@@ -475,6 +475,7 @@ class Risk < ApplicationRecord
 
       notes: sorted_notes.as_json,
       contract_nickname:  self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       project_id: fp.try(:project_id),

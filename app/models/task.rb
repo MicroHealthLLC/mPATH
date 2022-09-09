@@ -392,6 +392,7 @@ class Task < ApplicationRecord
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),

@@ -526,7 +526,7 @@ const contractStore = {
       
         axios({
           method: "DELETE",
-          url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+          url: `${API_BASE_PATH}/portfolio/contract_vehicles/${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,

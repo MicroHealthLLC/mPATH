@@ -8,8 +8,8 @@
         </span> 
         <br>    
         <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 }">
-          <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
-          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'mh-green-text' : 'inactive']"></i>PROJECTS
+          <el-button :class="[ getShowProjectStats == 0 ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats == 0 ? 'mh-green-text' : 'inactive']"></i>PROJECTS
           <span 
             v-if="currentProject && currentProject.facilities"
             class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
@@ -52,7 +52,7 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
@@ -1054,7 +1054,7 @@
             <loader type="code"></loader>
           </div>
         </el-card>
-         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="getShowProjectStats">
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="getShowProjectStats == 0">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
@@ -1226,7 +1226,7 @@
     </div>    
     </el-tab-pane>
 
-    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
       TABLE   
@@ -1252,7 +1252,7 @@
 
      <div class="row">
     <ProgramContractsSheet v-if="this.getShowContractStats" />
-    <ProgramProjectsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-if="this.getShowProjectStats == 0" />
     <ProgramVehiclesSheet v-if="this.getShowVehicleStats" />      
     </div>
     </el-tab-pane>
@@ -1372,7 +1372,7 @@ export default {
         return this.currentProject.facilities
     },
     programResourceObj(){
-      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
+      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats == 0 ){
         return this.currentProject.facilities
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
         return this.projectContracts
@@ -1445,7 +1445,7 @@ export default {
     },
     filteredLessons() {
       let programLessonsObj = [];
-      if(!this.getShowProjectStats){
+      if(this.getShowProjectStats !== 0){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
       } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
       //console.log(this.programLessons)
@@ -2096,14 +2096,14 @@ export default {
     showContractStats(){
      if(this.getShowContractStats == false){
         this.setShowContractStats(true)
-        this.setShowProjectStats(false)
+        this.setShowProjectStats(1)
         this.setShowVehicleStats(false)
      } else return
      
     },
     showProjectStats(){
-      if(this.getShowProjectStats == false){
-        this.setShowProjectStats(true)
+      if(this.getShowProjectStats !== 0){
+        this.setShowProjectStats(0)
         this.setShowContractStats(false)
         this.setShowVehicleStats(false)
       } else return
@@ -2111,7 +2111,7 @@ export default {
     showVehicleStats() {
       if(this.getShowVehicleStats == false){
         this.setShowVehicleStats(true)
-        this.setShowProjectStats(false)
+        this.setShowProjectStats(2) 
         this.setShowContractStats(false)
       } else return
     },

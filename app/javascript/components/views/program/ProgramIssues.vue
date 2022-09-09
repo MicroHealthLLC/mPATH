@@ -6,7 +6,11 @@
          <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
           <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectContractId">
             <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
-          <span v-else><i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectContractVehicleId">
+          <i class="far fa-car text-light py-2 mr-1"></i> </span>
+          <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectId">
+            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i>
+          </span>
           ISSUE
           </h5>
           <div v-for="number in [currentIssueSlide]" :key="number" >
@@ -75,13 +79,17 @@
                 <div class="col truncate-line-two">    
                       <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
                   <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectGroup"> {{dynamicObj[currentIssueSlide].projectGroup}}  </h4>
-                                                
+                  <h4 v-else>Unassigned</h4>                   
                 </div>  
         
                   <div class="col py-2">   
                      <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectContractId">                                      
                       <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
                       <h4  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].contractNickname">{{ dynamicObj[currentIssueSlide].contractNickname}}  </h4>  
+                    </span> 
+                    <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectContractVehicleId">                                      
+                      <h6 class="leftColLabel text-light mh-orange">VEHICLE</h6>
+                      <h4  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].vehicleNickname">{{ dynamicObj[currentIssueSlide].vehicleNickname}}  </h4>  
                     </span> 
                     <span v-else>
                         <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
@@ -527,7 +535,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
           <i class="fas fa-sort-down"></i
       ></span>
       </th> 
-      <th v-if="!getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+      <th v-if="getShowProjectStats == 0" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
         Project Name 
         <span
           class="inactive-sort-icon scroll"
@@ -568,7 +576,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
           <i class="fas fa-sort-down"></i
         ></span>
       </th>  
-      <th v-if="getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('contractNickname')">
+      <th v-if="getShowProjectStats == 1" class="pl-1 sort-th twenty" @click="sortCol2('contractName')">
         Contract Name 
         <span
           class="inactive-sort-icon scroll"
@@ -604,6 +612,47 @@ v-if="filteredIssues.filtered.issues.length > 0"
           class="inactive-sort-icon scroll"
           v-if="
             currentSortDir2 !== 'desc' && currentSortCol2 === 'contractNickname'
+          "
+        >
+          <i class="fas fa-sort-down"></i
+        ></span>
+      </th>  
+      <th v-if="getShowProjectStats == 2" class="pl-1 sort-th twenty" @click="sortCol2('name')">
+        Nickname 
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="currentSortCol2 !== 'name'"
+        >
+          <i class="fas fa-sort"></i
+        ></span>
+        <span
+          class="sort-icon main scroll"
+          v-if="
+            currentSortDir2 === 'asc' && currentSortCol2 === 'name'
+          "
+        >
+          <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="
+            currentSortDir2 !== 'asc' && currentSortCol2 === 'name'
+          "
+        >
+          <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+          class="sort-icon main scroll"
+          v-if="
+            currentSortDir2 === 'desc' && currentSortCol2 === 'name'
+          "
+        >
+          <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="
+            currentSortDir2 !== 'desc' && currentSortCol2 === 'name'
           "
         >
           <i class="fas fa-sort-down"></i
@@ -998,8 +1047,9 @@ v-if="filteredIssues.filtered.issues.length > 0"
     </thead>
     <tbody>
         <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" @click="openIssue(issue)">
-         <td>{{ issue.projectGroup }}</td>
-        <td>{{ issue.facilityName || issue.contractNickname }}</td>
+        <td v-if="issue.projectGroup">{{ issue.projectGroup }}</td>
+        <td v-else>Unassigned</td>
+        <td>{{ issue.facilityName || issue.contractNickname || issue.vehicleNickname }}</td>
         <td>{{ issue.title }}</td>
         <td>
          <span v-if="issue.notes.length > 0">       
@@ -1285,6 +1335,7 @@ export default {
     "filterDataForAdvancedFilter",
     "filteredAllIssues",
     "filteredAllContractIssues",
+    "filteredAllVehicleIssues",
     "filteredAllRisks",
     "filteredAllTasks",
     "filteredFacilities",
@@ -1435,8 +1486,11 @@ export default {
     },
     filteredIssues() {
     let allIssues = this.filteredAllIssues
-     if (this.getShowProjectStats){
+     if (this.getShowProjectStats == 1){
        allIssues = this.filteredAllContractIssues
+     }
+     if (this.getShowProjectStats == 2){
+       allIssues = this.filteredAllVehicleIssues
      }
      let issues = allIssues.filter(issue => {
        if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
@@ -1473,7 +1527,7 @@ export default {
           // Filtering 7 Task States
         })
         .filter((issue) => {
-          if (this.programCategoriesFilter.length > 0) {
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
             let category = this.programCategoriesFilter.map((t) => t);
             return category.includes(issue.taskTypeName);
           } else return true;
@@ -1697,7 +1751,7 @@ export default {
       done();
     },
    openIssue(issue) {   
-    if (!this.getShowProjectStats){
+    if (this.getShowProjectStats == 0){
       this.$router.push({
         name: "ProgramIssueForm",
         params: {
@@ -1707,7 +1761,7 @@ export default {
         },
         });
       }    
-      if (this.getShowProjectStats){
+      if (this.getShowProjectStats == 1){
         this.$router.push({
           name: "ProgramContractIssueForm",
           params: {
@@ -1716,7 +1770,17 @@ export default {
           issueId: issue.id,
           },
           });
-        }    
+        }  
+        if (this.getShowProjectStats == 2){
+        this.$router.push({
+          name: "ProgramVehicleIssueForm",
+          params: {
+          programId: this.$route.params.programId,
+          vehicleId: issue.projectContractVehicleId,
+          issueId: issue.id,
+          },
+          });
+        }      
     },
   exportIssuesToPdf() {
       const doc = new jsPDF("l");
