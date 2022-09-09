@@ -1237,6 +1237,7 @@ export default {
           });  
           this.fetchRoles(this.$route.params.programId)   
           this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);   
+          this.fetchCurrentProject(this.$route.params.programId)
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false
@@ -1250,7 +1251,8 @@ export default {
             message: `Succesfully added user/role to project.`,
             type: "success",
             showClose: true,
-          });         
+          });     
+          this.fetchCurrentProject(this.$route.params.programId)    
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
           this.SET_CONTRACT_ROLE_NAMES([])
