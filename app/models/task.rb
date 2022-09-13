@@ -22,6 +22,9 @@ class Task < ApplicationRecord
   after_save :update_facility_project, if: Proc.new {|task| task.project_contract_id.nil?}
   after_destroy :update_facility_project, if: Proc.new {|task| task.project_contract_id.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|task| task.project_contract_vehicle_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|task| task.project_contract_vehicle_id.nil?}
+
   attr_accessor :file_links
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }

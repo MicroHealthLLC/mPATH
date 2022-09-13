@@ -3965,6 +3965,10 @@ export default new Vuex.Store({
          let pcid = task.projectContractId
          deleteUrl = `/project_contracts/${pcid}/tasks/${task.id}.json`
       } 
+      if(task.projectContractVehicleId){
+        let pcid = task.projectContractVehicleId
+        deleteUrl = `/project_contract_vehicles/${pcid}/tasks/${task.id}.json`
+     } 
       return new Promise((resolve, reject) => {
         http
           .delete(
@@ -3973,7 +3977,11 @@ export default new Vuex.Store({
           .then((res) => {
             if (task.facilityId){
               commit("updateTasksHash", { task: task, action: "delete" });
-            } else   {
+            } 
+            if (task.projectContractVehicleId){
+              commit("updateVehicleTasks", { task: task, action: "delete" });
+            } 
+            if (task.projectContractId)  {
               commit("updateContractTasks", { task: task, action: "delete" });
             }            
             resolve("Success");
