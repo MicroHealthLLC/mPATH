@@ -884,15 +884,17 @@ export default {
     },
     goToContract(index, rows) {
       console.log(rows)
+      let programId =  this.$route.params.programId
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
       this.$router.push({
         name: "SheetContract",
         params: {
-          programId: this.$route.params.programId,
+          programId: programId,
           contractId: rows.project_contract_id,
         },
       });
+      this.fetchCurrentProject(programId);
     },
 	  handleExpandChange (row, expandedRows) {
 			this.projId = row.id;
