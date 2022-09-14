@@ -21,6 +21,9 @@ class Issue < ApplicationRecord
   after_save :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
   after_destroy :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|issue| issue.project_contract_vehicle_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|issue| issue.project_contract_vehicle_id.nil?}
+
   attr_accessor :file_links
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
@@ -131,6 +134,7 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       program_progress:  self.project.progress,
+      project_progress: self.facility_project.progress,
       project_group_name: self.facility_group.name,
       project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,

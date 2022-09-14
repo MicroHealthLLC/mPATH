@@ -3968,7 +3968,7 @@ export default new Vuex.Store({
       if(task.projectContractVehicleId){
         let pcid = task.projectContractVehicleId
         deleteUrl = `/project_contract_vehicles/${pcid}/tasks/${task.id}.json`
-     } 
+      } 
       return new Promise((resolve, reject) => {
         http
           .delete(
@@ -4028,6 +4028,10 @@ export default new Vuex.Store({
           let pcid = issue.projectContractId
           deleteUrl = `/project_contracts/${pcid}/issues/${issue.id}.json`
         } 
+        if(issue.projectContractVehicleId){
+          let pcid = issue.projectContractVehicleId
+          deleteUrl = `/project_contract_vehicles/${pcid}/issues/${issue.id}.json`
+       } 
       return new Promise((resolve, reject) => {
         http
           .delete(
@@ -4036,9 +4040,13 @@ export default new Vuex.Store({
           .then((res) => {
             if (issue.facilityId){
               commit("updateIssuesHash", { issue: issue, action: "delete" });
-            } else   {
+            } 
+            if(issue.projectContractId)   {
               commit("updateContractIssues", { issue: issue, action: "delete" });
-            }               
+            }    
+            if (issue.projectContractVehicleId)  {
+              commit("updateVehicleIssues", {issue: issue, action: "delete" });
+            }              
             resolve("Success");
           })
           .catch((err) => {
@@ -4053,6 +4061,10 @@ export default new Vuex.Store({
           let pcid = risk.projectContractId
           deleteUrl = `/project_contracts/${pcid}/risks/${risk.id}.json`
         } 
+        if(risk.projectContractVehicleId){
+          let pcid = risk.projectContractVehicleId
+          deleteUrl = `/project_contract_vehicles/${pcid}/risks/${risk.id}.json`
+        } 
        return new Promise((resolve, reject) => {
         http
           .delete(
@@ -4061,7 +4073,11 @@ export default new Vuex.Store({
           .then((res) => {
             if (risk.facilityId){
               commit("updateRisksHash", { risk: risk, action: "delete" });
-            } else   {
+            } 
+            if (risk.projectContractVehicleId){
+              commit("updateVehicleRisks", { risk: risk, action: "delete" });
+            } 
+            if (risk.projectContractId)  {
               commit("updateContractRisks", { risk: risk, action: "delete" });
             }          
             resolve("Success");
