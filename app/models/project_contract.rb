@@ -42,4 +42,14 @@ class ProjectContract < ApplicationRecord
       self.facility_group_id = project.default_facility_group.id
     end
   end
+
+  def update_progress
+    t = tasks
+    p = 0
+    if t.any?
+      p = (t.map(&:progress).sum / t.size).round(0)
+    end
+    self.update(progress: p)
+  end
+
 end
