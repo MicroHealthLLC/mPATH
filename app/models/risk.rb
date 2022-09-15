@@ -27,6 +27,9 @@ class Risk < ApplicationRecord
   after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
   after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_vehicle_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_vehicle_id.nil?}
+
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
   scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
