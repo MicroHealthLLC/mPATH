@@ -24,11 +24,8 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
-
-  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_vehicle_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_vehicle_id.nil?}
+  # after_save :update_owner_record
+  # after_destroy :update_owner_record
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
@@ -60,18 +57,7 @@ class Risk < ApplicationRecord
   def self.ransackable_scopes(_auth_object = nil)
     [:exclude_closed_in, :exclude_inactive_in]
   end
-
-  def update_facility_project
-    if self.previous_changes.keys.include?("progress")
-      fp = facility_project
-      p = fp.project
-
-      fp.update_progress
-      p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progress)
-    end
-  end
-
+  
   def files_as_json
     risk_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
       {
