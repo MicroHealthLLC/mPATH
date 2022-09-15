@@ -7,30 +7,45 @@
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 }">
-          <el-button :class="[ getShowProjectStats == 0 ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+        <el-button-group :class="{'d-none': !_isallowedContracts('read')}"  v-if="projectContracts.length > 0 || projectVehicles.length > 0">
+          <el-button :class="[ getShowProjectStats == 0 ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="p-2">  
           <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats == 0 ? 'mh-green-text' : 'inactive']"></i>PROJECTS
           <span 
-            v-if="currentProject && currentProject.facilities"
+            v-if="currentProject && currentProject.facilities && currentProject.facilities.length > 0"
             class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
             >{{ currentProject.facilities.length }}
             </span>
+            <span 
+               v-else
+               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >0
+            </span>
         </el-button>
-        <el-button :class="[ getShowContractStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
+        <el-button :class="[ getShowContractStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="p-2" v-show="isSheetsView"> 
           <i class="far fa-file-contract mr-1" :class="[ getShowContractStats ? 'mh-orange-text' : 'inactive']"></i>CONTRACTS 
             <span 
               v-if="projectContracts && projectContracts.length > 0"
               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ projectContracts.length }}
               </span>
+              <span 
+               v-else
+               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >0
+            </span>
            </el-button>
-           <el-button :class="[ getShowVehicleStats ? 'lightBtn' : 'inactive']" @click.prevent="showVehicleStats" class="pr-2" v-show="isSheetsView"> 
+           <el-button :class="[ getShowVehicleStats ? 'lightBtn' : 'inactive']" @click.prevent="showVehicleStats" class="p-2" v-show="isSheetsView"> 
           <i class="far fa-car mr-1" :class="[ getShowVehicleStats ? 'text-info' : 'inactive']"></i>VEHICLES
             <span 
               v-if="projectVehicles && projectVehicles.length > 0"
               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ projectVehicles.length }}
-              </span>
+            </span>
+            <span 
+               v-else
+               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >0
+            </span>
            </el-button>
        </el-button-group>
             
@@ -52,14 +67,15 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
+       <!-- <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
     </template>     
     NO DATA TO DISPLAY  
-    </el-tab-pane>
-    <el-tab-pane class="p-3" v-else> 
+    </el-tab-pane> -->
+    <!-- <el-tab-pane class="p-3" v-else >  -->
+     <el-tab-pane class="p-3" > 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
@@ -1226,14 +1242,15 @@
     </div>    
     </el-tab-pane>
 
-    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
+    <!-- <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
       TABLE   
     </template>     
     NO DATA TO DISPLAY  
-    </el-tab-pane>
-  <el-tab-pane class="p-3 overflowX" v-else>
+    </el-tab-pane> -->
+  <!-- <el-tab-pane class="p-3 overflowX" v-else> -->
+    <el-tab-pane class="p-3 overflowX">
      <template slot="label">
       <i class="fal fa-table mr-1"></i>
       TABLE    

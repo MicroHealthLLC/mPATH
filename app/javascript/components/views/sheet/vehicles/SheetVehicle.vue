@@ -45,16 +45,7 @@
               <div class="col">
                <h5 v-if="v.fullName">{{ v.fullName }} </h5>
               </div>  
-           </div>  
-          
-            <div v-if="v.contractSubCategory" class="row">
-             <div class="col">
-              <b>SINS or SUBCATEGORIES:</b>
-              </div>  
-              <div class="col">
-               <h5>{{ v.contractSubCategory.name }}</h5>
-              </div>  
-           </div>  
+           </div>      
 
              <div class="row">
              <div class="col">
