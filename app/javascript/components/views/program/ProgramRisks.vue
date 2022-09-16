@@ -1719,8 +1719,8 @@ export default {
         })
         .filter((r) => {
           if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
-            let category = this.programCategoriesFilter.map((t) => t);
-            return category.includes(r.category);
+            let category = this.programCategoriesFilter.map((t) => t.id);
+            return category.includes(r.taskTypeId);
           } else return true;
         })
      

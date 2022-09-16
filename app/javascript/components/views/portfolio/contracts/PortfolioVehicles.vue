@@ -19,7 +19,7 @@
           tabindex="1"
           size="small"
           v-if="( _isallowed('write') ) && scope.$index == createRow"
-          placeholder=""
+          placeholder="MicroHealth,LLC"
           style="text-align:center"
           v-model="scope.row.prime_name"
           controls-position="right"
@@ -124,7 +124,7 @@
 
         >
           <el-option
-            v-for="item in sinsOptions"
+            v-for="item in sinsOptions.filter(t => t.name !== 'null')"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -159,7 +159,7 @@
 
         >
           <el-option
-            v-for="item in contractAgencyOptions"
+            v-for="item in contractAgencyOptions.filter(t => t.name !== 'null')"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -193,7 +193,7 @@
 
         >
           <el-option
-            v-for="item in vehicleTypes"
+            v-for="item in vehicleTypes.filter(t => t.name !== 'null')"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -644,7 +644,7 @@
 
           >
             <el-option
-              v-for="item in contractAgencyOptions"
+              v-for="item in contractAgencyOptions.filter(t => t.name !== 'null')"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -678,7 +678,7 @@
 
           >
             <el-option
-              v-for="item in vehicleTypes"
+              v-for="item in vehicleTypes.filter(t => t.name !== 'null')"
               :key="item.id"
               :label="item.name"
               :value="item.id"
