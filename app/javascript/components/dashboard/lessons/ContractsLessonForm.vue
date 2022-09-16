@@ -1335,6 +1335,24 @@ export default {
             showClose: true,
           });
           this.SET_CONTRACT_LESSON_STATUS(0);
+          if (this.$route.path.includes("sheet")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/lessons/${this.contractLesson.id}`
+              );
+            //Once other views are supported, we can use these commented routes
+            // } else if (this.$route.path.includes("map")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/map/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );                   
+            // } else if (this.$route.path.includes("calendar")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/calendar/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );
+            // } else if (this.$route.path.includes("kanban"))  {
+            // this.$router.push(
+            //   `/programs/${this.$route.params.programId}/kanban/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            // );
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/contracts/${this.$route.params.contractId}/lessons/${this.contractLesson.id}`)
         }
         this.successes = this.contractLesson.successes;
         this.failures = this.contractLesson.failures;

@@ -1089,19 +1089,24 @@ export default {
             showClose: true,
           });
           this.SET_LESSON_STATUS(0);
-          //Route to newly created task form page
-          //   if (this.$route.path.includes("sheet")) {
-          //     this.$router.push(
-          //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-          //     );
-          //   } else if (this.$route.path.includes("map")) {
-          //     this.$router.push(
-          //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-          //     );
-          //   } else 
-          //   this.$router.push(
-          //       `/programs/${this.$route.params.programId}/dataviewer`
-          //     );
+          if (this.$route.path.includes("sheet")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+              );
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+              );
+                   
+            } else if (this.$route.path.includes("calendar")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+              );
+            } else if (this.$route.path.includes("kanban"))  {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+              );
+             }  
         }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;

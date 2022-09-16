@@ -1340,6 +1340,24 @@ export default {
         this.failures = this.vehicleLesson.failures;
         this.bestPractices = this.vehicleLesson.best_practices;
         this.updates = this.vehicleLesson.notes;
+        if (this.$route.path.includes("sheet")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/lessons/${this.vehicleLesson.id}`
+              );
+            //Once other views are supported, we can use these commented routes
+            // } else if (this.$route.path.includes("map")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/map/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );                   
+            // } else if (this.$route.path.includes("calendar")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/calendar/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );
+            // } else if (this.$route.path.includes("kanban"))  {
+            // this.$router.push(
+            //   `/programs/${this.$route.params.programId}/kanban/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            // );
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/vehicles/${this.$route.params.vehicleId}/lessons/${this.vehicleLesson.id}`)
       },
     },
   },
