@@ -1461,10 +1461,13 @@ export default {
       }
     },
     filteredLessons() {
+      console.log(this.programLessons)
       let programLessonsObj = [];
-      if(this.getShowProjectStats !== 0){
+      if(!this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
-      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      } else if (this.getShowContractStats) {
+        programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_vehicle_id)
       //console.log(this.programLessons)
       // let programLessonsObj = this.programLessons;
 
