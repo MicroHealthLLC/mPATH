@@ -18,8 +18,8 @@ class Issue < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
+  # after_save :update_owner_record
+  # after_destroy :update_owner_record
 
   attr_accessor :file_links
 
@@ -59,17 +59,6 @@ class Issue < ApplicationRecord
       project_id: facility.id,
       project_name: facility.facility_name
     }
-  end
-
-  def update_facility_project
-    if self.previous_changes.keys.include?("progress")
-      fp = facility_project
-      p = fp.project
-
-      fp.update_progress
-      p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progress)
-    end
   end
 
   def portfolio_json(facility_groups: [], files: false)
@@ -131,6 +120,7 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       program_progress:  self.project.progress,
+      project_progress: self.facility_project.progress,
       project_group_name: self.facility_group.name,
       project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,

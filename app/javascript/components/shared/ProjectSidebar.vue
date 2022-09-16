@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list" :load="log( sortedGroups )">
     <div class="stick">
       <div
         @click="deselectProject"
@@ -13,6 +13,7 @@
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
         <div
+        
           v-for="(group, index) in sortedGroups.filter(
             (t) =>
               t.contracts.length > 0 ||
@@ -91,7 +92,7 @@
                   `/programs/${$route.params.programId}/${tab}/contracts/${c.projectContractId}${pathTab}`
                 "
               >
-                <div
+                <div 
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{
@@ -117,7 +118,7 @@
                   `/programs/${$route.params.programId}/${tab}/vehicles/${v.projectContractVehicleId}${pathTab}`
                 "
               >
-                <div
+                <div             
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(v)"
                   :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"

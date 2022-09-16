@@ -67,14 +67,15 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
+       <!-- <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
     </template>     
     NO DATA TO DISPLAY  
-    </el-tab-pane>
-    <el-tab-pane class="p-3" v-else> 
+    </el-tab-pane> -->
+    <!-- <el-tab-pane class="p-3" v-else >  -->
+     <el-tab-pane class="p-3" > 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
@@ -1241,14 +1242,15 @@
     </div>    
     </el-tab-pane>
 
-    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
+    <!-- <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
       TABLE   
     </template>     
     NO DATA TO DISPLAY  
-    </el-tab-pane>
-  <el-tab-pane class="p-3 overflowX" v-else>
+    </el-tab-pane> -->
+  <!-- <el-tab-pane class="p-3 overflowX" v-else> -->
+    <el-tab-pane class="p-3 overflowX">
      <template slot="label">
       <i class="fal fa-table mr-1"></i>
       TABLE    
