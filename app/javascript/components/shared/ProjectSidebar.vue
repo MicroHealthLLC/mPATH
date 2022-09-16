@@ -80,6 +80,7 @@
               </router-link>
             </div>
             <div
+             :class="{'d-none': notSheetView }"   
               v-for="c in projectContracts.filter(
                 (t) => t.facilityGroup && t.facilityGroup.id == group.id
               )" 
@@ -105,6 +106,7 @@
               </router-link>
             </div>
             <div
+             :class="{'d-none': notSheetView }"   
               v-for="v in projectVehicles.filter(
                 (t) => t.facilityGroup && t.facilityGroup.id == group.id
               )"
@@ -207,6 +209,12 @@ export default {
       return (
         this.$route.name.includes("Sheet") ||
         this.$route.name.includes("Vehicle")
+      );
+    },
+    notSheetView() {
+      return (
+        this.$route.name.includes("Calendar") ||
+        this.$route.name.includes("Kanban")
       );
     },
     programName() {
