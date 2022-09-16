@@ -1896,7 +1896,7 @@ export default {
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
               );
               } else if (this.isProgramView && this.task.projectContractVehicleId) { this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/contract_vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
               );
               } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);
           })
