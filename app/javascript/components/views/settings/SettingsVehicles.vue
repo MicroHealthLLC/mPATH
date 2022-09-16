@@ -81,17 +81,7 @@
           <el-tabs type="border-card" @tab-click="handleClick">
             <el-tab-pane class="p-3" style="postion:relative" label="PRIME">
               <el-table
-                v-if="tableData"
-                :load="
-                  log(
-                    contractVehicles.filter(
-                      (t) =>
-                        t &&
-                        t.contract_vehicle &&
-                        !t.contract_vehicle.is_subprime
-                    )
-                  )
-                "
+                v-if="tableData"           
                 :data="
                   tableData
                     .filter(
@@ -1515,7 +1505,7 @@ export default {
       //Need to add filter for associated contracts only
       if (this.vehicles && this.vehicles.length > 0) {
         let con = this.vehicles.filter(
-          (t) => t && t !== "null" && !t.contract_vehicle.is_subprime
+          (t) => t && t !== "null" && !t.contract_vehicle.is_subprime && t.contract_vehicle !== 'null'
         );
 
         return con.filter((td) => {
@@ -1533,7 +1523,7 @@ export default {
       //Need to add filter for associated contracts only
       if (this.vehicles && this.vehicles.length > 0) {
         let con = this.vehicles.filter(
-          (t) => t && t !== "null" && t.contract_vehicle.is_subprime
+          (t) => t && t !== "null" && t.contract_vehicle.is_subprime && t.contract_vehicle !== 'null'
         );
         return con.filter((td) => {
           if (
@@ -1554,7 +1544,7 @@ export default {
       ) {
         if (this.contractVehicles && this.contractVehicles.length > 0) {
           console.log(this.contractVehicles.filter((t) => t && !t.is_subprime));
-          return this.contractVehicles.filter((t) => t && !t.is_subprime);
+          return this.contractVehicles.filter((t) => t && !t.is_subprime && t !== 'null');
         }
       } else if (
         this.contractVehicles &&
@@ -1604,7 +1594,7 @@ export default {
         this.subTableData.length == 0
       ) {
         if (this.contractVehicles && this.contractVehicles.length > 0) {
-          return this.contractVehicles.filter((t) => t && t.is_subprime);
+          return this.contractVehicles.filter((t) => t && t.is_subprime && t !== 'null');
         }
       } else if (
         this.contractVehicles &&

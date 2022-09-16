@@ -1376,6 +1376,15 @@ export default {
     'getHideImportant',
     'getHideBriefed',
     ]),
+    C_programCategoryFilter: {
+      get() {
+        return this.programCategoriesFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setProgramCategoriesFilter(value);
+      },
+    },
     stateIssues(){
       if(this.getShowProjectStats == false){
         return this.filteredAllIssues
@@ -1528,12 +1537,11 @@ export default {
         })
         .filter((issue) => {
           if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
-            let category = this.programCategoriesFilter.map((t) => t);
-            return category.includes(issue.taskTypeName);
+           let category = this.programCategoriesFilter.map((t) => t.id);
+            return category.includes(issue.taskTypeId);
           } else return true;
-        })
-     
-        return {
+        })  
+       return {
        unfiltered: {
             issues
             },

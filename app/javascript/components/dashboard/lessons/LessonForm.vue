@@ -1103,11 +1103,11 @@ export default {
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
               );
             } else if (this.$route.path.includes("kanban"))  {
-              this.$router.push(
-                `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-              );
-             }  
-        }
+            this.$router.push(
+              `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+            );
+            }    
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/lessons/${this.lesson.id}`)      
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
         this.bestPractices = this.lesson.best_practices;
