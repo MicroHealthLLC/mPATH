@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations,mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsView",
@@ -113,8 +113,12 @@ export default {
       },
     };
   },
+  mounted(){
+    this.fetchCurrentProject(this.$route.params.programId)
+  },
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
+    ...mapActions(["fetchCurrentProject"]),
     _isallowed(salut) {
       return this.checkPrivileges("SettingsView", salut, this.$route, {});
       // let pPrivilege = this.$programPrivileges[this.$route.params.programId]
