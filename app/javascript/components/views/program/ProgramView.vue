@@ -1810,10 +1810,10 @@ export default {
       if(this.getShowProjectStats == 0){
         programLessonsObj = this.programLessons.filter(l => l.project_id)
       } 
-      if(this.getShowProjectStats == 1 || this.getShowVehicleStats ){
+      if(this.getShowProjectStats == 1 || this.getShowContractStats ){
         programLessonsObj = this.programLessons.filter(l =>  l.project_contract_id)
       }  
-      if(this.getShowProjectStats == 2 || this.getShowContractStats){
+      if(this.getShowProjectStats == 2 || this.getShowVehicleStats){
         programLessonsObj = this.programLessons.filter(l => l.project_contract_vehicle_id)
       } 
       let lessons = programLessonsObj
