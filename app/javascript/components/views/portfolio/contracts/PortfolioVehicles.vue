@@ -109,7 +109,7 @@
         class=""
         >
         <template slot-scope="scope" >
-      <span v-if="_isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
+      <span v-if="sinsOptions && _isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
         <el-select
           tabindex="3"
           v-model="scope.row.contract_sub_category_id"
@@ -159,7 +159,7 @@
 
         >
           <el-option
-            v-for="item in contractAgencyOptions.filter(t => t.name !== 'null')"
+            v-for="item in contractAgencyOptions"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -193,7 +193,7 @@
 
         >
           <el-option
-            v-for="item in vehicleTypes.filter(t => t.name !== 'null')"
+            v-for="item in vehicleTypes"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -644,7 +644,7 @@
 
           >
             <el-option
-              v-for="item in contractAgencyOptions.filter(t => t.name !== 'null')"
+              v-for="item in contractAgencyOptions"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -678,7 +678,7 @@
 
           >
             <el-option
-              v-for="item in vehicleTypes.filter(t => t.name !== 'null')"
+              v-for="item in vehicleTypes"
               :key="item.id"
               :label="item.name"
               :value="item.id"

@@ -669,7 +669,7 @@
      </el-table-column>
     <el-table-column
       label="Actions"
-      width="140"
+      width="155"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
       align="center">
@@ -687,6 +687,13 @@
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
+        </el-button>
+        <el-button
+        type="default"
+        @click="openContractTask(scope.$index, scope.row)"
+         v-tooltip="`Go To Contract Task`" 
+        class="bg-light btn-sm text-light mx-0">               
+        <i class="far fa-suitcase text-secondary"></i>
         </el-button>
       <el-button 
         type="default" 
@@ -1236,6 +1243,15 @@ export default {
     this.pocDialogVisible = true;
     this.fetchContractPOCs()
   },   
+  // Method to open tab with route to Client Panel Contract Task
+  // If there are more than one program with contract, this method will first open modal with Programs that contain that Contract
+
+  //A computed value that identifies contracts that are associated with a program
+  openContractTask(index, row){
+    console.log(row)
+    // this.portfolioContractsByProgram.filter(c => row.id.includes(c.id))     
+
+  }, 
   editMode(index, rows) {
     console.log(rows)
     this.rowIndex = index,
