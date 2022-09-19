@@ -7,7 +7,9 @@ class ContractVehicle < ApplicationRecord
   belongs_to :user
 
   has_many :contract_project_data
- 
+  has_many :project_contract_vehicles, dependent: :destroy
+  has_many :projects, through: :project_contract_vehicles
+
   # validates_presence_of :name
 
   before_save :set_is_subprime
@@ -15,6 +17,7 @@ class ContractVehicle < ApplicationRecord
   def to_json
     h = self.as_json
     vehicle = self
+    h.merge!({associated_project_ids: projects.pluck(:id) })
     h.merge!({contract_sub_category: contract_sub_category.as_json})
     h.merge!({contract_agency: contract_agency.as_json})
     h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})
