@@ -1271,6 +1271,7 @@ export default {
     this.fetchContractPOCs()
   },   
   openContractTask(index, row, programId){
+  console.log(programNames)
     this.contractProgID = programId
     this.programContractRowID = row.id
      this.fetchContracts(programId)  
