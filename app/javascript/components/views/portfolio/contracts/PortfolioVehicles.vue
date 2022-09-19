@@ -449,21 +449,16 @@
           <i class="far fa-save"></i>
           </el-button>
           <el-popover
-          v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) &&
+          v-if="programNames && (scope.$index !== rowIndex) && (scope.$index !== createRow) &&
           scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
           placement="left"
           width="auto"
-          trigger="hover">    
+          trigger="hover">         
           <el-button          
           v-for="item, i in scope.row.associated_project_ids" :key="i"
-          @click="openContractTask(scope.$index, scope.row)" >
-          <!-- <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span> -->
-          </el-button>             
-          <!-- <el-button          
-          v-for="item, i in scope.row.associated_project_ids" :key="i"
-          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id || item == t.programId)[0].program_id)" >
-          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span>
-          </el-button>         -->
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)">
+          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          </el-button>        
           <el-button
           slot="reference"
           type="default"        
@@ -878,7 +873,6 @@ export default {
       "createContractVehicle",
       "fetchContractVehicles",
       "fetchVehicles",
-      "fetchPortfolioPrograms",
       "updateContractVehicle",
       "deleteContractVehicle",
       'fetchContractProjects',
@@ -891,8 +885,7 @@ export default {
       console.log(tab)
       console.log(`${"event:", event}`)
     },
-    openContractTask(index, row){
-      console.log(this.programNames)
+    openContractTask(index, row, programId){
       this.vehicleProgID = programId
       this.programVehicleRowID = row.id
       this.fetchVehicles(programId)  
@@ -1092,7 +1085,6 @@ export default {
   }
   },
   mounted() {
-    this.fetchPortfolioPrograms()
     // this.fetchContractVehicles()
   },
   computed: {
