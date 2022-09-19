@@ -688,7 +688,14 @@
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
         </el-button>
-        <el-popover
+        <el-button          
+          v-for="item, i in scope.row.associated_project_ids" :key="i"
+          @click="openContractTask(scope.$index, scope.row)"   
+          >
+          <i class="far fa-suitcase text-secondary"></i>
+          <!-- <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span> -->
+          </el-button>        
+        <!-- <el-popover
           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) &&
           scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
           placement="left"
@@ -707,7 +714,7 @@
           class="bg-light btn-sm text-light mr-2">               
           <i class="far fa-suitcase text-secondary"></i>
         </el-button>
-        </el-popover> 
+        </el-popover>  -->
        
       <el-button 
         type="default" 
