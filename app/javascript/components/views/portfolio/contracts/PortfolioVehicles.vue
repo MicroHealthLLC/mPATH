@@ -432,9 +432,9 @@
       <el-table-column
       label="Actions"
         v-if="_isallowed('write') || _isallowed('delete') "
-        width="130"
+        width="155"
         fixed="right"
-        align="center"
+        align="right"
         >
         <template slot-scope="scope">
           <el-button
@@ -448,6 +448,25 @@
           class="bg-primary btn-sm text-light mx-0">               
           <i class="far fa-save"></i>
           </el-button>
+          <el-popover
+          v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) &&
+          scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
+          placement="left"
+          width="auto"
+          trigger="hover">         
+          <el-button          
+          v-for="item, i in scope.row.associated_project_ids" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)" >
+          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          </el-button>        
+          <el-button
+          slot="reference"
+          type="default"        
+          v-tooltip="`Open Vehicle Tasks`" 
+          class="bg-light btn-sm text-light mr-2">               
+          <i class="far fa-suitcase text-secondary"></i>
+        </el-button>
+        </el-popover>     
         <el-button 
           type="default" 
           v-tooltip="`Cancel Edit`"       
@@ -821,6 +840,8 @@ export default {
   },
       data() {    
       return {
+        vehicleProgID: null,
+        programVehicleRowID: null,
         updateCeiling: 0,
         oneOne: 1,
         twoTwo: 2,
@@ -851,6 +872,7 @@ export default {
     ...mapActions([
       "createContractVehicle",
       "fetchContractVehicles",
+      "fetchVehicles",
       "updateContractVehicle",
       "deleteContractVehicle",
       'fetchContractProjects',
@@ -863,6 +885,11 @@ export default {
       console.log(tab)
       console.log(`${"event:", event}`)
     },
+    openContractTask(index, row, programId){
+      this.vehicleProgID = programId
+      this.programVehicleRowID = row.id
+      this.fetchVehicles(programId)  
+  }, 
     getSummaries(param) {
     const { columns, data } = param;
     const sums = [];
@@ -1062,7 +1089,9 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "portfolioPrograms",
       "contractProjects",
+      "vehicles",
        //Contract Vehicles
       "contractVehiclesStatus",
       "contractVehicles",
@@ -1071,6 +1100,11 @@ export default {
       "contractVehicle",
       "contractVehicleLoaded",
     ]),   
+    programNames(){
+      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+        return this.portfolioPrograms
+      }      
+    },
     tableData(){
       if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
         let data = this.contractVehicles.filter(v => v && !v.is_subprime)
@@ -1139,6 +1173,14 @@ contractAgencyOptions(){
     },
   },
   watch: {
+    vehicles: {
+      handler() {
+        if (this.vehicles && this.vehicles.length > 0 && this.vehicleProgID && this.programVehicleRowID) {
+          let programVehicleId = this.vehicles.filter(c => c.contract_vehicle_id ==  this.programVehicleRowID)[0].id
+            window.open(`/programs/${this.vehicleProgID }/sheet/vehicles/${programVehicleId}/tasks`)  
+          }                    
+        }
+    },
    opStart:{
       handler() {
       if (this.opStart !== null) {
@@ -1146,7 +1188,7 @@ contractAgencyOptions(){
           console.log(this.opStart)
        }
      }
-    },
+    },  
      contractVehicleStatus: {
       handler() {
         if (this.contractVehicleStatus == 200) {
