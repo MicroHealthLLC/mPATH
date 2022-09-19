@@ -459,11 +459,11 @@
           @click="openContractTask(scope.$index, scope.row)" >
           <!-- <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span> -->
           </el-button>             
-          <el-button          
+          <!-- <el-button          
           v-for="item, i in scope.row.associated_project_ids" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id || item == t.programId)[0].program_id)" >
           <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span>
-          </el-button>        
+          </el-button>         -->
           <el-button
           slot="reference"
           type="default"        
