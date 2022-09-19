@@ -669,10 +669,10 @@
      </el-table-column>
     <el-table-column
       label="Actions"
-      width="140"
+      width="155"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
-      align="center">
+      align="right">
    <template slot-scope="scope">
       <el-button
         type="default"
@@ -688,6 +688,27 @@
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
         </el-button>
+        <el-popover
+          v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) &&
+          scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
+          placement="left"
+          width="auto"
+          trigger="hover">         
+          <el-button          
+          v-for="item, i in scope.row.associated_project_ids" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)"   
+          >
+          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          </el-button>        
+          <el-button
+          slot="reference"
+          type="default"        
+          v-tooltip="`Open Contract Tasks`" 
+          class="bg-light btn-sm text-light mr-2">               
+          <i class="far fa-suitcase text-secondary"></i>
+        </el-button>
+        </el-popover> 
+       
       <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
@@ -996,7 +1017,14 @@
 
       </div>
       </el-dialog>
-
+      <el-dialog
+        :visible.sync="contractProgramsModal"
+        append-to-body
+        center
+        class="p-0 users"       
+      >
+       TEST
+      </el-dialog>
       </div>
       </div>
     </el-tab-pane>
@@ -1062,10 +1090,14 @@ export default {
   
     data() {    
       return {
+        contractProgID: null, 
+        programContractRowID: null,
         today: new Date().toISOString().slice(0, 10),
+        contractProgramsModal: false, 
         blankVehicle: '',
         totalContractValue: 0,
         workNumberVal: '', 
+        sampleArray: [2, 3, 5, 7],
         workNumberValNew: '', 
         mobNumberVal: '', 
         mobNumberValNew: '', 
@@ -1102,6 +1134,8 @@ export default {
      "SET_CONTRACT_POCS_STATUS"
     ]),
     ...mapActions([
+      "fetchContracts",
+      "fetchPortfolioPrograms",
       //Contract Projects
       "createContractProject",
       "fetchContractProjects",
@@ -1236,6 +1270,11 @@ export default {
     this.pocDialogVisible = true;
     this.fetchContractPOCs()
   },   
+  openContractTask(index, row, programId){
+    this.contractProgID = programId
+    this.programContractRowID = row.id
+     this.fetchContracts(programId)  
+  }, 
   editMode(index, rows) {
     console.log(rows)
     this.rowIndex = index,
@@ -1518,10 +1557,13 @@ export default {
   mounted() {
     this.fetchContractProjects()
     this.fetchContractVehicles()
-    this.fetchContractDataOptions()
+    this.fetchPortfolioPrograms()
+    this.fetchContractDataOptions()    
   },
   computed: {
     ...mapGetters([
+      "contracts",
+      "portfolioPrograms",
       //Contract Projects 
       "contractProjectStatus",
       "contractProjects",
@@ -1550,6 +1592,11 @@ export default {
          data.push({})
          return data
      }      
+    },
+    programNames(){
+      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+        return this.portfolioPrograms
+      }      
     },
     createRow(){
       let lastItem = this.tableData.length - 1
@@ -1695,6 +1742,14 @@ export default {
         }
       },
     }, 
+    contracts: {
+      handler() {
+        if (this.contracts && this.contracts.length > 0 && this.contractProgID && this.programContractRowID) {
+          let programContractId = this.contracts.filter(c => c.id ==  this.programContractRowID )[0].project_contract_id
+            window.open(`/programs/${this.contractProgID}/sheet/contracts/${programContractId}/tasks`)  
+          }                    
+        }
+    },
     contractPOCsStatus: {
       handler() {
         if (this.contractPOCsStatus == 200) {

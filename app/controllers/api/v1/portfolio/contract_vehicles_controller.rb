@@ -14,7 +14,7 @@ class Api::V1::Portfolio::ContractVehiclesController < AuthenticatedController
   end
 
   def index
-    contract_vehicles = ContractVehicle.all.map(&:to_json)
+    contract_vehicles = ContractVehicle.includes([:projects, :contract_vehicle_type, :contract_sub_category, :contract_number, :contract_agency]).all.map(&:to_json)
     render json: {contract_vehicles: contract_vehicles}
   end
 
