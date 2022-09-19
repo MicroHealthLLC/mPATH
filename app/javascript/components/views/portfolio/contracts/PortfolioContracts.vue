@@ -696,9 +696,9 @@
           trigger="hover">         
           <el-button          
           v-for="item, i in scope.row.associated_project_ids" :key="i"
-          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)"   
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id || item == t.programId)[0].program_id)"   
           >
-          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
@@ -1271,6 +1271,7 @@ export default {
     this.fetchContractPOCs()
   },   
   openContractTask(index, row, programId){
+    console.log(this.programNames)
     this.contractProgID = programId
     this.programContractRowID = row.id
      this.fetchContracts(programId)  
