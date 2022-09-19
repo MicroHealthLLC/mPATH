@@ -453,11 +453,16 @@
           scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
           placement="left"
           width="auto"
-          trigger="hover">         
+          trigger="hover">    
           <el-button          
           v-for="item, i in scope.row.associated_project_ids" :key="i"
-          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)" >
-          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          @click="openContractTask(scope.$index, scope.row)" >
+          <!-- <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span> -->
+          </el-button>             
+          <el-button          
+          v-for="item, i in scope.row.associated_project_ids" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id || item == t.programId)[0].program_id)" >
+          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id || item == t.programId)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
@@ -873,6 +878,7 @@ export default {
       "createContractVehicle",
       "fetchContractVehicles",
       "fetchVehicles",
+      "fetchPortfolioPrograms",
       "updateContractVehicle",
       "deleteContractVehicle",
       'fetchContractProjects',
@@ -885,7 +891,8 @@ export default {
       console.log(tab)
       console.log(`${"event:", event}`)
     },
-    openContractTask(index, row, programId){
+    openContractTask(index, row){
+      console.log(this.programNames)
       this.vehicleProgID = programId
       this.programVehicleRowID = row.id
       this.fetchVehicles(programId)  
@@ -1085,6 +1092,7 @@ export default {
   }
   },
   mounted() {
+    this.fetchPortfolioPrograms()
     // this.fetchContractVehicles()
   },
   computed: {
