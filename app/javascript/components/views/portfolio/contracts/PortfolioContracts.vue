@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid mx-3" :load="log(programNames)">       
+  <div class="container-fluid mx-3">       
     <div style="height:85px" class="pt-2">
       <span @click.prevent="backHomeBtn">
         <img         
@@ -690,15 +690,15 @@
         </el-button>
         <el-popover
           v-if="programNames && (scope.$index !== rowIndex) && (scope.$index !== createRow) &&
-          scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
+          scope.row.associated_projects && scope.row.associated_projects.length > 0"
           placement="left"
           width="auto"
           trigger="hover">         
           <el-button          
-          v-for="item, i in scope.row.associated_project_ids.filter( t => programNames.map(p => p.program_id).includes(t))" :key="i"
-          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)"   
+          v-for="item, i in scope.row.associated_projects" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
           >
-          <span v-if="programNames.filter(t => item == t.program_id)[0]" :load="log(programNames.filter(t => item == t.program_id)[0])">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
@@ -707,8 +707,7 @@
           class="bg-light btn-sm text-light mr-2">               
           <i class="far fa-suitcase text-secondary"></i>
         </el-button>
-        </el-popover> 
-       
+        </el-popover>        
       <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
@@ -1056,8 +1055,7 @@
     </span>
   </el-tabs>
 
-  </div>
-      
+  </div>      
 </template>
     
 <script>
@@ -1152,14 +1150,13 @@ export default {
       "fetchContractVehicles",
       "fetchContractDataOptions"
     ]),
+    // log(e){
+    //   console.log("programNames")
+    //   console.log(e)     
+    // },
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
-    log(e){
-      console.log("programNames")
-      console.log(e)
-     
-    },
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];
@@ -1268,9 +1265,6 @@ export default {
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
-  log(e){
-    // console.log(e)
-  },
   openPocModal(){
     this.pocDialogVisible = true;
     this.fetchContractPOCs()
@@ -1774,17 +1768,6 @@ export default {
           this.mobNumberValNew = '',
           this.pocRowIndex = null;
           this.pocRowId = null;
-
-          // this.dynamicValidateForm.newEmail = ''; 
-          // this.dynamicValidateForm.newName = ''; 
-          // this.dynamicValidateForm.newWorkNumber = ''; 
-          // this.dynamicValidateForm.newMobileNumber = ''; 
-          // this.dynamicValidateForm.newTitle = '';   
-          // this.validName = false; 
-          // this.validEmail = false; 
-          // this.validWorkNum = false;
-          // this.validMobileNum = false; 
-          // this.validTitle = false;
         }
       },
     },     
