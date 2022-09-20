@@ -457,7 +457,7 @@
           <el-button          
           v-for="item, i in scope.row.associated_project_ids" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)">
-          <span v-if="programNames">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          <span v-if="programNames.filter(t => item == t.program_id)[0]">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
