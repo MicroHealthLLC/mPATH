@@ -27,7 +27,10 @@ class ContractVehicle < ApplicationRecord
       projects.each do |p|
         if options[:authorized_project_ids].include?(p.id)
           pc = _project_contract_vehicles.detect{|_pc| _pc.project_id == p.id }
-          associated_projects << {id: p.id, name: p.name, project_contract_vehicle_id: pc.id}
+          # if vehicle has contract_task permission then only show
+          if options[:role_users][pc.id]
+            associated_projects << {id: p.id, name: p.name, project_contract_vehicle_id: pc.id}
+          end
         end
       end
       h.merge!({associated_projects: associated_projects })
