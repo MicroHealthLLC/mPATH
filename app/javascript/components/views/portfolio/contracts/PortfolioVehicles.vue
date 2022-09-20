@@ -450,14 +450,15 @@
           </el-button>
           <el-popover
           v-if="programNames && (scope.$index !== rowIndex) && (scope.$index !== createRow) &&
-          scope.row.associated_project_ids && scope.row.associated_project_ids.length > 0"
+          scope.row.associated_projects && scope.row.associated_projects.length > 0"
           placement="left"
           width="auto"
           trigger="hover">         
           <el-button          
-          v-for="item, i in scope.row.associated_project_ids.filter( t => programNames.map(p => p.program_id).includes(t))" :key="i"
-          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)">
-          <span v-if="programNames.filter(t => item == t.program_id)[0]">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          v-for="item, i in scope.row.associated_projects" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
+          >
+          <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
@@ -466,7 +467,7 @@
           class="bg-light btn-sm text-light mr-2">               
           <i class="far fa-suitcase text-secondary"></i>
         </el-button>
-        </el-popover>     
+        </el-popover> 
         <el-button 
           type="default" 
           v-tooltip="`Cancel Edit`"       
@@ -710,8 +711,7 @@
           {{ scope.row.contract_vehicle_type.name }}
           </span>
           </template>
-        </el-table-column>
-      
+        </el-table-column>      
         <el-table-column
           label="Vehicle/Contract Number"
           width="175"
@@ -755,7 +755,7 @@
         <el-table-column
         label="Actions"
           v-if="_isallowed('write') || _isallowed('delete') "
-          width="130"     
+          width="155"     
           fixed="right"
           align="center"
           >
@@ -769,6 +769,26 @@
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
             </el-button>
+            <el-popover
+            v-if="programNames && (scope.$index !== rowIndex) && (scope.$index !== createRow) &&
+            scope.row.associated_projects && scope.row.associated_projects.length > 0"
+            placement="left"
+            width="auto"
+            trigger="hover">         
+            <el-button          
+            v-for="item, i in scope.row.associated_projects" :key="i"
+            @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
+            >
+            <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
+            </el-button>        
+            <el-button
+            slot="reference"
+            type="default"        
+            v-tooltip="`Open Contract Tasks`" 
+            class="bg-light btn-sm text-light mr-2">               
+            <i class="far fa-suitcase text-secondary"></i>
+          </el-button>
+        </el-popover> 
           <el-button 
             type="default" 
             v-tooltip="`Cancel Edit`"       
