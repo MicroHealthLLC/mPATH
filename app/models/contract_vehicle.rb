@@ -14,10 +14,13 @@ class ContractVehicle < ApplicationRecord
 
   before_save :set_is_subprime
 
-  def to_json
+  def to_json(options={})
     h = self.as_json
     vehicle = self
-    h.merge!({associated_project_ids: projects.pluck(:id) })
+    if options[:authorized_project_ids]
+      _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
+      h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })
+    end
     h.merge!({contract_sub_category: contract_sub_category.as_json})
     h.merge!({contract_agency: contract_agency.as_json})
     h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})

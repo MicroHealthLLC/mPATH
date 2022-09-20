@@ -14,7 +14,10 @@ class Api::V1::Portfolio::ContractVehiclesController < AuthenticatedController
   end
 
   def index
-    contract_vehicles = ContractVehicle.includes([:projects, :contract_vehicle_type, :contract_sub_category, :contract_number, :contract_agency]).all.map(&:to_json)
+    authorized_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids
+    project_ids = ProjectContractVehicle.where(id: authorized_contract_vehicle_ids).pluck(:project_id).uniq
+
+    contract_vehicles = ContractVehicle.includes([:projects, :contract_vehicle_type, :contract_sub_category, :contract_number, :contract_agency]).all.map{|c| c.to_json({authorized_project_ids: project_ids}) }
     render json: {contract_vehicles: contract_vehicles}
   end
 
