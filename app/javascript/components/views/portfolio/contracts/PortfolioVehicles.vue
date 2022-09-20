@@ -757,7 +757,7 @@
           v-if="_isallowed('write') || _isallowed('delete') "
           width="155"     
           fixed="right"
-          align="center"
+          align="right"
           >
           <template slot-scope="scope">
             <el-button

@@ -26,8 +26,18 @@ class ContractProjectDatum < ApplicationRecord
   def to_json(options = {})
     h = self.as_json
     if options[:authorized_project_ids]
-      _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
-      h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })
+      _project_contracts = project_contracts
+      associated_projects = []
+      projects.each do |p|
+        if options[:authorized_project_ids].include?(p.id)
+          pc = _project_contracts.detect{|_pc| _pc.project_id == p.id }
+          # if contract has contract_task permission then only show
+          if options[:role_users][pc.id]
+            associated_projects << {id: p.id, name: p.name, project_contract_id: pc.id}
+          end
+        end
+      end
+      h.merge!({associated_projects: associated_projects })
     end
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
     h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
