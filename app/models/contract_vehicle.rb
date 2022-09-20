@@ -17,9 +17,20 @@ class ContractVehicle < ApplicationRecord
   def to_json(options={})
     h = self.as_json
     vehicle = self
+    # if options[:authorized_project_ids]
+    #   _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
+    #   h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })
+    # end
     if options[:authorized_project_ids]
-      _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
-      h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })
+      _project_contract_vehicles = project_contract_vehicles
+      associated_projects = []
+      projects.each do |p|
+        if options[:authorized_project_ids].include?(p.id)
+          pc = _project_contract_vehicles.detect{|_pc| _pc.project_id == p.id }
+          associated_projects << {id: p.id, name: p.name, project_contract_vehicle_id: pc.id}
+        end
+      end
+      h.merge!({associated_projects: associated_projects })
     end
     h.merge!({contract_sub_category: contract_sub_category.as_json})
     h.merge!({contract_agency: contract_agency.as_json})
