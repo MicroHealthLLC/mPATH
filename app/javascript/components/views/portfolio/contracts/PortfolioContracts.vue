@@ -695,10 +695,10 @@
           width="auto"
           trigger="hover">         
           <el-button          
-          v-for="item, i in scope.row.associated_project_ids" :key="i"
+          v-for="item, i in scope.row.associated_project_ids.filter( t => programNames.map(p => p.program_id).includes(t))" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item == t.program_id)[0].program_id)"   
           >
-          <span v-if="programNames.filter(t => item == t.program_id)[0]">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
+          <span v-if="programNames.filter(t => item == t.program_id)[0]" :load="log(programNames.filter(t => item == t.program_id)[0])">{{ programNames.filter(t => item == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
           slot="reference"
@@ -1283,6 +1283,7 @@ export default {
   }, 
   editMode(index, rows) {
     console.log(rows)
+    console.log(this.programNames)
     this.rowIndex = index,
     this.rowId = rows.id
     if(rows.contract_current_pop_start_date){
