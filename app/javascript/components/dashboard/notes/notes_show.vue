@@ -53,7 +53,6 @@
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
   import NotesForm from './notes_form'
-    import ContractNotesForm from './contract_notes_form'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {

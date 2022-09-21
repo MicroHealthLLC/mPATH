@@ -214,6 +214,7 @@
                   <i class="fas fa-ban"></i>
                 </el-button>
                 <el-button
+                    :load="log(scope.row)"
                     type="default"            
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
@@ -709,7 +710,7 @@ export default {
         return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", project_contract_id: c})
     },
     log(e){
-      // console.log('tableData:',  e)
+      console.log(e)
     },
     editUsers(index, rowData){
       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
@@ -883,15 +884,17 @@ export default {
     },
     goToContract(index, rows) {
       console.log(rows)
+      let programId =  this.$route.params.programId
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
       this.$router.push({
         name: "SheetContract",
         params: {
-          programId: this.$route.params.programId,
+          programId: programId,
           contractId: rows.project_contract_id,
         },
       });
+      this.fetchCurrentProject(programId);
     },
 	  handleExpandChange (row, expandedRows) {
 			this.projId = row.id;
@@ -1236,6 +1239,7 @@ export default {
           });  
           this.fetchRoles(this.$route.params.programId)   
           this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);   
+          this.fetchCurrentProject(this.$route.params.programId)
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false
@@ -1249,7 +1253,8 @@ export default {
             message: `Succesfully added user/role to project.`,
             type: "success",
             showClose: true,
-          });         
+          });     
+          this.fetchCurrentProject(this.$route.params.programId)    
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
           this.SET_CONTRACT_ROLE_NAMES([])

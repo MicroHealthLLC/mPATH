@@ -16,10 +16,12 @@ class Lesson < ApplicationRecord
   belongs_to :project_contract, optional: true
   has_one :contract_project_data, through: :project_contract
   
-  # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
+  belongs_to :project_contract_vehicle, optional: true
+  has_one :contract_vehicle, through: :project_contract_vehicle
 
   has_one :contract_project, class_name: "Project", through: :project_contract
   has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
+  has_one :contract_vehicle_project, class_name: "Project", through: :project_contract_vehicle
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -188,7 +190,12 @@ class Lesson < ApplicationRecord
 
     sorted_notes = notes.sort_by(&:created_at).reverse
 
-    project = self.project_contract_id ? self.contract_project : self.project
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
     fp = self.facility_project
 
@@ -211,6 +218,7 @@ class Lesson < ApplicationRecord
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: fp.try(:facility_id),
       contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       contract_name: project.try(:nickname),
       project_name: fp.try(:facility)&.facility_name,
       program_name: project.name,   
@@ -280,7 +288,12 @@ class Lesson < ApplicationRecord
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
-    project = self.project_contract_id ? self.contract_project : self.project
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
     fp = self.facility_project
 
@@ -303,7 +316,7 @@ class Lesson < ApplicationRecord
       project_id: fp.try(:facility_id),
       project_name: fp.try(:facility)&.facility_name,
       contract_nickname: self.contract_project_data.try(:name),
-      
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_group: facility_group.try(:name),
       category: task_type&.name,
       lesson_stage: lesson_stage.try(:name),
@@ -326,6 +339,7 @@ class Lesson < ApplicationRecord
       :important, 
       :draft, 
       :project_contract_id,
+      :project_contract_vehicle_id,
       :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],
@@ -426,6 +440,8 @@ class Lesson < ApplicationRecord
 
     if params[:project_contract_id]
       lesson.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      lesson.project_contract_vehicle_id = params[:project_contract_vehicle_id]
     end
 
     lesson.transaction do
@@ -548,7 +564,11 @@ class Lesson < ApplicationRecord
       if link_files && link_files.any?
         link_files.each do |f|
           next if !f.present? || f.nil? || !valid_url?(f)
-          self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+          filename = f
+          if f.length > URL_FILENAME_LENGTH
+            filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+          end 
+          self.lesson_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
         end
       end
     rescue Exception => e

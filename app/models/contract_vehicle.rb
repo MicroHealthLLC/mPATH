@@ -7,12 +7,34 @@ class ContractVehicle < ApplicationRecord
   belongs_to :user
 
   has_many :contract_project_data
- 
-  validates_presence_of :name
+  has_many :project_contract_vehicles, dependent: :destroy
+  has_many :projects, through: :project_contract_vehicles
 
-  def to_json
+  # validates_presence_of :name
+
+  before_save :set_is_subprime
+
+  def to_json(options={})
     h = self.as_json
     vehicle = self
+    # if options[:authorized_project_ids]
+    #   _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
+    #   h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })
+    # end
+    if options[:authorized_project_ids]
+      _project_contract_vehicles = project_contract_vehicles
+      associated_projects = []
+      projects.each do |p|
+        if options[:authorized_project_ids].include?(p.id)
+          pc = _project_contract_vehicles.detect{|_pc| _pc.project_id == p.id }
+          # if vehicle has contract_task permission then only show
+          if options[:role_users][pc.id]
+            associated_projects << {id: p.id, name: p.name, project_contract_vehicle_id: pc.id}
+          end
+        end
+      end
+      h.merge!({associated_projects: associated_projects })
+    end
     h.merge!({contract_sub_category: contract_sub_category.as_json})
     h.merge!({contract_agency: contract_agency.as_json})
     h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})
@@ -20,10 +42,19 @@ class ContractVehicle < ApplicationRecord
     h
   end
 
-  def self.params_to_permit
-    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees]
+  def self.preload_array
+    [:contract_sub_category, :contract_agency, :contract_vehicle_type, :contract_number ]
   end
 
+  def self.params_to_permit
+    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees, :subprime_name, :prime_name, :contract_name, :is_subprime]
+  end
+
+  def set_is_subprime
+    if subprime_name.present?
+      self.is_subprime = true
+    end
+  end
   def create_or_update_contract_vehicle(params, user)
     contract_params = params.require(:contract_vehicle).permit(ContractVehicle.params_to_permit)
     c_params = contract_params.dup

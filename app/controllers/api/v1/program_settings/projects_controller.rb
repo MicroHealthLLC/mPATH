@@ -9,8 +9,8 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
     action = nil
     if ["show" ].include?(params[:action]) 
       action = "R"
-    elsif ["add_contract" ].include?(params[:action]) 
-        action = "W"
+    elsif ["add_contract", "add_contract_vehicle" ].include?(params[:action]) 
+      action = "W"
     end
 
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
@@ -36,33 +36,14 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
     end
   end
 
-  private
-  def set_project
-      fg_hash = {
-        facility_projects: [:facility, {
-          tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, {checklists: :progress_lists}, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]
-          }, {
-          issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, {checklists: :progress_lists}, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]
-          }, {
-            notes: [{note_files_attachments: :blob}, :user]
-          }
-        ]
-      }
-      fp_hash = {
-        facility: [:facility_group],
-        tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, {checklists: :progress_lists}, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
-        issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, {checklists: :progress_lists}, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
-        notes: [{note_files_attachments: :blob}, :user]
-      }
-      projects_include_hash = {
-        users: [],     
-        facility_projects: fp_hash,
-        facility_groups: fg_hash,
-        statuses: [],
-        task_types: [],
-        issue_types: [],
-        issue_severities: []
-      }
+  def add_contract_vehicle
+    contract_vehicle = ContractVehicle.find(params[:contract_vehicle_id])
+    project = Project.find(params[:id])
+    project_contract_vehicle = ProjectContractVehicle.new(project_id: project.id, contract_vehicle_id: contract_vehicle.id)
+    if project_contract_vehicle.save
+      render json: {message: "Contract Vehicle is added successfully"}
+    else
+      render json: {error: project_contract_vehicle.errors.full_messages}, status: 406
+    end
   end
-
 end

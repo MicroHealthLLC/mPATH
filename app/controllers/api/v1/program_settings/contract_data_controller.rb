@@ -1,4 +1,4 @@
-class Api::V1::ContractDataController < AuthenticatedController
+class Api::V1::ProgramSettings::ContractDataController < AuthenticatedController
   before_action :check_contract_read_permission, only: [:index]
   before_action :check_contract_write_permission, only: [:create, :update, :add_project]
   before_action :check_contract_delete_permission, only: [:destroy]

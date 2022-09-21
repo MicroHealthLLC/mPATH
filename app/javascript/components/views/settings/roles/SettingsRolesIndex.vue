@@ -526,7 +526,7 @@
                       </template>
                     </el-table-column>
                   </el-table-column>
-                  <el-table-column label="Contracts">
+                  <el-table-column label="Contracts/Vehicles">
                     <el-table-column
                       prop="contractsRead"
                       label="Read"
@@ -1033,7 +1033,7 @@
               </el-tab-pane>
               <el-tab-pane class="px-3" style="postion:relative">
                 <template slot="label" class="text-right" v-if="true">
-                  CONTRACTS
+                  CONTRACTS/VEHICLES
                   <span class="badge badge-secondary badge-pill">
                     <span v-if="tableCounts && tableCounts.n">{{
                       tableCounts.n.contracts
@@ -1257,6 +1257,8 @@ import SettingsSidebar from "../SettingsSidebar.vue";
 import SettingsRolesProjects from "./SettingsRolesProjects.vue";
 import SettingsRolesContracts from "./SettingsRolesContracts.vue";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
+import AuthorizationService from '../../../../services/authorization_service'
+
 export default {
   name: "SettingsRolesIndex",
   components: {
@@ -2004,13 +2006,12 @@ export default {
       "new",
     ]),
     otherThanProgramAdminRoles() {
-      debugger;
       if (this.adminRoleUsers) {
         if (this.adminRoleUsers.length > 0) {
           return this.adminRoleUsers.filter(
             (t) =>
               t.type_of == "admin" &&
-              t.id != Vue.prototype.program_admin_role.id
+              t.id != AuthorizationService.program_admin_role.id
           );
         }
       }

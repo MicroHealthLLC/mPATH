@@ -24,8 +24,8 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
+  # after_save :update_owner_record
+  # after_destroy :update_owner_record
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
@@ -57,18 +57,7 @@ class Risk < ApplicationRecord
   def self.ransackable_scopes(_auth_object = nil)
     [:exclude_closed_in, :exclude_inactive_in]
   end
-
-  def update_facility_project
-    if self.previous_changes.keys.include?("progress")
-      fp = facility_project
-      p = fp.project
-
-      fp.update_progress
-      p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progress)
-    end
-  end
-
+  
   def files_as_json
     risk_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
       {
@@ -248,7 +237,8 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
-      :project_contract_id, 
+      :project_contract_id,
+      :project_contract_vehicle_id,
       :ongoing,
       :duration,
       :duration_name,
@@ -474,6 +464,7 @@ class Risk < ApplicationRecord
 
       notes: sorted_notes.as_json,
       contract_nickname:  self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       project_id: fp.try(:project_id),
@@ -504,6 +495,9 @@ class Risk < ApplicationRecord
 
     if params[:project_contract_id]
       risk.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      risk.project_contract_vehicle_id = params[:project_contract_vehicle_id]
+
     elsif !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
@@ -605,7 +599,11 @@ class Risk < ApplicationRecord
     if link_files && link_files.any?
       link_files.each do |f|
         next if !f.present? || f.nil? || !valid_url?(f)
-        self.risk_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+        filename = f
+        if f.length > URL_FILENAME_LENGTH
+          filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+        end 
+        self.risk_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
       end
     end
   end

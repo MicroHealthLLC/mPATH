@@ -17,6 +17,8 @@ class Api::V1::IssuesController < AuthenticatedController
 
     if params[:project_contract_id]
       raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'issues', project_contract: params[:project_contract_id])
+    elsif params[:project_contract_vehicle_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'issues', project_contract_vehicle: params[:project_contract_vehicle_id])
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'issues', program: params[:project_id], project: params[:facility_id])
     end
@@ -27,11 +29,7 @@ class Api::V1::IssuesController < AuthenticatedController
     all_users = []
     all_user_ids = []
 
-    if params[:project_contract_id]
-      all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, { issue_users: :user} , {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where("tasks.facility_project_id in (?) or tasks.project_contract_id in (?)", [@facility_project.id], [@project_contract.id]).paginate(:page => params[:page], :per_page => 15)
-    else
-      all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, { issue_users: :user} , {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
-    end
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, { issue_users: :user} , {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where("issues.facility_project_id in (?) or issues.project_contract_id in (?)  or issues.project_contract_vehicle_id in (?)", [@owner.id], [@owner.id], [@owner.id]).paginate(:page => params[:page], :per_page => 15)
 
     all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
     all_user_ids += all_issue_users.values.flatten.map(&:user_id)
@@ -105,19 +103,21 @@ class Api::V1::IssuesController < AuthenticatedController
         all_objs << duplicate_issue
       end
     end
+    if params[:project_contract_vehicle_ids].present?
+      params[:project_contract_vehicle_ids].each do |c_id|
+        duplicate_issue = @issue.amoeba_dup
+        duplicate_issue.project_contract_vehicle_id = c_id
+        duplicate_issue.save
+        all_objs << duplicate_issue
+      end
+    end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
     render json: {issues: all_objs.map(&:to_json)}
   end
 
   def show
-  
-    if params[:project_contract_id]
-      @issue = @project_contract.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
-    else
-      @issue = @facility_project.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
-    end
-
+    @issue = @owner.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
     render json: {issue: @issue.to_json}
   end
 
@@ -135,20 +135,19 @@ class Api::V1::IssuesController < AuthenticatedController
 
   private
   def set_resources
+    @owner = nil
     if params[:project_contract_id]
-      @project_contract = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
+      @owner = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
+    elsif params[:project_contract_vehicle_id]
+      @owner = ProjectContractVehicle.find_by(id: params[:project_contract_vehicle_id] )
     else
       @project = current_user.authorized_programs.find_by(id: params[:project_id])
-      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+      @owner = @project.facility_projects.find_by(facility_id: params[:facility_id])
     end
   end
 
   def set_issue
-    if params[:project_contract_id]
-      @issue = @project_contract.issues.find(params[:id])
-    else
-      @issue = @facility_project.issues.find_by(id: params[:id])
-    end
+    @issue = @owner.issues.find(params[:id])
   end
 
   def issue_params

@@ -18,7 +18,7 @@
   <el-table-column
     fixed
     prop="role"
-    label="Contracts Role"
+    label="Contract/Vehicle Role"
     width="250">
 
   <template slot-scope="scope">
@@ -647,7 +647,7 @@
       class="bg-light btn-sm"
       v-tooltip="`Cancel Create`"                  
       >
-      <i class="far fa-trash-alt text-danger"></i>
+      <i class="fas fa-ban"></i>
      </el-button>
    </template>
       

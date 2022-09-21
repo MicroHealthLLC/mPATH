@@ -11,7 +11,7 @@ export default {
     portfolioRiskForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioRisk', 'portfolioRisksLoaded', 'fetchPortfolioRisks', 'fetchPortfolioAssignees','fetchPortfolioCategories', 'fetchPortfolioRiskStages']),
+    ...mapActions(['fetchPortfolioRisk']),
     redirectBack() {
       this.$router.push(
         `/portfolio`
@@ -19,13 +19,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['portfolioRisk', 'portfolioRisks'])
+    ...mapGetters(['portfolioRisk'])
   },
-  beforeMount(){
-    this.fetchPortfolioRisk(this.$route.params)
-    this.fetchPortfolioAssignees()
-    this.fetchPortfolioCategories()
-    this.fetchPortfolioRiskStages()
+  mounted(){
+    this.fetchPortfolioRisk(this.$route.params) 
   },
 };
 </script>
