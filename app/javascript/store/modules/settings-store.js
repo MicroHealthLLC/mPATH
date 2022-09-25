@@ -792,7 +792,7 @@ const settingsStore = {
       // Retrieve vehicle by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}?project_id=${programId}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1315,38 +1315,6 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    updateVehicle({ commit }, { vehicle, id }) {
-      // Displays loader on front end
-      commit("TOGGLE_VEHICLES_LOADED", false);
-      let formData = new FormData();
-      // Utilize utility function to prep Lesson form data
-      // let formData = contractFormData(contract);
-      formData.append("project_id", vehicle.programId);
-      formData.append(
-        "project_contract_vehicle[facility_group_id]",
-        vehicle.facility_group_id
-      );
-      axios({
-        method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          commit("SET_VEHICLE", res.data.contract_vehicle);
-          commit("SET_VEHICLE_STATUS", res.status);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_VEHICLES_LOADED", true);
-        });
-    },
     deleteContract({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1361,6 +1329,7 @@ const settingsStore = {
       });
     },
     updateVehicle({ commit }, { vehicle, id }) {
+      console.log("vehicles")
       // Displays loader on front end
       commit("TOGGLE_VEHICLES_LOADED", false);
       let formData = new FormData();
@@ -1368,12 +1337,12 @@ const settingsStore = {
       // let formData = vehicleFormData(vehicle);
       formData.append("project_id", vehicle.programId);
       formData.append(
-        "project_vehicle[facility_group_id]",
+        "project_contract_vehicle[facility_group_id]",
         vehicle.facility_group_id
       );
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
