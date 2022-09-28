@@ -31,5 +31,8 @@ module MGIS
     # Don't generate system test files.
     config.generators.system_tests = nil
     config.exceptions_app = self.routes
+
+    # fix for upgrade to rails 6.1
+    config.active_record.yaml_column_permitted_classes = [Symbol]
   end
 end
