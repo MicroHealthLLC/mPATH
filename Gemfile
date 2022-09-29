@@ -42,7 +42,8 @@ gem 'activeadmin'
 gem 'activeadmin_addons'
 gem 'cancancan'
 gem 'geocoder'
-gem "omniauth-office365", github: 'jcarbo/omniauth-office365'
+# gem "omniauth-office365", github: 'jcarbo/omniauth-office365'
+gem "omniauth-office365", path: './lib/omniauth-office365'
 gem 'omniauth-google-oauth2'
 # gem 'omniauth-oktaoauth'
 gem 'dotenv-rails'
@@ -87,7 +88,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'activerecord-import', '1.0.7'
 
 
-gem 'omniauth-rails_csrf_protection', '~> 0.1'
+gem 'omniauth-rails_csrf_protection', '1.0.1'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
 gem 'amoeba'
