@@ -27,7 +27,7 @@ class Api::V1::FilterDataController < AuthenticatedController
           id: SecureRandom.uuid,
           program_id: p.id,
           label: p.name,
-          all_facility_project_ids: project_children.map{|h| h[:all_facility_project_ids]}.flatten.compact.uniq,
+          all_facility_project_ids: project_children.map{|h1| h1[:all_facility_project_ids]}.flatten.compact.uniq,
           children: project_children
         }
         response_json << h
