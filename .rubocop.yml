@@ -13,3 +13,7 @@ Lint/UnusedBlockArgument:
   Enabled: false
 Lint/UnderscorePrefixedVariableName:
   Enabled: false
+Lint/UselessAssignment:
+  Enabled: false
+Lint/UnusedMethodArgument:
+  Enabled: false
