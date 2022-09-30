@@ -1,0 +1,12 @@
+require:
+  - rubocop-rails
+  - rubocop-performance
+
+Layout/TrailingWhitespace:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false

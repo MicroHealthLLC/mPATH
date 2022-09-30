@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 
 ruby '2.6.6'
 # updating dev 
@@ -9,7 +9,7 @@ gem 'rails', '6.1.6.1' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
-gem "puma", ">= 5.6.4"
+gem 'puma', '>= 5.6.4'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -34,16 +34,16 @@ gem 'mini_magick'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-gem 'bootstrap', '~> 4.3.1'
-gem 'slim-rails'
-gem 'jquery-rails'
-gem 'devise', '4.8.1'
 gem 'activeadmin'
 gem 'activeadmin_addons'
+gem 'bootstrap', '~> 4.3.1'
 gem 'cancancan'
+gem 'devise', '4.8.1'
 gem 'geocoder'
-# gem "omniauth-office365", github: 'jcarbo/omniauth-office365'
-gem "omniauth-office365", path: './lib/omniauth-office365'
+gem 'jquery-rails'
+gem 'slim-rails'
+# gem 'omniauth-office365', github: 'jcarbo/omniauth-office365'
+gem 'omniauth-office365', path: './lib/omniauth-office365'
 gem 'omniauth-google-oauth2'
 # gem 'omniauth-oktaoauth'
 gem 'dotenv-rails'
@@ -87,7 +87,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import', '1.0.7'
 
-
 gem 'omniauth-rails_csrf_protection', '1.0.1'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
@@ -101,5 +100,5 @@ gem 'will_paginate', '~> 3.1.0'
 
 gem 'jwt'
 
-gem "addressable", ">= 2.8.0"
+gem 'addressable', '>= 2.8.0'
 
