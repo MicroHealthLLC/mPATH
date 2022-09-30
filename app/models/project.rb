@@ -218,7 +218,7 @@ class Project < SortableRecord
     
     project_contract_vehicle_ids_with_contract_risks = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_RISKS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
     
-    project_contract_vehicle_ids_with_contract_lessons = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_LESSONS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
+    # project_contract_vehicle_ids_with_contract_lessons = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_LESSONS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
     
     project_contract_vehicle_ids_with_contract_notes = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_NOTES).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
 
