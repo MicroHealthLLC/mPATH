@@ -46,16 +46,7 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   CountComments: false
   Max: 5
-  IgnoredMethods:
-    - context
-    - describe
-    - it
-    - shared_examples
-    - shared_examples_for
-    - namespace
-    - draw
-    - configure
-    - group
+  Enabled: false
 
 # Style Cops
 
@@ -110,7 +101,7 @@ Style/StringLiterals:
   Description: 'Checks if uses of quotes match the configured preference.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#consistent-string-literals'
   EnforcedStyle: double_quotes
-  Enabled: true
+  Enabled: false
 
 Style/TrailingCommaInArguments:
   Description: 'Checks for trailing comma in argument lists.'
@@ -160,6 +151,7 @@ Layout/LineLength:
   Description: 'Limit lines to 120 characters.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#80-character-limits'
   Max: 120
+  Enabled: false
 
 Layout/MultilineOperationIndentation:
   Description: >-
