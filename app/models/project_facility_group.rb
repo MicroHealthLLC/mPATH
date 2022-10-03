@@ -12,19 +12,19 @@ class ProjectFacilityGroup < ApplicationRecord
     project_contract_group = self.project_group.project_contracts.includes(:project).where(project_id: self.project_id).group_by{|fp| fp.project }
     project_contract_vehicles = self.project_group.project_contract_vehicles.includes(:project).where(project_id: self.project_id).group_by{|fp| fp.project }
 
-    facility_projects_group.each do |project, facility_projects|
+    facility_projects_group.each do |project, _facility_projects|
       unassigned = project.default_facility_group
-      FacilityProject.where(id: facility_projects.map(&:id) ).update_all(facility_group_id: unassigned.id)
+      FacilityProject.where(id: _facility_projects.map(&:id) ).update_all(facility_group_id: unassigned.id)
     end
     
-    project_contract_group.each do |project, project_contracts|
+    project_contract_group.each do |project, _project_contracts|
       unassigned = project.default_facility_group
-      ProjectContract.where(id: project_contracts.map(&:id) ).update_all(facility_group_id: unassigned.id)
+      ProjectContract.where(id: _project_contracts.map(&:id) ).update_all(facility_group_id: unassigned.id)
     end
 
-    project_contract_vehicles.each do |project, project_contract_vehicles|
+    project_contract_vehicles.each do |project, _project_contract_vehicles|
       unassigned = project.default_facility_group
-      ProjectContractVehicle.where(id: project_contract_vehicles.map(&:id) ).update_all(facility_group_id: unassigned.id)
+      ProjectContractVehicle.where(id: _project_contract_vehicles.map(&:id) ).update_all(facility_group_id: unassigned.id)
     end
 
   end

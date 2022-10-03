@@ -2701,33 +2701,34 @@ jQuery(function($) {
       methods: {
         generatePassword() {
           this.editPass = true;
-          let chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+          let mRandom = window.crypto.getRandomValues(new Uint32Array(1))[0];
+          let chars = [...Array(Number(this.range))].map(i=>(~~(mRandom*36)).toString(36)).join('');
           let pass = "";
           let i = 0;
           if (this.uppercase || this.lowercase || this.numbers || this.special_chars) {
             chars = "";
             if (this.uppercase) {
-              pass = pass + this.UPPERCASE.charAt(Math.floor(Math.random() * this.UPPERCASE.length));
+              pass = pass + this.UPPERCASE.charAt(Math.floor(mRandom * this.UPPERCASE.length));
               chars = chars + this.UPPERCASE;
               i++;
             }
             if (this.numbers) {
-              pass = pass + this.NUMBERS.charAt(Math.floor(Math.random() * this.NUMBERS.length));
+              pass = pass + this.NUMBERS.charAt(Math.floor(mRandom * this.NUMBERS.length));
               chars = chars + this.NUMBERS;
               i++;
             }
             if (this.special_chars) {
-              pass = pass + this.SPECIALCASE.charAt(Math.floor(Math.random() * this.SPECIALCASE.length));
+              pass = pass + this.SPECIALCASE.charAt(Math.floor(mRandom * this.SPECIALCASE.length));
               chars = chars + this.SPECIALCASE;
               i++;
             }
             if (this.lowercase) {
-              pass = pass + this.LOWERCASE.charAt(Math.floor(Math.random() * this.LOWERCASE.length));
+              pass = pass + this.LOWERCASE.charAt(Math.floor(mRandom * this.LOWERCASE.length));
               chars = chars + this.LOWERCASE;
               i++;
             }
             while (i<Number(this.range)) {
-              pass += chars.charAt(Math.floor(Math.random() * chars.length));
+              pass += chars.charAt(Math.floor(mRandom * chars.length));
               i++;
             }
           }

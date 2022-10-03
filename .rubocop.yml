@@ -1,0 +1,19 @@
+require:
+  - rubocop-rails
+
+Layout/TrailingWhitespace:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Lint/UnusedBlockArgument:
+  Enabled: false
+Lint/UnderscorePrefixedVariableName:
+  Enabled: false
+Lint/UselessAssignment:
+  Enabled: false
+Lint/UnusedMethodArgument:
+  Enabled: false
