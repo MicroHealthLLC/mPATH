@@ -1,5 +1,7 @@
+
 import axios from "axios";
 import { API_BASE_PATH } from "../mixins/utils";
+var id = window.current_program_id;
 
 const AuthorizationService = {
   projectPrivilegesRoles: {},
@@ -30,10 +32,16 @@ const AuthorizationService = {
     return permissionHash;
   },
 
+
   getRolePrivileges: () => {
+    let ww = window.location.pathname.split('/')
+    let portfolioProgramID = ww[ww.length - 5] 
+    if(!window.current_program_id){
+      id = portfolioProgramID
+    }
     axios({
       method: "GET",
-      url: `${API_BASE_PATH}/program_settings/users/get_user_privileges?program_id=${window.current_program_id}`,
+      url: `${API_BASE_PATH}/program_settings/users/get_user_privileges?program_id=${id}`,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
@@ -105,13 +113,13 @@ const AuthorizationService = {
     );
   },
   checkPrivileges: (page, salut, route, extraData) => {
+
     let permissionHash = { write: "W", read: "R", delete: "D" };
     let s = permissionHash[salut];
     let program_id = route.params.programId;
     let contract_id = route.params.contractId;
     let project_id = route.params.projectId;
-    let contract_vehicle_id = route.params.vehicleId;
-
+    let contract_vehicle_id = route.params.vehicleId;   
     if (["project_tabs"].includes(page)) {
     } else if (["portfolio_risk_form"].includes(page)) {
       if (contract_id) {
