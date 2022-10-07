@@ -101,8 +101,9 @@
   </div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
-<script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>-->
+<script> 
+  
 import Accordion from "../../shared/accordion";
 import { mapGetters, mapMutations } from "vuex";
 import * as Moment from "moment";

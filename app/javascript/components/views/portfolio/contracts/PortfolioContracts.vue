@@ -1192,17 +1192,17 @@ export default {
      return newSums
     },
   validateEmail(m){
+    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     if (m) {
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
-    {
-      this.isValidEmail = true
-      return (true)
-    }
-    this.$message({
-      message: `Please enter a valid email address.  Example: "john@example.com"`,
-      type: "warning",
-      showClose: true,
-    });
+      if (regex.test(m)){
+        this.isValidEmail = true
+        return (true)
+      }
+      this.$message({
+        message: `Please enter a valid email address.  Example: "john@example.com"`,
+        type: "warning",
+        showClose: true,
+      });
       this.isValidEmail = false
        console.log( this.isValidEmail)
       return (false)

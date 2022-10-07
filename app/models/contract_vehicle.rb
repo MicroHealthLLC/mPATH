@@ -16,7 +16,7 @@ class ContractVehicle < ApplicationRecord
 
   def to_json(options={})
     h = self.as_json
-    vehicle = self
+    # vehicle = self
     # if options[:authorized_project_ids]
     #   _projects = projects.select{|p| options[:authorized_project_ids].include?(p.id) }
     #   h.merge!({associated_projects: _projects.map{|p| {id: p.id, name: p.name} } })

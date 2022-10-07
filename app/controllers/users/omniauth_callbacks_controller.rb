@@ -1,5 +1,17 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  skip_before_action :verify_authenticity_token
+
+  def office365
+    check_omniauth_auth
+  end
+
+  def google_oauth2
+    check_omniauth_auth
+  end
+
+  def oktaoauth
+    session[:oktastate] = request.env["omniauth.auth"]["uid"]
+    check_omniauth_auth
+  end
 
   def passthru
     render status: 404, text: "Not found. Authentication passthru."
@@ -9,6 +21,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     set_flash_message :alert, :failure, kind: OmniAuth::Utils.camelize(failed_strategy.name), reason: failure_message
     redirect_to after_omniauth_failure_path_for(resource_name)
   end
+
+
+  private
+    def check_omniauth_auth
+      @user = User.from_omniauth(request.env["omniauth.auth"])
+      redirect_to new_user_session_path, alert: "You dont have access rights!" and return if @user.nil?
+      sign_in_and_redirect(@user)
+    end
 
   protected
 

@@ -53,7 +53,7 @@ class Project < SortableRecord
   has_many :contract_vehicles, through: :project_contract_vehicles
   has_many :project_contract_vehicle_groups, through: :project_contract_vehicles, class_name: "FacilityGroup"
 
-  enum status: [:inactive, :active].freeze
+  enum status: %i[inactive active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
   validates :name, presence: true
@@ -152,7 +152,7 @@ class Project < SortableRecord
   end  
 
   def as_complete_json
-    json = as_json.merge(
+    as_json.merge(
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
       facilities: facility_projects.includes(include_fp_hash, :status).active.uniq.as_json,
       facility_groups: facility_groups.includes(include_fg_hash).active.uniq.as_json,
@@ -164,7 +164,6 @@ class Project < SortableRecord
       issue_stages: issue_stages.as_json,
       risk_stages: risk_stages.as_json
     )
-    json
   end
   
   def build_json_response(user, response_for: 'client_panel')
@@ -218,7 +217,7 @@ class Project < SortableRecord
     
     project_contract_vehicle_ids_with_contract_risks = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_RISKS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
     
-    project_contract_vehicle_ids_with_contract_lessons = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_LESSONS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
+    # project_contract_vehicle_ids_with_contract_lessons = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_LESSONS).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
     
     project_contract_vehicle_ids_with_contract_notes = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id in (?) and role_privileges.role_type = ?", all_project_contract_vehicle_ids, RolePrivilege::CONTRACT_NOTES).select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
 

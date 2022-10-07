@@ -94,7 +94,7 @@ class User < ApplicationRecord
     user_project_privileges = user.project_privileges
     project_to_create_privileges = []
     user.project_ids.each do |pid|
-      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      p = user_project_privileges.detect{|p1| p1.project_ids.map(&:to_i).include?(pid) }
       if !p
         project_to_create_privileges << pid
       end
@@ -282,9 +282,9 @@ class User < ApplicationRecord
     # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
     # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
     self.facility_privileges_hash.transform_values{|v| 
-      v.transform_values{|v| 
-        v.map{|k,v| 
-          if (!["facility_id", "contracts"].include?(k)) && (v.present? || v.any?) && FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym]
+      v.transform_values{|v1| 
+        v1.map{|k,v2| 
+          if (!["facility_id", "contracts"].include?(k)) && (v2.present? || v2.any?) && FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym]
             {id: k.downcase, name: FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym].humanize, value: k.downcase}
           end
         }.compact
@@ -298,7 +298,7 @@ class User < ApplicationRecord
   end
 
   def build_sub_navigation_for_program_settings_tabs(right="R")
-    h = Hash.new{|h,(k,v)| h[k] = [] }
+    h = Hash.new{|h1,(k,v)| h1[k] = [] }
     program_settings_privileges_hash.map do |k,v|
       v.each do |k1,v1|
         if v1.include?(right)
@@ -694,7 +694,7 @@ class User < ApplicationRecord
 
     pp_hash = user.project_privileges_hash
 
-    facility_project_hash = FacilityProject.where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
+    facility_project_hash = FacilityProject.where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp1| fp1.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
 
     facility_project_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
