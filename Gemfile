@@ -38,13 +38,13 @@ gem 'activeadmin'
 gem 'activeadmin_addons'
 gem 'bootstrap', '~> 4.3.1'
 gem 'cancancan'
-gem 'devise', '4.8.1'
+gem 'devise', '~> 4.7.1'
 gem 'geocoder'
 gem 'jquery-rails'
 gem 'slim-rails'
 # gem 'omniauth-office365', github: 'jcarbo/omniauth-office365'
-gem 'omniauth-office365', path: './lib/omniauth-office365'
 gem 'omniauth-google-oauth2'
+gem 'omniauth-office365', path: './lib/omniauth-office365'
 # gem 'omniauth-oktaoauth'
 gem 'dotenv-rails'
 gem 'strip_attributes'
@@ -61,9 +61,9 @@ group :development, :test do
   gem 'pry', '~> 0.13.1'
   # gem 'pry-rails'
   gem 'pry-byebug'
+  gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
-  gem 'rubocop-performance', require: false
 end
 
 group :development do
@@ -90,7 +90,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import', '1.0.7'
 
-gem 'omniauth-rails_csrf_protection', '1.0.1'
+gem 'omniauth-rails_csrf_protection', '~> 0.1'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
 gem 'amoeba'
@@ -104,4 +104,3 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'jwt'
 
 gem 'addressable', '>= 2.8.0'
-
