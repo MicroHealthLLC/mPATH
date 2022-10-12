@@ -114,7 +114,7 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_POCS_LOADED", false);   
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -256,7 +256,7 @@ const contractStore = {
        }       
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -481,7 +481,7 @@ const contractStore = {
     formData.append("contract_project_poc[notes]", cPOCsData.notes);
   axios({
     method: "PUT",
-    url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+    url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
     data: formData,
     headers: {
       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -548,7 +548,7 @@ const contractStore = {
     
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
