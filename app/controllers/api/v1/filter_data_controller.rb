@@ -108,7 +108,7 @@ class Api::V1::FilterDataController < AuthenticatedController
       {id: 'accept', name: 'Accept', value: 'accept'},
       {id: 'avoid', name: 'Avoid', value: 'avoid'},
       {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
-      {id: 'transfer', name: 'Transfer', value: "transfer"},
+      {id: 'transfer', name: 'Transfer', value: "transfer"}
     ]
     render json: {risk_approaches: risk_approaches}
   end

@@ -112,7 +112,7 @@ class Lesson < ApplicationRecord
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       # project_id: facility_project.facility_id,
       project_id: facility.id, 
-      program_id: project.id, 
+      program_id: project.id
     ).as_json
 
   end
@@ -320,7 +320,7 @@ class Lesson < ApplicationRecord
       project_group: facility_group.try(:name),
       category: task_type&.name,
       lesson_stage: lesson_stage.try(:name),
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      notes_updated_at: notes.map(&:updated_at).compact.uniq
     ).as_json
   end
 

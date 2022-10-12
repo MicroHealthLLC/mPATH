@@ -118,7 +118,7 @@ class User < ApplicationRecord
       tasks: [], 
       risks: [],
       lessons: [],
-      issues: [],
+      issues: []
     }
     fph = self.facility_privileges_hash
     program_ids = fph.keys
@@ -281,15 +281,15 @@ class User < ApplicationRecord
   def allowed_sub_navigation_tabs(right = 'R')
     # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
     # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
-    self.facility_privileges_hash.transform_values{|v| 
-      v.transform_values{|v1| 
-        v1.map{|k,v2| 
+    self.facility_privileges_hash.transform_values do |v| 
+      v.transform_values do |v1| 
+        v1.map do |k,v2| 
           if (!["facility_id", "contracts"].include?(k)) && (v2.present? || v2.any?) && FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym]
             {id: k.downcase, name: FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym].humanize, value: k.downcase}
           end
-        }.compact
-      }
-    } 
+        end.compact
+      end
+    end
   end
 
   def build_sub_navigation_tabs_for_profile

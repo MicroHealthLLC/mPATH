@@ -102,7 +102,7 @@ class FacilityProject < ApplicationRecord
 
       h[:facility] = facility.attributes.merge({
         facility_group_name: g&.name,
-        facility_group_status: g&.status,
+        facility_group_status: g&.status
       })
 
       # Building Tasks
@@ -167,7 +167,7 @@ class FacilityProject < ApplicationRecord
       facilities: facility_projects_hash,
       facility_groups: facility_groups_hash,
       # statuses: statuses.as_json,
-      task_types: task_types.as_json,
+      task_types: task_types.as_json
       # issue_types: issue_types.as_json,
       # issue_severities: issue_severities.as_json,
       # task_stages: task_stages.as_json,
