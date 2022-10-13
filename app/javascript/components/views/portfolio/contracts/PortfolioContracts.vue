@@ -1191,7 +1191,7 @@ export default {
     //  console.log(newSums.filter(t => !t[17]))
      return newSums
     },
-  validateEmail(m){
+    validateEmail(m){
     let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     if (m) {
       if (regex.test(m)){

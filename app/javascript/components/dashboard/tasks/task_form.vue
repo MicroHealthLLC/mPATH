@@ -1436,6 +1436,7 @@ export default {
       };
     },
     _isallowed(salut) {
+      console.log(this.$route)
       return this.checkPrivileges("task_form", salut, this.$route)
     },
     selectedStage(item) {
