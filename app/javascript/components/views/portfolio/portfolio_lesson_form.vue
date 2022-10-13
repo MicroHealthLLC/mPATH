@@ -787,10 +787,11 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex";
-import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
+import { mapActions, mapMutations, mapGetters } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input.vue";
+import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
+import AuthorizationService from "../../../services/authorization_service"
 
 export default {
   name: "portfolioLessonForm",
@@ -799,6 +800,7 @@ export default {
     FormTabs,
     RelatedLessonMenu,
     AttachmentInput,
+    AuthorizationService
   },
   data() {
     return {
@@ -1240,6 +1242,7 @@ export default {
   },
   },
   mounted() {
+    AuthorizationService.getRolePrivileges();
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
