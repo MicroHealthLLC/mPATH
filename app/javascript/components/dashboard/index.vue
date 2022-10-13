@@ -40,6 +40,7 @@ export default {
              this.$route.name.includes("ProgramTaskForm") ||
              this.$route.name.includes("ProgramRiskForm") ||
              this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramContractLessonForm") ||  
              this.$route.name.includes("ProgramLessonForm") ;;  
       },
   },

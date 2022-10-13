@@ -1352,7 +1352,7 @@ export default {
             // this.$router.push(
             //   `/programs/${this.$route.params.programId}/kanban/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
             // );
-            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/contracts/${this.$route.params.contractId}/lessons/${this.contractLesson.id}`)
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/lesson/${this.contractLesson.id}`)
         }
         this.successes = this.contractLesson.successes;
         this.failures = this.contractLesson.failures;
