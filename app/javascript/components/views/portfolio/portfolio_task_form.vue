@@ -1253,6 +1253,7 @@
 </template>
 
 <script>
+import AuthorizationService from "../../../services/authorization_service"
 import axios from "axios";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs";
@@ -1270,6 +1271,7 @@ export default {
   props: ["facility", "task", "title", "fixedStage"],
   components: {
     AttachmentInput,
+    AuthorizationService,
     Draggable,
     FormTabs,
     RelatedTaskMenu,
@@ -1352,7 +1354,7 @@ export default {
     }
   },
   mounted() {
-    
+   AuthorizationService.getRolePrivileges();
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1395,19 +1397,8 @@ export default {
         notes: [],
       };
     },
-    // log(e){
-    //   console.log("taskSorted: " + e)
-    // },
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-        return this.checkPrivileges("portfolio_task_form", salut, this.$route)
-
-      // var programId = this.$route.params.programId;
-      // var projectId = this.$route.params.projectId
-      // let fPrivilege = this.$projectPrivileges[programId][projectId]
-      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      // let s = permissionHash[salut]
-      // return  fPrivilege.tasks.includes(s); 
+      return this.checkPrivileges("portfolio_task_form", salut, this.$route)
     },
     selectedStage(item) {     
       if (this._isallowed("write")) {

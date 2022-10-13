@@ -1278,15 +1278,17 @@ Tab 1 Row Begins here -->
 <script>
 import axios from "axios";
 import humps from "humps";
+import 'vue2-datepicker/index.css'
 import Draggable from "vuedraggable";
+import DatePicker from 'vue2-datepicker'
+Vue.component('v2-date-picker', DatePicker)
+import FormTabs from "./../../shared/FormTabs";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
-import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
-import {API_BASE_PATH} from './../../../mixins/utils'
-import 'vue2-datepicker/index.css'
- Vue.component('v2-date-picker', DatePicker)
- import DatePicker from 'vue2-datepicker'
+import AuthorizationService from "../../../services/authorization_service"
+
 
 export default {
   name: "portfolioIssueForm",
@@ -1296,6 +1298,7 @@ export default {
     Draggable,
     FormTabs,
     RelatedIssueMenu,
+    AuthorizationService
   },
   data() {
     return {
@@ -1372,6 +1375,7 @@ export default {
     }
   },
   mounted() {
+    AuthorizationService.getRolePrivileges();
     if (!_.isEmpty(this.issue)) {
       this.loadIssue(this.issue);
     } else {

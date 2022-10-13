@@ -26,7 +26,7 @@ class FacilityGroup < SortableRecord
   def as_json(options=nil)
     json = super(options)
     json.merge(
-      is_default: is_default,
+      is_default: is_default
     ).as_json
   end
 

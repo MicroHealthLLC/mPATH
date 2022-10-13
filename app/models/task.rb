@@ -219,7 +219,7 @@ class Task < ApplicationRecord
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
-      sub_risk_ids: sub_risks.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     }
 
     self.attributes.merge!(merge_h)

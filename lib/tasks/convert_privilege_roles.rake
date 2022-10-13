@@ -31,11 +31,11 @@ task :convert_privilege_roles => :environment do
           next if !privileges_hash["overview"] || !privileges_hash["tasks"] || !privileges_hash["notes"] || !privileges_hash["issues"] || !privileges_hash["risks"] || !privileges_hash["lessons"]
   
           if ( ["R", "D", "W"] & privileges_hash["overview"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
+              ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
+              ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
+              ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
+              ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
+              ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
             
             next if (role_users + new_role_users).detect{|ru| ru.role_id == program_admin_role_id  &&  ru.project_id == project_id} 
             
@@ -43,11 +43,11 @@ task :convert_privilege_roles => :environment do
             # new_role_users << RoleUser.new(user_id: user.id, role_id: program_admin_role_id, project_id: project_id)  
   
           elsif ( ["R"] & privileges_hash["overview"] ).size == 1 &&
-            ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
-            ( ["R"] & privileges_hash["notes"] ).size == 1 &&
-            ( ["R"] & privileges_hash["issues"] ).size == 1 &&
-            ( ["R"] & privileges_hash["risks"] ).size == 1 &&
-            ( ["R"] & privileges_hash["lessons"] ).size == 1
+              ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
+              ( ["R"] & privileges_hash["notes"] ).size == 1 &&
+              ( ["R"] & privileges_hash["issues"] ).size == 1 &&
+              ( ["R"] & privileges_hash["risks"] ).size == 1 &&
+              ( ["R"] & privileges_hash["lessons"] ).size == 1
             
             if !project.user_ids.include?(user.id)
               ProjectUser.create(project_id: project_id, user_id: user.id)
@@ -72,22 +72,22 @@ task :convert_privilege_roles => :environment do
             next if !privileges_hash["overview"] || !privileges_hash["tasks"] || !privileges_hash["notes"] || !privileges_hash["issues"] || !privileges_hash["risks"] || !privileges_hash["lessons"]
   
             if ( ["R", "D", "W"] & privileges_hash["overview"] ).size == 3 &&
-              ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
-              ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
-              ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
-              ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
-              ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
+                ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
+                ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
+                ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
+                ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
+                ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
               
               next if (role_users + new_role_users).detect{|ru| ru.role_id == update_project_role_id && ru.facility_project_id == facility_project_id  &&  ru.project_id == project_id} 
   
               new_role_users << RoleUser.new(user_id: user.id, role_id: update_project_role_id, facility_project_id: facility_project_id, project_id: project_id)
   
             elsif ( ["R", "W"] & privileges_hash["overview"] ).size == 2 &&
-              ( ["R", "W"] & privileges_hash["tasks"] ).size == 2 &&
-              ( ["R", "W"] & privileges_hash["notes"] ).size == 2 &&
-              ( ["R", "W"] & privileges_hash["issues"] ).size == 2 &&
-              ( ["R", "W"] & privileges_hash["risks"] ).size == 2 &&
-              ( ["R", "W"] & privileges_hash["lessons"] ).size == 2
+                ( ["R", "W"] & privileges_hash["tasks"] ).size == 2 &&
+                ( ["R", "W"] & privileges_hash["notes"] ).size == 2 &&
+                ( ["R", "W"] & privileges_hash["issues"] ).size == 2 &&
+                ( ["R", "W"] & privileges_hash["risks"] ).size == 2 &&
+                ( ["R", "W"] & privileges_hash["lessons"] ).size == 2
   
               next if (role_users + new_role_users).detect{|ru| ru.role_id == contribute_project_role_id && ru.facility_project_id == facility_project_id  &&  ru.project_id == project_id} 
   
@@ -95,11 +95,11 @@ task :convert_privilege_roles => :environment do
   
   
             elsif ( ["R"] & privileges_hash["overview"] ).size == 1 &&
-              ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
-              ( ["R"] & privileges_hash["notes"] ).size == 1 &&
-              ( ["R"] & privileges_hash["issues"] ).size == 1 &&
-              ( ["R"] & privileges_hash["risks"] ).size == 1 &&
-              ( ["R"] & privileges_hash["lessons"] ).size == 1
+                ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
+                ( ["R"] & privileges_hash["notes"] ).size == 1 &&
+                ( ["R"] & privileges_hash["issues"] ).size == 1 &&
+                ( ["R"] & privileges_hash["risks"] ).size == 1 &&
+                ( ["R"] & privileges_hash["lessons"] ).size == 1
   
               next if (role_users + new_role_users).detect{|ru| ru.role_id == read_project_role_id && ru.facility_project_id == facility_project_id  &&  ru.project_id == project_id} 
   

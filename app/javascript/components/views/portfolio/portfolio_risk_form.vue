@@ -2039,13 +2039,15 @@
 <script>
 import axios from "axios";
 import humps from "humps";
+import * as Moment from "moment";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs.vue";
-import * as Moment from "moment";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
-import {API_BASE_PATH} from './../../../mixins/utils'
+import AuthorizationService from "../../../services/authorization_service"
+
 
 export default {
   name: "portfolioRiskForm",
@@ -2055,8 +2057,8 @@ export default {
     FormTabs,
     Draggable,
     RelatedRiskMenu,
+    AuthorizationService
   },
-
   data() {
     return {
       DV_risk: this.INITIAL_RISK_STATE(),
@@ -2151,6 +2153,7 @@ export default {
     }
   },
   mounted() {
+    AuthorizationService.getRolePrivileges();
     if (!_.isEmpty(this.risk)) {
       this.loadRisk(this.risk);
     } else {
