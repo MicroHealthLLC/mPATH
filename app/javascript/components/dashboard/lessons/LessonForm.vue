@@ -649,17 +649,8 @@ export default {
     },
     close() {
       if (this.$route.params.projectId && this.facility) {
-        // console.log("true")
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-        );
-      } else if (this.$route.params.contractId && this.contract) {
-        this.$router.push(
-          `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
-        );
-      } else if (this.$route.params.vehicleId && this.vehicle) {
-        this.$router.push(
-          `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/lessons`
         );
       } else this.$router.push(
         `/programs/${this.$route.params.programId}/dataviewer`
@@ -1107,7 +1098,8 @@ export default {
               `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
             );
             }    
-            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/lessons/${this.lesson.id}`)      
+            } 
+            // else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/lesson/${this.lesson.id}`)      
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
         this.bestPractices = this.lesson.best_practices;

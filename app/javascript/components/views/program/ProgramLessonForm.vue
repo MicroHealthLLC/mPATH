@@ -6,6 +6,7 @@
 import { mapGetters } from "vuex";
 import LessonForm from "./../../dashboard/lessons/LessonForm";
 export default {
+ name:  "ProgramLessonForm",
  components: { 
    LessonForm
    },

@@ -1357,7 +1357,7 @@ export default {
             // this.$router.push(
             //   `/programs/${this.$route.params.programId}/kanban/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
             // );
-            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/vehicles/${this.$route.params.vehicleId}/lessons/${this.vehicleLesson.id}`)
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/lesson/${this.vehicleLesson.id}`)
       },
     },
   },
