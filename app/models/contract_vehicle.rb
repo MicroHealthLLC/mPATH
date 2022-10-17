@@ -10,6 +10,9 @@ class ContractVehicle < ApplicationRecord
   has_many :project_contract_vehicles, dependent: :destroy
   has_many :projects, through: :project_contract_vehicles
 
+  has_many :contract_project_poc_resources, dependent: :destroy, as: :resource
+  has_many :contract_project_pocs, through: :contract_project_poc_resources
+
   # validates_presence_of :name
 
   before_save :set_is_subprime
@@ -39,6 +42,8 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_agency: contract_agency.as_json})
     h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})
     h.merge!({contract_number: contract_number.as_json})
+    h.merge!({contract_project_pocs: contract_project_pocs.as_json})
+
     h
   end
 

@@ -12,6 +12,9 @@ class ContractProjectDatum < ApplicationRecord
   has_many :project_contracts, dependent: :destroy
   has_many :projects, through: :project_contracts
 
+  has_many :contract_project_poc_resources, dependent: :destroy, as: :resource
+  has_many :contract_project_pocs, through: :contract_project_poc_resources
+
   validates :charge_code, :name, :contract_customer_id, :contract_naic_id, :contract_award_type_id, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, presence: true
   
   validate :number_check
@@ -51,6 +54,7 @@ class ContractProjectDatum < ApplicationRecord
     h.merge!({contract_type: contract_type.as_json})
     h.merge!({contract_current_pop: contract_current_pop.as_json})
     h.merge!({contract_number: contract_number.as_json})
+    h.merge!({contract_project_pocs: contract_project_pocs.as_json})
     h
   end
 
@@ -116,9 +120,9 @@ class ContractProjectDatum < ApplicationRecord
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id], user_id: user.id).id
       end
       
-      if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
-        c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
-      end
+      # if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
+      #   c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
+      # end
       contract_project_data.attributes = c_params
       contract_project_data.user_id = user.id
       contract_project_data.save
