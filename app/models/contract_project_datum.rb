@@ -64,7 +64,7 @@ class ContractProjectDatum < ApplicationRecord
 
   def self.params_to_permit
     [
-      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes, :ignore_expired
+      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes, :ignore_expired, contract_poc_ids: []
     ]
   end
 
@@ -120,12 +120,22 @@ class ContractProjectDatum < ApplicationRecord
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id], user_id: user.id).id
       end
       
-      # if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
-      #   c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
-      # end
+      contract_poc_ids = c_params.delete(:contract_poc_ids)
+
       contract_project_data.attributes = c_params
       contract_project_data.user_id = user.id
-      contract_project_data.save
+      contract_project_data.save!
+      
+      if contract_poc_ids
+        _contract_pocs = []
+        contract_poc_ids.each do |poc_id|
+          _contract_pocs << ContractProjectPocResource.new(resource: contract_project_data, contract_project_poc_id: poc_id)
+        end
+        if _contract_pocs.any?
+          ContractProjectPocResource.import(_contract_pocs)
+        end
+      end
+
     end
     contract_project_data
   end
