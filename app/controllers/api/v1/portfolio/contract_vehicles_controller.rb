@@ -18,14 +18,14 @@ class Api::V1::Portfolio::ContractVehiclesController < AuthenticatedController
     project_ids = ProjectContractVehicle.where(id: authorized_contract_vehicle_ids).pluck(:project_id).uniq
     role_users = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_privileges.role_type = 'contract_tasks' and role_users.project_contract_vehicle_id in (?)", authorized_contract_vehicle_ids).group_by{|rs| rs.project_contract_vehicle_id }
 
-    contract_vehicles = ContractVehicle.includes([:projects, :project_contract_vehicles, :contract_vehicle_type, :contract_sub_category, :contract_number, :contract_agency]).all.map{|c| c.to_json({authorized_project_ids: project_ids, role_users: role_users}) }
+    contract_vehicles = ContractVehicle.includes([:projects, :project_contract_vehicles, :contract_vehicle_type, :contract_sub_category, :contract_number, :contract_agency, :contract_project_pocs]).all.map{|c| c.to_json({authorized_project_ids: project_ids, role_users: role_users}) }
     render json: {contract_vehicles: contract_vehicles}
   end
 
   def create
     contract_vehicle = ContractVehicle.new.create_or_update_contract_vehicle(params, current_user)
     if !contract_vehicle.errors.any?
-      render json: {contract_vehicle: contract_vehicle}
+      render json: {contract_vehicle: contract_vehicle.to_json}
     else
       render json: {errors: contract_vehicle.errors.full_messages}, status: 406
     end
@@ -34,7 +34,7 @@ class Api::V1::Portfolio::ContractVehiclesController < AuthenticatedController
   def update
     contract_vehicle = ContractVehicle.new.create_or_update_contract_vehicle(params, current_user)
     if !contract_vehicle.errors.any?
-        render json: {contract_vehicle: contract_vehicle}
+        render json: {contract_vehicle: contract_vehicle.to_json}
     else
       render json: {errors: contract_vehicle.errors.full_messages}, status: 406
     end

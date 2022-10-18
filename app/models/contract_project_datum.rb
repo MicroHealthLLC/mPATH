@@ -54,7 +54,7 @@ class ContractProjectDatum < ApplicationRecord
     h.merge!({contract_type: contract_type.as_json})
     h.merge!({contract_current_pop: contract_current_pop.as_json})
     h.merge!({contract_number: contract_number.as_json})
-    h.merge!({contract_project_pocs: contract_project_pocs.as_json})
+    h.merge!({contract_project_pocs: contract_project_pocs.distinct.as_json})
     h
   end
 
@@ -127,12 +127,22 @@ class ContractProjectDatum < ApplicationRecord
       contract_project_data.save!
       
       if contract_poc_ids
-        _contract_pocs = []
-        contract_poc_ids.each do |poc_id|
-          _contract_pocs << ContractProjectPocResource.new(resource: contract_project_data, contract_project_poc_id: poc_id)
-        end
-        if _contract_pocs.any?
+        contract_poc_ids = contract_poc_ids.map(&:to_i)
+        old_contract_project_poc_ids = ContractProjectPocResource.where(resource: contract_project_data).pluck(:contract_project_poc_id)
+
+        new_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - old_contract_project_poc_ids
+        remove_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - contract_poc_ids
+
+        if new_contract_project_poc_ids.any?
+          _contract_pocs = []
+          new_contract_project_poc_ids.each do |poc_id|
+            _contract_pocs << ContractProjectPocResource.new(resource: contract_project_data, contract_project_poc_id: poc_id)
+          end
           ContractProjectPocResource.import(_contract_pocs)
+        end
+        
+        if remove_contract_project_poc_ids
+          ContractProjectPocResource.where(resource: contract_project_data, contract_project_poc_id: remove_contract_project_poc_ids).destroy_all
         end
       end
 

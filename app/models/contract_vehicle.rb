@@ -52,7 +52,7 @@ class ContractVehicle < ApplicationRecord
   end
 
   def self.params_to_permit
-    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees, :subprime_name, :prime_name, :contract_name, :is_subprime]
+    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees, :subprime_name, :prime_name, :contract_name, :is_subprime, contract_poc_ids: [] ]
   end
 
   def set_is_subprime
@@ -90,10 +90,32 @@ class ContractVehicle < ApplicationRecord
       if c_params[:contract_vehicle_type_id] && !( a = (Integer(c_params[:contract_vehicle_type_id]) rescue nil) ) && !ContractVehicleType.exists?(id: c_params[:contract_vehicle_type_id])
         c_params[:contract_vehicle_type_id] = ContractVehicleType.create(name: c_params[:contract_vehicle_type_id], user_id: user.id).id
       end
-     
+      contract_poc_ids = c_params.delete(:contract_poc_ids)
+
       contract_vehicle.attributes = c_params
       contract_vehicle.user_id = user.id
-      contract_vehicle.save
+      contract_vehicle.save!
+
+      if contract_poc_ids
+        contract_poc_ids = contract_poc_ids.map(&:to_i)
+        old_contract_project_poc_ids = ContractProjectPocResource.where(resource: contract_vehicle).pluck(:contract_project_poc_id)
+
+        new_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - old_contract_project_poc_ids
+        remove_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - contract_poc_ids
+
+        if new_contract_project_poc_ids.any?
+          _contract_pocs = []
+          new_contract_project_poc_ids.each do |poc_id|
+            _contract_pocs << ContractProjectPocResource.new(resource: contract_vehicle, contract_project_poc_id: poc_id)
+          end
+          ContractProjectPocResource.import(_contract_pocs)
+        end
+        
+        if remove_contract_project_poc_ids
+          ContractProjectPocResource.where(resource: contract_vehicle, contract_project_poc_id: remove_contract_project_poc_ids).destroy_all
+        end
+      end
+
     end
     contract_vehicle
   end
