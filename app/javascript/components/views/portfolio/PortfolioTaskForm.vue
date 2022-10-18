@@ -24,6 +24,7 @@ export default {
     ...mapGetters(['portfolioTask'])
   },
  mounted(){
+    this.fetchPortfolioCategories()
     this.fetchPortfolioTask(this.$route.params)
     this.fetchPortfolioAssignees()
     this.fetchPortfolioTaskStages()

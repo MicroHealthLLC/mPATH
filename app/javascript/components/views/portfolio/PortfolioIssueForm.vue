@@ -30,6 +30,7 @@ export default {
     ...mapGetters(['portfolioIssue', 'portfolioTab'])
   },
   mounted(){
+    this.fetchPortfolioCategories()
     this.fetchPortfolioIssue(this.$route.params)
     this.fetchPortfolioIssueStages()
     this.fetchPortfolioAssignees()
