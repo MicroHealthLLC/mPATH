@@ -266,6 +266,7 @@
               <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
+                :load="log(selectedTaskType)"
                 class="w-100"
                 clearable
                 track-by="id"
@@ -329,6 +330,7 @@
               >
               <el-select
                 v-model="selectedIssueSeverity"
+                :load="log(selectedIssueSeverity)"
                 v-validate="'required'"
                 class="w-100"
                 track-by="id"
@@ -1376,17 +1378,32 @@ export default {
   },
   mounted() {
     AuthorizationService.getRolePrivileges();
+    this.fetchPortfolioIssue(this.$route.params)
+    this.fetchPortfolioIssueStages()
+    this.fetchPortfolioAssignees()
+    this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
     if (!_.isEmpty(this.issue)) {
       this.loadIssue(this.issue);
+      console.log(this.issue)
     } else {
-      this.loadIssue(this.DV_issue);     
+      this.loadIssue(this.DV_issue);  
     }
     this.loading = false;
     this._ismounted = true;
    },
   methods: {
     ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
-    ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues", 'fetchPortfolioIssue']),
+    ...mapActions([
+      "issueDeleted", 
+      "taskUpdated", 
+      "updateWatchedIssues", 
+      'fetchPortfolioIssue',
+      "fetchPortfolioIssueStages",
+      "fetchPortfolioAssignees",
+      "fetchPortfolioIssueTypes",
+      "fetchPortfolioIssueSeverities"
+    ]),
     INITIAL_ISSUE_STATE() {
       return {
         title: "",
@@ -1431,6 +1448,9 @@ export default {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
       }
+    },
+    log(e){
+      console.log(e)
     },
     clearStages() {
       this.selectedIssueStage = null;
