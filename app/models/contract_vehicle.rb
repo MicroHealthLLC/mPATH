@@ -42,7 +42,16 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_agency: contract_agency.as_json})
     h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})
     h.merge!({contract_number: contract_number.as_json})
-    h.merge!({contract_project_pocs: contract_project_pocs.as_json})
+    # h.merge!({contract_project_pocs: contract_project_pocs.as_json})
+
+    _contract_project_pocs = contract_project_pocs.distinct
+    _co_contract_pocs = _contract_project_pocs.select{|c| c.poc_type == 'contract_office'}
+    _gov_contract_pocs = _contract_project_pocs.select{|c| c.poc_type == 'government'}
+    _pm_contract_pocs = _contract_project_pocs.select{|c| c.poc_type == 'program_manager'}
+    
+    h.merge!({co_contract_pocs: _co_contract_pocs.as_json})
+    h.merge!({gov_contract_pocs: _gov_contract_pocs.as_json})
+    h.merge!({pm_contract_pocs: _pm_contract_pocs.as_json})
 
     h
   end
