@@ -229,7 +229,7 @@
         </el-select>
       </div>
 
-      <div class="col-6 pl-0 pr-0">
+      <div class="col-6 pl-0 pr-0" :load="log(lessonStages)">
         <label class="font-md"
           >Date <span style="color: #dc3545">*</span></label
         >
@@ -250,7 +250,7 @@
         </div>
       </div>
 
-      <div class="col-12 p-0"  v-if="validStages.length > 0 && lessonStages[programId] && lessonStages[programId].length >= 0">
+      <div class="col-12 p-0"  v-if="this.$route.params.programId && validStages.length > 0 &&  lessonStages[this.$route.params.programId] &&  lessonStages[this.$route.params.programId].length >= 0">
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
@@ -264,7 +264,7 @@
         </div>
          <el-steps         
           :active="
-            lessonStages[programId].findIndex(
+            lessonStages[this.$route.params.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -272,10 +272,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': lessonStages[programId].length >= 6 }"
+          :class="{ 'over-six-steps': lessonStages[this.$route.params.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in lessonStages[programId]"
+            v-for="stage in lessonStages[this.$route.params.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -948,9 +948,12 @@ export default {
         }
       });
     },
-    // log(e){
-    //   console.log("lesson" + e)
-    // },
+    log(e){
+      console.log(e)
+      if(this.$route.params.programId){
+        console.log(this.$route.params.programId)
+      } else console.log(this.$route)
+    },
     removeEmptyUpdates(){
       var returnUpdates = [];
       for (let i in this.updates) {
