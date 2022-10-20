@@ -250,7 +250,7 @@
         </div>
       </div>
 
-      <div class="col-12 p-0"  v-if="this.$route.params.programId && validStages.length > 0 &&  lessonStages[this.$route.params.programId] &&  lessonStages[this.$route.params.programId].length >= 0">
+      <div class="col-12 p-0"  v-if="this.$route.params.programId && lessonStages && validStages.length > 0 &&  lessonStages[this.$route.params.programId] &&  lessonStages[this.$route.params.programId].length >= 0">
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
