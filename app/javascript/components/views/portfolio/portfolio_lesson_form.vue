@@ -229,7 +229,7 @@
         </el-select>
       </div>
 
-      <div class="col-6 pl-0 pr-0" :load="log(lessonStages)">
+      <div class="col-6 pl-0 pr-0">
         <label class="font-md"
           >Date <span style="color: #dc3545">*</span></label
         >
@@ -251,7 +251,7 @@
       </div>
 
       <div class="col-12 p-0"  v-if="this.$route.params.programId && lessonStages && validStages.length > 0 &&  lessonStages[this.$route.params.programId] &&  lessonStages[this.$route.params.programId].length >= 0">
-        <div class="d-flex justify-content-between my-3">
+        <div class="d-flex justify-content-between my-3"  :load="log(lessonStages)">
           <label class="font-md">Select Stage</label
           ><button
             v-show="lesson.lesson_stage_id"
