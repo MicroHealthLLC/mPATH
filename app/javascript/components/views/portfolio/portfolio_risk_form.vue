@@ -2151,15 +2151,22 @@ export default {
     if (this.fixedStage) {
       this.selectedRiskStage = this.fixedStage;
     }
-  },
+  }, 
   mounted() {
-    AuthorizationService.getRolePrivileges();
+    // this.fetchPortfolioAssignees()
+    this.fetchPortfolioRiskStages()
+    this.fetchPortfolioAssignees()
+    this.fetchPortfolioCategories()
+    console.log(this.$route.params)
+    AuthorizationService.getRolePrivileges();       
     if (!_.isEmpty(this.risk)) {
       this.loadRisk(this.risk);
     } else {
       this.loading = false;
       this.loadRisk(this.DV_risk);
-    }
+    }   
+    this.loading = false;
+    this._ismounted = true; 
   },
   methods: {
     ...mapMutations([
@@ -2176,6 +2183,10 @@ export default {
       "riskUpdated",
       "updateWatchedRisks",
       "updateApprovedRisks",
+      'fetchPortfolioAssignees', 
+      'fetchPortfolioCategories', 
+      'fetchPortfolioRiskStages',
+      'fetchPortfolioRisk'
     ]),
     INITIAL_RISK_STATE() {
       return {
@@ -2961,10 +2972,10 @@ export default {
   computed: {
     ...mapGetters([
       "portfolioRisks",
+      "portfolioRisk",
       "portfolioUsers",
       "currentIssues",
       "portfolioCategories", 
-      'fetchPortfolioRisks',
       'portfolioRiskLoaded',
       "categories",
       "currentProject",
@@ -2989,12 +3000,12 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
-  riskStages(){
+     riskStages(){
           if(this.portfolioRiskStages){
             return this.portfolioRiskStages.program_stages
           }
        },
-  riskStagesSorted() { 
+    riskStagesSorted() { 
       if (this.riskStages) {
         let stageObj =  [...this.riskStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
@@ -3025,7 +3036,7 @@ export default {
         return _.map(this.riskStages[this.programId], "percentage").toString();
      }    
     },
-  taskTypes(){
+    taskTypes(){
       return this.portfolioCategories  
     },
     isMapView() {

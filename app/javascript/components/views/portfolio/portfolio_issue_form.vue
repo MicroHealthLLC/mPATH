@@ -1380,6 +1380,7 @@ export default {
     AuthorizationService.getRolePrivileges();
     this.fetchPortfolioIssue(this.$route.params)
     this.fetchPortfolioIssueStages()
+    this.fetchPortfolioCategories()
     this.fetchPortfolioAssignees()
     this.fetchPortfolioIssueTypes()
     this.fetchPortfolioIssueSeverities()
@@ -1399,6 +1400,7 @@ export default {
       "taskUpdated", 
       "updateWatchedIssues", 
       'fetchPortfolioIssue',
+      "fetchPortfolioCategories",
       "fetchPortfolioIssueStages",
       "fetchPortfolioAssignees",
       "fetchPortfolioIssueTypes",
@@ -1512,7 +1514,6 @@ export default {
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
-
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.responsible_user_ids.includes(u.id)
       )[0];
@@ -1525,7 +1526,6 @@ export default {
       this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.informed_user_ids.includes(u.id)
       );
-
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_issue.sub_issue_ids.includes(u.id)
       );

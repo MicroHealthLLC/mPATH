@@ -1355,6 +1355,9 @@ export default {
   },
   mounted() {
    AuthorizationService.getRolePrivileges();
+   this.fetchPortfolioTaskStages();
+   this.fetchPortfolioCategories();
+   this.fetchPortfolioAssignees();
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1366,7 +1369,15 @@ export default {
   },
   methods: {
     ...mapMutations(["setTaskForManager", "updateTasksHash", 'setPortfolioCategoriesFilter']),
-    ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks", 'fetchPortfolioTask']),
+    ...mapActions([
+      "taskDeleted", 
+      "taskUpdated", 
+      "updateWatchedTasks", 
+      'fetchPortfolioTask', 
+      'fetchPortfolioTaskStages', 
+      'fetchPortfolioCategories',
+      'fetchPortfolioAssignees'
+    ]),
     INITIAL_TASK_STATE() {
       return {
         text: "",
