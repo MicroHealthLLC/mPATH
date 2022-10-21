@@ -1253,7 +1253,7 @@ export default {
   },
   },
   mounted() {
-   this.fetchPortfolioTaskStages();
+   this.fetchPortfolioLessonStages();
    this.fetchPortfolioCategories();
    this.fetchPortfolioAssignees();
     AuthorizationService.getRolePrivileges();
