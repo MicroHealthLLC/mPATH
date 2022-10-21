@@ -1037,7 +1037,7 @@
    <el-tab-pane>
     <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
     <i v-tooltip="`Manage POCs`" class="far fa-plus-circle mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'd-none']" @click="openPocModal"></i> 
-    CONTRACT POC   
+    POCS
     </span>  
     <PortfolioContractPOC/>    
     </el-tab-pane>
