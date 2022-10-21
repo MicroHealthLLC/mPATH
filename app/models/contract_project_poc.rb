@@ -4,6 +4,8 @@ class ContractProjectPoc < ApplicationRecord
   validates :name,presence: true
   # validates :email,presence: true, format: { with: URI::MailTo::EMAIL_REGEXP } 
   # validate :number_check
+  # poc_type fields: 'contract_office', government, program_manager
+  
   def filter_values
     self.attributes.reject!{|k,v| v == 'undefined' }
   end
