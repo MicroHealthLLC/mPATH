@@ -886,7 +886,15 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioAssignees", "fetchPortfolioLessons"]),
+    ...mapActions([
+      "addLesson", 
+      "fetchLesson", 
+      "updateLesson",
+      "fetchPortfolioAssignees", 
+      "fetchPortfolioLessons",  
+      'fetchPortfolioCategories', 
+      'fetchPortfolioLessonStages'
+    ]),
     ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
@@ -1245,6 +1253,9 @@ export default {
   },
   },
   mounted() {
+   this.fetchPortfolioTaskStages();
+   this.fetchPortfolioCategories();
+   this.fetchPortfolioAssignees();
     AuthorizationService.getRolePrivileges();
       this.fetchLesson({
         id: this.$route.params.lessonId,
