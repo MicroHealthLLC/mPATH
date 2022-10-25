@@ -629,23 +629,29 @@ export default {
   _isallowed(salut) {    
      return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
   }, 
+  handleClick(tab, event) {
+    console.log(tab, event)
+   },
   saveContractPOCs(index, row){
     this.rowIndex = null;
     this.rowId = null;
     let contractProjectData = {
           cProjectData: {
-            contract_poc_ids: [13, 14, 15],
-            // pm_poc_id: row.pm_contract_poc_id,
-            // gov_poc_id: row.gov_contract_poc_id,
-            // co_poc_id: row.co_contract_poc_id,        
+            // pm_poc_ids: row.pm_contract_poc_ids,
+            // gov_poc_ids: row.gov_contract_poc_ids,
+            // co_poc_ids: row.co_contract_poc_ids,  
+            pm_poc_ids: [13, 14, 15],
+            gov_poc_ids: [13, 14, 15],
+            co_poc_ids: [13, 14, 15],            
         },
       };
       let id = row.id
+      console.log()
       this.updateContractProject({...contractProjectData, id})    
   },
   backHomeBtn() {
-      window.location.pathname = "/";
-    },    
+    window.location.pathname = "/";
+  },    
   editMode(index, rows) {
     
     this.rowIndex = index,
