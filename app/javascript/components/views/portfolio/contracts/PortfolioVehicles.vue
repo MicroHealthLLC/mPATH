@@ -1128,7 +1128,6 @@ export default {
     tableData(){
       if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
         let data = this.contractVehicles.filter(v => v && !v.is_subprime)
-        console.log(data)
         data.push({})
         return data
      } else {
@@ -1139,14 +1138,11 @@ export default {
     },
     createRow(){
       let lastItem = this.tableData.length - 1
-      //  console.log(lastItem)
       return lastItem
-
     },
     subTableData(){
       if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
         let data = this.contractVehicles.filter(v => v && v.is_subprime)
-        console.log(data)
         data.push({})
         return data
      } else {
@@ -1157,7 +1153,6 @@ export default {
     },
     subCreateRow(){
       let lastItem = this.subTableData.length - 1
-      //  console.log(lastItem)
       return lastItem
 
     },

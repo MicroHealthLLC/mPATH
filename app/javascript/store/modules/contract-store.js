@@ -448,6 +448,21 @@ const contractStore = {
     if (cVehicleData.contract_name){
       formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
     }
+    if(cVehicleData.co_poc_ids){       
+      cVehicleData.co_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[co_contract_poc_ids][]", ids)
+      });
+    }
+    if(cVehicleData.gov_poc_ids){       
+      cVehicleData.gov_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[gov_contract_poc_ids][]", ids)
+      });
+    }
+    if(cVehicleData.pm_poc_ids){       
+      cVehicleData.pm_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[pm_contract_poc_ids][]", ids)
+      });
+    }
     formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
     formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);

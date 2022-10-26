@@ -1204,7 +1204,7 @@ export default {
         showClose: true,
       });
       this.isValidEmail = false
-       console.log( this.isValidEmail)
+      //  console.log( this.isValidEmail)
       return (false)
     }
   } ,
@@ -1216,7 +1216,7 @@ export default {
         return (true)    
       } else {
         this.isValidWorkNum = false
-          console.log(this.isValidWorkNum )
+          // console.log(this.isValidWorkNum )
         this.$message({
           message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
           type: "warning",
@@ -1229,11 +1229,11 @@ export default {
     if (m) {
   if (m.length == 14)
     {
-      console.log(m.length)
+    //   console.log(m.length)
       this.isValidMobNum = true
       return (true)    
     }
-       console.log(this.isValidMobNum )
+      //  console.log(this.isValidMobNum )
     this.$message({
       message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
       type: "warning",
