@@ -24,10 +24,10 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     roles = []
     role_users =  RoleUser.includes([ {role: [:role_privileges] }, :user ] ).where(project_id: project.id, user_id: project_user_ids).group_by(&:role)
     role_ids = []
-    role_users.each do |role, role_users|
+    role_users.each do |role, _role_users|
       h = role.to_json({include: [:role_privileges]})
       role_ids << role.id
-      h[:role_users] = role_users.map(&:to_json)
+      h[:role_users] = _role_users.map(&:to_json)
       roles << h
     end
     default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)
@@ -56,7 +56,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
   end
 
   def add_users
-    role = Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]).find(params[:id])
+    role = Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, {project_contract: :contract_project_datum}  ] }]).find(params[:id])
     role_users = role_users_params["role_users"]
     errors = []
     role_users.each do |role_user_hash|

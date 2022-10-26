@@ -85,7 +85,7 @@ class Lesson < ApplicationRecord
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       # project_id: facility_project.facility_id,
       project_id: facility.id, 
-      program_id: project.id, 
+      program_id: project.id
     ).as_json
 
   end
@@ -191,6 +191,7 @@ class Lesson < ApplicationRecord
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: fp.try(:facility_id),
       contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       contract_name: project.try(:nickname),
       project_name: fp.try(:facility)&.facility_name,
       program_name: project.name,   
@@ -288,11 +289,11 @@ class Lesson < ApplicationRecord
       project_id: fp.try(:facility_id),
       project_name: fp.try(:facility)&.facility_name,
       contract_nickname: self.contract_project_data.try(:name),
-      
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_group: facility_group.try(:name),
       category: task_type&.name,
       lesson_stage: lesson_stage.try(:name),
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      notes_updated_at: notes.map(&:updated_at).compact.uniq
     ).as_json
   end
 
@@ -538,7 +539,11 @@ class Lesson < ApplicationRecord
       if link_files && link_files.any?
         link_files.each do |f|
           next if !f.present? || f.nil? || !valid_url?(f)
-          self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+          filename = f
+          if f.length > URL_FILENAME_LENGTH
+            filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+          end 
+          self.lesson_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
         end
       end
     rescue Exception => e

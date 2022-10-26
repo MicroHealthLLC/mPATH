@@ -27,7 +27,7 @@ class Api::V1::FilterDataController < AuthenticatedController
           id: SecureRandom.uuid,
           program_id: p.id,
           label: p.name,
-          all_facility_project_ids: project_children.map{|h| h[:all_facility_project_ids]}.flatten.compact.uniq,
+          all_facility_project_ids: project_children.map{|h1| h1[:all_facility_project_ids]}.flatten.compact.uniq,
           children: project_children
         }
         response_json << h
@@ -108,7 +108,7 @@ class Api::V1::FilterDataController < AuthenticatedController
       {id: 'accept', name: 'Accept', value: 'accept'},
       {id: 'avoid', name: 'Avoid', value: 'avoid'},
       {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
-      {id: 'transfer', name: 'Transfer', value: "transfer"},
+      {id: 'transfer', name: 'Transfer', value: "transfer"}
     ]
     render json: {risk_approaches: risk_approaches}
   end

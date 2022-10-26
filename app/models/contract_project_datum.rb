@@ -10,7 +10,8 @@ class ContractProjectDatum < ApplicationRecord
   belongs_to :contract_number, optional: true
   belongs_to :user, optional: true
   has_many :project_contracts, dependent: :destroy
-  
+  has_many :projects, through: :project_contracts
+
   validates :charge_code, :name, :contract_customer_id, :contract_naic_id, :contract_award_type_id, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, presence: true
   
   validate :number_check
@@ -24,6 +25,20 @@ class ContractProjectDatum < ApplicationRecord
 
   def to_json(options = {})
     h = self.as_json
+    if options[:authorized_project_ids]
+      _project_contracts = project_contracts
+      associated_projects = []
+      projects.each do |p|
+        if options[:authorized_project_ids].include?(p.id)
+          pc = _project_contracts.detect{|_pc| _pc.project_id == p.id }
+          # if contract has contract_task permission then only show
+          if options[:role_users][pc.id]
+            associated_projects << {id: p.id, name: p.name, project_contract_id: pc.id}
+          end
+        end
+      end
+      h.merge!({associated_projects: associated_projects })
+    end
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
     h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
     h.merge!({facility_group_id: options[:project_contract].facility_group_id }) if options[:project_contract]

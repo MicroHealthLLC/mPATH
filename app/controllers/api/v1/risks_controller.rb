@@ -28,7 +28,7 @@ class Api::V1::RisksController < AuthenticatedController
     all_users = []
     all_user_ids = []
     
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where("risks.facility_project_id in (?) or risks.project_contract_id in (?)  or risks.project_contract_vehicle_id", [@owner.id], [@owner.id], [@owner.id]).paginate(:page => params[:page], :per_page => 15)
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where("risks.facility_project_id in (?) or risks.project_contract_id in (?)  or risks.project_contract_vehicle_id in (?)", [@owner.id], [@owner.id], [@owner.id]).paginate(:page => params[:page], :per_page => 15)
 
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)

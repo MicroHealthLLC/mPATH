@@ -114,7 +114,7 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_POCS_LOADED", false);   
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -197,6 +197,17 @@ const contractStore = {
         if (cVehicleData.cafFees){
           formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
         }
+        if (cVehicleData.subprime_name){
+          formData.append("contract_vehicle[subprime_name]", cVehicleData.subprime_name);
+        }
+        // prime
+        if (cVehicleData.prime_name){
+          formData.append("contract_vehicle[prime_name]", cVehicleData.prime_name);
+        }
+        // contract_name
+        if (cVehicleData.contract_name){
+          formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
+        }
         formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
         formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
         formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
@@ -245,7 +256,7 @@ const contractStore = {
        }       
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -420,13 +431,24 @@ const contractStore = {
     if (cVehicleData.cafFees){
       formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
     }
+    if (cVehicleData.subprime_name){
+      formData.append("contract_vehicle[subprime_name]", cVehicleData.subprime_name);
+    }
+    // prime
+    if (cVehicleData.prime_name){
+      formData.append("contract_vehicle[prime_name]", cVehicleData.prime_name);
+    }
+    // contract_name
+    if (cVehicleData.contract_name){
+      formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
+    }
     formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
     formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
     formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
     axios({
       method: "PUT",
-      url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+      url: `${API_BASE_PATH}/portfolio/contract_vehicles/${id}`,
       data: formData, 
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -459,7 +481,7 @@ const contractStore = {
     formData.append("contract_project_poc[notes]", cPOCsData.notes);
   axios({
     method: "PUT",
-    url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+    url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
     data: formData,
     headers: {
       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -504,7 +526,7 @@ const contractStore = {
       
         axios({
           method: "DELETE",
-          url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+          url: `${API_BASE_PATH}/portfolio/contract_vehicles/${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -526,7 +548,7 @@ const contractStore = {
     
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

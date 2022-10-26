@@ -77,6 +77,7 @@
         v-if="Object.entries(DV_edit_task).length"
         :facility="facility"
         :contract="contract"
+        :vehicle="vehicle"
         :task="DV_edit_task"
         title="Edit Task"
         @task-updated="updateRelatedTaskIssue"
@@ -149,6 +150,8 @@ export default {
         this.DV_edit_task = this.DV_task;   
         if (this.$route.params.contractId)  {
            return this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/${this.DV_edit_task.id}`)
+        } else if (this.$route.params.vehicleId)  {
+           return this.$router.push(`/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/tasks/${this.DV_edit_task.id}`)
         } else return this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
     },
     onCloseForm() {

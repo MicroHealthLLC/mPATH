@@ -119,7 +119,7 @@ task :create_program_privileges => :environment do
     user_project_privileges = user.project_privileges
     project_to_create_privileges = []
     user.project_ids.each do |pid|
-      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      p = user_project_privileges.detect{|p1| p1.project_ids.map(&:to_i).include?(pid) }
       if !p
         project_to_create_privileges << pid
       end

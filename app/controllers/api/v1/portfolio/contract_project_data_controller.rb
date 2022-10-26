@@ -30,7 +30,13 @@ class Api::V1::Portfolio::ContractProjectDataController < AuthenticatedControlle
   end
 
   def index
-    contract_project_data = ContractProjectDatum.includes([ {contract_vehicle: [:contract_vehicle_type, :contract_sub_category] }, :contract_award_to, :contract_naic, :contract_customer, :contract_award_type, :contract_type, :contract_current_pop, :contract_pop, :contract_number, :user]).all.map(&:to_json)
+    authorized_contract_ids = current_user.authorized_contract_ids
+    project_ids = ProjectContract.where(id: authorized_contract_ids).pluck(:project_id).uniq
+
+    role_users = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_privileges.role_type = 'contract_tasks' and role_users.project_contract_id in (?)", authorized_contract_ids).group_by{|rs| rs.project_contract_id }
+
+
+    contract_project_data = ContractProjectDatum.includes([:projects, :project_contracts, {contract_vehicle: [:contract_vehicle_type, :contract_sub_category] }, :contract_award_to, :contract_naic, :contract_customer, :contract_award_type, :contract_type, :contract_current_pop, :contract_pop, :contract_number, :user]).all.map{|c| c.to_json({authorized_project_ids: project_ids, role_users: role_users}) }
     render json: {contract_project_data: contract_project_data}
   end
 

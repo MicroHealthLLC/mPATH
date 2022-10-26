@@ -25,7 +25,7 @@ ActiveAdmin.register Lesson do
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
-      sub_risk_ids: [],
+      sub_risk_ids: []
       # facility_project: [
       #   :id,
       #   :project_id,

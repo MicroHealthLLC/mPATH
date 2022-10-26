@@ -86,6 +86,8 @@ module Tasker
         ru.owner_id = ru.project_contract_vehicle_id
       end
     end
+   
+    base.const_set :URL_FILENAME_LENGTH, 252
 
     def valid_url?(url)
       uri = URI.parse(url)
@@ -124,6 +126,26 @@ module Tasker
       end
     end
 
+    # def update_owner_record
+    #   if self.previous_changes.keys.include?("progress")
+    #     _owner = nil
+    #     if facility_project.present?
+    #       _owner = facility_project
+    #     elsif project_contract_id.present?
+    #       _owner = project_contract
+    #     elsif project_contract_vehicle_id.present?
+    #       _owner = project_contract_vehicle
+    #     end
+  
+    #     return if !_owner
+  
+    #     p = _owner.project
+    #     _owner.update_progress
+    #     p.update_progress
+    #     FacilityGroup.where(project_id: p.id).map(&:update_progress)
+    #   end
+    # end
+    
     def handle_related_taskers
       subclass = "sub_#{self.class.name.downcase.pluralize}"
       sub_tasks.each{|t| t.send(subclass) << self unless t.send(subclass).include? self}

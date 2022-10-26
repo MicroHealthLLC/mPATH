@@ -1,6 +1,7 @@
 import http from "./../../common/http";
 import axios from "axios";
 import { API_BASE_PATH } from "./../../mixins/utils";
+import AuthorizationService from "./../../services/authorization_service";
 
 const settingsStore = {
   state: () => ({
@@ -8,7 +9,9 @@ const settingsStore = {
     show_create_row: false,
     user_status: true,
     edit_contract_sheet: false,
+    edit_vehicle_sheet: false,
     contract_table: [],
+    vehicle_table: [],
     group_filter: null,
     transfer_data: [],
     new_groups: [],
@@ -44,7 +47,9 @@ const settingsStore = {
     prime: null,
     current_pop: [],
     contract_type_filter: 0,
+    vehicle_type_filter: 0,
     contract_group_types: {},
+    vehicle_group_types: {},
 
     portfolio_projects: [],
     portfolio_projects_loaded: true,
@@ -75,6 +80,7 @@ const settingsStore = {
     new_user_status: 0,
 
     new_contract_group_filter: null,
+    new_vehicle_group_filter: null,
     new_user_loaded: true,
     new_user_id: null,
 
@@ -424,7 +430,7 @@ const settingsStore = {
           if (res.data && res.data.role.type_of == "contract") {
             commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
           }
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -513,7 +519,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           // console.log(res)
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -606,7 +612,7 @@ const settingsStore = {
            console.log(res)
           //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
           if (
             userData.projectIds ||
             userData.contractIds ||
@@ -673,7 +679,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           console.log(res);
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -780,13 +786,13 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* fetchVehicle({ commit }, { id, programId }) {
+    fetchVehicle({ commit }, { id, programId }) {
       console.log(id, programId);
       commit("TOGGLE_VEHICLE_LOADED", false);
       // Retrieve vehicle by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}?project_id=${programId}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -801,7 +807,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLE_LOADED", true);
         });
-    },*/
+    },
     fetchVehicles({ commit }, id) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
@@ -1309,38 +1315,6 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    updateVehicle({ commit }, { vehicle, id }) {
-      // Displays loader on front end
-      commit("TOGGLE_VEHICLES_LOADED", false);
-      let formData = new FormData();
-      // Utilize utility function to prep Lesson form data
-      // let formData = contractFormData(contract);
-      formData.append("project_id", vehicle.programId);
-      formData.append(
-        "project_contract_vehicle[facility_group_id]",
-        vehicle.facility_group_id
-      );
-      axios({
-        method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          commit("SET_VEHICLE", res.data.contract_vehicle);
-          commit("SET_VEHICLE_STATUS", res.status);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_VEHICLES_LOADED", true);
-        });
-    },
     deleteContract({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1354,7 +1328,8 @@ const settingsStore = {
           });
       });
     },
-    /* updateVehicle({ commit }, { vehicle, id }) {
+    updateVehicle({ commit }, { vehicle, id }) {
+      console.log("vehicles")
       // Displays loader on front end
       commit("TOGGLE_VEHICLES_LOADED", false);
       let formData = new FormData();
@@ -1362,12 +1337,12 @@ const settingsStore = {
       // let formData = vehicleFormData(vehicle);
       formData.append("project_id", vehicle.programId);
       formData.append(
-        "project_vehicle[facility_group_id]",
+        "project_contract_vehicle[facility_group_id]",
         vehicle.facility_group_id
       );
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1385,7 +1360,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    },*/
+    },
     deleteVehicle({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1451,10 +1426,10 @@ const settingsStore = {
       (state.new_contract_group_filter = loaded),
 
     // VEHICLES
-    /* setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
+    setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
     setVehicleTable: (state, value) => (state.vehicle_table = value),
     setNewVehicleGroupFilter: (state, loaded) =>
-      (state.new_vehicle_group_filter = loaded), */
+      (state.new_vehicle_group_filter = loaded),
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) =>
@@ -1780,6 +1755,7 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
+    getVehicleTypeFilter: (state) => state.vehicle_type_filter,
     facilityGroupContracts: (state, getters) => (group) => {
       return {
         contracts: {

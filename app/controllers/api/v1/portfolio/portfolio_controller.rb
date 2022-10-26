@@ -53,7 +53,7 @@ class Api::V1::Portfolio::PortfolioController < AuthenticatedController
     if params[:pagination] && params[:pagination] == "true"
       all_resources = current_user.authorized_programs.includes(:tasks, :issues, :risks).paginate(per_page: 15, page: params[:page])
       json_response = []
-      all_resources.each do |resources|
+      all_resources.each do |resource|
         json_response << resource.portfolio_json
       end
       render json: json_response

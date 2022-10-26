@@ -228,7 +228,7 @@ export default {
   components: {
     TaskShow
   },
-  props: ['facility', 'from', "contract"],
+  props: ['facility', 'from', "contract", "vehicle"],
   data() {
     return {
       viewList: 'active',
@@ -593,6 +593,9 @@ computed: {
       if (this.$route.params.contractId) {
         console.log(this.contract)
         return this.contract
+      } else if (this.$route.params.vehicleId) {
+        console.log(this.vehicle)
+        return this.vehicle
       } else return this.facility
      },
   C_facilityManagerTaskFilter: {

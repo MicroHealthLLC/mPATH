@@ -456,14 +456,6 @@
        width="100"
       prop="contract_current_pop_start_date">
       <template slot-scope="scope">
-        <v2-date-picker
-          name="Date"   
-          v-model="newPopStartDate"      
-          v-if="scope.$index == createRow  && _isallowed('write')"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
         <span v-if="rowId == scope.row.id">
          <v2-date-picker
           name="Date"   
@@ -509,13 +501,6 @@
       width="350"
        >
       <template slot-scope="scope">
-        <el-input
-          size="small"
-          v-if="_isallowed('write') && scope.$index == createRow"
-          style="text-align:center"
-          v-model="scope.row.name"
-          controls-position="right"
-        ></el-input>
         <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
         <el-input
           size="small"
@@ -570,14 +555,14 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) && _isallowed('write')"
+           v-if="(scope.$index !== rowIndex) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
           type="default"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)  && _isallowed('delete')"
+           v-if="(scope.$index !== rowIndex) && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
        </template>
@@ -684,17 +669,17 @@ export default {
      return newSums
     },
   validateEmail(m){
+    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     if (m) {
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
-    {
-      this.isValidEmail = true
-      return (true)
-    }
-    this.$message({
-      message: `Please enter a valid email address.  Example: "john@example.com"`,
-      type: "warning",
-      showClose: true,
-    });
+      if (regex.test(m)){
+        this.isValidEmail = true
+        return (true)
+      }
+      this.$message({
+        message: `Please enter a valid email address.  Example: "john@example.com"`,
+        type: "warning",
+        showClose: true,
+      });
       this.isValidEmail = false
        console.log( this.isValidEmail)
       return (false)
@@ -847,13 +832,13 @@ export default {
         this.popEndDate = rows.contract_current_pop_end_date
       }
     }
-    if (!row.id){
-        vehicle = row.contract_vehicle_id;
-        this.contractStartDate = this.newContractStartDate;
-        this.contractEndDate = this.newContractEndDate;
-        this.popStartDate = this.newPopStartDate;
-        this.popEndDate = this.newPopEndDate;
-    }
+    // if (!row.id){
+    //     vehicle = row.contract_vehicle_id;
+    //     this.contractStartDate = this.newContractStartDate;
+    //     this.contractEndDate = this.newContractEndDate;
+    //     this.popStartDate = this.newPopStartDate;
+    //     this.popEndDate = this.newPopEndDate;
+    // }
     let contractProjectData = {
           cProjectData: {
             charge_code: row.charge_code,
@@ -988,15 +973,15 @@ export default {
     return date < startDate;  
     }      
   },  
-  disabledNewContractEndDate(date) {
-  if (this.newContractStartDate){
-    // console.log(this.contractStartDate, date)
-    date.setHours(0, 0, 0, 0);
-    const startDate = new Date(this.newContractStartDate);
-    startDate.setHours(48, 0, 0, 0);
-    return date < startDate;  
-    }      
-  },  
+  // disabledNewContractEndDate(date) {
+  // if (this.newContractStartDate){
+  //   // console.log(this.contractStartDate, date)
+  //   date.setHours(0, 0, 0, 0);
+  //   const startDate = new Date(this.newContractStartDate);
+  //   startDate.setHours(48, 0, 0, 0);
+  //   return date < startDate;  
+  //   }      
+  // },  
   handleClick(tab, event) {
     if (tab.paneName == 0){
        this.pane0 = true;
