@@ -23,7 +23,7 @@
         <el-table-column    
           label="Contract Program Manager POC"
           width="420"
-          prop="pm_contract_poc_id">
+          prop="pm_contract_poc_ids">
         <template slot-scope="scope" >
       <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
       <el-popover
@@ -46,24 +46,25 @@
       {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.pm_contract_poc_id ).mobile_number}} 
       </p>
       
-          <el-select
-            v-model="scope.row.pm_contract_poc_id"
+         <el-select        
+            v-model="scope.row.pm_contract_poc_ids"       
+            :load="log(scope.row.pm_contract_poc_ids)"
             filterable       
-            multiple
-            track-by="name"        
-            value-key="id"
+            multiple  
+            track-by="id"        
+            value-key="id"        
             class="w-100"
             slot="reference"
             default-first-option
             placeholder="Select Contract Program Manager POC"
           >
-            <el-option
-              v-for="item in pocOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
+          <el-option
+            v-for="item in pocOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          >
+          </el-option>
           </el-select>
           </el-popover>    
           </span>
@@ -100,7 +101,7 @@
         <el-table-column    
           label="Government COR POC/ Prime POC"
           width="420"
-          prop="gov_contract_poc_id">
+          prop="gov_contract_poc_ids">
         <template slot-scope="scope" >
         <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
         <el-popover
@@ -125,24 +126,25 @@
       </p>
           
           
-          <el-select
-            v-model="scope.row.gov_contract_poc_id"
+         <el-select
+            v-model="scope.row.gov_contract_poc_ids"       
+            :load="log(scope.row.gov_contract_poc_ids)"
             filterable       
-            track-by="name"     
-            multiple   
-            value-key="id"
+            multiple  
+            track-by="id"        
+            value-key="id"        
             class="w-100"
             slot="reference"
             default-first-option
-            placeholder="Select Government COR POC or Prime POC"
+            placeholder="Select Government COR/PRIME  POC"
           >
-            <el-option
+          <el-option
             v-for="item in pocOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          >
+          </el-option>
           </el-select>
           </el-popover> 
           </span>  
@@ -181,7 +183,7 @@
         <el-table-column    
           label="Contract Office POC"
           width="420"
-          prop="co_contract_poc_id">
+          prop="co_contract_poc_ids">
         <template slot-scope="scope" >
         <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
         <el-popover
@@ -206,23 +208,24 @@
           {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.co_contract_poc_id ).mobile_number}} 
           </p>
           <el-select
-            v-model="scope.row.co_contract_poc_id"
+            v-model="scope.row.co_contract_poc_ids"       
+            :load="log(scope.row.co_contract_poc_ids)"
             filterable       
-            track-by="name"        
-            value-key="id"
+            multiple  
+            track-by="id"        
+            value-key="id"        
             class="w-100"
             slot="reference"
             default-first-option
-            placeholder="Select Contracting Office POC"
-
+            placeholder="Select Contract Office POC"
           >
-            <el-option
-              v-for="item in pocOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
+          <el-option
+            v-for="item in pocOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          >
+          </el-option>
           </el-select>
           </el-popover> 
         </span>
@@ -318,7 +321,7 @@
         <el-table-column    
           label="Contract Program Manager POC"
           width="420"
-          prop="pm_contract_poc_id">
+          prop="pm_contract_poc_ids">
         <template slot-scope="scope" >
       <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
       <el-popover
@@ -342,23 +345,24 @@
       </p>
       
           <el-select
-            v-model="scope.row.pm_contract_poc_id"
+            v-model="pmContractPocIds"
+            :load="log(pmContractPocIds)"
             filterable       
-            multiple
-            track-by="name"        
-            value-key="id"
+            multiple  
+            track-by="id"        
+            value-key="id"        
             class="w-100"
             slot="reference"
             default-first-option
             placeholder="Select Contract Program Manager POC"
           >
-            <el-option
-              v-for="item in pocOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
+          <el-option
+            v-for="item in pocOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          >
+          </el-option>
           </el-select>
           </el-popover>    
           </span>
@@ -505,6 +509,7 @@
             filterable       
             track-by="name"        
             value-key="id"
+            multiple
             class="w-100"
             slot="reference"
             default-first-option
@@ -606,10 +611,11 @@ export default {
 
   data() {    
       return {
-        isEditing: false, 
+        isEditing: false,     
         nothing: true,
         rowIndex: null, 
         rowId: null, 
+        rowData: null,
         tabPosition: 'bottom',
         search: '',
     };
@@ -636,27 +642,23 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     let contractProjectData = {
-          cProjectData: {
-            // pm_poc_ids: row.pm_contract_poc_ids,
-            // gov_poc_ids: row.gov_contract_poc_ids,
-            // co_poc_ids: row.co_contract_poc_ids,  
-            pm_poc_ids: [13, 14, 15],
-            gov_poc_ids: [13, 14, 15],
-            co_poc_ids: [13, 14, 15],            
+        cProjectData: {
+          pm_poc_ids: row.pm_contract_poc_ids.map(t => t.id),
+          gov_poc_ids: row.gov_contract_poc_ids.map(t => t.id),
+          co_poc_ids: row.co_contract_poc_ids.map(t => t.id),     
         },
       };
       let id = row.id
-      console.log()
+      console.log(contractProjectData)
       this.updateContractProject({...contractProjectData, id})    
   },
   backHomeBtn() {
     window.location.pathname = "/";
   },    
-  editMode(index, rows) {
-    
+  editMode(index, rows) {    
     this.rowIndex = index,
     this.isEditing = true,
-    this.rowId = rows.id
+    this.rowId = rows.id  
   },  
   cancelEdits(index, rows) {
     this.rowIndex = null;
@@ -678,7 +680,7 @@ export default {
        return validProjects
      }      
     }, 
-  pocOptions(){
+   pocOptions(){
      if (this.contractPOCs && this.contractPOCs.length > 0){
       console.log(this.contractPOCs)
         return this.contractPOCs.map(t => t).filter(pocs => pocs && pocs.id && pocs.name !== null )
@@ -691,7 +693,7 @@ export default {
      },
   },
   watch: {
-   contractProjectStatus: {
+    contractProjectStatus: {
       handler() {
         if (this.contractProjectStatus == 200) {
           this.$message({
