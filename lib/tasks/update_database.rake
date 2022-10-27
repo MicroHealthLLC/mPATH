@@ -1,3 +1,16 @@
+desc 'Move existing POC records to multiple as feature is changed'
+task :move_existing_poc_to_multiple => :environment do
+  ContractProjectDatum.all.each do |contract_project_data|
+    pm_contract_poc_id = [contract_project_data.pm_contract_poc_id]
+    gov_contract_poc_id = [contract_project_data.gov_contract_poc_id]
+    co_contract_poc_id = [contract_project_data.co_contract_poc_id]
+    contract_project_data.add_contract_pocs(pm_contract_poc_id, ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE )
+    contract_project_data.add_contract_pocs(gov_contract_poc_id, ContractProjectPoc::GOVERNMENT_POC_TYPE)
+    contract_project_data.add_contract_pocs(co_contract_poc_id, ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE) 
+  end
+
+end
+
 desc "Remove duplicate project users"
 task :remove_duplicate_project_users => :environment do
   
