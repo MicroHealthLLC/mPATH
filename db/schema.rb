@@ -221,6 +221,14 @@ ActiveRecord::Schema.define(version: 2022_08_02_210024) do
     t.boolean "ignore_expired", default: false
   end
 
+  create_table "contract_project_poc_resources", charset: "utf8", force: :cascade do |t|
+    t.string "resource_type", null: false
+    t.integer "resource_id", null: false
+    t.integer "contract_project_poc_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "poc_type"
