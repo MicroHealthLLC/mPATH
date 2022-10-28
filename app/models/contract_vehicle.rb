@@ -44,7 +44,7 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_number: contract_number.as_json})
     # h.merge!({contract_project_pocs: contract_project_pocs.as_json})
 
-    _contract_project_poc_resources = contract_project_poc_resources
+    _contract_project_poc_resources = contract_project_poc_resources.includes(:contract_project_poc)
     _co_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE}.compact
     _gov_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::GOVERNMENT_POC_TYPE}.compact
     _pm_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE}.compact
