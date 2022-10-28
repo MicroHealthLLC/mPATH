@@ -1585,7 +1585,7 @@ export default {
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         console.log(data)
+        //  console.log(data)
          return data   
 
      } else {
@@ -1701,13 +1701,6 @@ export default {
          return unique
       }
     },
-  //  validEmail() {
-  //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
-  //         this.msg[this.email] = 'Please enter a valid email address';
-  //     } else {
-  //         this.msg[this.email] = '';
-  //     }
-  //   },
     contractTypes(){
      if (this.contractProjects && this.contractProjects.length > 0){
         let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))

@@ -384,21 +384,27 @@ const contractStore = {
         console.log(cProjectData.expired)
         formData.append("contract_project_data[ignore_expired]", cProjectData.expired)
       }
-      if(cProjectData.co_poc_ids){       
+
+      if(cProjectData.co_poc_ids.length > 0){   
+        console.log("there is pocs")    
         cProjectData.co_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[co_contract_poc_ids][]", ids)
         });
-      }
+      } else {
+        console.log("there is not pocs")    
+        formData.append("contract_project_data[co_contract_poc_ids]", [])
+      } 
       if(cProjectData.gov_poc_ids){       
         cProjectData.gov_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[gov_contract_poc_ids][]", ids)
         });
-      }
+      } else formData.append("contract_project_data[gov_contract_poc_ids]", [])
       if(cProjectData.pm_poc_ids){       
         cProjectData.pm_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[pm_contract_poc_ids][]", ids)
         });
-      }
+      } else formData.append("contract_project_data[pm_contract_poc_ids]", [])    
+
       formData.append("contract_project_data[total_founded_value]", cProjectData.tfv)
       formData.append("contract_project_data[billings_to_date]", cProjectData.btd)
       formData.append("contract_project_data[comments]", cProjectData.notes)      
