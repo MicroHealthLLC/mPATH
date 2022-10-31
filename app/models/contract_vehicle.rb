@@ -44,7 +44,7 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_number: contract_number.as_json})
     # h.merge!({contract_project_pocs: contract_project_pocs.as_json})
 
-    _contract_project_poc_resources = contract_project_poc_resources.includes(:contract_project_poc)
+    _contract_project_poc_resources = contract_project_poc_resources
     _co_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE}.compact
     _gov_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::GOVERNMENT_POC_TYPE}.compact
     _pm_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE}.compact
@@ -117,7 +117,7 @@ class ContractVehicle < ApplicationRecord
 
   def add_contract_pocs(_contract_poc_ids = [], poc_type)
     return if !_contract_poc_ids
-    contract_poc_ids = _contract_poc_ids.map(&:to_i)
+    contract_poc_ids = ContractProjectPoc.where(id: _contract_poc_ids.map(&:to_i)).pluck(:id)
     old_contract_project_poc_ids = ContractProjectPocResource.where(resource: self,poc_type: poc_type).pluck(:contract_project_poc_id)
 
     new_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - old_contract_project_poc_ids
