@@ -12,6 +12,9 @@ class ContractProjectDatum < ApplicationRecord
   has_many :project_contracts, dependent: :destroy
   has_many :projects, through: :project_contracts
 
+  has_many :contract_project_poc_resources, dependent: :destroy, as: :resource
+  has_many :contract_project_pocs, through: :contract_project_poc_resources
+
   validates :charge_code, :name, :contract_customer_id, :contract_naic_id, :contract_award_type_id, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, presence: true
   
   validate :number_check
@@ -51,6 +54,16 @@ class ContractProjectDatum < ApplicationRecord
     h.merge!({contract_type: contract_type.as_json})
     h.merge!({contract_current_pop: contract_current_pop.as_json})
     h.merge!({contract_number: contract_number.as_json})
+    
+    _contract_project_poc_resources = contract_project_poc_resources
+    _co_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE}.compact
+    _gov_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::GOVERNMENT_POC_TYPE}.compact
+    _pm_contract_poc_ids = _contract_project_poc_resources.map{|c| c.contract_project_poc if c.poc_type == ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE}.compact
+
+    h.merge!({co_contract_poc_ids: _co_contract_poc_ids})
+    h.merge!({gov_contract_poc_ids: _gov_contract_poc_ids})
+    h.merge!({pm_contract_poc_ids: _pm_contract_poc_ids})
+
     h
   end
 
@@ -60,7 +73,7 @@ class ContractProjectDatum < ApplicationRecord
 
   def self.params_to_permit
     [
-      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes, :ignore_expired
+      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes, :ignore_expired, pm_contract_poc_ids: [], gov_contract_poc_ids: [], co_contract_poc_ids: []
     ]
   end
 
@@ -116,14 +129,41 @@ class ContractProjectDatum < ApplicationRecord
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id], user_id: user.id).id
       end
       
-      if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
-        c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
-      end
+      pm_contract_poc_id = c_params.delete(:pm_contract_poc_ids)
+      gov_contract_poc_id = c_params.delete(:gov_contract_poc_ids)
+      co_contract_poc_id = c_params.delete(:co_contract_poc_ids)
+
       contract_project_data.attributes = c_params
       contract_project_data.user_id = user.id
-      contract_project_data.save
+      contract_project_data.save!
+      
+      contract_project_data.add_contract_pocs(pm_contract_poc_id, ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE )
+      contract_project_data.add_contract_pocs(gov_contract_poc_id, ContractProjectPoc::GOVERNMENT_POC_TYPE)
+      contract_project_data.add_contract_pocs(co_contract_poc_id, ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE)
+
     end
     contract_project_data
+  end
+
+  def add_contract_pocs(_contract_poc_ids = [], poc_type)
+    return if !_contract_poc_ids
+    contract_poc_ids = ContractProjectPoc.where(id: _contract_poc_ids.map(&:to_i)).pluck(:id)
+    old_contract_project_poc_ids = ContractProjectPocResource.where(resource: self,poc_type: poc_type).pluck(:contract_project_poc_id)
+
+    new_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - old_contract_project_poc_ids
+    remove_contract_project_poc_ids = (old_contract_project_poc_ids + contract_poc_ids ) - contract_poc_ids
+
+    if new_contract_project_poc_ids.any?
+      _contract_pocs = []
+      new_contract_project_poc_ids.each do |poc_id|
+        _contract_pocs << ContractProjectPocResource.new(resource: self, contract_project_poc_id: poc_id, poc_type: poc_type)
+      end
+      ContractProjectPocResource.import(_contract_pocs)
+    end
+    
+    if remove_contract_project_poc_ids
+      ContractProjectPocResource.where(resource: self, contract_project_poc_id: remove_contract_project_poc_ids, poc_type: poc_type).destroy_all
+    end
   end
 
 end

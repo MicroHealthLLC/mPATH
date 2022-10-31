@@ -567,6 +567,7 @@
                 class="informed w-100"
                 track-by="id"
                 value-key="id"
+                :load="log(informedTaskUsers)"
                 multiple
                 clearable
                 filterable
@@ -1435,8 +1436,11 @@ export default {
         notes: [],
       };
     },
+    log(e){
+      console.log(e)
+    },
     _isallowed(salut) {
-      console.log(this.$route)
+      // console.log(this.$route)
       return this.checkPrivileges("task_form", salut, this.$route)
     },
     selectedStage(item) {
@@ -2314,6 +2318,7 @@ export default {
     informedTaskUsers: {
       handler: function(value) {
         if (value) {
+          console.log(value)
           this.DV_task.informedUserIds = _.uniq(_.map(value, "id"));
         } else {
           this.DV_task.informedUserIds = [];

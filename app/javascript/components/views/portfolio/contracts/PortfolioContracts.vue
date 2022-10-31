@@ -1037,7 +1037,7 @@
    <el-tab-pane>
     <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
     <i v-tooltip="`Manage POCs`" class="far fa-plus-circle mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'd-none']" @click="openPocModal"></i> 
-    CONTRACT POC   
+    POCS
     </span>  
     <PortfolioContractPOC/>    
     </el-tab-pane>
@@ -1204,7 +1204,7 @@ export default {
         showClose: true,
       });
       this.isValidEmail = false
-       console.log( this.isValidEmail)
+      //  console.log( this.isValidEmail)
       return (false)
     }
   } ,
@@ -1216,7 +1216,7 @@ export default {
         return (true)    
       } else {
         this.isValidWorkNum = false
-          console.log(this.isValidWorkNum )
+          // console.log(this.isValidWorkNum )
         this.$message({
           message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
           type: "warning",
@@ -1229,11 +1229,11 @@ export default {
     if (m) {
   if (m.length == 14)
     {
-      console.log(m.length)
+    //   console.log(m.length)
       this.isValidMobNum = true
       return (true)    
     }
-       console.log(this.isValidMobNum )
+      //  console.log(this.isValidMobNum )
     this.$message({
       message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
       type: "warning",
@@ -1585,7 +1585,7 @@ export default {
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         console.log(data)
+        //  console.log(data)
          return data   
 
      } else {
@@ -1701,13 +1701,6 @@ export default {
          return unique
       }
     },
-  //  validEmail() {
-  //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
-  //         this.msg[this.email] = 'Please enter a valid email address';
-  //     } else {
-  //         this.msg[this.email] = '';
-  //     }
-  //   },
     contractTypes(){
      if (this.contractProjects && this.contractProjects.length > 0){
         let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))
