@@ -47,7 +47,7 @@
         fixed
         label="Vehicle Nick Name*"
         width="175"
-        prop="name">
+        >
       <template slot-scope="scope">
       <el-input
         tabindex="1"

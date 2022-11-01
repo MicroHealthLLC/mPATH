@@ -642,7 +642,6 @@ export default {
     },
    pocOptions(){
      if (this.contractPOCs && this.contractPOCs.length > 0){
-      console.log(this.contractPOCs)
         return this.contractPOCs.map(t => t).filter(pocs => pocs && pocs.id && pocs.name !== null )
       }
     },

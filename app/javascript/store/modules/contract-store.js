@@ -80,7 +80,6 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-          console.log(res)
         })
         .catch((err) => {
           console.log(err);
@@ -101,8 +100,7 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_DATA_OPTIONS", res.data);
-          console.log(res.data)
-        })
+          })
         .catch((err) => {
           console.log(err);
         })
@@ -351,7 +349,6 @@ const contractStore = {
   updateContractProject({ commit }, { cProjectData, id }) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     let formData = new FormData();
-    console.log(cProjectData, id )
       formData.append("contract_project_data[id]", id);
       formData.append("contract_project_data[charge_code]", cProjectData.charge_code);
       formData.append("contract_project_data[name]", cProjectData.name)
@@ -402,7 +399,7 @@ const contractStore = {
         formData.append("contract_project_data[ignore_expired]", cProjectData.expired)
       }
 
-      if(cProjectData.co_poc_ids.length > 0){
+      if(cProjectData.co_poc_ids && cProjectData.co_poc_ids.length > 0){
         cProjectData.co_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[co_contract_poc_ids][]", ids)
         });
@@ -410,7 +407,7 @@ const contractStore = {
         formData.append("contract_project_data[co_contract_poc_ids][]", '')
       }
 
-      if(cProjectData.gov_poc_ids.length > 0){
+      if(cProjectData.gov_poc_ids && cProjectData.gov_poc_ids.length > 0){
         cProjectData.gov_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[gov_contract_poc_ids][]", ids)
         });
@@ -418,7 +415,7 @@ const contractStore = {
         formData.append("contract_project_data[gov_contract_poc_ids][]", '')
       }
 
-      if(cProjectData.pm_poc_ids.length > 0){      
+      if(cProjectData.pm_poc_ids && cProjectData.pm_poc_ids.length > 0){      
         cProjectData.pm_poc_ids.forEach((ids) => {
           formData.append("contract_project_data[pm_contract_poc_ids][]", ids)
         });
@@ -476,7 +473,7 @@ const contractStore = {
     if (cVehicleData.contract_name){
       formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
     }
-    if(cVehicleData.co_poc_ids.length > 0){
+    if(cVehicleData.co_poc_ids && cVehicleData.co_poc_ids.length > 0){
       cVehicleData.co_poc_ids.forEach((ids) => {
         formData.append("contract_vehicle[co_contract_poc_ids][]", ids)
       });
@@ -484,7 +481,7 @@ const contractStore = {
       formData.append("contract_vehicle[co_contract_poc_ids][]", '')
     }
 
-    if(cVehicleData.gov_poc_ids.length > 0){
+    if(cVehicleData.gov_poc_ids && cVehicleData.gov_poc_ids.length > 0){
       cVehicleData.gov_poc_ids.forEach((ids) => {
         formData.append("contract_vehicle[gov_contract_poc_ids][]", ids)
       });
@@ -492,7 +489,7 @@ const contractStore = {
       formData.append("contract_vehicle[gov_contract_poc_ids][]", '')
     }
 
-    if(cVehicleData.pm_poc_ids.length > 0){      
+    if(cVehicleData.pm_poc_ids && cVehicleData.pm_poc_ids.length > 0){      
       cVehicleData.pm_poc_ids.forEach((ids) => {
         formData.append("contract_vehicle[pm_contract_poc_ids][]", ids)
       });

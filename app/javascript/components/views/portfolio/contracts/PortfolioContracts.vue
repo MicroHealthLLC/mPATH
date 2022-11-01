@@ -81,7 +81,7 @@
       fixed
       label="Project Name*"
       width="200"
-      prop="name">
+      >
       <template slot-scope="scope">
         <el-input
           size="small"
