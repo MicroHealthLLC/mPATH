@@ -319,6 +319,7 @@
                         <h5 class="mh-orange-text">
                           Projects
                           <span
+                          :load="log(groupProjects)"
                             v-if="
                               groupProjects &&
                                 groupProjects
@@ -393,7 +394,6 @@
                         <h5 class="mh-orange-text">
                           Vehicles
                           <span
-                          :load="log(groupVehicles)"
                             v-if="
                               groupVehicles && groupVehicles.length > 0 &&
                                 groupVehicles
@@ -864,24 +864,27 @@ export default {
       } else return [];
     },
     groupProjects() {
+      let facilities = this.facilities.filter(f => f.facilityName != "" || f.facilityName != null)
       if (
-        this.facilities &&
-        this.facilities.length &&
-        this.facilities.length > 0
+        facilities &&
+        facilities.length &&
+        facilities.length > 0
       ) {
-        return this.facilities;
+        return facilities;
       }
     },
-  groupContracts() {
-     if (this.contracts && this.contracts.length > 0) {
-          // console.log(this.contracts)
-          return this.contracts.filter(t => t !== 'null');
+    groupContracts() {
+    let contracts = this.contracts.filter(f => f.name != "" && f.name != null && f.name != 'null')
+     if (contracts && contracts.length > 0) {
+          // console.log(contracts)
+          return contracts
       } else return []
     },
     groupVehicles() {
-     if (this.vehicles && this.vehicles.length > 0) {
-          // console.log(this.vehicles)
-          return this.vehicles.filter(t => t !== 'null');
+      let vehicles = this.vehicles.filter(f => f.contract_vehicle.name != "" && f.contract_vehicle.name != null && f.contract_vehicle.name != 'null')
+     if (vehicles && vehicles.length > 0) {
+          // console.log(vehicles)
+          return vehicles
       } else return []
     },
     // groupContracts() {
