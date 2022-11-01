@@ -107,12 +107,6 @@ Rails.application.routes.draw do
         get "/tab_counts", to: "portfolio#tab_counts"
         get "/contracts", to: "portfolio#contracts"
       end
-
-      resources :privileges do
-        collection do
-          get :get_privileges, to: 'privileges#get_privileges'
-        end
-      end
       
       # For Admin panel
       get '/settings', to: 'settings#index'
