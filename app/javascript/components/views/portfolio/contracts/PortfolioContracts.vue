@@ -1275,8 +1275,8 @@ export default {
      this.fetchContracts(programId)  
   }, 
   editMode(index, rows) {
-    console.log(rows)
-    console.log(this.programNames)
+    //console.log(rows)
+    //console.log(this.programNames)
     this.rowIndex = index,
     this.rowId = rows.id
     if(rows.contract_current_pop_start_date){
@@ -1627,7 +1627,7 @@ export default {
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
         console.log(unique)
-         return unique.filter(u => u.name != "")
+         return unique.filter(u => u.name != "  " || u.name != null)
       }
     },
     primeOrSub(){
@@ -1641,14 +1641,14 @@ export default {
           let contractNums = this.contractDataOptions.contract_numbers
           .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
           .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
-         return contractNums        
+         return contractNums.filter(u => u.name != "  " || u.name != null)        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        return vehicles
+        return vehicles.filter(u => u.name != "  " || u.name != null)
       }
     },
     customerOptions(){
@@ -1668,7 +1668,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique.filter(u => u.name != "")
+        return unique.filter(u => u.name != "  " || u.name != null)
       }
     },
     awardTypes(){
@@ -1679,7 +1679,7 @@ export default {
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
         console.log(unique)
-        return unique.filter(u => u.name != "")
+        return unique.filter(u => u.name != "  " || u.name != null)
       }
     },
     pops(){
