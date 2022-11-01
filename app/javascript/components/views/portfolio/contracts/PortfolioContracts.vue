@@ -1150,10 +1150,9 @@ export default {
       "fetchContractVehicles",
       "fetchContractDataOptions"
     ]),
-    // log(e){
-    //   console.log("programNames")
-    //   console.log(e)     
-    // },
+    log(e){
+      console.log(e)     
+    },
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
@@ -1627,7 +1626,8 @@ export default {
         let unique = [];
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+        console.log(unique)
+         return unique.filter(u => u.name != "")
       }
     },
     primeOrSub(){
@@ -1668,7 +1668,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(u => u.name != "")
       }
     },
     awardTypes(){
@@ -1678,7 +1678,8 @@ export default {
         let unique = [];
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        console.log(unique)
+        return unique.filter(u => u.name != "")
       }
     },
     pops(){
