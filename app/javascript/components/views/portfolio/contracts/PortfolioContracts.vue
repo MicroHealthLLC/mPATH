@@ -384,7 +384,7 @@
       <el-table-column
       label="Prime vs Sub"
       width="55"
-      prop="prime_or_sub">
+      >
      <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
