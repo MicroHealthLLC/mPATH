@@ -3,7 +3,7 @@ require 'uri'
 module Tasker
   extend ActiveSupport::Concern
 
-  included do
+  included do |base|
     # Do not include it for Lesson
     if name != "Lesson"
       default_scope {order(due_date: :asc)}
