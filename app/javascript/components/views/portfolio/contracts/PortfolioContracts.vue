@@ -81,7 +81,7 @@
       fixed
       label="Project Name*"
       width="200"
-      prop="name">
+      >
       <template slot-scope="scope">
         <el-input
           size="small"
@@ -752,6 +752,20 @@
           class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
         </el-button>
+        <el-button 
+        type="default" 
+        v-tooltip="`Cancel`"       
+        v-if="scope.$index == createRow && (
+          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
+          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
+          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
+          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
+          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          )"
+        @click.prevent="cancelNewRow(scope.row)"  
+        class="bg-secondary btn-sm text-light mx-0">
+      <i class="fas fa-ban"></i>
+        </el-button>
        </template>
 
     </el-table-column>
@@ -1150,10 +1164,9 @@ export default {
       "fetchContractVehicles",
       "fetchContractDataOptions"
     ]),
-    // log(e){
-    //   console.log("programNames")
-    //   console.log(e)     
-    // },
+    log(e){
+      console.log(e)     
+    },
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
@@ -1276,8 +1289,8 @@ export default {
      this.fetchContracts(programId)  
   }, 
   editMode(index, rows) {
-    console.log(rows)
-    console.log(this.programNames)
+    //console.log(rows)
+    //console.log(this.programNames)
     this.rowIndex = index,
     this.rowId = rows.id
     if(rows.contract_current_pop_start_date){
@@ -1479,6 +1492,29 @@ export default {
     this.rowIndex = null;
     this.rowId = null;       
   },
+  cancelNewRow(rows) {
+    console.log(rows)
+    let row = rows
+    row.charge_code = ""
+    row.contract_award_to_id = null
+    row.contract_award_type = null
+    row.contract_award_type_id = null
+    row.contract_current_pop_id = null
+    row.contract_customer_id = null
+    row.contract_naic_id = null
+    row.contract_number_id = null
+    row.contract_pop_id = null
+    row.contract_type_id = null
+    row.contract_vehicle_id = null
+    row.name = ""
+    row.notes = ""
+    row.prime_or_sub = ""
+    row.total_contract_value = ""
+    this.newContractStartDate = null
+    this.newContractEndDate = null
+    this.newPopStartDate = null
+    this.newPopEndDate = null
+  },
   handleDelete(index, row) {
     console.log(index, row);
   },
@@ -1585,7 +1621,7 @@ export default {
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         console.log(data)
+        //  console.log(data)
          return data   
 
      } else {
@@ -1627,7 +1663,8 @@ export default {
         let unique = [];
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+        console.log(unique)
+         return unique.filter(u => u.name != "  ")
       }
     },
     primeOrSub(){
@@ -1641,14 +1678,14 @@ export default {
           let contractNums = this.contractDataOptions.contract_numbers
           .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
           .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
-         return contractNums        
+         return contractNums.filter(u => u.name != "  ")        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        return vehicles
+        return vehicles.filter(u => u.name != "  ")
       }
     },
     customerOptions(){
@@ -1668,7 +1705,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(u => u.name != "  ")
       }
     },
     awardTypes(){
@@ -1678,7 +1715,8 @@ export default {
         let unique = [];
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        console.log(unique)
+        return unique.filter(u => u.name != "  ")
       }
     },
     pops(){
@@ -1701,13 +1739,6 @@ export default {
          return unique
       }
     },
-  //  validEmail() {
-  //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
-  //         this.msg[this.email] = 'Please enter a valid email address';
-  //     } else {
-  //         this.msg[this.email] = '';
-  //     }
-  //   },
     contractTypes(){
      if (this.contractProjects && this.contractProjects.length > 0){
         let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))

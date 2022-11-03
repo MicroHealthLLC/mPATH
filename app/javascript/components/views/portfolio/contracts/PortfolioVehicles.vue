@@ -47,7 +47,7 @@
         fixed
         label="Vehicle Nick Name*"
         width="175"
-        prop="name">
+        >
       <template slot-scope="scope">
       <el-input
         tabindex="1"
@@ -500,6 +500,17 @@
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light mx-0">               
           <i class="far fa-save"></i>
+          </el-button>
+          <el-button 
+          type="default" 
+          v-tooltip="`Cancel`"       
+          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
+            scope.row.full_name && scope.row.contract_sub_category_id &&
+            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
+            newBpStart && newBpEnd)"
+          @click.prevent="cancelNewRow(scope.row)"  
+          class="bg-secondary btn-sm text-light mx-0">
+        <i class="fas fa-ban"></i>
           </el-button> 
           <!-- <el-button
             type="default"
@@ -517,6 +528,7 @@
       </el-table>
       </div>
       </el-tab-pane>
+
       <el-tab-pane class="px-3"  style="postion:relative" label="SUBCONTRACT">
       <div style="height:72vh; overflow-y:auto">
       <el-table
@@ -820,6 +832,15 @@
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
             </el-button> 
+            <el-button 
+            type="default" 
+            v-tooltip="`Cancel`"       
+            v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
+              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+            @click.prevent="cancelNewRow(scope.row)"  
+            class="bg-secondary btn-sm text-light mx-0">
+            <i class="fas fa-ban"></i>
+            </el-button>
             <!-- <el-button
               type="default"
               @click="saveContractVehicle(scope.$index, scope.row)"
@@ -1096,6 +1117,25 @@ export default {
     this.rowId = null;
     this.updateContractNum = ''
        
+  },
+  cancelNewRow(rows) {
+    let row = rows
+    row.name = ""
+    row.subprime_name = ""
+    row.contract_name = ""
+    row.full_name = ""
+    row.prime_name = ""
+    row.contract_vehicle_id = null
+    row.contract_vehicle_type_id = null
+    row.contract_sub_category_id = null
+    row.contract_agency_id = null
+    row.caf_fees = ""
+    row.ceiling = ""
+    this.newContractNum = '';
+    this.newBpStart = null;
+    this.newBpEnd = null;
+    this.newOpStart = null;
+    this.newOpEnd = null;
   },
   backHomeBtn() {
       window.location.pathname = "/";
