@@ -504,10 +504,9 @@
           <el-button 
           type="default" 
           v-tooltip="`Cancel`"       
-          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
-            scope.row.full_name && scope.row.contract_sub_category_id &&
-            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
-            newBpStart && newBpEnd)"
+          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.prime_name || scope.row.name || scope.row.full_name || scope.row.contract_sub_category_id ||
+            scope.row.contract_agency_id || scope.row.contract_vehicle_type_id ||
+            newBpStart || newBpEnd || scope.row.caf_fees || scope.row.ceiling || newContractNum || newOpStart || newOpEnd)"
           @click.prevent="cancelNewRow(scope.row)"  
           class="bg-secondary btn-sm text-light mx-0">
         <i class="fas fa-ban"></i>
@@ -835,8 +834,7 @@
             <el-button 
             type="default" 
             v-tooltip="`Cancel`"       
-            v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
-              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+            v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name || scope.row.name || scope.row.full_name || scope.row.contract_agency_id || scope.row.contract_vehicle_type_id || newContractNum || scope.row.contract_name)" 
             @click.prevent="cancelNewRow(scope.row)"  
             class="bg-secondary btn-sm text-light mx-0">
             <i class="fas fa-ban"></i>
@@ -1118,25 +1116,32 @@ export default {
     this.updateContractNum = ''
        
   },
-  cancelNewRow(rows) {
-    let row = rows
-    row.name = ""
-    row.subprime_name = ""
-    row.contract_name = ""
-    row.full_name = ""
-    row.prime_name = ""
-    row.contract_vehicle_id = null
-    row.contract_vehicle_type_id = null
-    row.contract_sub_category_id = null
-    row.contract_agency_id = null
-    row.caf_fees = ""
-    row.ceiling = ""
-    this.newContractNum = '';
-    this.newBpStart = null;
-    this.newBpEnd = null;
-    this.newOpStart = null;
-    this.newOpEnd = null;
-  },
+    cancelNewRow(rows) {
+      let row = rows
+      for (let i in row) {
+        if (typeof row[i] == "string" && row[i] != "") {
+          row[i] = ""
+        }
+        else if (typeof row[i] == "number" && row[i] != null) {
+          row[i] = null
+        }
+      }
+      this.newContractNum != '' ?
+        this.newContractNum = ''
+        : this.newContractNum
+      this.newBpEnd ?
+        this.newBpEnd = null
+        : this.newBpEnd
+      this.newBpStart ?
+        this.newBpStart = null
+        : this.newBpStart
+      this.newOpEnd ?
+        this.newOpEnd = null
+        : this.newOpEnd
+      this.newOpStart ?
+        this.newOpStart = null
+        : this.newOpStart
+    },
   backHomeBtn() {
       window.location.pathname = "/";
   },    
