@@ -756,11 +756,10 @@
         type="default" 
         v-tooltip="`Cancel`"       
         v-if="scope.$index == createRow && (
-          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
-          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
-          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
-          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          scope.row.charge_code || scope.row.name || scope.row.contract_customer_id || scope.row.contract_vehicle_id || scope.row.contract_award_to_id || scope.row.contract_number_id || 
+          scope.row.contract_naic_id || scope.row.contract_award_type_id ||
+          scope.row.contract_type_id || scope.row.prime_or_sub || newContractStartDate || newContractEndDate ||  scope.row.total_contract_value
+          || scope.row.contract_pop_id || scope.row.contract_current_pop_id || newPopStartDate || newPopEndDate || scope.row.notes
           )"
         @click.prevent="cancelNewRow(scope.row)"  
         class="bg-secondary btn-sm text-light mx-0">
@@ -1018,7 +1017,14 @@
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
-            
+            </el-button>
+            <el-button 
+            type="default" 
+            v-tooltip="`Cancel Edit`"       
+            v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name || scope.row.title || scope.row.email || scope.row.notes || mobNumberValNew || workNumberValNew)"
+            @click.prevent="cancelNewPoc(scope.row)"  
+            class="bg-secondary btn-sm text-light mx-0">
+          <i class="fas fa-ban"></i>
             </el-button>
           </template>
 
@@ -1488,6 +1494,31 @@ export default {
     this.workNumberVal = null;
        
   },
+  cancelNewPoc(rows) {
+    let row = rows
+    for (let i in row) {
+      if (row[i] != "") {
+        row[i] = ""
+      }
+    }
+    this.workNumberValNew ?
+        this.workNumberValNew = null
+        : this.workNumberValNew
+    this.mobNumberValNew ?
+      this.mobNumberValNew = null
+      : this.mobNumberValNew
+    /* row.name = ""
+    row.email = ""
+    row.title = ""
+    row.notes = "" 
+    this.workNumberValNew = null
+    this.mobNumberValNew = null*/
+  },
+  /* checkForInputs(row) {
+    if (Object.values(row).length > 0) {
+      return true
+    } else return false
+  }, */
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;       
@@ -1495,25 +1526,26 @@ export default {
   cancelNewRow(rows) {
     console.log(rows)
     let row = rows
-    row.charge_code = ""
-    row.contract_award_to_id = null
-    row.contract_award_type = null
-    row.contract_award_type_id = null
-    row.contract_current_pop_id = null
-    row.contract_customer_id = null
-    row.contract_naic_id = null
-    row.contract_number_id = null
-    row.contract_pop_id = null
-    row.contract_type_id = null
-    row.contract_vehicle_id = null
-    row.name = ""
-    row.notes = ""
-    row.prime_or_sub = ""
-    row.total_contract_value = ""
-    this.newContractStartDate = null
-    this.newContractEndDate = null
-    this.newPopStartDate = null
-    this.newPopEndDate = null
+    for (let i in row) {
+      if (typeof row[i] == "string" && row[i] != "") {
+        row[i] = ""
+      }
+      else if (typeof row[i] == "number" && row[i] != null) {
+        row[i] = null
+      }
+    }
+    this.newContractStartDate ?
+      this.newContractStartDate = null
+      : this.newContractStartDate
+    this.newContractEndDate ?
+      this.newContractEndDate = null
+      : this.newContractEndDate
+    this.newPopEndDate ?
+      this.newPopEndDate = null
+      : this.newPopEndDate
+    this.newPopStartDate ?
+      this.newPopStartDate = null
+      : this.newPopStartDate
   },
   handleDelete(index, row) {
     console.log(index, row);
