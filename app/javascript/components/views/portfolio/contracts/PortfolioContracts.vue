@@ -1695,7 +1695,7 @@ export default {
         let unique = [];
         // console.log(customers)
         customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(t => t.name != '  ')
       }
     },
     naicsOptions(){
@@ -1726,7 +1726,7 @@ export default {
         let unique = [];
         // console.log(pops)
         pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name != '  ')
       }
     },
     currentPops(){
@@ -1736,7 +1736,7 @@ export default {
         let unique = [];
         // console.log(currentPoPs)
         currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name != '  ' || t.name != 'null')
       }
     },
     contractTypes(){
@@ -1746,7 +1746,7 @@ export default {
         let unique = [];
         // console.log(contractTypes)
         contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name != '  ')
       }
     },
   },
