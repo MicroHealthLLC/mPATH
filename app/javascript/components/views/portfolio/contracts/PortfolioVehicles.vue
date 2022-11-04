@@ -124,7 +124,7 @@
 
         >
           <el-option
-            v-for="item in sinsOptions.filter(t => t.name !== 'null')"
+            v-for="item in sinsOptions"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -1203,7 +1203,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       agencies.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+      return unique.filter(t => t.name != '  ')
     }
   },
   sinsOptions(){
@@ -1213,7 +1213,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       sins.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+      return unique.filter(t => t.name != '  ')
     }
   },
   vehicleTypes(){
@@ -1223,7 +1223,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+      return unique.filter(t => t.name != '  ')
      }
     },
   },
