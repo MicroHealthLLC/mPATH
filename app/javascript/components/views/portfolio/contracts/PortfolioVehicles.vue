@@ -493,9 +493,9 @@
             <el-button
             type="default"
             @click="saveContractVehicle(scope.$index, scope.row)"
-            v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
-            scope.row.full_name && scope.row.contract_sub_category_id &&
-            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
+            v-if="( _isallowed('write') )  && scope.$index == createRow && (checkEmpty(scope.row.name) && 
+            checkEmpty(scope.row.full_name) && checkEmpty(scope.row.contract_sub_category_id) &&
+            checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id) &&
             newBpStart && newBpEnd)" 
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light mx-0">               
@@ -825,9 +825,10 @@
               <el-button
               type="default"
               @click="saveContractVehicle(scope.$index, scope.row)"
-              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
-              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (checkEmpty(scope.row.subprime_name) && checkEmpty(scope.row.name) && 
+              checkEmpty(scope.row.full_name) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id))" 
               v-tooltip="`Save`" 
+              :load="log(scope.row)"
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
             </el-button> 
@@ -919,15 +920,23 @@ export default {
     ]),
     _isallowed(salut) {     
      return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    },
+    log(e) {
+      console.log(e)
     }, 
     handleClick(tab, event){
-      console.log(tab)
-      console.log(`${"event:", event}`)
+      /* console.log(tab)
+      console.log(`${"event:", event}`) */
     },
     openContractTask(index, row, programId){
       this.vehicleProgID = programId
       this.programVehicleRowID = row.id
       this.fetchVehicles(programId)  
+  },
+  checkEmpty(str){
+    if (typeof str == "string") {
+      return str.trim().length === 0 ? "" : str
+    }
   }, 
     getSummaries(param) {
     const { columns, data } = param;
@@ -1208,7 +1217,8 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       agencies.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique.filter(t => t.name != '  ')
+
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
     }
   },
   sinsOptions(){
@@ -1218,7 +1228,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       sins.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique.filter(t => t.name != '  ')
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
     }
   },
   vehicleTypes(){
@@ -1228,7 +1238,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique.filter(t => t.name != '  ')
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
      }
     },
   },
