@@ -742,11 +742,11 @@
           type="default"
           @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow && (
-          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
-          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
-          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
-          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          checkEmpty(scope.row.charge_code) && checkEmpty(scope.row.name) && checkEmpty(scope.row.contract_customer_id) && 
+          (checkEmpty(scope.row.contract_award_to_id) || checkEmpty(scope.row.contract_number_id)) && 
+          checkEmpty(scope.row.contract_naic_id) && checkEmpty(scope.row.contract_award_type_id) &&
+          checkEmpty(scope.row.contract_type_id) && newContractStartDate && newContractEndDate &&  checkEmpty(scope.row.total_contract_value)
+          && checkEmpty(scope.row.contract_pop_id) && newPopStartDate && newPopEndDate
           )" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
@@ -1013,7 +1013,7 @@
             <el-button
               type="default"
               @click="saveContractPOC(scope.$index, scope.row)"             
-              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name)" 
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && checkEmpty(scope.row.name)" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -1507,18 +1507,15 @@ export default {
     this.mobNumberValNew ?
       this.mobNumberValNew = null
       : this.mobNumberValNew
-    /* row.name = ""
-    row.email = ""
-    row.title = ""
-    row.notes = "" 
-    this.workNumberValNew = null
-    this.mobNumberValNew = null*/
   },
-  /* checkForInputs(row) {
-    if (Object.values(row).length > 0) {
-      return true
-    } else return false
-  }, */
+  checkEmpty(str) {
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
+    }
+    if (typeof str != "string") {
+      return str
+    }
+  },
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;       
@@ -1696,7 +1693,7 @@ export default {
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
         console.log(unique)
-         return unique.filter(u => u.name != "  ")
+         return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     primeOrSub(){
@@ -1710,14 +1707,14 @@ export default {
           let contractNums = this.contractDataOptions.contract_numbers
           .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
           .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
-         return contractNums.filter(u => u.name != "  ")        
+         return contractNums.filter(u => u.name.trim().length !== 0 && u.name !== 'null')        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        return vehicles.filter(u => u.name != "  ")
+        return vehicles.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     customerOptions(){
@@ -1727,7 +1724,7 @@ export default {
         let unique = [];
         // console.log(customers)
         customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique.filter(t => t.name != '  ')
+        return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     naicsOptions(){
@@ -1737,7 +1734,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique.filter(u => u.name != "  ")
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     awardTypes(){
@@ -1748,7 +1745,7 @@ export default {
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
         console.log(unique)
-        return unique.filter(u => u.name != "  ")
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     pops(){
@@ -1758,7 +1755,7 @@ export default {
         let unique = [];
         // console.log(pops)
         pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique.filter(t => t.name != '  ')
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     currentPops(){
@@ -1768,7 +1765,7 @@ export default {
         let unique = [];
         // console.log(currentPoPs)
         currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique.filter(t => t.name != '  ' || t.name != 'null')
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     contractTypes(){
@@ -1778,7 +1775,7 @@ export default {
         let unique = [];
         // console.log(contractTypes)
         contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique.filter(t => t.name != '  ')
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
   },
