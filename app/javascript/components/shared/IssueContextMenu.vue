@@ -142,7 +142,7 @@ export default {
             children: [
               ...group.facilities
                 .filter(
-                  (facility) => this.isAllowedFacility("write", 'issues', facility.facility.id) && facility.facility.id !== this.issue.facilityId
+                  (facility) => this.isAllowedFacility("write", 'issue_index', facility.facility.id) && facility.facility.id !== this.issue.facilityId
                 )
                 .map((facility) => {
                   return {
@@ -165,7 +165,7 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'issues', contract.projectContractId) && contract.projectContractId !== this.issue.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'issue_index', contract.projectContractId) && contract.projectContractId !== this.issue.projectContractId
                   )
                   .map((contract) => {
                     return {
@@ -190,7 +190,7 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowedFacility("write", 'issues', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.issue.projectContractVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'issue_index', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.issue.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
@@ -225,21 +225,9 @@ export default {
      },
      isAllowedFacility(salut, module, facility_id) {
          if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
+          return this.checkPrivileges(module, salut, this.$route)
         }
       },
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-    // closes context menu
     close() {
       this.show = false;
       this.left = 0;

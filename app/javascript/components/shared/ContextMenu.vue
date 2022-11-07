@@ -142,7 +142,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'task_index', facility.facility.id) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -222,28 +222,15 @@ export default {
   methods: {
     ...mapActions(["taskDeleted"]),
     ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
-    //TODO: change the method name of isAllowed
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
 
-      // Temporary _isallowed method until contract projectPrivileges is fixed
-      isAllowed(salut) {
+    isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
-     },
-      isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);          
-        }
-      },
+    },
+    isAllowedFacility(salut, module, facility_id) {
+      if (this.$route.params.projectId) {
+        return this.checkPrivileges(module, salut, this.$route)       
+      }
+    },
     // closes context menu
     close() {
       this.show = false;
