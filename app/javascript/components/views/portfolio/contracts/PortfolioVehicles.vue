@@ -269,6 +269,8 @@
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow && scope.row.contract_number">
     {{ scope.row.contract_number.name }} 
     </span>
+    <span v-else-if="scope.$index !== createRow">N/A
+    </span>
 
         </template>
       </el-table-column>
@@ -493,9 +495,7 @@
             <el-button
             type="default"
             @click="saveContractVehicle(scope.$index, scope.row)"
-            v-if="( _isallowed('write') )  && scope.$index == createRow && (checkEmpty(scope.row.name) && 
-            checkEmpty(scope.row.full_name) && checkEmpty(scope.row.contract_sub_category_id) &&
-            checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id) &&
+            v-if="( _isallowed('write') )  && scope.$index == createRow && (checkEmpty(scope.row.name) && checkEmpty(scope.row.full_name) && checkEmpty(scope.row.prime_name) && checkEmpty(scope.row.contract_sub_category_id) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id) &&
             newBpStart && newBpEnd)" 
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light mx-0">               
@@ -758,6 +758,7 @@
       <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow && scope.row.contract_number">
       {{ scope.row.contract_number.name }} 
       </span>
+      <span v-else-if="scope.$index !== subCreateRow">N/A</span>
 
           </template>
         </el-table-column>
@@ -933,11 +934,14 @@ export default {
       this.programVehicleRowID = row.id
       this.fetchVehicles(programId)  
   },
-  checkEmpty(str){
-    if (typeof str == "string") {
-      return str.trim().length === 0 ? "" : str
+  checkEmpty(str) {
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
     }
-  }, 
+    if (typeof str != "string") {
+      return str
+    }
+  },
     getSummaries(param) {
     const { columns, data } = param;
     const sums = [];

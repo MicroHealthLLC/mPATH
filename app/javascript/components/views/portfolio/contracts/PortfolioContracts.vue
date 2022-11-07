@@ -1509,7 +1509,12 @@ export default {
       : this.mobNumberValNew
   },
   checkEmpty(str) {
-    return str && str.trim().length === 0 ? "" : str
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
+    }
+    if (typeof str != "string") {
+      return str
+    }
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
