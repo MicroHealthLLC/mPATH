@@ -117,7 +117,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "filteredFacilityGroups"]),
     // get position of context menu
     style() {
       return {
@@ -135,14 +135,14 @@ export default {
     treeFormattedData() {
     if(this.$route.params.projectId){
       let data = [];
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'risks', facility.facility.id) && facility.facility.id !== this.risk.facilityId
+                (facility) => this.isAllowedFacility("write", 'risk_form', facility.facility.id) && facility.facility.id !== this.risk.facilityId
               )
               .map((facility) => {
                 return {
@@ -165,7 +165,7 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'risks', contract.projectContractId) && contract.projectContractId !== this.risk.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'risk_form', contract.projectContractId) && contract.projectContractId !== this.risk.projectContractId
                   )
                   .map((contract) => {
                     return {
@@ -190,7 +190,7 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowedFacility("write", 'risks', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.risk.projectContractVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'risk_form', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.risk.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
@@ -222,15 +222,12 @@ export default {
     ...mapMutations(["updateRisksHash", "updateContractRisks", "updateVehicleRisks"]),
     isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
-     },
-      isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);          
-        }
-      },
+    },
+    isAllowedFacility(salut, module, facility_id) {
+      if (this.$route.params.projectId) {
+      return this.checkPrivileges(module, salut, this.$route)         
+      }
+    },
     close() {
       this.show = false;
       this.left = 0;

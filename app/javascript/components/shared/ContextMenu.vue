@@ -27,7 +27,7 @@
             :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
-          <el-tree
+          <el-tree        
             :data="treeFormattedData"
             :props="defaultProps"
             :filter-node-method="filterNode"
@@ -99,7 +99,7 @@ export default {
   props: {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
-    facilityGroups: Array,
+    // facilityGroups: Array,
     task: Object,
   },
   data() {
@@ -117,7 +117,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups",]),
     // get position of context menu
     style() {
       return {
@@ -135,14 +135,14 @@ export default {
    treeFormattedData() {
     if(this.$route.params.projectId){
       let data = [];
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'task_index', facility.facility.id) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -222,28 +222,17 @@ export default {
   methods: {
     ...mapActions(["taskDeleted"]),
     ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
-    //TODO: change the method name of isAllowed
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-
-      // Temporary _isallowed method until contract projectPrivileges is fixed
-      isAllowed(salut) {
+    log(e){
+      console.log(e)
+    },
+    isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
-     },
-      isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);          
-        }
-      },
+    },
+    isAllowedFacility(salut, module, facility_id) {
+      if (this.$route.params.projectId) {
+        return this.checkPrivileges(module, salut, this.$route)       
+      }
+    },
     // closes context menu
     close() {
       this.show = false;
