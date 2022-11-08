@@ -27,7 +27,7 @@
             :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
-          <el-tree
+          <el-tree        
             :data="treeFormattedData"
             :props="defaultProps"
             :filter-node-method="filterNode"
@@ -99,7 +99,7 @@ export default {
   props: {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
-    facilityGroups: Array,
+    // facilityGroups: Array,
     task: Object,
   },
   data() {
@@ -117,7 +117,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups",]),
     // get position of context menu
     style() {
       return {
@@ -135,7 +135,7 @@ export default {
    treeFormattedData() {
     if(this.$route.params.projectId){
       let data = [];
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
@@ -222,7 +222,9 @@ export default {
   methods: {
     ...mapActions(["taskDeleted"]),
     ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
-
+    log(e){
+      console.log(e)
+    },
     isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
     },
