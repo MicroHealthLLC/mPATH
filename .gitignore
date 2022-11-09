@@ -29,6 +29,7 @@
 # Ignore database.yml and puma files as remote servers use their own
 /config/database.yml
 /config/puma.rb
+/config/secrets.yml
 
 /public/packs
 /public/packs-test
