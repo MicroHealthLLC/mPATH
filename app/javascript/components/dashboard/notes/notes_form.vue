@@ -262,7 +262,7 @@
           type: 'warning'
         }).then(() => {
             // TODO: this is sending facilityProjectId in facilityId parameter. So now we will process with note id
-            this.noteDeleted({note: this.DV_note, facilityId: this.$route.params.projectId, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+          this.noteDeleted({note: this.DV_note, facilityId: this.$route.params.projectId, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
         });
       },
       cancelNoteSave() {
