@@ -138,7 +138,7 @@
           <div class="col pt-0 text-right">
           <button 
             v-if="_isallowed('write')"
-            :disabled="disableSave(project.pointOfContact, project.email, project.phoneNumber)"
+            :disabled="!project.pointOfContact"
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
@@ -329,9 +329,18 @@ export default {
     },
     updateContactInfo() {
       let formData = new FormData();
-          formData.append("facility[point_of_contact]", this.project.pointOfContact);  
-          formData.append("facility[phone_number]", this.project.phoneNumber);
-          formData.append("facility[email]",this.project.email);
+
+          if(this.project.pointOfContact){
+            formData.append("facility[point_of_contact]", this.project.pointOfContact);  
+          }
+          if(this.project.email){
+            formData.append("facility[email]",this.project.email);
+          }
+          if(this.project.phoneNumber){
+            formData.append("facility[phone_number]", this.project.phoneNumber)
+          }
+   
+  
     
       // formData.append("commit", "Update Project");
       // let url = `/admin/facilities/${this.$route.params.projectId}`;
