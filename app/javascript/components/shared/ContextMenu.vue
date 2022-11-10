@@ -142,7 +142,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'task_index', facility.facility.id) && facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -167,7 +167,7 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowed("write", 'tasks', contract.projectContractId) && contract.projectContractId !== this.task.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'task_contract_context_menu', {project_contract_id: contract.projectContractId} ) && contract.projectContractId !== this.task.projectContractId
                   )
                   .map((contract) => {
                     return {
@@ -192,7 +192,7 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowed("write", 'tasks', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'task_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId} ) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
@@ -226,10 +226,8 @@ export default {
     isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
     },
-    isAllowedFacility(salut, module, facility_id) {
-      if (this.$route.params.projectId) {
-        return this.checkPrivileges(module, salut, this.$route)       
-      }
+    isAllowedFacility(salut, module, extraData) {
+      return this.checkPrivileges(module, salut, this.$route, extraData)  
     },
     // closes context menu
     close() {

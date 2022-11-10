@@ -153,6 +153,88 @@ const AuthorizationService = {
           facility_project_privileges.project_risks.includes(s)
         );
       }
+    } else if(["task_project_context_menu", "task_contract_context_menu", "task_vehicle_context_menu", 
+    "issue_project_context_menu", "issue_contract_context_menu", "issue_vehicle_context_menu",
+    "risk_project_context_menu", "risk_contract_context_menu", "risk_vehicle_context_menu",
+  , ].includes(page)){
+
+      let facility_project_id = extraData["facility_project_id"]
+      let project_contract_id = extraData["project_contract_id"]
+      let project_contract_vehicle_id = extraData["project_contract_vehicle_id"]
+      var is_task = ["task_project_context_menu", "task_contract_context_menu", "task_vehicle_context_menu"].includes(page)
+      var is_issue = ["issue_project_context_menu", "issue_contract_context_menu", "issue_vehicle_context_menu"].includes(page)
+      var is_risk = ["risk_project_context_menu", "risk_contract_context_menu", "risk_vehicle_context_menu"].includes(page)
+      
+      if (project_contract_id) {
+        let contract_privileges = AuthorizationService.contractPrivilegesRoles[project_contract_id];
+        
+        if(is_task){
+          return (
+            contract_privileges &&
+            contract_privileges.contract_tasks &&
+            contract_privileges.contract_tasks.includes(s)
+          );
+        } else if(is_issue){
+          return (
+            contract_privileges &&
+            contract_privileges.contract_issues &&
+            contract_privileges.contract_issues.includes(s)
+          );
+        } else if(is_risk){
+          return (
+            contract_privileges &&
+            contract_privileges.contract_risks &&
+            contract_privileges.contract_risks.includes(s)
+          );
+        }
+
+      } else if (project_contract_vehicle_id) {
+        let contract_vehicle_privileges = AuthorizationService.contractVehiclePrivilegesRoles[project_contract_vehicle_id];
+        
+        if(is_task){
+          return (
+            contract_vehicle_privileges &&
+            contract_vehicle_privileges.contract_tasks &&
+            contract_vehicle_privileges.contract_tasks.includes(s)
+          );
+        } else if(is_issue){
+          return (
+            contract_vehicle_privileges &&
+            contract_vehicle_privileges.contract_issues &&
+            contract_vehicle_privileges.contract_issues.includes(s)
+          );
+        } else if(is_risk){
+          return (
+            contract_vehicle_privileges &&
+            contract_vehicle_privileges.contract_risks &&
+            contract_vehicle_privileges.contract_risks.includes(s)
+          );
+        }
+
+      } else if (facility_project_id) {
+        let facility_project_privileges = AuthorizationService.projectPrivilegesRoles[facility_project_id];
+        console.log(page, extraData, facility_project_id, facility_project_privileges)
+
+        if(is_task){
+          return (
+            facility_project_privileges &&
+            facility_project_privileges.project_tasks &&
+            facility_project_privileges.project_tasks.includes(s)
+          );
+        } else if(is_issue){
+          return (
+            facility_project_privileges &&
+            facility_project_privileges.project_issues &&
+            facility_project_privileges.project_issues.includes(s)
+          );
+        } else if(is_risk){
+          return (
+            facility_project_privileges &&
+            facility_project_privileges.project_risks &&
+            facility_project_privileges.project_risks.includes(s)
+          );
+        }
+      }
     } else if (
       [
         "portfolio_issue_form",
@@ -442,9 +524,12 @@ const AuthorizationService = {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
           program_id,
           project_id
-        );
+        );        
         let facility_project_privileges =
           AuthorizationService.projectPrivilegesRoles[facility_project_id];
+          if(extraData && extraData["method"]=="isAllowedFacilityContextMenu"){
+            console.log(page, extraData, facility_project_id, facility_project_privileges)
+          }
         return (
           facility_project_privileges &&
           facility_project_privileges.project_tasks &&
