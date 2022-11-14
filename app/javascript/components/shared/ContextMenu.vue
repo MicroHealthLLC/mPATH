@@ -58,7 +58,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
+      <el-submenu index="2" :disabled="!isAllowed('delete', 'tasks')"  v-if="$route.params.projectId">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
