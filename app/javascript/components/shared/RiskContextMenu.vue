@@ -117,7 +117,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "filteredFacilityGroups"]),
     // get position of context menu
     style() {
       return {
@@ -135,7 +135,7 @@ export default {
     treeFormattedData() {
     if(this.$route.params.projectId){
       let data = [];
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
