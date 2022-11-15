@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openRisk">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -16,10 +16,8 @@
         :disabled="!isAllowed('write', 'risks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'risks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
-        </template>
+      <el-submenu index="1" v-if="$route.params.projectId">
+        <template slot="title">Duplicate to... </template>
         <div>
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
@@ -59,9 +57,7 @@
       </el-submenu>
       <hr />
       <el-submenu index="2" :disabled="!isAllowed('delete', 'risks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Move to...</span>
-        </template>
+        <template slot="title"> Move to...</template>
         <div>
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
@@ -580,6 +576,10 @@ export default {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
 }
+.context-menu-inner {
+  width: 10vw;
+}
+
 hr {
   margin: 0;
 }
