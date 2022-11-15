@@ -29,12 +29,16 @@ import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
 import VuePhoneNumberInput  from 'vue-phone-number-input'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
 
 
 
 Vue.use(vco)
 Vue.mixin(utils)
 Vue.use(AuthorizationService)
+Vue.use(ElementUI);
 Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)
@@ -51,8 +55,9 @@ Vue.component('GmapCluster', GmapCluster)
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
+
 Vue.config.productionTip = false
-ELEMENT.locale(ELEMENT.lang.en)
+// ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
 if(!window.google){
