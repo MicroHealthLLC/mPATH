@@ -157,20 +157,13 @@
                   :label="item.name"
                 >
                 </el-option>
-              </el-select>   
-
-             
+              </el-select>               
                <span v-else> 
                  <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.id">
                     {{ scope.row.facility_group.name }}
                  </span> 
             
-               </span>
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityGroupName"
-              ></el-input> -->
+               </span>           
             </template>
           </el-table-column>
              <el-table-column label="Actions" align="right">
@@ -181,7 +174,7 @@
                 v-tooltip="`Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && _isallowed('write')"
-                class="bg-light">
+                class="bg-light px-2">
                 <i class="fal fa-network-wired mh-blue-text"></i>
                </el-button>  
                 <el-button
@@ -190,7 +183,7 @@
                   v-tooltip="`Manage User(s)`"
                   @click.prevent="addUserRole(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex"
-                  class="bg-primary text-light">
+                  class="bg-primary text-light px-2">
                     <i class="fas fa-users-medical mr-1"></i>
                 </el-button>
                 <el-button
@@ -201,7 +194,7 @@
                   @click.prevent="saveEdits(scope.$index, scope.row)"
                   v-tooltip="`Save`"
                   size="small"
-                  class="bg-primary text-light"
+                  class="bg-primary px-2 text-light"
                 >
                   <i class="far fa-save"></i>
                 </el-button>
@@ -213,7 +206,7 @@
                     scope.$index == rowIndex
                   "
                   @click.prevent="cancelEdits(scope.$index, scope.row)"
-                  class="bg-secondary btn-sm text-light"
+                  class="bg-secondary btn-sm text-light px-2"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -221,35 +214,23 @@
                     :load="log(scope.row)"
                     type="default"        
                     size="small"    
-                    class="bg-light btn-sm"
+                    class="bg-light btn-sm px-2"
                     v-tooltip="'Remove Contract'"            
                     @click.prevent="removeContractBtn(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex && _isallowed('write')"        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
-                  </el-button>
-                 <!-- <el-button
-                  type="default" 
-                  v-tooltip="`Go To Contract`"    
-                  v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
-                  @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light btn-sm"
-                  >
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                </el-button> -->
+                  </el-button>          
                 <el-button
                   type="default" 
                   size="small"
                   v-tooltip="`Go To Contract`"  
                   v-if="_isallowedContracts(scope.row.project_contract_id, 'read')"  
                   @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light btn-sm"
+                  class="bg-success text-light btn-sm px-2"
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
-               
-
-                <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
             </el-table-column>
           </el-table>

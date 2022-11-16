@@ -168,7 +168,7 @@
                 v-if="scope.$index == rowIndex" 
                 v-tooltip="`Save`" 
                 size="small"
-                class="bg-primary btn-sm text-light">               
+                class="bg-primary btn-sm text-light px-2">               
                <i class="far fa-save"></i>
                 </el-button>
                 <el-button 
@@ -177,7 +177,7 @@
                 v-if="scope.$index == rowIndex"
                 @click.prevent="cancelEdits(scope.$index, scope.row)"  
                 size="small"
-                class="bg-secondary btn-sm text-light">
+                class="bg-secondary btn-sm text-light px-2">
               <i class="fas fa-ban"></i>
                 </el-button>
                 <el-button  
@@ -186,13 +186,13 @@
                 v-tooltip="`Edit Project`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && !scope.row.isPortfolio && _isallowed('write')"
-                class="bg-light btn-sm">
+                class="bg-light btn-sm px-2">
                 <i class="fal fa-edit text-primary" ></i>
                 </el-button>  
                   <el-button
                     type="default" 
                     size="small"           
-                    class="bg-light btn-sm"
+                    class="bg-light btn-sm px-2"
                     v-tooltip="'Remove Portfolio Project'"            
                     @click.prevent="removeProject(scope.$index, scope.row)"
                     v-if="
@@ -212,7 +212,7 @@
                       scope.$index !== rowIndex &&
                         !scope.row.isPortfolio
                     "
-                    class="bg-light btn-sm"
+                    class="bg-light btn-sm px-2"
                   >    
                 <i class="far fa-trash-alt text-danger "></i>                           
                   </el-button>
@@ -222,16 +222,16 @@
                 v-tooltip="`Manage User(s)`"
                 @click.prevent="addUserRole(scope.$index, scope.row)"
                 v-if="scope.$index !== rowIndex"
-                class="bg-primary text-light btn-sm">
+                class="bg-primary text-light btn-sm px-2">
                 <i class="fas fa-users-medical mr-1"></i>
               </el-button>
              
               <el-button
-              size="small"
+                size="small"
                 type="default"
                 v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
-                class="bg-success text-light btn-sm"
+                class="bg-success text-light btn-sm px-2"
                 v-if="_isallowedProject(scope.row.facilityProjectId, 'read')"
               >
              <i class="fas fa-arrow-alt-circle-right"></i>

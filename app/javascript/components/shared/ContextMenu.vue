@@ -562,7 +562,9 @@ export default {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
           type: 'warning'
-        }).then(() => {
+        })
+        
+        .then(() => {
           this.taskDeleted({task, programId}).then((value) => {
             if (value === 'Success') {
               this.$message({
