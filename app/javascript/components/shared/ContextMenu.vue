@@ -555,33 +555,32 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteTask() {
-      console.log("HI")
       // console.log(this.task)
-      // let task = this.task
-      // let programId = this.$route.params.programId
-      // this.$confirm(`Are you sure you want to delete ${this.task.text}?`, 'Confirm Delete', {
-      //     confirmButtonText: 'Delete',
-      //     cancelButtonText: 'Cancel',
-      //     type: 'warning'
-      //   })
+      let task = this.task
+      let programId = this.$route.params.programId
+      this.$confirm(`Are you sure you want to delete ${this.task.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        })
         
-        // .then(() => {
-        //   this.taskDeleted({task, programId}).then((value) => {
-        //     if (value === 'Success') {
-        //       this.$message({
-        //         message: `${this.task.text} was deleted successfully.`,
-        //         type: "success",
-        //         showClose: true,
-        //       });
-        //     }
-        //   });
-        // }).catch(() => {
-        //   this.$message({
-        //     type: 'info',
-        //     message: 'Delete canceled',
-        //     showClose: true
-        //   });          
-        // });
+        .then(() => {
+          this.taskDeleted({task, programId}).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.task.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
     },
     toggleSubmitBtn() {
       this.submitted = false;
