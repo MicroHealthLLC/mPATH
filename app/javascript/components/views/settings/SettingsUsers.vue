@@ -94,6 +94,7 @@
               <el-table-column label="Actions" align="right">
                 <template slot-scope="scope">
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Manage User Roles`"
                     @click.prevent="openUserRoleDialog(scope.$index, scope.row)"
@@ -104,6 +105,7 @@
                   </el-button>
                   <el-button
                     type="default"
+                    size="small"
                     v-tooltip="`Remove User from Program`"
                     @click.prevent="removeUser(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex && _isallowed('delete')"
@@ -113,6 +115,7 @@
                   </el-button>
                   <el-button
                     type="default"
+                    size="small"
                     v-tooltip="`Edit User info`"
                     v-if="_isallowed('write')"
                     @click.prevent="openEditUser(scope.$index, scope.row)"

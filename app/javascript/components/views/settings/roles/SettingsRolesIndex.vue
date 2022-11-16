@@ -956,6 +956,7 @@
                      
                       <el-button
                         type="default"
+                        size="small"
                         v-tooltip="`Manage Admin Role User(s)`"
                         v-if="!isEditting"
                         @click.prevent="addUserRole(scope.$index, scope.row)"
@@ -965,6 +966,7 @@
                       </el-button>
                       <el-button
                         type="default"
+                        size="small"
                         v-tooltip="`Save role`"
                         v-if="
                           (isEditting && currentRow == scope.$index) ||
@@ -979,6 +981,7 @@
                         <i class="far fa-save"></i>
                       </el-button>
                       <el-button
+                        size="small"
                         type="default"
                         @click.prevent="editRole(scope.$index, scope.row)"
                         v-if="
@@ -996,6 +999,7 @@
 
                       <el-button
                         type="default"
+                        size="small"
                         @click.prevent="cancelEditRole(scope.$index, scope.row)"
                         v-if="isEditting && currentRow == scope.$index"
                         class="bg-secondary btn-sm text-light ml-1"
@@ -1005,6 +1009,7 @@
                       </el-button>
                       <el-button
                         type="default"
+                        size="small"
                         @click.prevent="
                           cancelCreateRole(scope.$index, scope.row)
                         "

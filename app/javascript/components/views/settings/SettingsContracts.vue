@@ -177,18 +177,20 @@
               <template slot-scope="scope">
               <el-button  
                 type="default" 
+                size="small"
                 v-tooltip="`Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && _isallowed('write')"
-                class="bg-light btn-sm">
+                class="bg-light">
                 <i class="fal fa-network-wired mh-blue-text"></i>
                </el-button>  
                 <el-button
                   type="default"
+                  size="small"
                   v-tooltip="`Manage User(s)`"
                   @click.prevent="addUserRole(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex"
-                  class="bg-primary text-light btn-sm">
+                  class="bg-primary text-light">
                     <i class="fas fa-users-medical mr-1"></i>
                 </el-button>
                 <el-button
@@ -198,12 +200,14 @@
                   "
                   @click.prevent="saveEdits(scope.$index, scope.row)"
                   v-tooltip="`Save`"
-                  class="bg-primary btn-sm text-light"
+                  size="small"
+                  class="bg-primary text-light"
                 >
                   <i class="far fa-save"></i>
                 </el-button>
                 <el-button
                   type="default"
+                  size="small"
                   v-tooltip="`Cancel Edit`"
                   v-if="
                     scope.$index == rowIndex
@@ -215,7 +219,8 @@
                 </el-button>
                 <el-button
                     :load="log(scope.row)"
-                    type="default"            
+                    type="default"        
+                    size="small"    
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
                     @click.prevent="removeContractBtn(scope.$index, scope.row)"
@@ -234,6 +239,7 @@
                 </el-button> -->
                 <el-button
                   type="default" 
+                  size="small"
                   v-tooltip="`Go To Contract`"  
                   v-if="_isallowedContracts(scope.row.project_contract_id, 'read')"  
                   @click.prevent="goToContract(scope.$index, scope.row)"
@@ -531,59 +537,66 @@
             <template slot-scope="scope"  class="px-0">
                 <el-button
                   type="default"
+                  size="mini"
                   @click="bulkChangeRole(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex_1 && _isallowed('write')"
                   v-tooltip="`Change Role`" 
-                  class="bg-light btn-sm mx-0">               
+                  class="bg-light btn-sm px-2 mx-0">               
                 <i class="fa-solid fa-users-gear text-primary"></i>
                 </el-button>
                   <el-button
                   type="default"
+                  size="mini"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
                   v-if="scope.$index == rowIndex_1 && changeRoleMode && (bulkChangeContractRoleNames.id || currentRoleName.id) && 
                   (scope.row !== bulkChangeContractRoleNames.id && scope.row !== currentRoleName.id)"
                   v-tooltip="`Save`" 
-                  class="bg-primary btn-sm text-light mx-0">               
+                  class="bg-primary px-2 btn-sm text-light mx-0">               
                   <i class="far fa-save"></i>
                 </el-button>
                 <el-button
+                  size="mini"
                   type="default"
                   @click="saveRemoveUsers(scope.$index, scope.row)"
                   v-if="isEditingRoles && scope.$index == rowIndex_1"
                   v-tooltip="`Save`" 
-                  class="bg-primary btn-sm text-light">               
+                  class="bg-primary px-2 text-light">               
                   <i class="far fa-save"></i>
                 </el-button>
                 <el-button  
                 type="default" 
+                size="mini"
                 v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove all users from this role`"  
                 @click.prevent="removeAllUsers(scope.$index, scope.row)"                
-                class="bg-danger btn-sm mx-0">
+                class="bg-danger px-2 btn-sm mx-0">
               <i class="fa-solid fa-users-slash mr-1 text-light"></i>
                 </el-button>  
                 <el-button  
                 type="default" 
+                size="mini"
                 v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove user(s) from this role`"
                 @click.prevent="editUsers(scope.$index, scope.row)"           
-                class="bg-danger text-light btn-sm mx-0">
+                class="bg-danger px-2  text-light btn-sm mx-0">
                  <i class="fa-solid fa-user-slash text-light"></i>
                 </el-button>  
                   <el-button  
                   type="default" 
+                  size="mini"
                   v-if="isEditingRoles && scope.$index == rowIndex_1"
                   v-tooltip="`Cancel`"
                   @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
-                class="btn btn-sm bg-secondary text-light">
+                class="btn btn-sm px-2  bg-secondary text-light">
                   <i class="fas fa-ban"></i> 
                 </el-button> 
                  <el-button  
                   type="default" 
+                  size="mini"
                   v-if="changeRoleMode && scope.$index == rowIndex_1"
                   v-tooltip="`Cancel`"
                   @click.prevent="cancelBulkChangeRole(scope.$index, scope.row)"             
-                  class="btn btn-sm bg-secondary text-light mx-0">
+                  class="btn btn-sm bg-secondary text-light px-2 mx-0">
                   <i class="fas fa-ban"></i> 
                 </el-button>                
               </template>
