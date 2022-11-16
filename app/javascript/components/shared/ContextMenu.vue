@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse class="context-menu-two">
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openTask">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -601,11 +601,9 @@ export default {
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
-}
-.context-menu-two{
+}.context-menu-inner{
   width: 10vw;
 }
-
 hr {
   margin: 0;
 }
