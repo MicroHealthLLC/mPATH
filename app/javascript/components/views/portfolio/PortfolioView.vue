@@ -1001,7 +1001,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
-                      :disabled="portfolioCounts.tasks_count == 0"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -1009,7 +1009,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
                       class="btn btn-md exportBtns text-light"
-                      :disabled="portfolioCounts.tasks_count == 0"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -1019,7 +1019,7 @@
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
-                      :disabled="portfolioCounts.tasks_count == 0"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -2066,7 +2066,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
                       class="btn btn-md presentBtn mr-1 text-light mh-blue"
-                      :disabled="portfolioCounts.issues_count == 0"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -2074,7 +2074,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportIssuesToPdf"
                       class="btn btn-md exportBtns text-light"
-                      :disabled="portfolioCounts.issues_count == 0"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -2084,7 +2084,7 @@
                         exportIssuesToExcel('table', 'Portfolio Issues')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
-                      :disabled="portfolioCounts.issues_count == 0"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -3152,7 +3152,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openRpresentation"
                       class="btn btn-md mr-1 text-light mh-blue presentBtn"
-                      :disabled="portfolioCounts.risks_count == 0"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -3160,7 +3160,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportRisksToPdf"
                       class="btn btn-md exportBtns text-light"
-                      :disabled="portfolioCounts.risks_count == 0"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -3170,7 +3170,7 @@
                         exportRisksToExcel('table', 'Portfolio Risks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
-                      :disabled="portfolioCounts.risks_count == 0"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -4259,7 +4259,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openLpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue"
-                      :disabled="portfolioCounts.lessons_count == 0"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="fas fa-presentation text-light"></i>
                     </button>
@@ -4267,7 +4267,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportLessonsToPdf"
                       class="btn btn-md exportBtns text-light"
-                      :disabled="portfolioCounts.lessons_count == 0"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -4277,7 +4277,7 @@
                         exportLessonsToExcel('table', 'Portfolio Lessons')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
-                      :disabled="portfolioCounts.lessons_count == 0"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>

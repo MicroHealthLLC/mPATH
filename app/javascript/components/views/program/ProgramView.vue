@@ -670,7 +670,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
-                      :disabled="(getShowProjectStats == 0 && filteredAllTasks.length == 0) || (getShowProjectStats == 1 && filteredAllContractTasks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleTasks.length == 0)"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -678,7 +678,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
                       class="btn btn-md exportBtns text-light"
-                      :disabled="(getShowProjectStats == 0 && filteredAllTasks.length == 0) || (getShowProjectStats == 1 && filteredAllContractTasks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleTasks.length == 0)"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -688,7 +688,7 @@
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
-                      :disabled="(getShowProjectStats == 0 && filteredAllTasks.length == 0) || (getShowProjectStats == 1 && filteredAllContractTasks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleTasks.length == 0)"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>

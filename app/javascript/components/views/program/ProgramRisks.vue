@@ -511,7 +511,7 @@
         v-tooltip="`Presentation Mode`"
         @click.prevent="openRiskPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
-        :disabled="(getShowProjectStats == 0 && filteredAllRisks.length == 0) || (getShowProjectStats == 1 && filteredAllContractRisks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleRisks.length == 0)"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="fas fa-presentation"></i>
     </button>
@@ -519,7 +519,7 @@
         v-tooltip="`Export to PDF`"
         @click.prevent="exportRisksToPdf"
         class="btn btn-md exportBtns text-light"
-        :disabled="(getShowProjectStats == 0 && filteredAllRisks.length == 0) || (getShowProjectStats == 1 && filteredAllContractRisks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleRisks.length == 0)"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="far fa-file-pdf"></i>
     </button>
@@ -529,7 +529,7 @@
         exportRisksToExcel('table', 'Program Risks')
         "
         class="btn btn-md mx-1 exportBtns text-light"
-        :disabled="(getShowProjectStats == 0 && filteredAllRisks.length == 0) || (getShowProjectStats == 1 && filteredAllContractRisks.length == 0) || (getShowProjectStats == 2 && filteredAllVehicleRisks.length == 0)"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="far fa-file-excel"></i>
     </button>
