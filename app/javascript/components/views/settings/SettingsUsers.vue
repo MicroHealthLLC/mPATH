@@ -2349,7 +2349,13 @@ export default {
     -webkit-line-clamp: unset;
   }
 }
-
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  content: "No Data";
+  visibility: visible;
+}
 /deep/.el-dialog {
   width: 30%;
 }

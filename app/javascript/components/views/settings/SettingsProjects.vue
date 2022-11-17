@@ -1562,6 +1562,13 @@ h5 {
     height: 35vh;
    } 
 }
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  content: "No Data";
+  visibility: visible;
+}
 
 div.sticky {
   position: -webkit-sticky;

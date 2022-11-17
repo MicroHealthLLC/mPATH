@@ -1377,6 +1377,13 @@ a {
     font-size: 16px !important;
   }
 }
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  content: "No Data";
+  visibility: visible;
+}
 /deep/.el-dialog__close.el-icon.el-icon-close {
   background-color: #dc3545;
   border-radius: 50%;
