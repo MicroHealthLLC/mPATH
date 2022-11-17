@@ -1103,13 +1103,6 @@ div.sticky {
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
 }
-/deep/.el-table__empty-text {
-  visibility: hidden;
-}
-/deep/.el-table__empty-text:after {
-  content: "No Data";
-  visibility: visible;
-}
 .add-groups-header{
   background-color: #fff;
 }
