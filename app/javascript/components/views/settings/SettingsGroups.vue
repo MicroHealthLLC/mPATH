@@ -1099,7 +1099,13 @@ div.sticky {
   width: 30%;  
  }
 }
-
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  visibility: visible;
+  content: "No Data"
+}
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
 }

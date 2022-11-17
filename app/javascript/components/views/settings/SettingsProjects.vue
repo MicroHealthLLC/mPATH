@@ -1516,6 +1516,13 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
 }
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  visibility: visible;
+  content: "No Data"
+}
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;

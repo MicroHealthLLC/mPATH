@@ -2362,6 +2362,13 @@ export default {
 /deep/.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
+/deep/.el-table__empty-text {
+  visibility: hidden;
+}
+/deep/.el-table__empty-text:after {
+  visibility: visible;
+  content: "No Data"
+}
 /deep/.el-dialog__header.users {
   padding: 0;
 }
