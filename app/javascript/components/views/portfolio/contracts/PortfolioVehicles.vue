@@ -1142,7 +1142,7 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     this.updateContractNum = ''
-       
+    this.fetchContractVehicles();       
   },
     cancelNewRow(rows) {
       let row = rows
@@ -1289,7 +1289,7 @@ contractAgencyOptions(){
           this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();
           this.fetchContractProjects();
-         this.fetchContractDataOptions();
+          this.fetchContractDataOptions();
           this.bpStart = null;
           this.newContractNum = '';
           this.updateContractNum = '';

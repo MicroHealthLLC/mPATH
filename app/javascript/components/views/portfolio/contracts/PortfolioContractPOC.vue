@@ -617,6 +617,7 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     this.isEditing = false
+    this.fetchContractProjects();
   },
   v_editMode(index, rows) {    
     this.v_rowIndex = index,
@@ -627,6 +628,7 @@ export default {
     this.v_rowIndex = null;
     this.v_rowId = null;
     this.v_isEditing = false
+    this.fetchContractVehicles();
   },      
   },
   mounted() {
