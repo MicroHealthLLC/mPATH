@@ -153,6 +153,7 @@
       align="center">
    <template slot-scope="scope">
       <el-button
+        size="small"
         type="default"
         @click="saveBacklogValues(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex && _isallowed('write')" 
@@ -161,6 +162,7 @@
         <i class="far fa-save"></i>
         </el-button>
       <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
@@ -169,6 +171,7 @@
       <i class="fas fa-ban"></i>
         </el-button>
          <el-button
+          size="small"
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"

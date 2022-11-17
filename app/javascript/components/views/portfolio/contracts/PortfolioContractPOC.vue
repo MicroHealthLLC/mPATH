@@ -234,6 +234,7 @@
           align="center">
       <template slot-scope="scope">
             <el-button
+            size="small"
             type="default"
             @click="saveContractPOCs(scope.$index, scope.row)"
             v-if="scope.$index == rowIndex"
@@ -243,6 +244,7 @@
             </el-button>
           <el-button 
             type="default" 
+            size="small"
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == rowIndex"
             @click.prevent="cancelEdits(scope.$index, scope.row)"  
@@ -250,6 +252,7 @@
           <i class="fas fa-ban"></i>
             </el-button>
               <el-button
+              size="small"
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
@@ -488,6 +491,7 @@
           align="center">
          <template slot-scope="scope">
             <el-button
+            size="small"
             type="default"
             @click="saveVehiclePOCs(scope.$index, scope.row)"
             v-if="scope.$index == v_rowIndex"
@@ -496,6 +500,7 @@
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
+           size="small"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == v_rowIndex"
@@ -504,6 +509,7 @@
           <i class="fas fa-ban"></i>
             </el-button>
               <el-button
+              size="small"
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
