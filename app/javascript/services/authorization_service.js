@@ -213,7 +213,7 @@ const AuthorizationService = {
 
       } else if (facility_project_id) {
         let facility_project_privileges = AuthorizationService.projectPrivilegesRoles[facility_project_id];
-        console.log(page, extraData, facility_project_id, facility_project_privileges)
+        // console.log(page, extraData, facility_project_id, facility_project_privileges)
 
         if(is_task){
           return (

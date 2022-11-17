@@ -707,8 +707,8 @@
           placement="left"
           width="auto"
           trigger="hover">         
-          <el-button    
-          size="mini"      
+          <el-button
+          size="mini"  
           v-for="item, i in scope.row.associated_projects" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
           >

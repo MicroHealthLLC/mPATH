@@ -468,7 +468,7 @@
           size="mini"
           type="default"        
           v-tooltip="`Open Vehicle Tasks`" 
-          class="bg-light text-light px-2 mr-2">               
+          class="bg-light text-light px-2 mr-2">            
           <i class="far fa-suitcase text-secondary"></i>
           </el-button>
           </el-popover> 
@@ -504,7 +504,7 @@
             v-if="( _isallowed('write') )  && scope.$index == createRow && (checkEmpty(scope.row.name) && checkEmpty(scope.row.full_name) && checkEmpty(scope.row.prime_name) && checkEmpty(scope.row.contract_sub_category_id) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id) &&
             newBpStart && newBpEnd)" 
             v-tooltip="`Save`" 
-            class="bg-primary text-light  px-2">               
+            class="bg-primary text-light  px-2">           
           <i class="far fa-save"></i>
           </el-button>
           <el-button 
@@ -786,7 +786,7 @@
             v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.subprime_name && scope.row.name && 
               scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
               v-tooltip="`Save`" 
-              class="bg-primary text-light  px-2">               
+              class="bg-primary text-light  px-2">       
             <i class="far fa-save"></i>
             </el-button>
             <el-popover
@@ -795,9 +795,8 @@
             placement="left"
             width="auto"
             trigger="hover">         
-            <el-button    
+            <el-button  
             size="mini"
-
             v-for="item, i in scope.row.associated_projects" :key="i"
             @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
             >
@@ -845,7 +844,7 @@
               checkEmpty(scope.row.full_name) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id))" 
               v-tooltip="`Save`" 
               :load="log(scope.row)"
-              class="bg-primary text-light  px-2">               
+              class="bg-primary text-light  px-2">           
             <i class="far fa-save"></i>
             </el-button> 
             <el-button 

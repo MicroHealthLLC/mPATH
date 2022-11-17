@@ -171,7 +171,7 @@
       <i class="fas fa-ban"></i>
         </el-button>
          <el-button
-          size="mini"
+         size="mini"
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light px-2"

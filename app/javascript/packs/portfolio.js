@@ -1,4 +1,3 @@
-import                           'element-ui/lib/theme-chalk/index.css';
 import                           'core-js/stable'
 import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
@@ -30,16 +29,11 @@ import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
 import VuePhoneNumberInput  from 'vue-phone-number-input'
-import ElementUI            from 'element-ui';
-
-
 
 
 
 Vue.use(vco)
 Vue.mixin(utils)
-Vue.use(AuthorizationService)
-Vue.use(ElementUI);
 Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)
