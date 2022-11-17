@@ -1516,6 +1516,7 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
 }
+
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;
