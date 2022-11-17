@@ -304,6 +304,7 @@
         v-tooltip="`Presentation Mode`"
         @click.prevent="openPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="fas fa-presentation"></i>
     </button>
@@ -311,6 +312,7 @@
         v-tooltip="`Export to PDF`"
         @click.prevent="exportLessonsToPdf"
         class="btn btn-md exportBtns text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="far fa-file-pdf"></i>
     </button>
@@ -320,6 +322,7 @@
         exportLessonsToExcel('table', 'Program Lessons')
         "
         class="btn btn-md mx-1 exportBtns text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="far fa-file-excel"></i>
     </button>
