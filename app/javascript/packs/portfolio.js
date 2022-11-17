@@ -52,7 +52,7 @@ Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
 
 Vue.config.productionTip = false
-// ELEMENT.locale(ELEMENT.lang.en)
+ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
 if(!window.google){

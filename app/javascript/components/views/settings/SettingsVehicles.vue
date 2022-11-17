@@ -2005,13 +2005,7 @@ a {
   padding: 2px;
   font-size: 0.7rem;
 }
-/deep/.el-table__empty-text {
-  visibility: hidden;
-}
-/deep/.el-table__empty-text:after {
-  visibility: visible;
-  content: "No Data"
-}
+
 .addUserRole {
   /deep/.el-dialog__body {
     padding-top: 0 !important;
