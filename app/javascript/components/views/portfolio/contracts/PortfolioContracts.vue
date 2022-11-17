@@ -674,7 +674,8 @@
       fixed="right"
       align="right">
    <template slot-scope="scope">
-      <el-button
+       <el-button
+        size="small"
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
@@ -694,13 +695,15 @@
           placement="left"
           width="auto"
           trigger="hover">         
-          <el-button          
+          <el-button    
+          size="small"      
           v-for="item, i in scope.row.associated_projects" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
           >
           <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
+          size="small"
           slot="reference"
           type="default"        
           v-tooltip="`Open Contract Tasks`" 
@@ -709,6 +712,7 @@
         </el-button>
         </el-popover>        
       <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
@@ -717,6 +721,7 @@
       <i class="fas fa-ban"></i>
         </el-button>
         <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Remove expiration date exemption`"       
         v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
@@ -725,6 +730,7 @@
         <i class="fa-solid fa-calendar-xmark text-danger"></i>
         </el-button>
          <el-button
+          size="small"
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
@@ -732,6 +738,7 @@
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
+          size="small"
           type="default"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
@@ -739,6 +746,7 @@
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
         <el-button
+          size="small"
           type="default"
           @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow && (
@@ -753,6 +761,7 @@
         <i class="far fa-save"></i>
         </el-button>
         <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Cancel`"       
         v-if="scope.$index == createRow && (
@@ -981,7 +990,7 @@
          <template slot-scope="scope">
           <el-button
             type="default"
-          
+            size="small"
             @click="saveContractPOC(scope.$index, scope.row)"
             v-if="(_isallowed('write')) && scope.$index == pocRowIndex" 
             v-tooltip="`Save`" 
@@ -989,6 +998,7 @@
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
+            size="small"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == pocRowIndex"
@@ -997,6 +1007,7 @@
           <i class="fas fa-ban"></i>
             </el-button>
             <el-button
+              size="small"
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
@@ -1004,6 +1015,7 @@
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
+              size="small"
               type="default"
               v-tooltip="`Delete`" 
               class="bg-light btn-sm"
@@ -1012,6 +1024,7 @@
               </el-button>
             <el-button
               type="default"
+              size="small"
               @click="saveContractPOC(scope.$index, scope.row)"             
               v-if="(_isallowed('write')) && scope.$index == pocCreateRow && checkEmpty(scope.row.name)" 
               v-tooltip="`Save`" 
@@ -1019,6 +1032,7 @@
             <i class="far fa-save"></i>
             </el-button>
             <el-button 
+            size="small"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name || scope.row.title || scope.row.email || scope.row.notes || mobNumberValNew || workNumberValNew)"

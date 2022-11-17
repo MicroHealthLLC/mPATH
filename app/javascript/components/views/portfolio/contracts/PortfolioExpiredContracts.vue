@@ -522,6 +522,7 @@
       align="center">
    <template slot-scope="scope">
       <el-button
+        size="small"
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
@@ -536,6 +537,7 @@
         <i class="far fa-save"></i>
         </el-button>
       <el-button 
+       size="small"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
@@ -544,6 +546,7 @@
       <i class="fas fa-ban"></i>
         </el-button>
         <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Exempt expiration date`"       
         v-if="scope.$index == rowIndex"
@@ -552,6 +555,7 @@
         <i class="fa-solid fa-calendar-xmark text-success"></i>
         </el-button>
          <el-button
+         size="small"
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
@@ -560,6 +564,7 @@
           </el-button>
           <el-button
           type="default"
+          size="small"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
            v-if="(scope.$index !== rowIndex) && _isallowed('delete')"
