@@ -2924,14 +2924,19 @@ th {
 }
 // For the badges inside the el dropdown menus
 .el-tag.el-tag--info {
-  background-color: #41b883;
-  color: white;
-  border: none;
+  background-color: #41b883 !important;
+  color: white !important;
+  border: none !important;
 }
 
 i.el-tag__close.el-icon-close {
   background-color: #41b883 !important;
-  color: #383838;
+  color: #383838 !important;
+  font-weight: 800 !important;
+}
+
+i.el-tag__close.el-icon-close:hover {
+  color: rgb(197, 0, 0) !important;
 }
 
 
