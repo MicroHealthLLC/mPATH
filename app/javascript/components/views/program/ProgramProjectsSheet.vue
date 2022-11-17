@@ -229,21 +229,22 @@ export default {
   methods: {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
-    goToProject(index, rows) {  
-      if(this.isMapView){
-        // window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
-      } else  {
-      //  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
-     this.$router.push({
-        name: "SheetProject",
-        params: {
-          programId: this.$route.params.programId,
-          projectId: rows.id.toString(),          
-        },
-      });    
-     }   
+    goToProject(index, rows) {
+      console.log(index)
+      console.log(rows)
+      console.log("isMapView: " + this.isMapView)
+      if (this.isMapView) {
+        this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${rows.id.toString()}`)
+      } else {
+        this.$router.push({
+          name: "SheetProject",
+          params: {
+            programId: this.$route.params.programId,
+            projectId: rows.id.toString(),
+          },
+        });
+      }
     },
-  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
