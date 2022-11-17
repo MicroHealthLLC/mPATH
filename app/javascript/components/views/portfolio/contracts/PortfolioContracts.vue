@@ -1532,7 +1532,8 @@ export default {
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;       
+    this.rowId = null;
+    this.fetchContractProjects();       
   },
   cancelNewRow(rows) {
     console.log(rows)
