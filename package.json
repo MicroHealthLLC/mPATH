@@ -24,7 +24,7 @@
     "js-cookie": "^2.2.1",
     "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.5.13",
-    "loader-utils": "^2.0.3",
+    "loader-utils": "^2.0.4",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "moment": "^2.29.4",
@@ -78,7 +78,7 @@
     "node-forge": "^0.10.0",
     "json-schema": "^0.4.0",
     "ansi-html": "https://registry.npmjs.org/ansi-html-community/-/ansi-html-community-0.0.8.tgz",
-    "loader-utils": "^2.0.3"
+    "loader-utils": "^2.0.4"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
