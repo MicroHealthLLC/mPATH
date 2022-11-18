@@ -1518,6 +1518,7 @@ export default {
     this.pocRowIndex = null;
     this.pocRowId = null;
     this.workNumberVal = null;
+    this.fetchContractPOCs()
        
   },
   cancelNewPoc(rows) {

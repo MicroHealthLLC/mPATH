@@ -2500,8 +2500,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2973,7 +2973,7 @@ export default {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedIssues(issues) {
@@ -2988,7 +2988,7 @@ export default {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedRisks(risks) {
@@ -3003,8 +3003,8 @@ export default {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
             1
-          );
-        });
+          ).then(this.validateThenSave());
+        })
     },
     author(id) {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;

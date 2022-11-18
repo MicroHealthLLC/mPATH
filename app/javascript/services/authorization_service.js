@@ -70,14 +70,14 @@ const AuthorizationService = {
     let contract_id = route.params.contractId;
     let project_id = route.params.projectId;
     let contract_vehicle_id = route.params.vehicleId;
-    console.log(
-      "getProjectTabPrivilege",
-      program_id,
-      contract_id,
-      project_id,
-      contract_vehicle_id,
-      AuthorizationService.contractVehiclePrivilegesRoles
-    );
+    // console.log(
+    //   "getProjectTabPrivilege",
+    //   program_id,
+    //   contract_id,
+    //   project_id,
+    //   contract_vehicle_id,
+    //   AuthorizationService.contractVehiclePrivilegesRoles
+    // );
     if (contract_id) {
       return AuthorizationService.contractPrivilegesRoles[contract_id];
     } else if (contract_vehicle_id) {

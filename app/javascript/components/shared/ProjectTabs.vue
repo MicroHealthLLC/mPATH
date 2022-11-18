@@ -1,5 +1,5 @@
 <template>
-  <div :load="log()" v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
+  <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
     <span v-if="$route.params.projectId" class="d-flex">
       <div v-for="cTab in cTabs" :key="cTab.key" class="d-flex">
         <div
@@ -164,9 +164,6 @@ export default {
     }
   },
   methods: {
-    log(e) {
-      console.log(e)
-    },
     changeCtab(cTab) {
       if (this.$route.params.contractId) {
         if (cTab.key === "contract") {
@@ -190,11 +187,6 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
     privileges() {
-      console.log(
-        "privileges()",
-        AuthorizationService.getProjectTabPrivilege(this.$route),
-        this.$route
-      );
       return AuthorizationService.getProjectTabPrivilege(this.$route);
     },
     currentCtab() {
