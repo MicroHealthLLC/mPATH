@@ -1,3 +1,4 @@
+// import                           'element-ui/lib/theme-chalk/index.css';   
 import                           'core-js/stable'
 import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
@@ -27,6 +28,10 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
+// import ElementUI            from 'element-ui';
+// import locale               from 'element-ui/lib/locale/lang/en'
+
+// Vue.use(ElementUI, { locale })
 
 Vue.use(vco)
 Vue.mixin(utils)

@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openTask">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -16,10 +16,8 @@
         :disabled="!isAllowed('write', 'tasks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
-        </template>
+      <el-submenu index="1" v-if="$route.params.projectId">
+        <template slot="title">Duplicate to... </template>
         <div>
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
@@ -58,10 +56,8 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Move to...</span>
-        </template>
+      <el-submenu index="2" :disabled="!isAllowed('delete', 'tasks')"  v-if="$route.params.projectId">
+        <template slot="title"> Move to...</template>
         <div>
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
@@ -142,7 +138,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'task_index', facility.facility.id) && facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -167,7 +163,7 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowed("write", 'tasks', contract.projectContractId) && contract.projectContractId !== this.task.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'task_contract_context_menu', {project_contract_id: contract.projectContractId} ) && contract.projectContractId !== this.task.projectContractId
                   )
                   .map((contract) => {
                     return {
@@ -192,7 +188,7 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowed("write", 'tasks', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'task_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId} ) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
@@ -228,10 +224,8 @@ export default {
     isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
     },
-    isAllowedFacility(salut, module, facility_id) {
-      if (this.$route.params.projectId) {
-        return this.checkPrivileges(module, salut, this.$route)       
-      }
+    isAllowedFacility(salut, module, extraData) {
+      return this.checkPrivileges(module, salut, this.$route, extraData)  
     },
     // closes context menu
     close() {
@@ -607,6 +601,8 @@ export default {
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
+}.context-menu-inner{
+  width: 10vw;
 }
 hr {
   margin: 0;

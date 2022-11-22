@@ -10,7 +10,7 @@
       </span>
       <span class="float-right mr-4">
         <button
-          class="portfolioHomeBtn mh-orange btn btn-sm"
+          class="portfolioHomeBtn mh-orange btn"
           style="cursor: pointer"
           @click.prevent="backHomeBtn"
         >
@@ -121,6 +121,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in customerOptions"
@@ -154,6 +155,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -176,6 +178,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -198,6 +201,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -233,6 +237,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractNumbers"
@@ -266,6 +271,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardToNums"
@@ -299,6 +305,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in naicsOptions"
@@ -332,6 +339,7 @@
         placeholder=""
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardTypes"
@@ -365,6 +373,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractTypes"
@@ -384,7 +393,7 @@
       <el-table-column
       label="Prime vs Sub"
       width="55"
-      prop="prime_or_sub">
+      >
      <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
@@ -396,6 +405,7 @@
         class="w-100"
         clearable
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in primeOrSub"
@@ -528,6 +538,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in pops"
@@ -561,6 +572,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in currentPops"
@@ -674,7 +686,8 @@
       fixed="right"
       align="right">
    <template slot-scope="scope">
-      <el-button
+       <el-button
+        size="mini"
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
@@ -685,7 +698,7 @@
           && scope.row.contract_pop_id && popStartDate && popEndDate
           )"  
         v-tooltip="`Save`" 
-        class="bg-primary btn-sm text-light mx-0">               
+        class="bg-primary text-light px-2">               
         <i class="far fa-save"></i>
         </el-button>
         <el-popover
@@ -694,63 +707,84 @@
           placement="left"
           width="auto"
           trigger="hover">         
-          <el-button          
+          <el-button
+          size="mini"  
           v-for="item, i in scope.row.associated_projects" :key="i"
           @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
           >
           <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
           </el-button>        
           <el-button
+          size="mini"
           slot="reference"
           type="default"        
           v-tooltip="`Open Contract Tasks`" 
-          class="bg-light btn-sm text-light mr-2">               
+          class="bg-light text-light mr-2 px-2">               
           <i class="far fa-suitcase text-secondary"></i>
         </el-button>
         </el-popover>        
       <el-button 
+        size="mini"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
-        class="bg-secondary btn-sm text-light mx-0">
+        class="bg-secondary text-light px-2">
       <i class="fas fa-ban"></i>
         </el-button>
         <el-button 
+        size="mini"
         type="default" 
         v-tooltip="`Remove expiration date exemption`"       
         v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
         @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
-        class="bg-light btn-sm mx-0">
+        class="bg-light px-2">
         <i class="fa-solid fa-calendar-xmark text-danger"></i>
         </el-button>
          <el-button
+          size="mini"
           type="default"
            v-tooltip="`Edit`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
+          size="mini"
           type="default"
            v-tooltip="`Delete`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)  && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
         <el-button
+          size="mini"
           type="default"
           @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow && (
-          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
-          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
-          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
-          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          checkEmpty(scope.row.charge_code) && checkEmpty(scope.row.name) && checkEmpty(scope.row.contract_customer_id) && 
+          (checkEmpty(scope.row.contract_award_to_id) || checkEmpty(scope.row.contract_number_id)) && 
+          checkEmpty(scope.row.contract_naic_id) && checkEmpty(scope.row.contract_award_type_id) &&
+          checkEmpty(scope.row.contract_type_id) && newContractStartDate && newContractEndDate &&  checkEmpty(scope.row.total_contract_value)
+          && checkEmpty(scope.row.contract_pop_id) && newPopStartDate && newPopEndDate
           )" 
           v-tooltip="`Save`" 
-          class="bg-primary btn-sm text-light mx-0">               
+          class="bg-primary text-light px-2">               
         <i class="far fa-save"></i>
+        </el-button>
+        <el-button 
+        size="mini"
+        type="default" 
+        v-tooltip="`Cancel`"       
+        v-if="scope.$index == createRow && (
+          scope.row.charge_code || scope.row.name || scope.row.contract_customer_id || scope.row.contract_vehicle_id || scope.row.contract_award_to_id || scope.row.contract_number_id || 
+          scope.row.contract_naic_id || scope.row.contract_award_type_id ||
+          scope.row.contract_type_id || scope.row.prime_or_sub || newContractStartDate || newContractEndDate ||  scope.row.total_contract_value
+          || scope.row.contract_pop_id || scope.row.contract_current_pop_id || newPopStartDate || newPopEndDate || scope.row.notes
+          )"
+        @click.prevent="cancelNewRow(scope.row)"  
+        class="bg-secondary text-light px-2">
+      <i class="fas fa-ban"></i>
         </el-button>
        </template>
 
@@ -968,43 +1002,55 @@
          <template slot-scope="scope">
           <el-button
             type="default"
-          
+            size="mini"
             @click="saveContractPOC(scope.$index, scope.row)"
             v-if="(_isallowed('write')) && scope.$index == pocRowIndex" 
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
+            size="mini"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == pocRowIndex"
             @click.prevent="cancelPocEdits(scope.$index, scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light px-2">
           <i class="fas fa-ban"></i>
             </el-button>
             <el-button
+              size="mini"
               type="default"
               v-tooltip="`Edit`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="(_isallowed('write')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
+              size="mini"
               type="default"
               v-tooltip="`Delete`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="(_isallowed('delete')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="deleteContractPoc(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
             <el-button
               type="default"
+              size="mini"
               @click="saveContractPOC(scope.$index, scope.row)"             
-              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name)" 
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && checkEmpty(scope.row.name)" 
               v-tooltip="`Save`" 
-              class="bg-primary btn-sm text-light mx-0">               
+              class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
-            
+            </el-button>
+            <el-button 
+            size="mini"
+            type="default" 
+            v-tooltip="`Cancel Edit`"       
+            v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name || scope.row.title || scope.row.email || scope.row.notes || mobNumberValNew || workNumberValNew)"
+            @click.prevent="cancelNewPoc(scope.row)"  
+            class="bg-secondary text-light px-2">
+          <i class="fas fa-ban"></i>
             </el-button>
           </template>
 
@@ -1150,10 +1196,9 @@ export default {
       "fetchContractVehicles",
       "fetchContractDataOptions"
     ]),
-    // log(e){
-    //   console.log("programNames")
-    //   console.log(e)     
-    // },
+    log(e){
+      console.log(e)     
+    },
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
@@ -1276,8 +1321,8 @@ export default {
      this.fetchContracts(programId)  
   }, 
   editMode(index, rows) {
-    console.log(rows)
-    console.log(this.programNames)
+    //console.log(rows)
+    //console.log(this.programNames)
     this.rowIndex = index,
     this.rowId = rows.id
     if(rows.contract_current_pop_start_date){
@@ -1473,11 +1518,59 @@ export default {
     this.pocRowIndex = null;
     this.pocRowId = null;
     this.workNumberVal = null;
+    this.fetchContractPOCs()
        
+  },
+  cancelNewPoc(rows) {
+    let row = rows
+    for (let i in row) {
+      if (row[i] != "") {
+        row[i] = ""
+      }
+    }
+    this.workNumberValNew ?
+        this.workNumberValNew = null
+        : this.workNumberValNew
+    this.mobNumberValNew ?
+      this.mobNumberValNew = null
+      : this.mobNumberValNew
+  },
+  checkEmpty(str) {
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
+    }
+    if (typeof str != "string") {
+      return str
+    }
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;       
+    this.rowId = null;
+    this.fetchContractProjects();       
+  },
+  cancelNewRow(rows) {
+    console.log(rows)
+    let row = rows
+    for (let i in row) {
+      if (typeof row[i] == "string" && row[i] != "") {
+        row[i] = ""
+      }
+      else if (typeof row[i] == "number" && row[i] != null) {
+        row[i] = null
+      }
+    }
+    this.newContractStartDate ?
+      this.newContractStartDate = null
+      : this.newContractStartDate
+    this.newContractEndDate ?
+      this.newContractEndDate = null
+      : this.newContractEndDate
+    this.newPopEndDate ?
+      this.newPopEndDate = null
+      : this.newPopEndDate
+    this.newPopStartDate ?
+      this.newPopStartDate = null
+      : this.newPopStartDate
   },
   handleDelete(index, row) {
     console.log(index, row);
@@ -1627,7 +1720,8 @@ export default {
         let unique = [];
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+        console.log(unique)
+         return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     primeOrSub(){
@@ -1641,14 +1735,14 @@ export default {
           let contractNums = this.contractDataOptions.contract_numbers
           .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
           .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
-         return contractNums        
+         return contractNums.filter(u => u.name.trim().length !== 0 && u.name !== 'null')        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        return vehicles
+        return vehicles.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     customerOptions(){
@@ -1658,7 +1752,7 @@ export default {
         let unique = [];
         // console.log(customers)
         customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     naicsOptions(){
@@ -1668,7 +1762,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     awardTypes(){
@@ -1678,7 +1772,8 @@ export default {
         let unique = [];
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        console.log(unique)
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     pops(){
@@ -1688,7 +1783,7 @@ export default {
         let unique = [];
         // console.log(pops)
         pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     currentPops(){
@@ -1698,7 +1793,7 @@ export default {
         let unique = [];
         // console.log(currentPoPs)
         currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     contractTypes(){
@@ -1708,7 +1803,7 @@ export default {
         let unique = [];
         // console.log(contractTypes)
         contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
   },

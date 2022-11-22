@@ -47,6 +47,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Contract Program Manager POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -116,6 +117,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Government COR/PRIME  POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -184,6 +186,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Contract Office POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -234,25 +237,28 @@
           align="center">
       <template slot-scope="scope">
             <el-button
+            size="mini"
             type="default"
             @click="saveContractPOCs(scope.$index, scope.row)"
             v-if="scope.$index == rowIndex"
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
             type="default" 
+            size="mini"
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == rowIndex"
             @click.prevent="cancelEdits(scope.$index, scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light px-2">
           <i class="fas fa-ban"></i>
             </el-button>
               <el-button
+              size="mini"
               type="default"
               v-tooltip="`Edit`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="scope.$index !== rowIndex && (_isallowed('write'))"
               @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button> 
@@ -302,6 +308,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Contract Program Manager POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -370,6 +377,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Government COR/PRIME  POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -438,6 +446,7 @@
             slot="reference"
             default-first-option
             placeholder="Select Contract Office POC"
+            size="small"
           >
           <el-option
             v-for="item in pocOptions"
@@ -488,25 +497,28 @@
           align="center">
          <template slot-scope="scope">
             <el-button
+            size="mini"
             type="default"
             @click="saveVehiclePOCs(scope.$index, scope.row)"
             v-if="scope.$index == v_rowIndex"
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
+           size="mini"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == v_rowIndex"
             @click.prevent="v_cancelEdits(scope.$index, scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light px-2">
           <i class="fas fa-ban"></i>
             </el-button>
               <el-button
+              size="mini"
               type="default"
               v-tooltip="`Edit`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="scope.$index !== v_rowIndex && (_isallowed('write'))"
               @click="v_editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button> 
@@ -605,6 +617,7 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     this.isEditing = false
+    this.fetchContractProjects();
   },
   v_editMode(index, rows) {    
     this.v_rowIndex = index,
@@ -615,6 +628,7 @@ export default {
     this.v_rowIndex = null;
     this.v_rowId = null;
     this.v_isEditing = false
+    this.fetchContractVehicles();
   },      
   },
   mounted() {

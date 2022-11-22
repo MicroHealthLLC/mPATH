@@ -677,7 +677,7 @@ export default {
         this.relatedTasks.splice(
           this.relatedTasks.findIndex((task) => task.id == id),
           1
-        );
+        ).then(this.saveLesson());
       });
     },
     addRelatedIssues(issues) {
@@ -692,7 +692,7 @@ export default {
         this.relatedIssues.splice(
           this.relatedIssues.findIndex((issue) => issue.id == id),
           1
-        );
+        ).then(this.saveLesson());
       });
     },
     addRelatedRisks(risks) {
@@ -707,7 +707,7 @@ export default {
         this.relatedRisks.splice(
           this.relatedRisks.findIndex((risk) => risk.id == id),
           1
-        );
+        ).then(this.saveLesson());
       });
     },
     addSuccess() {

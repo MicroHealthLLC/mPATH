@@ -319,6 +319,7 @@
                         <h5 class="mh-orange-text">
                           Projects
                           <span
+                          :load="log(groupProjects)"
                             v-if="
                               groupProjects &&
                                 groupProjects
@@ -393,7 +394,6 @@
                         <h5 class="mh-orange-text">
                           Vehicles
                           <span
-                          :load="log(groupVehicles)"
                             v-if="
                               groupVehicles && groupVehicles.length > 0 &&
                                 groupVehicles
@@ -433,6 +433,7 @@
               <el-table-column label="Actions"  align="right" v-if="_isallowed('delete') || _isallowed('write')">
                 <template slot-scope="scope">
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Save`"
                     @click.prevent="saveEdits(scope.$index, scope.row)"
@@ -444,6 +445,7 @@
                     <i class="far fa-save"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Cancel Edit`"
                     v-if="
@@ -455,6 +457,7 @@
                     <i class="fas fa-ban"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Edit Program Group`"
                     @click.prevent="editMode(scope.$index, scope.row)"
@@ -467,6 +470,7 @@
                     <i class="fal fa-edit text-primary"></i>
                   </el-button>
                   <el-button
+                   size="small"
                     type="default" 
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Portfolio Group'"            
@@ -479,6 +483,7 @@
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
                   <el-button
+                    size="small"
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
@@ -864,24 +869,27 @@ export default {
       } else return [];
     },
     groupProjects() {
+      let facilities = this.facilities.filter(f => f.facilityName != "" || f.facilityName != null)
       if (
-        this.facilities &&
-        this.facilities.length &&
-        this.facilities.length > 0
+        facilities &&
+        facilities.length &&
+        facilities.length > 0
       ) {
-        return this.facilities;
+        return facilities;
       }
     },
-  groupContracts() {
-     if (this.contracts && this.contracts.length > 0) {
-          // console.log(this.contracts)
-          return this.contracts.filter(t => t !== 'null');
+    groupContracts() {
+    let contracts = this.contracts.filter(f => f.name != "" && f.name != null && f.name != 'null')
+     if (contracts && contracts.length > 0) {
+          // console.log(contracts)
+          return contracts
       } else return []
     },
     groupVehicles() {
-     if (this.vehicles && this.vehicles.length > 0) {
-          // console.log(this.vehicles)
-          return this.vehicles.filter(t => t !== 'null');
+      let vehicles = this.vehicles.filter(f => f.contract_vehicle.name != "" && f.contract_vehicle.name != null && f.contract_vehicle.name != 'null')
+     if (vehicles && vehicles.length > 0) {
+          // console.log(vehicles)
+          return vehicles
       } else return []
     },
     // groupContracts() {
