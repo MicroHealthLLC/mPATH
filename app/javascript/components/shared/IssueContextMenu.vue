@@ -251,7 +251,7 @@ export default {
       this.close();
     },
     moveIssue(issue, facilityProjectId) {
-      if (!this.isAllowed("write", 'issues')) return;
+      // if (!this.isAllowed("write", 'issues')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
