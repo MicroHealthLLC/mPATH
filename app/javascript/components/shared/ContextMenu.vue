@@ -255,7 +255,7 @@ export default {
       this.close();
     },
     moveTask(task, facilityProjectId) {
-      if (!this.isAllowed("write", 'tasks')) return;
+      // if (!this.isAllowed("write", 'tasks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -438,10 +438,14 @@ export default {
       this.$refs.duplicatetree.setCheckedNodes([]);
     },
     move(node) {
-      if (!node.hasOwnProperty("children")) {
-        this.moveTask(this.task, node.id);
-        // console.log(node.id)
-      }
+      this.moveTask(this.task, node.id);
+        console.log(node.id)
+        console.log(this.task)
+      
+      // if (!node.hasOwnProperty("children")) {
+      //   this.moveTask(this.task, node.id);
+      //   // console.log(node.id)
+      // }
     },
     duplicateSelectedTasks() {
       this.submitted = true;

@@ -17,6 +17,8 @@ Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('loader', FadeLoader)
 Vue.component('multiselect', Multiselect)
 Vue.use(VeeValidate)
+ELEMENT.locale(ELEMENT.lang.en)
+
 
 if(!window.google){
   Vue.use(VueGoogleMaps, {
