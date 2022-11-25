@@ -85,6 +85,6 @@
     "@4tw/cypress-drag-drop": "^1.4.0",
     "cypress": "^7.0.0",
     "sass": "^1.49.8",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.11.3"
   }
 }
