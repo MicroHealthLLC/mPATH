@@ -249,7 +249,7 @@ export default {
       this.close();
     },
     moveRisk(risk, facilityProjectId) {
-      if (!this.isAllowed("write", 'risks')) return;
+      // if (!this.isAllowed("write", 'risks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
