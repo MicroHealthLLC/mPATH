@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TaskCalendar from "../../dashboard/tasks/task_calendar";
+import TaskCalendar from "../../dashboard/tasks/task_calendar.vue";
 
 export default {
   props: ["facility"],

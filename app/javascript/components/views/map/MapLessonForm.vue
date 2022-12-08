@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import LessonForm from "./../../dashboard/lessons/LessonForm";
+import LessonForm from "./../../dashboard/lessons/LessonForm.vue";
 
 export default {
   name: "SheetLessonForm",

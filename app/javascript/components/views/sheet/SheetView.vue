@@ -107,8 +107,8 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import ProjectSidebar from "../../shared/ProjectSidebar";
-import ProjectTabs from "../../shared/ProjectTabs";
+import ProjectSidebar from "../../shared/ProjectSidebar.vue";
+import ProjectTabs from "../../shared/ProjectTabs.vue";
 export default {
   name: "SheetView",
   components: {

@@ -172,7 +172,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import Kanban from "../../shared/kanban";
+import Kanban from "../../shared/kanban.vue";
 
 export default {
   props: ["facility"],

@@ -4,7 +4,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import VehiclesLessonForm from "./../../dashboard/lessons/VehiclesLessonForm";
+import VehiclesLessonForm from "./../../dashboard/lessons/VehiclesLessonForm.vue";
 export default {
  name:  "ProgramVehicleLessonForm",
  components: { 

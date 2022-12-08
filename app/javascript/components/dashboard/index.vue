@@ -8,8 +8,8 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import Tabsbar from "./../shared/tabsbar";
-import FilterSidebar from "./../shared/filter_sidebar";
+import Tabsbar from "./../shared/tabsbar.vue";
+import FilterSidebar from "./../shared/filter_sidebar.vue";
 import SettingsSidebar from "../views/settings/SettingsSidebar.vue";
 
 export default {

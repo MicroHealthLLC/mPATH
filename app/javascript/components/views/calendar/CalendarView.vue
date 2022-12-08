@@ -81,7 +81,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import ProjectSidebar from "../../shared/ProjectSidebar";
+import ProjectSidebar from "../../shared/ProjectSidebar.vue";
 export default {
   name: "CalendarView",
   components: {

@@ -1,115 +1,115 @@
-import GanttChartView from "./../components/dashboard/gantt_view";
-import MembersView from "./../components/dashboard/members_view";
-import ProgramView from "./../components/views/program/ProgramView";
+import GanttChartView from "./../components/dashboard/gantt_view.vue";
+import MembersView from "./../components/dashboard/members_view.vue";
+import ProgramView from "./../components/views/program/ProgramView.vue";
 
-import SettingsView from "./../components/views/settings/SettingsView";
-import SettingsProjects from "./../components/views/settings/SettingsProjects";
-import TestCloudData from "./../components/views/settings/TestCloudData";
-import SettingsContracts from "./../components/views/settings/SettingsContracts";
-import SettingsGroups from "./../components/views/settings/SettingsGroups";
-import SettingsUsers from "./../components/views/settings/SettingsUsers";
-import SettingsVehicles from "./../components/views/settings/SettingsVehicles";
-import SettingsRolesIndex from "./../components/views/settings/roles/SettingsRolesIndex";
+import SettingsView from "./../components/views/settings/SettingsView.vue";
+import SettingsProjects from "./../components/views/settings/SettingsProjects.vue";
+import TestCloudData from "./../components/views/settings/TestCloudData.vue";
+import SettingsContracts from "./../components/views/settings/SettingsContracts.vue";
+import SettingsGroups from "./../components/views/settings/SettingsGroups.vue";
+import SettingsUsers from "./../components/views/settings/SettingsUsers.vue";
+import SettingsVehicles from "./../components/views/settings/SettingsVehicles.vue";
+import SettingsRolesIndex from "./../components/views/settings/roles/SettingsRolesIndex.vue";
 
 // import SettingsRolesProjects from "./../components/views/settings/roles/SettingsRolesProjects"
 // import SettingsRolesContracts from "./../components/views/settings/roles/SettingsRolesContracts"
 
-import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
-import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
-import ProgramRiskForm from "./../components/views/program/ProgramRiskForm";
-import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
+import ProgramTaskForm from "./../components/views/program/ProgramTaskForm.vue";
+import ProgramIssueForm from "./../components/views/program/ProgramIssueForm.vue";
+import ProgramRiskForm from "./../components/views/program/ProgramRiskForm.vue";
+import ProgramLessonForm from "./../components/views/program/ProgramLessonForm.vue";
 
-import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm";
-import ProgramContractIssueForm from "./../components/views/program/ProgramContractIssueForm";
-import ProgramContractRiskForm from "./../components/views/program/ProgramContractRiskForm";
-import ProgramContractLessonForm from "./../components/views/program/ProgramContractLessonForm";
+import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm.vue";
+import ProgramContractIssueForm from "./../components/views/program/ProgramContractIssueForm.vue";
+import ProgramContractRiskForm from "./../components/views/program/ProgramContractRiskForm.vue";
+import ProgramContractLessonForm from "./../components/views/program/ProgramContractLessonForm.vue";
 
-import ProgramVehicleTaskForm from "./../components/views/program/ProgramVehicleTaskForm";
-import ProgramVehicleIssueForm from "./../components/views/program/ProgramVehicleIssueForm";
-import ProgramVehicleRiskForm from "./../components/views/program/ProgramVehicleRiskForm";
-import ProgramVehicleLessonForm from "./../components/views/program/ProgramVehicleLessonForm";
+import ProgramVehicleTaskForm from "./../components/views/program/ProgramVehicleTaskForm.vue";
+import ProgramVehicleIssueForm from "./../components/views/program/ProgramVehicleIssueForm.vue";
+import ProgramVehicleRiskForm from "./../components/views/program/ProgramVehicleRiskForm.vue";
+import ProgramVehicleLessonForm from "./../components/views/program/ProgramVehicleLessonForm.vue";
 
 
 // Map Routes Components
-import MapView from "./../components/views/map/MapView";
-import MapAnalytics from "./../components/views/map/MapAnalytics";
-import MapProject from "./../components/views/map/MapProject";
-import MapTasks from "./../components/views/map/MapTasks";
-import MapTaskForm from "./../components/views/map/MapTaskForm";
-import MapIssues from "./../components/views/map/MapIssues";
-import MapIssueForm from "./../components/views/map/MapIssueForm";
-import MapRisks from "./../components/views/map/MapRisks";
-import MapRiskForm from "./../components/views/map/MapRiskForm";
-import MapLessons from "./../components/views/map/MapLessons";
-import MapLessonForm from "./../components/views/map/MapLessonForm";
-import MapNotes from "./../components/views/map/MapNotes";
-import MapNoteForm from "./../components/views/map/MapNoteForm";
+import MapView from "./../components/views/map/MapView.vue";
+import MapAnalytics from "./../components/views/map/MapAnalytics.vue";
+import MapProject from "./../components/views/map/MapProject.vue";
+import MapTasks from "./../components/views/map/MapTasks.vue";
+import MapTaskForm from "./../components/views/map/MapTaskForm.vue";
+import MapIssues from "./../components/views/map/MapIssues.vue";
+import MapIssueForm from "./../components/views/map/MapIssueForm.vue";
+import MapRisks from "./../components/views/map/MapRisks.vue";
+import MapRiskForm from "./../components/views/map/MapRiskForm.vue";
+import MapLessons from "./../components/views/map/MapLessons.vue";
+import MapLessonForm from "./../components/views/map/MapLessonForm.vue";
+import MapNotes from "./../components/views/map/MapNotes.vue";
+import MapNoteForm from "./../components/views/map/MapNoteForm.vue";
 
 
 //Sheet Routes Components
-import SheetView from "./../components/views/sheet/SheetView";
-import ProjectRollup from "./../components/shared/ProjectRollup";
+import SheetView from "./../components/views/sheet/SheetView.vue";
+import ProjectRollup from "./../components/shared/ProjectRollup.vue";
 
-import SheetContract from "./../components/views/sheet/contracts/SheetContract";
-import ContractAnalytics from "./../components/views/sheet/contracts/ContractAnalytics";
-import ContractTasks from "./../components/views/sheet/contracts/ContractTasks";
-import ContractTaskForm from "./../components/views/sheet/contracts/ContractTaskForm";
-import ContractIssues from "./../components/views/sheet/contracts/ContractIssues";
-import ContractIssueForm from "./../components/views/sheet/contracts/ContractIssueForm";
-import ContractRisks from "./../components/views/sheet/contracts/ContractRisks";
-import ContractRiskForm from "./../components/views/sheet/contracts/ContractRiskForm";
-import ContractLessons from "./../components/views/sheet/contracts/ContractLessons";
-import ContractLessonForm from "./../components/views/sheet/contracts/ContractLessonForm";
-import ContractNotes from "./../components/views/sheet/contracts/ContractNotes";
-import ContractNoteForm from "./../components/views/sheet/contracts/ContractNoteForm";
+import SheetContract from "./../components/views/sheet/contracts/SheetContract.vue";
+import ContractAnalytics from "./../components/views/sheet/contracts/ContractAnalytics.vue";
+import ContractTasks from "./../components/views/sheet/contracts/ContractTasks.vue";
+import ContractTaskForm from "./../components/views/sheet/contracts/ContractTaskForm.vue";
+import ContractIssues from "./../components/views/sheet/contracts/ContractIssues.vue";
+import ContractIssueForm from "./../components/views/sheet/contracts/ContractIssueForm.vue";
+import ContractRisks from "./../components/views/sheet/contracts/ContractRisks.vue";
+import ContractRiskForm from "./../components/views/sheet/contracts/ContractRiskForm.vue";
+import ContractLessons from "./../components/views/sheet/contracts/ContractLessons.vue";
+import ContractLessonForm from "./../components/views/sheet/contracts/ContractLessonForm.vue";
+import ContractNotes from "./../components/views/sheet/contracts/ContractNotes.vue";
+import ContractNoteForm from "./../components/views/sheet/contracts/ContractNoteForm.vue";
 
-import SheetVehicle from "./../components/views/sheet/vehicles/SheetVehicle";
-import VehicleTaskForm from "./../components/views/sheet/vehicles/VehicleTaskForm";
-import VehicleTasks from "./../components/views/sheet/vehicles/VehicleTasks";
-import VehicleAnalytics from "./../components/views/sheet/vehicles/VehicleAnalytics";
-import VehicleIssues from "./../components/views/sheet/vehicles/VehicleIssues";
-import VehicleIssueForm from "./../components/views/sheet/vehicles/VehicleIssueForm";
-import VehicleRisks from "./../components/views/sheet/vehicles/VehicleRisks";
-import VehicleRiskForm from "./../components/views/sheet/vehicles/VehicleRiskForm";
-import VehicleLessons from "./../components/views/sheet/vehicles/VehicleLessons";
-import VehicleLessonForm from "./../components/views/sheet/vehicles/VehicleLessonForm";
-import VehicleNotes from "./../components/views/sheet/vehicles/VehicleNotes";
-import VehicleNoteForm from "./../components/views/sheet/vehicles/VehicleNoteForm";
+import SheetVehicle from "./../components/views/sheet/vehicles/SheetVehicle.vue";
+import VehicleTaskForm from "./../components/views/sheet/vehicles/VehicleTaskForm.vue";
+import VehicleTasks from "./../components/views/sheet/vehicles/VehicleTasks.vue";
+import VehicleAnalytics from "./../components/views/sheet/vehicles/VehicleAnalytics.vue";
+import VehicleIssues from "./../components/views/sheet/vehicles/VehicleIssues.vue";
+import VehicleIssueForm from "./../components/views/sheet/vehicles/VehicleIssueForm.vue";
+import VehicleRisks from "./../components/views/sheet/vehicles/VehicleRisks.vue";
+import VehicleRiskForm from "./../components/views/sheet/vehicles/VehicleRiskForm.vue";
+import VehicleLessons from "./../components/views/sheet/vehicles/VehicleLessons.vue";
+import VehicleLessonForm from "./../components/views/sheet/vehicles/VehicleLessonForm.vue";
+import VehicleNotes from "./../components/views/sheet/vehicles/VehicleNotes.vue";
+import VehicleNoteForm from "./../components/views/sheet/vehicles/VehicleNoteForm.vue";
 
-import SheetProject from "./../components/views/sheet/SheetProject";
-import SheetAnalytics from "./../components/views/sheet/SheetAnalytics";
-import SheetTasks from "./../components/views/sheet/SheetTasks";
-import SheetTaskForm from "./../components/views/sheet/SheetTaskForm";
-import SheetIssues from "./../components/views/sheet/SheetIssues";
-import SheetIssueForm from "./../components/views/sheet/SheetIssueForm";
-import SheetRisks from "./../components/views/sheet/SheetRisks";
-import SheetRiskForm from "./../components/views/sheet/SheetRiskForm";
-import SheetLessons from "./../components/views/sheet/SheetLessons";
-import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
-import SheetNotes from "./../components/views/sheet/SheetNotes";
-import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+import SheetProject from "./../components/views/sheet/SheetProject.vue";
+import SheetAnalytics from "./../components/views/sheet/SheetAnalytics.vue";
+import SheetTasks from "./../components/views/sheet/SheetTasks.vue";
+import SheetTaskForm from "./../components/views/sheet/SheetTaskForm.vue";
+import SheetIssues from "./../components/views/sheet/SheetIssues.vue";
+import SheetIssueForm from "./../components/views/sheet/SheetIssueForm.vue";
+import SheetRisks from "./../components/views/sheet/SheetRisks.vue";
+import SheetRiskForm from "./../components/views/sheet/SheetRiskForm.vue";
+import SheetLessons from "./../components/views/sheet/SheetLessons.vue";
+import SheetLessonForm from "./../components/views/sheet/SheetLessonForm.vue";
+import SheetNotes from "./../components/views/sheet/SheetNotes.vue";
+import SheetNoteForm from "./../components/views/sheet/SheetNoteForm.vue";
 
 
 // Kanban Routes Components
-import KanbanView from "./../components/views/kanban/KanbanView";
-import KanbanDefault from "./../components/views/kanban/KanbanDefault";
-import KanbanTasks from "./../components/views/kanban/KanbanTasks";
-import KanbanTaskForm from "./../components/views/kanban/KanbanTaskForm";
-import KanbanIssues from "./../components/views/kanban/KanbanIssues";
-import KanbanIssueForm from "./../components/views/kanban/KanbanIssueForm";
-import KanbanRisks from "./../components/views/kanban/KanbanRisks";
-import KanbanRiskForm from "./../components/views/kanban/KanbanRiskForm";
+import KanbanView from "./../components/views/kanban/KanbanView.vue";
+import KanbanDefault from "./../components/views/kanban/KanbanDefault.vue";
+import KanbanTasks from "./../components/views/kanban/KanbanTasks.vue";
+import KanbanTaskForm from "./../components/views/kanban/KanbanTaskForm.vue";
+import KanbanIssues from "./../components/views/kanban/KanbanIssues.vue";
+import KanbanIssueForm from "./../components/views/kanban/KanbanIssueForm.vue";
+import KanbanRisks from "./../components/views/kanban/KanbanRisks.vue";
+import KanbanRiskForm from "./../components/views/kanban/KanbanRiskForm.vue";
 //Calendar Routes Components
-import CalendarView from "./../components/views/calendar/CalendarView";
-import CalendarLanding from "./../components/views/calendar/CalendarLanding";
-import CalendarTasks from "./../components/views/calendar/CalendarTasks";
-import CalendarTaskForm from "./../components/views/calendar/CalendarTaskForm";
-import CalendarIssues from "./../components/views/calendar/CalendarIssues";
-import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm";
-import CalendarRisks from "./../components/views/calendar/CalendarRisks";
-import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
+import CalendarView from "./../components/views/calendar/CalendarView.vue";
+import CalendarLanding from "./../components/views/calendar/CalendarLanding.vue";
+import CalendarTasks from "./../components/views/calendar/CalendarTasks.vue";
+import CalendarTaskForm from "./../components/views/calendar/CalendarTaskForm.vue";
+import CalendarIssues from "./../components/views/calendar/CalendarIssues.vue";
+import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm.vue";
+import CalendarRisks from "./../components/views/calendar/CalendarRisks.vue";
+import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm.vue";
 
-import PageNotFound from "./../components/views/PageNotFound"
+import PageNotFound from "./../components/views/PageNotFound.vue"
 
 export default new VueRouter({
   routes: [

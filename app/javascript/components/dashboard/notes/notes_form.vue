@@ -100,7 +100,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
-  import AttachmentInput from './../../shared/attachment_input'
+  import AttachmentInput from './../../shared/attachment_input.vue'
   import { API_BASE_PATH } from '../../../mixins/utils'
 
   export default {

@@ -83,10 +83,10 @@
 
 <script>
   import {mapMutations, mapGetters, mapActions} from "vuex"
-  import NotesForm from './notes_form'
-  import ContractNotesForm from './contract_notes_form'
-  import VehicleNotesForm from './vehicle_notes_form'
-  import NotesSheets from './notes_sheets'
+  import NotesForm from './notes_form.vue'
+  import ContractNotesForm from './contract_notes_form.vue'
+  import VehicleNotesForm from './vehicle_notes_form.vue'
+  import NotesSheets from './notes_sheets.vue'
   import {SweetModal} from 'sweet-modal-vue'
 
   export default {

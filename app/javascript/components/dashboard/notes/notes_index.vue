@@ -61,8 +61,8 @@
 
 <script>
   import {mapMutations, mapGetters} from "vuex"
-  import NotesForm from './notes_form'
-  import NotesShow from './notes_show'
+  import NotesForm from './notes_form.vue'
+  import NotesShow from './notes_show.vue'
 
   export default {
     name: 'NotesIndex',

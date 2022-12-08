@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ContractsLessonForm from "../../../dashboard/lessons/ContractsLessonForm";
+import ContractsLessonForm from "../../../dashboard/lessons/ContractsLessonForm.vue";
 
 export default {
   name: "ContractLessonForm",

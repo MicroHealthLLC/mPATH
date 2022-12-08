@@ -83,7 +83,7 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from 'vuex'
-  import AttachmentInput from './../../shared/attachment_input'
+  import AttachmentInput from './../../shared/attachment_input.vue'
 
   export default {
     name: 'ContractNotesForm',

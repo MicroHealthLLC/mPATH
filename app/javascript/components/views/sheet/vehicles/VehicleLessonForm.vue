@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import VehiclesLessonForm from "../../../dashboard/lessons/VehiclesLessonForm";
+import VehiclesLessonForm from "../../../dashboard/lessons/VehiclesLessonForm.vue";
 
 export default {
   name: "VehicleLessonForm",

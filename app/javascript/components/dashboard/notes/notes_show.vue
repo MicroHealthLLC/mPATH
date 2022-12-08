@@ -52,7 +52,7 @@
 <script>
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
-  import NotesForm from './notes_form'
+  import NotesForm from './notes_form.vue'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {

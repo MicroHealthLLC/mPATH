@@ -4,7 +4,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import LessonForm from "./../../dashboard/lessons/LessonForm";
+import LessonForm from "./../../dashboard/lessons/LessonForm.vue";
 export default {
  name:  "ProgramLessonForm",
  components: { 
