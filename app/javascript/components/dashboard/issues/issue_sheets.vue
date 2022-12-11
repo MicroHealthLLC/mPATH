@@ -71,10 +71,10 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
-  import IssueForm from "./issue_form"
-  import TaskForm from "./../tasks/task_form"
-  import IssueContextMenu from "../../shared/IssueContextMenu"
+  import { SweetModal } from 'sweet-modal-vue/src/components/SweetModal.vue'
+  import IssueForm from "./issue_form.vue"
+  import TaskForm from "./../tasks/task_form.vue"
+  import IssueContextMenu from "../../shared/IssueContextMenu.vue"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
@@ -267,7 +267,7 @@
     color: #fff;
     border-radius: 3px;
   }
-  .issue_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .issue_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

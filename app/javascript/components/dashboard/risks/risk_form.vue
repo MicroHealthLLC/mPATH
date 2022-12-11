@@ -2057,11 +2057,11 @@
 import axios from "axios";
 import humps from "humps";
 import Draggable from "vuedraggable";
-import FormTabs from "./../../shared/FormTabs";
+import FormTabs from "./../../shared/FormTabs.vue";
 import * as Moment from "moment";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import AttachmentInput from "./../../shared/attachment_input";
-import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
+import AttachmentInput from "./../../shared/attachment_input.vue";
+import RelatedRiskMenu from "./../../shared/RelatedRiskMenu.vue";
 import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
@@ -3818,7 +3818,7 @@ ul {
   border: solid 0.5px red;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -32px;
@@ -3828,26 +3828,26 @@ ul {
   }
 }
 .risk_matrix {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     border-bottom: none !important;
     background-color: #fff !important;
   }
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   text-transform: capitalize;
 }
 .inner-name-lowercase{
-  /deep/.el-input__inner{
+  ::v-deep.el-input__inner{
     text-transform: none !important;
   }
 }
@@ -3923,7 +3923,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

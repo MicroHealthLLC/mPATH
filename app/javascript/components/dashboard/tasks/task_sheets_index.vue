@@ -500,7 +500,7 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import TaskSheets from "./task_sheets"
+  import TaskSheets from "./task_sheets.vue"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
@@ -1203,7 +1203,7 @@ i, .icons {
   border-radius: 4px; 
   border: .5px solid lightgray;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

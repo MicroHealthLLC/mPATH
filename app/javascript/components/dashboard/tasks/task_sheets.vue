@@ -92,8 +92,8 @@
 <script>
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import TaskForm from "./task_form";
-import ContextMenu from "../../shared/ContextMenu";
+import TaskForm from "./task_form.vue";
+import ContextMenu from "../../shared/ContextMenu.vue";
 import moment from "moment";
 Vue.prototype.moment = moment;
 
@@ -288,7 +288,7 @@ td {
 // .task_form_modal.sweet-modal-overlay {
 //   z-index: 10000001;
 // }
-.task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+.task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
   min-width: 30vw;
   max-height: 80vh;
   .sweet-content {
@@ -298,7 +298,7 @@ td {
   .badge-pill {
     font-size: .85rem;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

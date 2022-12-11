@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import FacilityShow from './../dashboard/facilities/facility_show'
+  import FacilityShow from './../dashboard/facilities/facility_show.vue'
   export default {
     name: 'Accordion',
     props: ['facility', 'facilityGroup', 'expanded', 'statuses'],

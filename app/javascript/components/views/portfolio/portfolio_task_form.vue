@@ -1256,11 +1256,11 @@
 import AuthorizationService from "../../../services/authorization_service"
 import axios from "axios";
 import Draggable from "vuedraggable";
-import FormTabs from "./../../shared/FormTabs";
-import RelatedTaskMenu from "./../../shared/RelatedTaskMenu";
+import FormTabs from "./../../shared/FormTabs.vue";
+import RelatedTaskMenu from "./../../shared/RelatedTaskMenu.vue";
 import humps from "humps";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import AttachmentInput from "./../../shared/attachment_input";
+import AttachmentInput from "./../../shared/attachment_input.vue";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
 import {API_BASE_PATH} from './../../../mixins/utils'

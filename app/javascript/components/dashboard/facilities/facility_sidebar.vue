@@ -36,7 +36,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
-  import Loader from './../../shared/loader'
+  import Loader from './../../shared/loader.vue'
 
   export default {
     name: 'FacilitySidebar',

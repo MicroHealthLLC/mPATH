@@ -110,7 +110,7 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import ContextMenu from "../../shared/ContextMenu"
+  import ContextMenu from "../../shared/ContextMenu.vue"
 
   export default {
     name: 'TaskShow',
@@ -255,7 +255,7 @@
   .task_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
       min-width: 80vw;
       max-height: 80vh;
     .sweet-content {

@@ -346,7 +346,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import LessonContextMenu from "./../../shared/LessonContextMenu";
+import LessonContextMenu from "./../../shared/LessonContextMenu.vue";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import moment from "moment";
@@ -804,7 +804,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

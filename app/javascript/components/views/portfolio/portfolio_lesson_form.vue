@@ -787,7 +787,7 @@
 </template>
 
 <script>
-import FormTabs from "./../../shared/FormTabs";
+import FormTabs from "./../../shared/FormTabs.vue";
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input.vue";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
@@ -1418,7 +1418,7 @@ a:hover {
   font-size: 13px;
 }
 .over-six-steps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

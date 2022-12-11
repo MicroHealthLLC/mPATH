@@ -538,7 +538,7 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   // import moment from 'moment'
-  import RiskSheets from "./risk_sheets"
+  import RiskSheets from "./risk_sheets.vue"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
@@ -1248,7 +1248,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

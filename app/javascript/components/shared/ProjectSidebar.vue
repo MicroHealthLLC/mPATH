@@ -153,7 +153,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import Loader from "./loader";
+import Loader from "./loader.vue";
 
 export default {
   name: "ProjectSidebar",
@@ -431,7 +431,7 @@ export default {
   z-index: 1140;
 }
 
-/deep/.el-dialog__title {
+::v-deep.el-dialog__title {
   padding: 5px 10px;
   background-color: #dd9036;
   color: white;
@@ -440,7 +440,7 @@ export default {
   border-radius: 0.25rem;
 }
 
-// /deep/.el-dialog__body {
+// ::v-deep.el-dialog__body {
 //     padding: 10px 20px;
 //  }
 .saveBtns {

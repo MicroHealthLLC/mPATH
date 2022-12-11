@@ -17,6 +17,6 @@
 
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
 
-= javascript_pack_tag "portfolio", async: true
+= javascript_include_tag "portfolio", async: true
 - if true
-  = stylesheet_pack_tag "dashboard"
+  = stylesheet_link_tag "dashboard"

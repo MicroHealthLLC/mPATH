@@ -84,7 +84,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   // import IssueForm from "./../issues/issue_form"
-  import RiskContextMenu from "../../../shared/RiskContextMenu"
+  import RiskContextMenu from "../../../shared/RiskContextMenu.vue"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
@@ -293,7 +293,7 @@
   .risk_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .risk_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .risk_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

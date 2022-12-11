@@ -435,7 +435,7 @@
   import IssueSheetsIndex from './../issues/issue_sheets_index'
   import TaskSheetsIndex from './../tasks/task_sheets_index'
   import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
-  import Loader from './../../shared/loader'
+  import Loader from './../../shared/loader.vue'
   import CustomTabs from './../../shared/custom-tabs'
   import {API_BASE_PATH} from './../mixins/utils'
 
@@ -922,11 +922,11 @@
   .my-el-card {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {   
       text-overflow: ellipsis;
     }

@@ -1,9 +1,9 @@
-import PortfolioView from "./../components/views/portfolio/PortfolioView";
-import PortfolioTaskForm from "./../components/views/portfolio/PortfolioTaskForm";
-import PortfolioIssueForm from "./../components/views/portfolio/PortfolioIssueForm";
-import PortfolioRiskForm from "./../components/views/portfolio/PortfolioRiskForm";
-import PortfolioLessonForm from "./../components/views/portfolio/PortfolioLessonForm";
-import ContractsView from "./../components/views/portfolio/contracts/PortfolioContracts";
+import PortfolioView from "./../components/views/portfolio/PortfolioView.vue";
+import PortfolioTaskForm from "./../components/views/portfolio/PortfolioTaskForm.vue";
+import PortfolioIssueForm from "./../components/views/portfolio/PortfolioIssueForm.vue";
+import PortfolioRiskForm from "./../components/views/portfolio/PortfolioRiskForm.vue";
+import PortfolioLessonForm from "./../components/views/portfolio/PortfolioLessonForm.vue";
+import ContractsView from "./../components/views/portfolio/contracts/PortfolioContracts.vue";
 
 export default new VueRouter({
   routes: [

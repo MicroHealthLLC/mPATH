@@ -450,7 +450,7 @@
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
-import FormTabs from "./../../shared/FormTabs";
+import FormTabs from "./../../shared/FormTabs.vue";
 import AttachmentInput from "./../../shared/attachment_input.vue";
 
 export default {
@@ -1202,7 +1202,7 @@ a:hover {
 }
 
 .over-six-steps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

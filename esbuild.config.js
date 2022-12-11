@@ -2,19 +2,25 @@ const glob = require("glob");
 const esbuild = require("esbuild");
 const vuePlugin = require("esbuild-vue");
 const { nodeExternalsPlugin } = require('esbuild-node-externals');
+const fs = require("fs");
+const path = require('path')
+const chokidar = require('chokidar');
 
-// const {lessLoader} = require("esbuild-plugin-less");
 const isProduction = ["production", "staging"].includes(
   process.env.WEBPACK_ENV
 );
-const fs = require("fs");
-const path = require('path')
+
+// import glob from "glob";
+// import esbuild from "esbuild";
+// import vuePlugin from "esbuild-vue";
+// import nodeExternalsPlugin from "esbuild-node-externals";
+// import path from 'path';
 
 console.log("******", path.join(process.cwd(), "app/javascript"))
 
 const config = {
-  // entryPoints: glob.sync("app/javascript/packs/*.js"),
-  entryPoints: ["app/javascript/packs/dashboard.js"],
+  entryPoints: glob.sync("app/javascript/packs/*.js"),
+  // entryPoints: ["app/javascript/packs/firebase.js"],
   bundle: true,
   assetNames: "[name]-[hash].digested",
   chunkNames: "[name]-[hash].digested",
@@ -55,7 +61,11 @@ const config = {
   sourcemap: true,
   minify: isProduction,
   metafile: true,
-  target: ["safari12", "ios12", "chrome92", "firefox88"],
+  target: ["safari12", "ios12", "chrome92", "firefox88"]
+  // resolve: {
+  //   alias: {'vue$': 'vue/dist/vue.esm.js'},
+  //   extensions: ['.js', '.vue'], // this string resolve your problem
+  // }
 };
 
 if (process.argv.includes("--watch")) {

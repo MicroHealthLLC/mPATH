@@ -1284,11 +1284,11 @@ import 'vue2-datepicker/index.css'
 import Draggable from "vuedraggable";
 import DatePicker from 'vue2-datepicker'
 Vue.component('v2-date-picker', DatePicker)
-import FormTabs from "./../../shared/FormTabs";
+import FormTabs from "./../../shared/FormTabs.vue";
 import {API_BASE_PATH} from './../../../mixins/utils'
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import AttachmentInput from "./../../shared/attachment_input";
-import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import AttachmentInput from "./../../shared/attachment_input.vue";
+import RelatedIssueMenu from "./../../shared/RelatedIssueMenu.vue";
 import AuthorizationService from "../../../services/authorization_service"
 
 

@@ -12,5 +12,5 @@
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
   |var password_key = "#{Setting['PASSWORDS_KEY']}";
 
-= javascript_pack_tag "users", async: true
-= stylesheet_pack_tag "users"
+= javascript_include_tag "users", async: true
+= stylesheet_link_tag "users"

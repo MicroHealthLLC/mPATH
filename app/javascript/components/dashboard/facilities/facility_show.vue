@@ -440,12 +440,12 @@
 
 <script>
   import http from './../../../common/http'
-  import DetailShow from './detail_show'
-  import NotesIndex from './../notes/notes_index'
-  import IssueIndex from './../issues/issue_index'
-  import RiskIndex from './../risks/risk_index'
-  import CustomTabs from './../../shared/custom-tabs'
-  import Loader from './../../shared/loader'
+  import DetailShow from './detail_show.vue'
+  import NotesIndex from './../notes/notes_index.vue'
+  import IssueIndex from './../issues/issue_index.vue'
+  import RiskIndex from './../risks/risk_index.vue'
+  import CustomTabs from './../../shared/custom-tabs.vue'
+  import Loader from './../../shared/loader.vue'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
@@ -919,12 +919,12 @@
   .my-el-card {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
 
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
@@ -995,11 +995,11 @@
     background: #fff;
     padding: 5px;
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {
       color: #dc3545;
       text-overflow: ellipsis;

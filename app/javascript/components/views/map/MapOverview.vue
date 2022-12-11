@@ -616,7 +616,7 @@
 <script>
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import Loader from "../../shared/loader";
+import Loader from "../../shared/loader.vue";
 import {API_BASE_PATH} from './../../../mixins/utils'
 
 export default {
@@ -1292,11 +1292,11 @@ export default {
   font-size: 14px;
   font-weight: bold;
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -1341,18 +1341,18 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
 
-/deep/.el-card__body {
+::v-deep.el-card__body {
     padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
   }
 
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {
@@ -1360,7 +1360,7 @@ export default {
 }
 
 .lessonsCard {
-  /deep/.el-card__body{
+  ::v-deep.el-card__body{
     min-height: 161px;
   }
 }

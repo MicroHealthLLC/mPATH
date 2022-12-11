@@ -104,7 +104,7 @@
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>-->
 <script> 
   
-import Accordion from "../../shared/accordion";
+import Accordion from "../../shared/accordion.vue";
 import { mapGetters, mapMutations } from "vuex";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
@@ -419,7 +419,7 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-.vue-map-container /deep/ button.gm-ui-hover-effect {
+.vue-map-container ::v-deep button.gm-ui-hover-effect {
   display: none;
   visibility: hidden;
 }

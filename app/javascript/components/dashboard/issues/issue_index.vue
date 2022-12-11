@@ -244,8 +244,8 @@ import http from './../../../common/http'
 import { jsPDF } from "jspdf"
 import 'jspdf-autotable'
 import { mapGetters, mapMutations } from 'vuex'
-import IssueForm from './issue_form'
-import IssueShow from './issue_show'
+import IssueForm from './issue_form.vue'
+import IssueShow from './issue_show.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
 library.add(faFilePdf)
@@ -799,7 +799,7 @@ i, .icons {
 
 }
 
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
@@ -812,10 +812,10 @@ i, .icons {
   font-weight: 600;
 }
 
-/deep/.v-input__control {
+::v-deep.v-input__control {
   display: block !important;
 }
-/deep/.v-input--checkbox{
+::v-deep.v-input--checkbox{
   margin-top: 0;
 }
 

@@ -25,8 +25,8 @@
 
 <script>
   import http from './../../../common/http'
-  import TaskIndex from './../tasks/task_index'
-  import TaskForm from './../tasks/task_form'
+  import TaskIndex from './../tasks/task_index.vue'
+  import TaskForm from './../tasks/task_form.vue'
   import {mapGetters, mapMutations} from 'vuex'
   import {API_BASE_PATH} from './../../../mixins/utils'
 

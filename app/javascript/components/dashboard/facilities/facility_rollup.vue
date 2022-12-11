@@ -423,7 +423,7 @@
 </template>
 
 <script>
-import Loader from './../../shared/loader'
+import Loader from './../../shared/loader.vue'
 import {mapGetters} from 'vuex'
 export default {
   name: 'FacilityRollup',
