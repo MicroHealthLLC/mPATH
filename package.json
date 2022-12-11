@@ -2,7 +2,7 @@
   "name": "mGIS",
   "private": true,
   "scripts": {
-    "build": "webpack --config ./config/webpack/webpack.config.js"
+    "build": "webpack --config ./webpack.config.js"
   },
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
