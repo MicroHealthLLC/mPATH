@@ -83,7 +83,7 @@
   import NotesForm from './notes_form.vue'
   import ContractNotesForm from './contract_notes_form.vue'
   import VehicleNotesForm from './vehicle_notes_form.vue'
-  import { SweetModal } from 'sweet-modal-vue/src/components/SweetModal.vue'
+  import { SweetModal } from 'sweet-modal-vue'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {

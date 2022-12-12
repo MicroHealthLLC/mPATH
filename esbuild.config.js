@@ -5,6 +5,7 @@ const { nodeExternalsPlugin } = require('esbuild-node-externals');
 const fs = require("fs");
 const path = require('path')
 const chokidar = require('chokidar');
+const pkg = require("./package.json")
 
 const isProduction = ["production", "staging"].includes(
   process.env.WEBPACK_ENV
@@ -15,12 +16,15 @@ const isProduction = ["production", "staging"].includes(
 // import vuePlugin from "esbuild-vue";
 // import nodeExternalsPlugin from "esbuild-node-externals";
 // import path from 'path';
+// import chokidar from "chokidar";
+
+// const pkg = require("./package.json")
 
 console.log("******", path.join(process.cwd(), "app/javascript"))
 
 const config = {
-  entryPoints: glob.sync("app/javascript/packs/*.js"),
-  // entryPoints: ["app/javascript/packs/firebase.js"],
+  // entryPoints: glob.sync("app/javascript/packs/*.js"),
+  entryPoints: ["app/javascript/packs/dashboard.js"],
   bundle: true,
   assetNames: "[name]-[hash].digested",
   chunkNames: "[name]-[hash].digested",
@@ -35,8 +39,7 @@ const config = {
       onReadFile: path => {
         console.error("The following dependency was used:", path);
       }
-    }),
-    nodeExternalsPlugin()
+    })
   ],
   tsconfig: "tsconfig.json",
   format: "esm",
@@ -61,11 +64,12 @@ const config = {
   sourcemap: true,
   minify: isProduction,
   metafile: true,
-  target: ["safari12", "ios12", "chrome92", "firefox88"]
-  // resolve: {
-  //   alias: {'vue$': 'vue/dist/vue.esm.js'},
-  //   extensions: ['.js', '.vue'], // this string resolve your problem
-  // }
+  resolveExtensions: ['.vue', '.css','.js','.ts'],
+  target: ["safari12", "ios12", "chrome92", "firefox88", "node14.18.2"],
+  // external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  external: ['vue-*'],
+  platform: 'node',
+  nodePaths: ['./node_modules','node_modules','./node_modules/*'],
 };
 
 if (process.argv.includes("--watch")) {

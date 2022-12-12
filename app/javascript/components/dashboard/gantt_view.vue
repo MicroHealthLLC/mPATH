@@ -71,7 +71,7 @@
 
 <script>
   import http from './../../common/http'
-  import { SweetModal } from 'sweet-modal-vue/src/components/SweetModal.vue'
+  import { SweetModal } from 'sweet-modal-vue'
   import {mapGetters, mapActions, mapMutations} from 'vuex'
 
   export default {

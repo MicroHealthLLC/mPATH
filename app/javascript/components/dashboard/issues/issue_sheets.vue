@@ -71,7 +71,7 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import { SweetModal } from 'sweet-modal-vue/src/components/SweetModal.vue'
+  import { SweetModal } from 'sweet-modal-vue'
   import IssueForm from "./issue_form.vue"
   import TaskForm from "./../tasks/task_form.vue"
   import IssueContextMenu from "../../shared/IssueContextMenu.vue"

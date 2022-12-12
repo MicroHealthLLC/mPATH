@@ -87,7 +87,7 @@
   import ContractNotesForm from './contract_notes_form.vue'
   import VehicleNotesForm from './vehicle_notes_form.vue'
   import NotesSheets from './notes_sheets.vue'
-  import { SweetModal } from 'sweet-modal-vue/src/components/SweetModal.vue'
+  import { SweetModal } from 'sweet-modal-vue'
 
   export default {
     name: 'NotesSheetsIndex',

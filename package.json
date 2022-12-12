@@ -6,7 +6,6 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/vue-fontawesome": "^2.0.0",
-    "@rails/webpacker": "4.2.2",
     "@vue/composition-api": "^1.6.2",
     "async": "2.6.4",
     "axios": "^0.21.2",
@@ -87,10 +86,9 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
     "cypress": "^7.0.0",
-    "sass": "^1.49.8",
-    "webpack-dev-server": "^3.9.0"
+    "sass": "^1.49.8"
   },
   "scripts": {
-    "build": "node esbuild.config.js --tsconfig=./tsconfig.json"
+    "build": "node esbuild.config.js"
   }
 }
