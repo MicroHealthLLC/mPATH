@@ -14,5 +14,5 @@
   |var project_facility_hash = "#{JSON.generate(generate_project_facility_hash )}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
 
-= javascript_pack_tag "dashboard", async: true
+= javascript_include_tag "dashboard", async: true
 = stylesheet_pack_tag "dashboard"
