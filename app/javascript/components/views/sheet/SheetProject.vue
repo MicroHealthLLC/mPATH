@@ -137,8 +137,7 @@
         <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
           <div class="col pt-0 text-right">
           <button 
-            v-if="_isallowed('write')"
-            :disabled="disableSave(project.pointOfContact, project.email, project.phoneNumber)"
+            v-if="_isallowed('write')"           
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
@@ -329,33 +328,38 @@ export default {
     },
     updateContactInfo() {
       let formData = new FormData();
-          formData.append("facility[point_of_contact]", this.project.pointOfContact);  
-          formData.append("facility[phone_number]", this.project.phoneNumber);
-          formData.append("facility[email]",this.project.email);
-    
-      // formData.append("commit", "Update Project");
-      // let url = `/admin/facilities/${this.$route.params.projectId}`;
+
+          if(this.project.pointOfContact){
+            formData.append("facility[point_of_contact]", this.project.pointOfContact);  
+          } else formData.append("facility[point_of_contact]", '');  
+          if(this.project.email){
+            formData.append("facility[email]",this.project.email);
+          } else formData.append("facility[email]", '');
+          if(this.project.phoneNumber){
+            formData.append("facility[phone_number]", this.project.phoneNumber)
+          } else  formData.append("facility[phone_number]", '') 
+
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}`; 
       let method = "PUT";
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      }).then((response) => {
-        if (response.status === 200) {
-          this.$message({
-            message: `Edits has been saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-          this.fetchCurrentProject(this.$route.params.programId)
-          this.edit = true
-        }
-      });
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        }).then((response) => {
+          if (response.status === 200) {
+            this.$message({
+              message: `Edits has been saved successfully.`,
+              type: "success",
+              showClose: true,
+            });
+            this.fetchCurrentProject(this.$route.params.programId)
+            this.edit = true
+          }
+        });
     },
     updateFacility(e) {
       if (e.target) e.target.blur();

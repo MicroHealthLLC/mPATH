@@ -796,6 +796,7 @@
         <template slot-scope="scope">
     <el-button
       type="default"
+      size="small"
       v-tooltip="`Save role`"
       v-if="(isEditting && currentRow == scope.$index) || 
       (scope.$index == 0 && isEditting && scope.row.newRow) && scope.row.name"
@@ -807,6 +808,7 @@
    
     <el-button
       type="default"
+      size="small"
       @click.prevent="editRole(scope.$index, scope.row)"
       v-if="!isEditting &&
       scope.row.name !== 'update-project' &&
@@ -819,6 +821,7 @@
       </el-button>
 
       <el-button
+      size="small"
       type="default"
       @click.prevent="cancelEditRole(scope.$index, scope.row)"
       v-if="isEditting && currentRow == scope.$index"
@@ -828,6 +831,7 @@
       <i class="fas fa-ban"></i> 
       </el-button>
       <el-button
+      size="small"
       type="default"
       @click.prevent="cancelCreateRole(scope.$index, scope.row)"
       v-if="scope.$index == 0 && isEditting && scope.row.newRow"
