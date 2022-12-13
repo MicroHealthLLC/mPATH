@@ -2478,16 +2478,16 @@ export default {
   z-index: 1045;
   width: 350px;
 }
-/deep/.el-switch__label, .el-switch__label--left {
+::v-deep.el-switch__label, .el-switch__label--left {
   color: lightgray;
 }
-/deep/.el-switch__label, .el-switch__label--right {
+::v-deep.el-switch__label, .el-switch__label--right {
   color: lightgray;
 }
-/deep/.el-switch__label.is-active, .el-switch__label--left {
+::v-deep.el-switch__label.is-active, .el-switch__label--left {
   color: #383838;
 }
-/deep/.vue-treeselect__control {
+::v-deep.vue-treeselect__control {
   height: 40px !important;
 }
 .lightBtn {

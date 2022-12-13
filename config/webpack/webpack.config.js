@@ -1,5 +1,9 @@
 const { webpackConfig, merge } = require('shakapacker')
 const { VueLoaderPlugin } = require('vue-loader')
+const webpack = require('webpack')
+const dotenv = require('dotenv')
+
+dotenv.config();
 
 module.exports = merge({
   module: {
@@ -15,7 +19,10 @@ module.exports = merge({
     ]
   },
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+   })
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.vue', '.css'],

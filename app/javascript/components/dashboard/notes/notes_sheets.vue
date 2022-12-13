@@ -294,7 +294,7 @@
    .notes_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .notes_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .notes_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 80vw;
     max-height: 80vh;
     .sweet-content {

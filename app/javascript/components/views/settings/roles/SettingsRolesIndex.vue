@@ -2245,30 +2245,30 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
 .addRoleDialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
-  /deep/.el-dialog__header {
+  ::v-deep.el-dialog__header {
     padding-bottom: 0 !important;
   }
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
-/deep/.el-dialog__header.users {
+::v-deep.el-dialog__header.users {
   padding: 0;
 }
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #383838;
   //   font-size: .9rem;
   text-align: center;
 }
 .user-role-modal {
-  /deep/.el-table__header,
+  ::v-deep.el-table__header,
   .el-table {
     width: auto !important;
   }
@@ -2278,7 +2278,7 @@ export default {
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
 .crudRow {
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
     border: 1px solid #d9534f;
   }
 }

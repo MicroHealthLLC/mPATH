@@ -1294,7 +1294,7 @@ contractAgencyOptions(){
 </script>
     
 <style scoped lang="scss">
-  /deep/.el-scrollbar__view.el-select-dropdown__list{
+  ::v-deep.el-scrollbar__view.el-select-dropdown__list{
     width: 450px !important;
   }
   .bottomTabs{
@@ -1320,7 +1320,7 @@ contractAgencyOptions(){
       -webkit-line-clamp: unset;
     }
   }
-  /deep/.el-table {
+  ::v-deep.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;

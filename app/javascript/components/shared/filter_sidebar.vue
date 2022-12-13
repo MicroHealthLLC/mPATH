@@ -1642,18 +1642,18 @@ export default {
   margin-right: 0px !important;
   width: 100%;
 }
-.issueUser-select /deep/ .multiselect,
-.taskUser-select /deep/ .multiselect,
-.actions-select /deep/ .multiselect,
-.issetype-select /deep/ .multiselect,
-.issueSeverity-select /deep/ .multiselect,
-.issueProgress-select /deep/ .multiselect,
-.taskProgress-select /deep/ .multiselect,
-.tasktype-select /deep/ .multiselect,
-.progress-ranges-select /deep/ .multiselect,
-.facilityname-search /deep/ .multiselect,
-.facilitygroup-select /deep/ .multiselect,
-.status-select /deep/ .multiselect {
+.issueUser-select ::v-deep .multiselect,
+.taskUser-select ::v-deep .multiselect,
+.actions-select ::v-deep .multiselect,
+.issetype-select ::v-deep .multiselect,
+.issueSeverity-select ::v-deep .multiselect,
+.issueProgress-select ::v-deep .multiselect,
+.taskProgress-select ::v-deep .multiselect,
+.tasktype-select ::v-deep .multiselect,
+.progress-ranges-select ::v-deep .multiselect,
+.facilityname-search ::v-deep .multiselect,
+.facilitygroup-select ::v-deep .multiselect,
+.status-select ::v-deep .multiselect {
   font-size: 14px;
   width: 280px;
   .multiselect__placeholder {
@@ -1680,7 +1680,7 @@ export default {
 .duedate-range {
   display: flex;
 }
-.project-select /deep/ .multiselect {
+.project-select ::v-deep .multiselect {
   font-size: 14px;
   width: 280px;
   .multiselect__tags {
@@ -1703,7 +1703,7 @@ export default {
     content: unset;
   }
 }
-.taskissueoverdue-select /deep/ .multiselect {
+.taskissueoverdue-select ::v-deep .multiselect {
   font-size: 14px;
   width: 280px;
   .multiselect__tags {
@@ -1739,7 +1739,7 @@ a.disabled {
 .filter-header {
   height: 30px;
 }
-.duedate-range /deep/ .mx-datepicker-range {
+.duedate-range ::v-deep .mx-datepicker-range {
   width: 280px;
   .mx-input {
     display: inline-block;
@@ -1760,7 +1760,7 @@ a.disabled {
     }
   }
 }
-.notedate-range /deep/ .mx-datepicker-range {
+.notedate-range ::v-deep .mx-datepicker-range {
   width: 280px;
   .mx-input {
     display: inline-block;
@@ -1781,7 +1781,7 @@ a.disabled {
     }
   }
 }
-.taskissueduedate-range /deep/ .mx-datepicker-range {
+.taskissueduedate-range ::v-deep .mx-datepicker-range {
   width: 280px;
   .mx-input {
     display: inline-block;
@@ -1885,13 +1885,13 @@ input[type=number] {
   -moz-appearance: textfield;
   height: 34px;
 }
-/deep/.mx-input {
+::v-deep.mx-input {
   font-size: .75rem !important;
 }
 .clear-btn {
   text-decoration-line: none !important;
 }
-/deep/.multiselect__tags {   
+::v-deep.multiselect__tags {   
     padding: 4px 40px 0 8px;
     border-radius: 5px;
     border: 1px solid #ced4da;

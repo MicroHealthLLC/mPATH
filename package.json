@@ -94,6 +94,7 @@
     "defaults"
   ],
   "devDependencies": {
+    "dotenv": "^16.0.3",
     "node-sass": "^8.0.0",
     "sass": "^1.56.2",
     "sass-loader": "^13.2.0"

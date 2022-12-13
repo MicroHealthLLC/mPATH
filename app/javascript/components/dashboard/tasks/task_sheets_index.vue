@@ -1203,7 +1203,7 @@ i, .icons {
   border-radius: 4px; 
   border: .5px solid lightgray;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
