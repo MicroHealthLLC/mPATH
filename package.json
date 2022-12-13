@@ -82,7 +82,10 @@
     "webpack-dev-server": "^4.11.1",
     "webpack-merge": "^5.8.0",
     "webpack-sources": "^3.2.3",
-    "xlsx": "^0.17.0"
+    "xlsx": "^0.17.0",
+    "dotenv": "^16.0.3",
+    "sass": "^1.56.2",
+    "sass-loader": "^13.2.0"
   },
   "version": "0.1.0",
   "babel": {
@@ -94,8 +97,6 @@
     "defaults"
   ],
   "devDependencies": {
-    "dotenv": "^16.0.3",
-    "sass": "^1.56.2",
-    "sass-loader": "^13.2.0"
+
   }
 }

@@ -6,6 +6,7 @@ const dotenv = require('dotenv')
 dotenv.config();
 
 module.exports = merge({
+  mode: process.env.RAILS_ENV,
   module: {
     rules: [
       {
