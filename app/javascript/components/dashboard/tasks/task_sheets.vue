@@ -288,7 +288,7 @@ td {
 // .task_form_modal.sweet-modal-overlay {
 //   z-index: 10000001;
 // }
-.task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+.task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
   min-width: 30vw;
   max-height: 80vh;
   .sweet-content {
@@ -298,7 +298,7 @@ td {
   .badge-pill {
     font-size: .85rem;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

@@ -1868,7 +1868,7 @@ export default {
   min-height: 300px;
 }
 
-/deep/.el-popper {
+::v-deep.el-popper {
   .select-popper {
     display: none;
   }
@@ -1891,7 +1891,7 @@ export default {
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   padding-left: 1.5rem;
 }
 
@@ -1899,7 +1899,7 @@ export default {
   text-align: right;
 }
 
-/deep/.el-table__header,
+::v-deep.el-table__header,
 .el-table {
   width: auto !important;
 }
@@ -1908,27 +1908,27 @@ export default {
   font-size: x-large;
 }
 
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1rem;
   word-break: break-word;
 }
 
 .contractUsers {
-  /deep/.el-dialog {
+  ::v-deep.el-dialog {
     width: 60% !important;
 
-    /deep/.el-dialog__body {
+    ::v-deep.el-dialog__body {
       padding-top: 0;
     }
   }
 }
 
-// /deep/.el-dialog.contractUsers{
+// ::v-deep.el-dialog.contractUsers{
 //  width: 60% !important;
 //   }
 // .contractUsers{
-//  /deep/.el-dialog__body {
+//  ::v-deep.el-dialog__body {
 //    padding-top: 0;
 //  }
 // }
@@ -1965,40 +1965,40 @@ a {
   overflow-y: auto;
 }
 
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   font-weight: 300 !important;
 }
 
-/deep/.el-table__row .el-input .el-input__inner {
+::v-deep.el-table__row .el-input .el-input__inner {
   border-style: none;
   font-size: 16px !important;
 }
 
-/deep/.hover-row .el-input .el-input__inner {
+::v-deep.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
 
-/deep/.el-dialog.addVehicle {
+::v-deep.el-dialog.addVehicle {
   width: 60%;
 }
 
 .addVehicle {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
 }
 
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
 
-/deep/.el-table {
+::v-deep.el-table {
   .el-input__inner {
     font-size: 16px !important;
   }
 }
 
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   background-color: #dc3545;
   border-radius: 50%;
   color: white;
@@ -2007,11 +2007,11 @@ a {
 }
 
 .addUserRole {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
 
-  /deep/.el-dialog {
+  ::v-deep.el-dialog {
     width: 55%;
   }
 }

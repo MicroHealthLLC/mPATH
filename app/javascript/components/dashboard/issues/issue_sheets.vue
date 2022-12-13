@@ -267,7 +267,7 @@
     color: #fff;
     border-radius: 3px;
   }
-  .issue_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .issue_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {
