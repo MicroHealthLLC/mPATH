@@ -2,6 +2,8 @@ const { webpackConfig, merge } = require('shakapacker')
 const { VueLoaderPlugin } = require('vue-loader')
 const webpack = require('webpack')
 const dotenv = require('dotenv')
+const { ESBuildMinifyPlugin } = require('esbuild-loader')
+
 
 dotenv.config();
 
@@ -30,5 +32,12 @@ module.exports = merge({
     alias: {
       vue: 'vue/dist/vue.esm'
     }
+  },
+  optimization: {
+    minimizer: [
+      new ESBuildMinifyPlugin({
+        target: 'es2015' 
+      })
+    ]
   }
 }, webpackConfig)

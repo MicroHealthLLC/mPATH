@@ -23,8 +23,11 @@
     "css-loader": "^6.7.2",
     "css-minimizer-webpack-plugin": "^4.2.2",
     "dayjs": "^1.10.4",
+    "dotenv": "^16.0.3",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.14.1",
+    "esbuild": "^0.16.5",
+    "esbuild-loader": "^2.20.0",
     "firebase": "8.10.0",
     "follow-redirects": "^1.14.8",
     "gantt-elastic": "^1.0.11",
@@ -41,6 +44,8 @@
     "node-fetch": "2.6.7",
     "node-forge": "^1.0.0",
     "regenerator-runtime": "^0.13.11",
+    "sass": "^1.56.2",
+    "sass-loader": "^13.2.0",
     "scss-tokenizer": "^0.4.3",
     "shakapacker": "6.5.4",
     "style-loader": "^3.3.1",
@@ -82,10 +87,7 @@
     "webpack-dev-server": "^4.11.1",
     "webpack-merge": "^5.8.0",
     "webpack-sources": "^3.2.3",
-    "xlsx": "^0.17.0",
-    "dotenv": "^16.0.3",
-    "sass": "^1.56.2",
-    "sass-loader": "^13.2.0"
+    "xlsx": "^0.17.0"
   },
   "version": "0.1.0",
   "babel": {
@@ -96,7 +98,5 @@
   "browserslist": [
     "defaults"
   ],
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }
