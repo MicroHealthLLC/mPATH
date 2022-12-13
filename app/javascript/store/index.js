@@ -4001,10 +4001,10 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
-            if (issue.facilityId){
+            if (note.facilityProjectId){
               commit("updateNotesHash", {
                 note: note,
                 facilityId,
