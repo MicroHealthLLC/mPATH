@@ -2301,13 +2301,13 @@ export default {
   padding: 1px 3px;
   border: solid lightgray 0.75px;
 }
-/deep/.el-popper {
+::v-deep.el-popper {
   .select-popper {
     display: none;
   }
 }
 
-/deep/.el-table__body-wrapper {
+::v-deep.el-table__body-wrapper {
   overflow-y: visible;
 }
 .right-panel {
@@ -2323,7 +2323,7 @@ export default {
   border-bottom: lightgray solid 1px;
 }
 
-/deep/.el-table.usersTable {
+::v-deep.el-table.usersTable {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
@@ -2334,34 +2334,34 @@ export default {
   }
 }
 
-/deep/.el-dialog {
+::v-deep.el-dialog {
   width: 30%;
 }
 .users {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
-/deep/.el-dialog__header.users {
+::v-deep.el-dialog__header.users {
   padding: 0;
 }
-/deep/.el-table th.el-table__cell > .cell,
+::v-deep.el-table th.el-table__cell > .cell,
 .priviLabel {
   color: #212529;
   font-size: 1.1rem;
 }
 .userRoles {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
-  /deep/.el-dialog {
+  ::v-deep.el-dialog {
     width: 55%;
   }
-  /deep/.el-dialog__header {
+  ::v-deep.el-dialog__header {
     padding-bottom: 0 !important;
   }
 }

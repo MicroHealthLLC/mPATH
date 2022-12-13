@@ -1196,16 +1196,16 @@ export default {
     bottom: 2.5%;
     width: 100%;
   }
- /deep/.el-dialog {
+ ::v-deep.el-dialog {
   width: 70%;  
  }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   padding: 1px 1px 1px 2px;
 }
-/deep/.el-tabs__content {
+::v-deep.el-tabs__content {
   padding-bottom: 0;
 }
-/deep/.el-table {
+::v-deep.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;
