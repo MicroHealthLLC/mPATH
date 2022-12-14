@@ -433,6 +433,7 @@
               <el-table-column label="Actions"  align="right" v-if="_isallowed('delete') || _isallowed('write')">
                 <template slot-scope="scope">
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Save`"
                     @click.prevent="saveEdits(scope.$index, scope.row)"
@@ -444,6 +445,7 @@
                     <i class="far fa-save"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Cancel Edit`"
                     v-if="
@@ -455,6 +457,7 @@
                     <i class="fas fa-ban"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Edit Program Group`"
                     @click.prevent="editMode(scope.$index, scope.row)"
@@ -467,6 +470,7 @@
                     <i class="fal fa-edit text-primary"></i>
                   </el-button>
                   <el-button
+                   size="small"
                     type="default" 
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Portfolio Group'"            
@@ -479,6 +483,7 @@
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
                   <el-button
+                    size="small"
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"

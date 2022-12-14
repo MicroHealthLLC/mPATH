@@ -94,6 +94,7 @@
               <el-table-column label="Actions" align="right">
                 <template slot-scope="scope">
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Manage User Roles`"
                     @click.prevent="openUserRoleDialog(scope.$index, scope.row)"
@@ -104,6 +105,7 @@
                   </el-button>
                   <el-button
                     type="default"
+                    size="small"
                     v-tooltip="`Remove User from Program`"
                     @click.prevent="removeUser(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex && _isallowed('delete')"
@@ -113,6 +115,7 @@
                   </el-button>
                   <el-button
                     type="default"
+                    size="small"
                     v-tooltip="`Edit User info`"
                     v-if="_isallowed('write')"
                     @click.prevent="openEditUser(scope.$index, scope.row)"
@@ -868,6 +871,7 @@
           </template> -->
                 <template slot-scope="scope">
                   <el-button
+                    size="mini"
                     type="default"
                     v-if="
                       (isEditingRoles || isEditingContractRoles) &&
@@ -881,6 +885,7 @@
                     <i class="far fa-save"></i>
                   </el-button>
                   <el-button
+                    size="mini"
                     type="default"
                     v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
                     @click.prevent="removeRole(scope.$index, scope.row)"
@@ -890,16 +895,18 @@
                     <i class="far fa-trash-alt text-danger "></i>
                   </el-button>
                   <el-button
+                    size="mini"
                     type="default"
                     v-tooltip="`Remove Association(s)`"
                     @click.prevent="editRoles(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
-                    class="bg-danger text-light btn-sm"
+                    class="bg-danger text-light px-2"
                   >
                     <i class="fal fa-user-lock mr-1 text-light"></i>
                     <!-- <i class="fal fa-user-gear mr-1 text-light"></i>  -->
                   </el-button>
                   <el-button
+                   size="mini"
                     type="default"
                     v-if="
                       (isEditingRoles || isEditingContractRoles) &&
@@ -989,6 +996,7 @@
             <div class="mt-2 row">
               <div class="col pt-1">
                 <el-button
+                 size="mini"
                   type="default"
                   @click="saveProjectUserRole()"
                   v-if="
@@ -1004,6 +1012,7 @@
               </div>
               <div class="col text-right pt-1">
                 <el-button
+                  size="mini"
                   type="default"
                   @click.prevent="closeProjectRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
@@ -1084,6 +1093,7 @@
             <div class="mt-2 row">
               <div class="col pt-1">
                 <el-button
+                 size="mini"
                   type="default"
                   @click="saveContractUserRole()"
                   v-if="
@@ -1099,6 +1109,7 @@
               </div>
               <div class="col text-right pt-1">
                 <el-button
+                 size="mini"
                   type="default"
                   @click.prevent="closeContractRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
@@ -1180,6 +1191,7 @@
             <div class="mt-2 row">
               <div class="col pt-1">
                 <el-button
+                  size="mini"
                   type="default"
                   @click="saveVehicleUserRole()"
                   v-if="
@@ -1195,6 +1207,7 @@
               </div>
               <div class="col text-right pt-1">
                 <el-button
+                 size="mini"
                   type="default"
                   @click.prevent="closeVehicleRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
@@ -1244,6 +1257,7 @@
             <div class="mt-2 row">
               <div class="col pt-1">
                 <el-button
+                  size="mini"
                   type="default"
                   @click="saveAdminUserRole()"
                   v-if="adminRoleUsers"
@@ -1253,6 +1267,7 @@
                   <i class="fal fa-save"></i>
                 </el-button>
                 <el-button
+                  size="mini"
                   type="default"
                   @click="removeAssociations()"
                   v-if="
@@ -1268,6 +1283,7 @@
               </div>
               <div class="col text-right pt-1">
                 <el-button
+                  size="mini"
                   type="default"
                   @click.prevent="closeAdminRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"

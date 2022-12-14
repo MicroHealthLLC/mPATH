@@ -1,3 +1,4 @@
+import                           'element-ui/lib/theme-chalk/index.css';   
 import                          'core-js/stable'
 import                          'regenerator-runtime/runtime'
 import _                   from 'lodash'
@@ -11,10 +12,13 @@ import VuePhoneNumberInput from 'vue-phone-number-input'
 import 'vue-phone-number-input/dist/vue-phone-number-input.css'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
+
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('loader', FadeLoader)
 Vue.component('multiselect', Multiselect)
 Vue.use(VeeValidate)
+ELEMENT.locale(ELEMENT.lang.en)
+
 
 if(!window.google){
   Vue.use(VueGoogleMaps, {

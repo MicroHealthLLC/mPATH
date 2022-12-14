@@ -64,6 +64,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in customerOptions"
@@ -97,6 +98,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -118,6 +120,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -151,6 +154,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractNumber"
@@ -183,6 +187,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardToNums"
@@ -215,6 +220,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in naicsOptions"
@@ -246,6 +252,7 @@
         placeholder=""
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardTypes"
@@ -277,6 +284,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractTypes"
@@ -306,6 +314,7 @@
         class="w-100"
         clearable
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in primeOrSub"
@@ -405,6 +414,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in pops"
@@ -436,6 +446,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in currentPops"
@@ -522,6 +533,7 @@
       align="center">
    <template slot-scope="scope">
       <el-button
+        size="small"
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
@@ -532,36 +544,40 @@
           && scope.row.contract_pop_id && popStartDate && popEndDate
           )"  
         v-tooltip="`Save`" 
-        class="bg-primary btn-sm text-light mx-0">               
+        class="bg-primary text-light px-2">               
         <i class="far fa-save"></i>
         </el-button>
       <el-button 
+       size="small"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
-        class="bg-secondary btn-sm text-light mx-0">
+        class="bg-secondary text-light px-2">
       <i class="fas fa-ban"></i>
         </el-button>
         <el-button 
+        size="small"
         type="default" 
         v-tooltip="`Exempt expiration date`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
-        class="bg-light btn-sm mx-0">
+        class="bg-light px-2">
         <i class="fa-solid fa-calendar-xmark text-success"></i>
         </el-button>
          <el-button
+         size="small"
           type="default"
            v-tooltip="`Edit`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
           type="default"
+          size="small"
            v-tooltip="`Delete`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
@@ -943,7 +959,8 @@ export default {
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;       
+    this.rowId = null; 
+    this.fetchContractProjects();      
   },
   handleDelete(index, row) {
     console.log(index, row);

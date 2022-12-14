@@ -956,15 +956,17 @@
                      
                       <el-button
                         type="default"
+                        size="small"
                         v-tooltip="`Manage Admin Role User(s)`"
                         v-if="!isEditting"
                         @click.prevent="addUserRole(scope.$index, scope.row)"
-                        class="bg-primary text-light btn-sm"
+                        class="bg-primary text-light btn-sm px-2"
                       >
                         <i class="fas fa-users-medical mr-1"></i>
                       </el-button>
                       <el-button
                         type="default"
+                        size="small"
                         v-tooltip="`Save role`"
                         v-if="
                           (isEditting && currentRow == scope.$index) ||
@@ -979,6 +981,7 @@
                         <i class="far fa-save"></i>
                       </el-button>
                       <el-button
+                        size="small"
                         type="default"
                         @click.prevent="editRole(scope.$index, scope.row)"
                         v-if="
@@ -988,7 +991,7 @@
                             scope.row.name !== 'program-admin-not-contract' &&
                             _isallowed('write')
                         "
-                        class="bg-light btn-sm"
+                        class="bg-light btn-sm px-2 ml-1"
                         v-tooltip="`Edit Role`"
                       >
                         <i class="fal fa-edit text-primary"></i>
@@ -996,6 +999,7 @@
 
                       <el-button
                         type="default"
+                        size="small"
                         @click.prevent="cancelEditRole(scope.$index, scope.row)"
                         v-if="isEditting && currentRow == scope.$index"
                         class="bg-secondary btn-sm text-light ml-1"
@@ -1005,6 +1009,7 @@
                       </el-button>
                       <el-button
                         type="default"
+                        size="small"
                         @click.prevent="
                           cancelCreateRole(scope.$index, scope.row)
                         "
@@ -1184,14 +1189,9 @@
             </el-table-column> -->
 
                     <el-table-column align="right">
-                      <!-- <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Search Users in this Role"/>
-        </template> -->
                       <template slot-scope="scope">
                         <el-button
+                          size="mini"
                           type="default"
                           @click="saveRemoveUsers(scope.$index, scope.row)"
                           v-if="
@@ -1205,14 +1205,16 @@
                         </el-button>
                         <el-button
                           type="default"
+                          size="mini"
                           v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                           v-tooltip="`Remove User from role`"
                           @click.prevent="editUsers(scope.$index, scope.row)"
-                          class="bg-danger text-light btn-sm"
+                          class="bg-danger text-light btn-sm px-2"
                         >
                           <i class="fal fa-user-lock mr-1 text-light"></i>
                         </el-button>
                         <el-button
+                          size="mini"
                           type="default"
                           v-if="isEditingRoles && scope.$index == rowIndex_1"
                           v-tooltip="`Cancel`"
@@ -1317,9 +1319,6 @@ export default {
       "updateRole",
       "removeUserRole",
     ]),
-    log(e) {
-      // console.log(e)
-    },
     _isallowed(salut) {
       return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {
         settingType: "Users",

@@ -153,6 +153,7 @@
         this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
       editRisk() {
+        console.log(this.DV_risk)
         this.DV_edit_risk = this.DV_risk;
         if (this.$route.params.contractId){
           this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/${this.DV_edit_risk.id}`);
