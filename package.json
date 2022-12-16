@@ -41,7 +41,7 @@
     "moment-range": "^4.0.2",
     "node-fetch": "2.6.7",
     "node-forge": "^1.0.0",
-    "regenerator-runtime": "^0.13.11",
+    "regenerator-runtime": "^0.13.11", 
     "scss-tokenizer": "^0.4.3",
     "shakapacker": "6.5.4",
     "style-loader": "^3.3.1",
