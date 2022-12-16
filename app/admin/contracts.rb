@@ -126,7 +126,7 @@
 #   end
 
 #   # form do |f|
-#   #   f.semantic_errors *f.object.errors.keys
+#   #   f.semantic_errors *f.object.errors
 #   #   div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
 
 #   #   tabs do

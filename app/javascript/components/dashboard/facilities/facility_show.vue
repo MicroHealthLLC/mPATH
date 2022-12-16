@@ -919,12 +919,12 @@
   .my-el-card {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
 
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
@@ -995,11 +995,11 @@
     background: #fff;
     padding: 5px;
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {
       color: #dc3545;
       text-overflow: ellipsis;

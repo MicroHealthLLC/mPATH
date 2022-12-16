@@ -293,7 +293,7 @@ export default {
 .fa-calendar {
   font-size: x-large; 
 }
-/deep/.el-table th.el-table__cell>.cell {
+::v-deep.el-table th.el-table__cell>.cell {
   color: #212529;
   font-size: 1.15rem;
 }
@@ -325,23 +325,23 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-table__row .el-input .el-input__inner{
+::v-deep.el-table__row .el-input .el-input__inner{
   border-style:none;
   font-size: 16px !important;
 }
-/deep/.hover-row .el-input .el-input__inner{
+::v-deep.hover-row .el-input .el-input__inner{
   border-style:solid;   
 }
-/deep/.el-dialog {
+::v-deep.el-dialog {
   width:30%;
   border-top: solid 5px  #1D336F !important;
 }
-/deep/.el-table {
+::v-deep.el-table {
   .el-input__inner { 
   font-size: 16px !important;
   }
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   background-color: #DC3545;
     border-radius: 50%;
     color: white;

@@ -697,7 +697,7 @@ export default {
     bottom: 2.5%;
     width: 100%;
   }
-/deep/.el-table {
+::v-deep.el-table {
     th {
       color: #383838;
     }

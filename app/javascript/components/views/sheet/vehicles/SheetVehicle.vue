@@ -211,7 +211,7 @@ export default {
   font-size: 1.3rem;
 }
 
-/deep/.el-button.usd-icon {
+::v-deep.el-button.usd-icon {
   cursor:text;
 }
 .fa-building {
@@ -231,11 +231,11 @@ export default {
 .my-el-card {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -294,24 +294,24 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header,
-/deep/.el-collapse-item__wrap {
+::v-deep.el-collapse-item__header,
+::v-deep.el-collapse-item__wrap {
   border-bottom: none !important;
 }
 
-/deep/.el-card__body {
+::v-deep.el-card__body {
   padding-bottom: 0 !important;
 }
-/deep/.el-progress-circle {
+::v-deep.el-progress-circle {
   height: 100px !important;
   width: 100px !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
 }
 
-/deep/.el-collapse-item__arrow,
-/deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow,
+::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {

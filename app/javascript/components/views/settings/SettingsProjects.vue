@@ -1448,7 +1448,7 @@ removeProject(index, rows) {
 .fs-50{
   font-size: .50rem;
 }
-/deep/.el-popper {
+::v-deep.el-popper {
   .select-popper {
     display: none;
   }
@@ -1469,13 +1469,13 @@ removeProject(index, rows) {
 .right {
   text-align: right;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   padding-left: 1.5rem;
 }
 .fa-calendar {
   font-size: x-large;
 }
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1.15rem;
 }
@@ -1507,57 +1507,57 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-table__row .el-input .el-input__inner {
+::v-deep.el-table__row .el-input .el-input__inner {
   border-style: none;
 }
-// /deep/.el-table__header, .el-table{
+// ::v-deep.el-table__header, .el-table{
 //   width: auto !important;
 // }
-/deep/.hover-row .el-input .el-input__inner {
+::v-deep.hover-row .el-input .el-input__inner {
   border-style: none;
 }
 
-/deep/.el-table {
+::v-deep.el-table {
   .el-input__inner {
     font-size: 16px !important;
     font-weight: 300 !important;
   }
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
 h5 {
   word-break: break-word;
 }
 .addProjectDialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
   padding-top: 0 !important;
  }
 
 
 }
 .addUserRole {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
   padding-top: 0 !important;
  }
- /deep/.el-dialog {
+ ::v-deep.el-dialog {
   width: 55%;
   }
 }
 .portfolioNames {
-  /deep/.el-dialog__header {
+  ::v-deep.el-dialog__header {
     padding-top: 0 !important;
   }
-  /deep/.el-dialog__headerbtn {
+  ::v-deep.el-dialog__headerbtn {
     display: none;
   }
 
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
     height: 68vh; 
   }
 
-  /deep/.el-checkbox-group {
+  ::v-deep.el-checkbox-group {
     overflow-y: auto;
     overflow-x: hidden;
     height: 35vh;
@@ -1579,10 +1579,10 @@ div.sticky {
 }
 
 .addProjectDialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
   padding-top: 0 !important;
  }
- /deep/.el-dialog {
+ ::v-deep.el-dialog {
   width: 30%;
 }
 }
