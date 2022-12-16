@@ -21,9 +21,9 @@ jobs:
 
     # Customize the ruby version depending on your needs
     - name: Setup Ruby
-      uses: actions/checkout@v2
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1.0'
+        ruby-version: 3.1.0
 
     - name: Setup Brakeman
       env:
