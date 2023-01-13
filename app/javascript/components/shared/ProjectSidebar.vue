@@ -68,6 +68,7 @@
             >
               <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
+                  @mouseup.right="openContextMenu" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
@@ -93,6 +94,7 @@
                 "
               >
                 <div 
+                 @mouseup.right="openContextMenu" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{
@@ -139,6 +141,13 @@
       </div>
     </div>
     <!-- <router-link  >  -->
+      <SidebarContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"    
+        :display="showContextMenu"
+        ref="sidebarContextMenu"
+        >  
+      </SidebarContextMenu>
     <button
       v-if="_isallowedProgramSettings('read')"
       class="btn btn-sm btn-light program-settings-btn"
@@ -153,12 +162,14 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import SidebarContextMenu from "./SidebarContextMenu";
 import Loader from "./loader";
 
 export default {
   name: "ProjectSidebar",
   components: {
     Loader,
+    SidebarContextMenu
   },
   props: [
     "title",
@@ -177,6 +188,7 @@ export default {
       totalGroupVehicle: 0,
       filteredGroupSize: null,
       projectCount: 0,
+      showContextMenu: false, 
     };
   },
   computed: {
@@ -297,6 +309,10 @@ export default {
       "createVehicle",
       "updateVehicle",
     ]),
+    openContextMenu(e) {
+      e.preventDefault();
+      this.$refs.sidebarContextMenu.open(e);
+    },
     expandFacilityGroup(group) {
       if (this.currentContract && this.currentFacility == {}) {
         group = this.currentContract.facilityGroup.id;
