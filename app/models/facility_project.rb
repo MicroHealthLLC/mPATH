@@ -21,6 +21,39 @@ class FacilityProject < ApplicationRecord
   before_create :assign_default_facility_group 
   before_update :assign_default_facility_group
 
+
+  def move_to_program(target_program_id)
+    begin
+      facility = self.facility
+      source_program = self.project
+      target_program = Project.find(target_program_id)
+      facility_project = self
+      
+      source_program_user_ids = source_program.user_ids
+      target_program_user_ids = target_program.user_ids
+      
+      # Assign default read role to all target program users
+      default_read_project_role = Role.where(name: "read-project", is_default: true, is_portfolio: true).first
+      role_users = []
+      target_program_user_ids.each do |user_id|
+        role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_read_project_role.id, resource_id: facility_project.id, project_id: target_program.id, resource_type: "FacilityProject",user_id: user_id)
+      end
+      
+      results = RoleUser.import(role_users)
+      
+      # delete roles for project for program users
+      RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).destroy_all
+      
+      facility_project.update(project_id: target_program.id)
+
+      return {message: "Project moved successfully", status: true}
+    
+    rescue Exception => e
+      return {message: e.message, status: false}
+    end
+
+  end
+
   def remove_roles
     RoleUser.where(facility_project_id: self.id).destroy_all
   end

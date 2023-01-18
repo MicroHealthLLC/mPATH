@@ -1,4 +1,22 @@
 class Api::V1::FacilityGroupsController < AuthenticatedController
+  before_action :check_permission, only: [:move_to_program]
+
+  def check_permission
+    program_id = params[:project_id]
+
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update", "bulk_projects_update"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy", "remove_facility_project"].include?(params[:action]) 
+      action = "D"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_PROJECTS)
+  end
 
   def index
     # authorized_program_ids = current_user.authorized_programs.pluck(:id)
@@ -41,6 +59,23 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     groups = FacilityGroup.where(id: params[:facility_group_ids])
     project.project_groups = groups
     render json: groups
+  end
+
+  def move_to_program
+    source_program = Project.find(params[:source_program_id])
+    target_program = Project.find(params[:target_program_id])
+
+    all_facility_projects = FacilitProject.where(project_id: source_program.id, facility_group_id: params[:facility_group_id])
+    all_facility_projects.each do |fp|
+      fp.move_to_program(target_program.id)
+    end
+    
+    # self.update(project_id: target_program_id)
+
+    # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
+    # project_facility_group.move_to_program(target_program_id)
+
+    render json: group
   end
 
   def update
