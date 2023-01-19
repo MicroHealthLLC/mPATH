@@ -1,22 +1,16 @@
 <template>
     <div
       class="context-menu"
-      v-show="show"
+       v-show="show"
       :style="style"
       ref="context"
       tabindex="0"
       @mouseleave="close"
     >
       <el-menu collapse class="context-menu-inner">
-      <el-menu-item
-          v-if="$route.params.projectId"
-          @click="createDuplicate"
-          :disabled="!isAllowed('write', 'tasks')"
-          >Duplicate</el-menu-item
-        >
         <hr />
-        <el-submenu index="1" v-if="$route.params.projectId">
-          <template slot="title">Duplicate to Another Program </template>
+        <el-submenu index="1" v-if="$route.params.programId">
+          <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate to Another Program </template>
           <div>
             <div class="menu-subwindow-title">Duplicate to Another Program</div>
             <el-input
@@ -40,7 +34,7 @@
                 @click="duplicateSelectedTasks"
                 :disabled="submitDisabled"
               >
-                Submit
+                Save
               </button>
               <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">
                 Select All
@@ -54,16 +48,9 @@
             </div>
           </div>
         </el-submenu>
-        <hr />
-        <el-menu-item
-          v-if="$route.params.projectId"
-          @click="createDuplicate"
-          :disabled="!isAllowed('write', 'tasks')"
-          >Move</el-menu-item
-        >
-        <hr />
-        <el-submenu index="2" :disabled="!isAllowed('delete', 'tasks')"  v-if="$route.params.projectId">
-          <template slot="title"> Move to Another Program</template>
+        <hr />   
+        <el-submenu index="2" v-if="$route.params.programId">
+          <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move to Another Program</template>
           <div>
             <div class="menu-subwindow-title">Move to Another Program</div>
             <el-input
@@ -71,11 +58,13 @@
               :placeholder="placeholder"
               v-model="filterTree"
             ></el-input>
+
             <el-tree
               :data="treeFormattedData"
               :props="defaultProps"
               :filter-node-method="filterNode"
               ref="movetree"
+              show-checkbox
               @node-click="move"
             >
             </el-tree>
@@ -97,12 +86,10 @@
   import {API_BASE_PATH} from './../../mixins/utils'
   
   export default {
-    name: "SidebarContextMenu",
+    name: "MoveProjectContextMenu",
     props: {
       display: Boolean, // prop detect if we should show context menu,
-      facilities: Array,
-      // facilityGroups: Array,
-     
+      facilities: Array,    
     },
     data() {
       return {
@@ -119,7 +106,7 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups",]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms"]),
       // get position of context menu
       style() {
         return {
@@ -132,83 +119,32 @@
           return "Filter Contracts"
         } else if(this.$route.params.vehicleId){
           return "Filter Vehicles"
-        } else return "Filter Projects"
+        } else return "Filter Programs & Groups"
       },
      treeFormattedData() {
-      if(this.$route.params.projectId){
+      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
         let data = [];
-        this.filteredFacilityGroups.forEach((group, index) => {
+        this.portfolioPrograms.forEach((program, index) => {    
           data.push({
             id: index,
-            label: group.name,
+            label: program.label,            
             children: [
-              ...group.facilities
-                .filter(
-                  (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) 
-                )
-                .map((facility) => {
+              ...program.children
+                // .filter(
+                //   (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) 
+                // )
+                .map((group) => {
                   return {
-                    id: facility.facilityProjectId,
-                    label: facility.facilityName,
+                    id: group.project_group_id,
+                    label: group.label,
                   };
                 }),
             ],
           });
         });
-        // debugger
-        return [...data];
-      }
-  
-        if(this.$route.params.contractId){
-            let data = [];
-          let contractGroups = this.currentProject.contracts
-            this.facilityGroups.forEach((group, index) => {
-              data.push({
-                id: index,
-                label: group.name,         
-                children: [
-                    ...contractGroups.filter(t => t.facilityGroup.id == group.id)
-                    .filter(
-                      (contract) => this.isAllowedFacility("write", 'task_contract_context_menu', {project_contract_id: contract.projectContractId} ) && contract.projectContractId !== this.task.projectContractId
-                    )
-                    .map((contract) => {
-                      return {
-                        id: contract.projectContractId,
-                        label: contract.name,
-                      };
-                    }),
-                ],
-              });
-            });
-            // debugger
-        return [...data];    
-       }
-  
-       if(this.$route.params.vehicleId){
-            let data = [];
-          let vehicleGroups = this.currentProject.vehicles
-            this.facilityGroups.forEach((group, index) => {
-              data.push({
-                id: index,
-                label: group.name,         
-                children: [
-                    ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
-                    .filter(
-                      (vehicle) => this.isAllowedFacility("write", 'task_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId} ) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
-                    )
-                    .map((vehicle) => {
-                      return {
-                        id: vehicle.projectContractVehicleId,
-                        label: vehicle.name,
-                      };
-                    }),
-                ],
-              });
-            });
-            // debugger
-        return [...data];    
-       }
-     
+
+      return [...data]  
+       }    
       },
       submitDisabled() {
         if (this.$refs.duplicatetree) {
@@ -222,10 +158,12 @@
       },
     },
     methods: {
-      ...mapActions(["taskDeleted"]),
+      ...mapActions(["taskDeleted", "fetchPortfolioPrograms"]),
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
       log(e){
         console.log(e)
+        // console.log(`unfilteredFacs:  `, this.getUnfilteredFacilities)
+        // console.log(`facilityGroups:  `, this.facilityGroups)
       },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
@@ -594,6 +532,9 @@
         this.submitted = false;
       },
     },
+    mounted() {
+    this.fetchPortfolioPrograms()
+  },
     watch: {
       filterTree(value) {
         this.$refs.duplicatetree.filter(value);
@@ -612,7 +553,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     cursor: pointer;
   }.context-menu-inner{
-    width: 15vw;
+    width: 12.5vw;
   }
   hr {
     margin: 0;

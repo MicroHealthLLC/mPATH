@@ -31,7 +31,7 @@
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
-              <span class="d-flex">
+              <span class="d-flex" @mouseup.right="openGroupContextMenu"  @contextmenu.prevent="">
                 <span v-show="getExpandedGroup != group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
@@ -68,7 +68,7 @@
             >
               <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
-                  @mouseup.right="openContextMenu" @contextmenu.prevent=""
+                  @mouseup.right="openProjectContextMenu($event, 'project')" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
@@ -94,7 +94,7 @@
                 "
               >
                 <div 
-                 @mouseup.right="openContextMenu" @contextmenu.prevent=""
+                  @mouseup.right="openProjectContextMenu" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{
@@ -141,13 +141,16 @@
       </div>
     </div>
     <!-- <router-link  >  -->
-      <SidebarContextMenu
-        :facilities="facilities"
-        :facilityGroups="facilityGroups"    
-        :display="showContextMenu"
-        ref="sidebarContextMenu"
+      <MoveProjectContextMenu
+        :display="showProjectContextMenu"
+        ref="moveProjectContextMenu"
         >  
-      </SidebarContextMenu>
+      </MoveProjectContextMenu>
+      <MoveGroupContextMenu
+        :display="showGroupContextMenu"
+        ref="moveGroupContextMenu"
+        >  
+      </MoveGroupContextMenu>
     <button
       v-if="_isallowedProgramSettings('read')"
       class="btn btn-sm btn-light program-settings-btn"
@@ -162,14 +165,16 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import SidebarContextMenu from "./SidebarContextMenu";
+import MoveProjectContextMenu from "./MoveProjectContextMenu";
+import MoveGroupContextMenu from "./MoveGroupContextMenu";
 import Loader from "./loader";
 
 export default {
   name: "ProjectSidebar",
   components: {
     Loader,
-    SidebarContextMenu
+    MoveProjectContextMenu,
+    MoveGroupContextMenu
   },
   props: [
     "title",
@@ -177,7 +182,6 @@ export default {
     "currentFacilityGroup",
     "currentContract",
     "currentContractGroup",
-    ,
     "currentVehicle",
     "currentVehicleGroup",
   ],
@@ -188,7 +192,8 @@ export default {
       totalGroupVehicle: 0,
       filteredGroupSize: null,
       projectCount: 0,
-      showContextMenu: false, 
+      showProjectContextMenu: false, 
+      showGroupContextMenu: false, 
     };
   },
   computed: {
@@ -309,10 +314,14 @@ export default {
       "createVehicle",
       "updateVehicle",
     ]),
-    openContextMenu(e) {
+    openProjectContextMenu(e) {
       e.preventDefault();
-      this.$refs.sidebarContextMenu.open(e);
-    },
+      this.$refs.moveProjectContextMenu.open(e);
+   },
+    openGroupContextMenu(e) {
+      e.preventDefault();
+      this.$refs.moveGroupContextMenu.open(e);
+   },
     expandFacilityGroup(group) {
       if (this.currentContract && this.currentFacility == {}) {
         group = this.currentContract.facilityGroup.id;

@@ -1461,7 +1461,7 @@ export default {
       }
     },
     filteredLessons() {
-      console.log(this.programLessons)
+      // console.log(this.programLessons)
       let programLessonsObj = [];
       if(!this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
@@ -2104,9 +2104,9 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
-    log(e){
-      console.log(e)
-    },
+    // log(e){
+    //   console.log(e)
+    // },
     _isallowedContracts(salut) {
       return this.checkPrivileges("ProjectRollup", salut, this.$route, {method: "isallowedContracts"})
      },
