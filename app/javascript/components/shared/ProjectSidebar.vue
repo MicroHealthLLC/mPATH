@@ -146,7 +146,7 @@
         ref="moveProjectContextMenu"
         >  
       </MoveProjectContextMenu>
-      <MoveGroupContextMenu
+      <MoveGroupContextMenu      
         :display="showGroupContextMenu"
         ref="moveGroupContextMenu"
         >  

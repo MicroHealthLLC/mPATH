@@ -10,9 +10,9 @@
       <el-menu collapse class="context-menu-inner">
         <hr />
         <el-submenu index="1" v-if="$route.params.programId">
-          <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate to Another Program </template>
+          <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate Group to Another Program </template>
           <div>
-            <div class="menu-subwindow-title">Duplicate to Another Program</div>
+            <div class="menu-subwindow-title">Duplicate Group to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -50,24 +50,32 @@
         </el-submenu>
         <hr />   
         <el-submenu index="2" v-if="$route.params.programId">
-          <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move to Another Program</template>
+          <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move Group to Another Program</template>
           <div>
-            <div class="menu-subwindow-title">Move to Another Program</div>
+            <div class="menu-subwindow-title">Move Group to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
               v-model="filterTree"
+              :load="log(filterTree)"
             ></el-input>
-
             <el-tree
               :data="treeFormattedData"
               :props="defaultProps"
               :filter-node-method="filterNode"
-              ref="movetree"
-              show-checkbox
+              ref="movetree"       
               @node-click="move"
             >
             </el-tree>
+            <div class="context-menu-btns">
+              <button
+                class="btn btn-sm btn-success ml-2"
+                @click="duplicateSelectedTasks"         
+              >
+                Confirm Move
+              </button>
+                      
+            </div>
           </div>
         </el-submenu>
         <!-- <hr />
@@ -89,7 +97,7 @@
     name: "MoveGroupContextMenu",
     props: {
       display: Boolean, // prop detect if we should show context menu,
-      facilities: Array,     
+      group: Object,     
     },
     data() {
       return {
@@ -150,8 +158,6 @@
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
       log(e){
         console.log(e)
-        // console.log(`unfilteredFacs:  `, this.getUnfilteredFacilities)
-        // console.log(`facilityGroups:  `, this.facilityGroups)
       },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
@@ -182,115 +188,91 @@
         Vue.nextTick(() => this.$el.focus());
         this.show = true;
       },
-      openTask() {
-        this.$emit("open-task", this.task);
-        this.close();
-      },
-      moveTask(task, facilityProjectId) {
-        // if (!this.isAllowed("write", 'tasks')) return;
-        this.$validator.validate().then((success) => {
-          if (!success || this.loading) {
-            this.showErrors = !success;
-            return;
-          }
+    
+    //   moveGroup(task, facilityProjectId) {
+    //     // if (!this.isAllowed("write", 'tasks')) return;
+    //     this.$validator.validate().then((success) => {
+    //       if (!success || this.loading) {
+    //         this.showErrors = !success;
+    //         return;
+    //       }
   
-          this.loading = true;
-          let formData = new FormData();
+    //       this.loading = true;
+    //       let formData = new FormData();
         
-          if (this.$route.params.contractId) {
-               formData.append("task[project_contract_id]", task.projectContractId);
-           } else if (this.$route.params.vehicleId) {
-               formData.append("task[project_contract_vehicle_id]", task.projectContractVehicleId);
-           } else {
-               formData.append("task[facility_project_id]", facilityProjectId);
-           }
+    //       if (this.$route.params.contractId) {
+    //            formData.append("task[project_contract_id]", task.projectContractId);
+    //        } else if (this.$route.params.vehicleId) {
+    //            formData.append("task[project_contract_vehicle_id]", task.projectContractVehicleId);
+    //        } else {
+    //            formData.append("task[facility_project_id]", facilityProjectId);
+    //        }
   
-           let url;
-           let method;
-          if (this.$route.params.contractId) {
-               method = "PATCH";
-               url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
-           } else if (this.$route.params.vehicleId) {
-               method = "PATCH";
-               url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
-           } else {
-               method = "PUT";
-               url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
-           }
-           let callback = "task-updated";
+    //        let url;
+    //        let method;
+    //       if (this.$route.params.contractId) {
+    //            method = "PATCH";
+    //            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+    //        } else if (this.$route.params.vehicleId) {
+    //            method = "PATCH";
+    //            url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
+    //        } else {
+    //            method = "PUT";
+    //            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
+    //        }
+    //        let callback = "task-updated";
   
-          axios({
-            method: method,
-            url: url,
-            data: formData,
-            headers: {
-              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-                .attributes["content"].value,
-            },
-          })
-            .then((response) => {
-              let responseTask = humps.camelizeKeys(response.data.task);
-              this.$emit(callback, responseTask);
+    //       axios({
+    //         method: method,
+    //         url: url,
+    //         data: formData,
+    //         headers: {
+    //           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+    //             .attributes["content"].value,
+    //         },
+    //       })
+    //         .then((response) => {
+    //           let responseTask = humps.camelizeKeys(response.data.task);
+    //           this.$emit(callback, responseTask);
   
-             if (this.$route.params.contractId){
-                 this.updateContractTasks({ task: responseTask });
-              } else if (this.$route.params.vehicleId){
-                 this.updateVehicleTasks({ task: responseTask });
-              } else {
-                this.updateFacilities(
-                responseTask,
-                facilityProjectId
-              );
-              }           
+    //          if (this.$route.params.contractId){
+    //              this.updateContractTasks({ task: responseTask });
+    //           } else if (this.$route.params.vehicleId){
+    //              this.updateVehicleTasks({ task: responseTask });
+    //           } else {
+    //             this.updateFacilities(
+    //             responseTask,
+    //             facilityProjectId
+    //           );
+    //           }           
              
-              if (response.status === 200) {
-                this.$message({
-                  message: `${task.text} was moved successfully.`,
-                  type: "success",
-                  showClose: true,
-                });
-              }
-            })
-            .catch((err) => {
-              this.$message({
-                message: `Unable to move ${task.text}. Please try again.`,
-                type: "error",
-                showClose: true,
-              });
-              // var errors = err.response.data.errors
-              console.log(err);
-            })
-            .finally(() => {
-              this.loading = false;
-              this.updateTasksHash({ task: task, action: "delete" });
-               this.updateContractTasks({ task: task, action: "delete" });
-               this.updateVehicleTasks({ task: task, action: "delete" });
-            });
-        });
-      },
-      updateFacilities(updatedTask, id) {
-        var facilities = this.getUnfilteredFacilities;
-  
-        facilities.forEach((facility) => {
-          if (facility.facilityProjectId === id) {
-            facility.tasks.push(updatedTask);
-          }
-        });
-      },
-    updateContracts(updatedTask) {
-        var contracts = this.currentProject.contracts;
-        contracts.forEach((c) => {       
-            c.tasks.push(updatedTask);
-      
-        });
-      },
-      updateVehicles(updatedTask) {
-        var vehicles = this.currentProject.vehicles;
-        vehicles.forEach((c) => {       
-            c.tasks.push(updatedTask);
-      
-        });
-      },
+    //           if (response.status === 200) {
+    //             this.$message({
+    //               message: `${task.text} was moved successfully.`,
+    //               type: "success",
+    //               showClose: true,
+    //             });
+    //           }
+    //         })
+    //         .catch((err) => {
+    //           this.$message({
+    //             message: `Unable to move ${task.text}. Please try again.`,
+    //             type: "error",
+    //             showClose: true,
+    //           });
+    //           // var errors = err.response.data.errors
+    //           console.log(err);
+    //         })
+    //         .finally(() => {
+    //           this.loading = false;
+    //           this.updateTasksHash({ task: task, action: "delete" });
+    //            this.updateContractTasks({ task: task, action: "delete" });
+    //            this.updateVehicleTasks({ task: task, action: "delete" });
+    //         });
+    //     });
+    //   },
+
+
       updateFacilityTask(task) {
         var facilities = this.getUnfilteredFacilities;
   
@@ -370,14 +352,15 @@
         this.$refs.duplicatetree.setCheckedNodes([]);
       },
       move(node) {
-        this.moveTask(this.task, node.id);
-          console.log(node.id)
-          console.log(this.task)
+        // this.moveGroup(node);
+          console.log(node)
+        //   console.log(node.id)
+
         
-        // if (!node.hasOwnProperty("children")) {
-        //   this.moveTask(this.task, node.id);
-        //   // console.log(node.id)
-        // }
+        if (!node.hasOwnProperty("children")) {
+         
+          console.log(node)
+        }
       },
       duplicateSelectedTasks() {
         this.submitted = true;
@@ -488,6 +471,8 @@
       },
       filterNode(value, data) {
         if (!value) return true;
+        console.log(data)
+        console.log(value)
         return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       },
       deleteTask() {
@@ -525,6 +510,7 @@
   },
     watch: {
       filterTree(value) {
+        console.log(value)
         this.$refs.duplicatetree.filter(value);
         this.$refs.movetree.filter(value);
       },

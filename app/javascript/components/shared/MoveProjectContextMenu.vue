@@ -10,9 +10,9 @@
       <el-menu collapse class="context-menu-inner">
         <hr />
         <el-submenu index="1" v-if="$route.params.programId">
-          <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate to Another Program </template>
+          <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate Project to Another Program </template>
           <div>
-            <div class="menu-subwindow-title">Duplicate to Another Program</div>
+            <div class="menu-subwindow-title">Duplicate Project to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -50,9 +50,9 @@
         </el-submenu>
         <hr />   
         <el-submenu index="2" v-if="$route.params.programId">
-          <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move to Another Program</template>
+          <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move Project to Another Program</template>
           <div>
-            <div class="menu-subwindow-title">Move to Another Program</div>
+            <div class="menu-subwindow-title">Move Project to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -129,10 +129,7 @@
             id: index,
             label: program.label,            
             children: [
-              ...program.children
-                // .filter(
-                //   (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) 
-                // )
+              ...program.children          
                 .map((group) => {
                   return {
                     id: group.project_group_id,
@@ -162,8 +159,6 @@
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
       log(e){
         console.log(e)
-        // console.log(`unfilteredFacs:  `, this.getUnfilteredFacilities)
-        // console.log(`facilityGroups:  `, this.facilityGroups)
       },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
