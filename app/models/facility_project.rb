@@ -22,18 +22,17 @@ class FacilityProject < ApplicationRecord
   before_update :assign_default_facility_group
 
 
-  def move_to_program(target_program_id)
+  def move_to_program(target_program_id, target_facility_group_id = nil)
     begin
       facility_project = self
       facility = facility_project.facility
       source_program = facility_project.project
       target_program = Project.find(target_program_id)
-
       
       source_program_user_ids = source_program.user_ids
       target_program_user_ids = target_program.user_ids
       
-      source_user_ids_with_access = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).pluck(:user_ids).uniq
+      source_user_ids_with_access = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).pluck(:user_id).uniq
 
       target_program.user_ids = (target_program.user_ids + source_user_ids_with_access).uniq
       
@@ -80,9 +79,10 @@ class FacilityProject < ApplicationRecord
       
       # # delete roles for project for program users
       # RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).destroy_all
+      facility_project.project_id = target_program.id
+      facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
+      facility_project.save
       
-      facility_project.update(project_id: target_program.id)
-
       return {message: "Project moved successfully", status: true}
     
     rescue Exception => e
