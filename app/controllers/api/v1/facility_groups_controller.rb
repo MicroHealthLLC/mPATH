@@ -1,4 +1,11 @@
 class Api::V1::FacilityGroupsController < AuthenticatedController
+  # before_action :check_permission, only: [:move_to_program]
+
+  def check_permission
+    source_program_id = params[:source_program_id]
+    target_program_id = params[:target_program_id]
+    raise(CanCan::AccessDenied) if !source_program_id || !target_program_id || !current_user.is_program_admin?(source_program_id) || !current_user.is_program_admin?(target_program_id)
+  end
 
   def index
     # authorized_program_ids = current_user.authorized_programs.pluck(:id)
@@ -41,6 +48,30 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     groups = FacilityGroup.where(id: params[:facility_group_ids])
     project.project_groups = groups
     render json: groups
+  end
+
+  def move_to_program
+    source_program = Project.find(params[:source_program_id])
+    target_program = Project.find(params[:target_program_id])
+
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: params[:facility_group_id])
+    failed_facility_projects = []
+    all_facility_projects.each do |fp|
+      result = fp.move_to_program(target_program.id)
+      if !result[:status]
+        failed_facility_projects << fp
+      end 
+    end
+    
+    # self.update(project_id: target_program_id)
+
+    # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
+    # project_facility_group.move_to_program(target_program_id)
+    if failed_facility_projects.any?
+      render json: {message: "Facility group projects are moved to program"}, status: 200
+    else
+      render json: {message: "Fail to move all projects from given group"}, status: 406
+    end
   end
 
   def update

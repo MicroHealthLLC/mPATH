@@ -1,6 +1,13 @@
 class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_project
-  before_action :set_facility, only: [:show]
+  before_action :set_facility, only: [:show]  
+  # before_action :check_permission, only: [:move_to_program]
+
+  def check_permission
+    source_program_id = params[:source_program_id]
+    target_program_id = params[:target_program_id]
+    raise(CanCan::AccessDenied) if !source_program_id || !target_program_id || !current_user.is_program_admin?(source_program_id) || !current_user.is_program_admin?(target_program_id)
+  end
 
   def index
     response_hash = {}
@@ -42,6 +49,20 @@ class Api::V1::FacilitiesController < AuthenticatedController
     render json: {}, status: 200
   rescue
     render json: {}, status: :not_found
+  end
+
+  def move_to_program
+    facility_project = FacilityProject.where(facility_id: params[:facility_id], project_id: params[:source_program_id]).first
+    if facility_project
+      result = facility_project.move_to_program(params[:target_program_id])
+      if result[:status]
+        render json: {message: result[:message]}
+      else
+        render json: {message: result[:message]}
+      end
+    else
+      render json: {message: "Can't find project!"}, status: 404
+    end
   end
 
   private

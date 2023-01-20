@@ -127,12 +127,14 @@ Rails.application.routes.draw do
       resources :facility_groups do
         collection do
           put :bulk_project_update
+          post :move_to_program
         end
       end
 
       resources :facilities do
         collection do
           put :bulk_projects_update
+          post :move_to_program
         end
       end
 

@@ -212,6 +212,36 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    moveGroup({ commit }, { group }) {
+
+      let formData = new FormData();
+      console.log(group);
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_group_id", group.groupId);
+      formData.append("source_program_id", group.sourceProgramId);
+      formData.append("target_program_id", group.targetProgramId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facility_groups/move_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          commit("SET_GROUP_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
     updateGroupName({ commit }, { id, newNameData, project_id }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = new FormData();
