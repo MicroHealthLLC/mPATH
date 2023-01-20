@@ -133,9 +133,11 @@
      treeFormattedData() {
       if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.forEach((program, index) => {    
+        this.portfolioPrograms.forEach((program, index) => {
+          // console.log("treeFormattedData", program)    
           data.push({
             id: index,
+            program_id: program.program_id,
             label: program.label,        
           });
         });
@@ -259,7 +261,8 @@
         this.$refs.duplicatetree.setCheckedNodes([]);
       },
       move(node) {
-      this.target_program_id = node.id  
+      console.log("move", node)
+      this.target_program_id = node.program_id  
       },
       confirmGroupMove(){
       let data = {

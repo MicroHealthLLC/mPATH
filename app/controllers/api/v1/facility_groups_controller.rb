@@ -68,9 +68,9 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
     # project_facility_group.move_to_program(target_program_id)
     if failed_facility_projects.any?
-      render json: {message: "Facility group projects are moved to program"}, status: 200
-    else
       render json: {message: "Fail to move all projects from given group"}, status: 406
+    else
+      render json: {message: "Facility group projects are moved to program"}, status: 200
     end
   end
 
