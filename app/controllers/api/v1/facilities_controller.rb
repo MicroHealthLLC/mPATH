@@ -54,7 +54,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
   def move_to_program
     facility_project = FacilityProject.where(facility_id: params[:facility_id], project_id: params[:source_program_id]).first
     if facility_project
-      result = facility_project.move_to_program(params[:target_program_id])
+      result = facility_project.move_to_program(params[:target_program_id], params[:target_facility_group_id])
       if result[:status]
         render json: {message: result[:message]}
       else

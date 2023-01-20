@@ -57,7 +57,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: params[:facility_group_id])
     failed_facility_projects = []
     all_facility_projects.each do |fp|
-      result = fp.move_to_program(target_program.id)
+      result = fp.move_to_program(target_program.id, params[:target_facility_group_id])
       if !result[:status]
         failed_facility_projects << fp
       end 
