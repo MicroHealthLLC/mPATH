@@ -31,7 +31,7 @@
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
-              <span class="d-flex" @mouseup.right="openGroupContextMenu"  @contextmenu.prevent="">
+              <span class="d-flex" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
                 <span v-show="getExpandedGroup != group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
@@ -148,6 +148,7 @@
       </MoveProjectContextMenu>
       <MoveGroupContextMenu      
         :display="showGroupContextMenu"
+        :groupId="groupId"
         ref="moveGroupContextMenu"
         >  
       </MoveGroupContextMenu>
@@ -190,6 +191,7 @@ export default {
       value: "",
       totalGroupContract: 0,
       totalGroupVehicle: 0,
+      groupId: null, 
       filteredGroupSize: null,
       projectCount: 0,
       showProjectContextMenu: false, 
@@ -318,7 +320,8 @@ export default {
       e.preventDefault();
       this.$refs.moveProjectContextMenu.open(e);
    },
-    openGroupContextMenu(e) {
+    openGroupContextMenu(e, groupId) {
+      this.groupId = groupId
       e.preventDefault();
       this.$refs.moveGroupContextMenu.open(e);
    },

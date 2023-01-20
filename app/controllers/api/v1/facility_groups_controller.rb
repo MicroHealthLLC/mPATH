@@ -1,5 +1,5 @@
 class Api::V1::FacilityGroupsController < AuthenticatedController
-  before_action :check_permission, only: [:move_to_program]
+  # before_action :check_permission, only: [:move_to_program]
 
   def check_permission
     source_program_id = params[:source_program_id]

@@ -1,7 +1,7 @@
 class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_project
   before_action :set_facility, only: [:show]  
-  before_action :check_permission, only: [:move_to_program]
+  # before_action :check_permission, only: [:move_to_program]
 
   def check_permission
     source_program_id = params[:source_program_id]

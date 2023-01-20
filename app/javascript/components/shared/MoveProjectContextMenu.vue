@@ -548,7 +548,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     cursor: pointer;
   }.context-menu-inner{
-    width: 12.5vw;
+    width: 14vw;
   }
   hr {
     margin: 0;
