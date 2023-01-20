@@ -59,7 +59,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     all_facility_projects.each do |fp|
       result = fp.move_to_program(target_program.id, params[:target_facility_group_id])
       if !result[:status]
-        failed_facility_projects << fp
+        failed_facility_projects << result
       end 
     end
     
@@ -68,7 +68,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
     # project_facility_group.move_to_program(target_program_id)
     if failed_facility_projects.any?
-      render json: {message: "Fail to move all projects from given group"}, status: 406
+      render json: {message: "Fail to move all projects from given group", data: failed_facility_projects}, status: 406
     else
       render json: {message: "Facility group projects are moved to program"}, status: 200
     end

@@ -83,10 +83,10 @@ class FacilityProject < ApplicationRecord
       facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
       facility_project.save
       
-      return {message: "Project moved successfully", status: true}
+      return {facility_project_id: facility_project.id, message: "Project moved successfully", status: true}
     
     rescue Exception => e
-      return {message: e.message, status: false}
+      return {facility_project_id: facility_project.id, message: e.message, status: false}
     end
 
   end
