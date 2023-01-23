@@ -7,6 +7,7 @@
       tabindex="0"
       @mouseleave="close"
     >
+    <!-- Nothing to see here -->
       <el-menu collapse class="context-menu-inner">
         <hr />
         <el-submenu index="1" v-if="$route.params.programId">
