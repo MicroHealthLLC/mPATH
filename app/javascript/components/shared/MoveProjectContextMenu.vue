@@ -68,6 +68,15 @@
               @node-click="move"
             >
             </el-tree>
+             <div class="context-menu-btns">
+              <button
+                class="btn btn-sm btn-success ml-2"
+                @click="confirmProjectMove"         
+              >
+                Confirm Move
+              </button>
+                      
+            </div>
           </div>
         </el-submenu>
         <!-- <hr />
@@ -77,7 +86,8 @@
       </el-menu> 
     </div>
 </template>
-  
+
+
 <script>
   import Vue from "vue";
   import { mapGetters, mapActions, mapMutations } from "vuex";
@@ -96,6 +106,7 @@
         left: 0, // left position
         top: 0, // top position
         show: false, // affect display of context menu
+        target_program_id: null, 
         defaultProps: {
           children: "children",
           label: "label",
@@ -189,93 +200,7 @@
         Vue.nextTick(() => this.$el.focus());
         this.show = true;
       },
-      openTask() {
-        this.$emit("open-task", this.task);
-        this.close();
-      },
-      moveTask(task, facilityProjectId) {
-        // if (!this.isAllowed("write", 'tasks')) return;
-        this.$validator.validate().then((success) => {
-          if (!success || this.loading) {
-            this.showErrors = !success;
-            return;
-          }
-  
-          this.loading = true;
-          let formData = new FormData();
-        
-          if (this.$route.params.contractId) {
-               formData.append("task[project_contract_id]", task.projectContractId);
-           } else if (this.$route.params.vehicleId) {
-               formData.append("task[project_contract_vehicle_id]", task.projectContractVehicleId);
-           } else {
-               formData.append("task[facility_project_id]", facilityProjectId);
-           }
-  
-           let url;
-           let method;
-          if (this.$route.params.contractId) {
-               method = "PATCH";
-               url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
-           } else if (this.$route.params.vehicleId) {
-               method = "PATCH";
-               url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
-           } else {
-               method = "PUT";
-               url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
-           }
-           let callback = "task-updated";
-  
-          axios({
-            method: method,
-            url: url,
-            data: formData,
-            headers: {
-              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-                .attributes["content"].value,
-            },
-          })
-            .then((response) => {
-              let responseTask = humps.camelizeKeys(response.data.task);
-              this.$emit(callback, responseTask);
-  
-             if (this.$route.params.contractId){
-                 this.updateContractTasks({ task: responseTask });
-              } else if (this.$route.params.vehicleId){
-                 this.updateVehicleTasks({ task: responseTask });
-              } else {
-                this.updateFacilities(
-                responseTask,
-                facilityProjectId
-              );
-              }           
-             
-              if (response.status === 200) {
-                this.$message({
-                  message: `${task.text} was moved successfully.`,
-                  type: "success",
-                  showClose: true,
-                });
-              }
-            })
-            .catch((err) => {
-              this.$message({
-                message: `Unable to move ${task.text}. Please try again.`,
-                type: "error",
-                showClose: true,
-              });
-              // var errors = err.response.data.errors
-              console.log(err);
-            })
-            .finally(() => {
-              this.loading = false;
-              this.updateTasksHash({ task: task, action: "delete" });
-               this.updateContractTasks({ task: task, action: "delete" });
-               this.updateVehicleTasks({ task: task, action: "delete" });
-            });
-        });
-      },
-      updateFacilities(updatedTask, id) {
+  updateFacilities(updatedTask, id) {
         var facilities = this.getUnfilteredFacilities;
   
         facilities.forEach((facility) => {
@@ -377,14 +302,21 @@
         this.$refs.duplicatetree.setCheckedNodes([]);
       },
       move(node) {
-        this.moveTask(this.task, node.id);
-          console.log(node.id)
-          console.log(this.task)
-        
-        // if (!node.hasOwnProperty("children")) {
-        //   this.moveTask(this.task, node.id);
-        //   // console.log(node.id)
-        // }
+      console.log("move", node)
+      this.target_program_id = node.program_id 
+      
+      },
+      confirmProjectMove(){
+      let data = {
+          project:{
+            projectId: this.groupId,
+            sourceProgramId: this.$route.params.programId,
+            targetProgramId: this.target_program_id,
+            targetGroupId: this.target_group_id
+          }           
+        }
+        this.exportGroup({...data})
+        console.log("this works", data)
       },
       duplicateSelectedTasks() {
         this.submitted = true;

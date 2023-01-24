@@ -244,6 +244,36 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    exportProject({ commit }, { group }) {
+
+      let formData = new FormData();
+      console.log(group);
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_id", group.projectId);
+      formData.append("source_program_id", group.sourceProgramId);
+      formData.append("target_program_id", group.targetProgramId);
+      formData.append("target_facility_group_id", group.targetGroupId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facilities/move_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_EXPORT_PROJECT_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
     updateGroupName({ commit }, { id, newNameData, project_id }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = new FormData();
@@ -1635,6 +1665,7 @@ const settingsStore = {
       (state.program_users_status = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     SET_MOVE_GROUP_STATUS: (state, value) => (state.move_group_status = value),
+    SET_EXPORT_PROJECT_STATUS: (state, value) => (state.export_project_status = value),
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) =>
       (state.portfolio_projects_status = status),
 
