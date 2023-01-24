@@ -32,7 +32,7 @@ class FacilityProject < ApplicationRecord
       source_program_user_ids = source_program.user_ids
       target_program_user_ids = target_program.user_ids
       
-      source_user_ids_with_access = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).pluck(:user_id).uniq
+      source_user_ids_with_access = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id,  user_id: source_program_user_ids).pluck(:user_id).uniq
 
       target_program.user_ids = (target_program.user_ids + source_user_ids_with_access).uniq
       
@@ -44,7 +44,7 @@ class FacilityProject < ApplicationRecord
       role_users = []
       source_user_ids_with_access.each do |user_id|
         default_roles.each do |default_role_id|
-          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_role_id.id, resource_id: facility_project.id, project_id: target_program.id, resource_type: "FacilityProject",user_id: user_id)
+          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_role_id.id, project_id: target_program.id, user_id: user_id)
         end
       end
 
@@ -60,25 +60,25 @@ class FacilityProject < ApplicationRecord
 
       source_user_ids_with_access.each do |user_id|
         dup_other_roles.each do |other_role|
-          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: other_role.id, resource_id: facility_project.id, project_id: target_program.id, resource_type: "FacilityProject",user_id: user_id)
+          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: other_role.id,  project_id: target_program.id, user_id: user_id)
         end
       end
 
       results = RoleUser.import(role_users)
 
-      RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).destroy_all
+      RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
 
       # # Assign default read role to all target program users
       # default_read_project_role = Role.where(name: "read-project", is_default: true, is_portfolio: true).first
       # role_users = []
       # target_program_user_ids.each do |user_id|
-      #   role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_read_project_role.id, resource_id: facility_project.id, project_id: target_program.id, resource_type: "FacilityProject",user_id: user_id)
+      #   role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_read_project_role.id,  project_id: target_program.id, user_id: user_id)
       # end
       
       # results = RoleUser.import(role_users)
       
       # # delete roles for project for program users
-      # RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).destroy_all
+      # RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
       facility_project.project_id = target_program.id
       facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
       facility_project.save
