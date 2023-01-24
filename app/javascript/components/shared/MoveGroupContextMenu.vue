@@ -116,7 +116,7 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms"]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus", "fetchFacilities"]),
       // get position of context menu
       style() {
         return {
@@ -159,7 +159,7 @@
     },
     methods: {
       ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "moveGroup"]),
-      ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
+      ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_MOVE_GROUP_STATUS"]),
       // log(e){
       //   console.log(e)
       // },
@@ -428,6 +428,20 @@
         this.$refs.duplicatetree.filter(value);
         this.$refs.movetree.filter(value);
       },
+      moveGroupStatus: {
+      handler() {
+        if (this.moveGroupStatus == 200) {
+          this.$message({
+            message: `Group moved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_MOVE_GROUP_STATUS(0);
+          this.fetchFacilities(this.$route.params.programId);
+          //  this.newGroupName =
+        }
+      },
+    },
     },
   };
   </script>
@@ -441,7 +455,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     cursor: pointer;
   }.context-menu-inner{
-    width: 14vw;
+    width: 14.5vw;
   }
   hr {
     margin: 0;

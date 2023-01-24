@@ -37,6 +37,7 @@ const settingsStore = {
     contracts_status: 0,
     vehicles_status: 0,
     vehicle_status: 0,
+    move_group_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
     contract_classifications: [],
@@ -233,7 +234,8 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_GROUP", res.data.facility_groups);
-          commit("SET_GROUP_STATUS", res.status);
+          // commit("SET_GROUP_STATUS", res.status);
+          commit("SET_MOVE_GROUP_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
@@ -1632,6 +1634,7 @@ const settingsStore = {
     SET_PROGRAM_USERS_STATUS: (state, value) =>
       (state.program_users_status = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
+    SET_MOVE_GROUP_STATUS: (state, value) => (state.move_group_status = value),
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) =>
       (state.portfolio_projects_status = status),
 
@@ -1733,6 +1736,8 @@ const settingsStore = {
     vehiclesLoaded: (state) => state.vehicles_loaded,
     vehicles: (state) => state.vehicles,
     vehiclesStatus: (state) => state.vehicles_status,
+
+    moveGroupStatus: (state) => state.move_group_status,
 
     getNewUserId: (state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
