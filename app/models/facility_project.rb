@@ -29,6 +29,7 @@ class FacilityProject < ApplicationRecord
       source_program = facility_project.project
       target_program = Project.find(target_program_id)
       
+      # Moving source program users to target program users who has access to this project
       source_program_user_ids = source_program.user_ids
       target_program_user_ids = target_program.user_ids
       
@@ -36,7 +37,7 @@ class FacilityProject < ApplicationRecord
 
       target_program.user_ids = (target_program.user_ids + source_user_ids_with_access).uniq
       
-      default_roles = Role.includes(:role_users).where(role_users: {project_id: source_program.id, facility_project_id: facility_project.id,  user_id: source_program_user_ids},  is_default: true, is_portfolio: true).uniq
+      default_roles = Role.includes(:role_users).where(role_users: {facility_project_id: facility_project.id,  user_id: source_program_user_ids},  is_default: true, is_portfolio: true).uniq
       
       other_roles = Role.includes(:role_users).where(role_users: {project_id: source_program.id, facility_project_id: facility_project.id,  user_id: source_program_user_ids},  is_default: false, is_portfolio: false).uniq
 
@@ -65,7 +66,7 @@ class FacilityProject < ApplicationRecord
       end
 
       results = RoleUser.import(role_users)
-
+      binding.pry
       RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
 
       # # Assign default read role to all target program users
