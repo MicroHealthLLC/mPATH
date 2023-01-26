@@ -146,7 +146,7 @@ class RoleUser < ApplicationRecord
 
     RoleUser.includes({facility_project: [:project]}).in_batches.each do |role_users|
       role_users.each do |role_user|
-        if role_user.facility_project_id && role_user.project_id != role_user.facility_project.project_id
+        if role_user.facility_project_id && role_user.project_id != role_user.facility_project.try(:project_id)
           bad_role_user_ids << role_user.id          
         end
       end
