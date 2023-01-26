@@ -65,7 +65,8 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       end 
     end
     
-    source_program.project_facility_groups.where(facility_group_id: facility_group.id).first.destroy
+    source_project_facility_group = source_program.project_facility_groups.where(facility_group_id: facility_group.id).first
+    source_project_facility_group.destroy if source_project_facility_group
 
     # self.update(project_id: target_program_id)
 

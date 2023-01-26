@@ -54,7 +54,7 @@ class FacilityProject < ApplicationRecord
       dup_other_roles = {}
       other_roles.each do |other_role|
         r = other_role.dup
-        r.project_id = target_program_id
+        r.project_id = target_program.id
         r.name = "#{r.name} - copy of role##{other_role.id}"
         r.user_id = nil
 
@@ -81,7 +81,7 @@ class FacilityProject < ApplicationRecord
        
       facility_project.save
       
-      RoleUser.remove_bad_records
+      # RoleUser.remove_bad_records
 
       return {facility_project_id: facility_project.id, message: "Project moved successfully", status: true}
     
