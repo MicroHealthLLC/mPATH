@@ -37,20 +37,23 @@ class RoleUser < ApplicationRecord
   def check_duplication
     user = self.user
     role = self.role
+    
+    RoleUser.remove_bad_records
+
     if facility_project_id
-      if RoleUser.where(user_id: user_id, role_id: role_id, facility_project_id: facility_project_id).exists?
+      if RoleUser.where(user_id: user_id, role_id: role_id, facility_project_id: facility_project_id, project_id: project_id).exists?
         facility = self.facility_project.facility
         self.errors.add(:base, "#{role.name} is already assigned to #{facility.facility_name} to user #{user.full_name}")
         return false
       end
     elsif project_contract_id
-      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_id: project_contract_id).exists?
+      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_id: project_contract_id, project_id: project_id).exists?
         contract = self.project_contract
         self.errors.add(:base, "#{role.name} is already assigned to contract to user #{user.full_name}")
         return false
       end
     elsif project_contract_vehicle_id
-      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_vehicle_id: project_contract_vehicle_id).exists?
+      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_vehicle_id: project_contract_vehicle_id, project_id: project_id).exists?
         project_contract_vehicle = self.project_contract_vehicle
         self.errors.add(:base, "#{role.name} is already assigned to contract vehicle to user #{user.full_name}")
         return false
@@ -122,6 +125,7 @@ class RoleUser < ApplicationRecord
     # find duplicate record with project
     _program_admin_role = RoleUser.select(:role_id,:project_id,:user_id).where(role_id: program_admin_role.id).group(:role_id,:project_id, :user_id).having("count(*) > 1")
 
+    RoleUser.remove_bad_records
 
     puts "Duplicate #{update_project_role.name} roles: #{_update_project_role.size}"
     puts "Duplicate #{read_project_role.name} roles: #{_read_project_role.size}"
@@ -131,6 +135,23 @@ class RoleUser < ApplicationRecord
     puts "Duplicate #{contribute_contract_role.name} roles: #{_contribute_contract_role.size}"
     puts "Duplicate #{program_admin_role.name} roles: #{_program_admin_role.size}"
 
+  end
+
+  # Due to move and duplicate project and group to different program, 
+  # there are several records which are not moved as expected.
+  # this method will check if project is not part of program and still has role for user then 
+  # it is an invalid record, hence remove it.
+  def self.remove_bad_records
+    bad_role_user_ids = []
+
+    RoleUser.includes({facility_project: [:project]}).in_batches.each do |role_users|
+      role_users.each do |role_user|
+        if role_user.facility_project_id && role_user.project_id != role_user.facility_project.project_id
+          bad_role_user_ids << role_user.id          
+        end
+      end
+    end
+    RoleUser.where(id: bad_role_user_ids).destroy_all
   end
 
 end

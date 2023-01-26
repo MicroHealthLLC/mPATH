@@ -28,62 +28,61 @@ class FacilityProject < ApplicationRecord
       facility = facility_project.facility
       source_program = facility_project.project
       target_program = Project.find(target_program_id)
-      
+
       # Moving source program users to target program users who has access to this project
-      source_program_user_ids = source_program.user_ids
-      target_program_user_ids = target_program.user_ids
-      
-      source_user_ids_with_access = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id,  user_id: source_program_user_ids).pluck(:user_id).uniq
+      # source_program_user_ids = source_program.user_ids
+      # target_program_user_ids = target_program.user_ids
 
-      target_program.user_ids = (target_program.user_ids + source_user_ids_with_access).uniq
-      
-      default_roles = Role.includes(:role_users).where(role_users: {facility_project_id: facility_project.id,  user_id: source_program_user_ids},  is_default: true, is_portfolio: true).uniq
-      
-      other_roles = Role.includes(:role_users).where(role_users: {project_id: source_program.id, facility_project_id: facility_project.id,  user_id: source_program_user_ids},  is_default: false, is_portfolio: false).uniq
+      # source_role_users = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id)
+      portfolio_role_role_users = RoleUser.includes(:role).where(project_id: source_program.id, facility_project_id: facility_project.id, roles: {is_default: true, is_portfolio: true})
 
+      program_specific_role_role_users = RoleUser.includes(:role).where(project_id: source_program.id, facility_project_id: facility_project.id, roles: {project_id: source_program.id })
+
+      target_program.user_ids = (target_program.user_ids + portfolio_role_role_users.pluck(:user_id) + program_specific_role_role_users.pluck(:user_id)).uniq
+      
       # Assign portfolio level roles to target users
-      role_users = []
-      source_user_ids_with_access.each do |user_id|
-        default_roles.each do |default_role_id|
-          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_role_id.id, project_id: target_program.id, user_id: user_id)
-        end
-      end
-
-      # Create new project level roles
-      dup_other_roles = []
-      other_roles.each do |role|
-        r = role.dup
-        r.project_id = target_program_id
-        r.name = "#{r.name} - copy of role##{role.id}"
-        r.user_id = nil
-        dup_other_roles << r if r.save!
-      end
-
-      source_user_ids_with_access.each do |user_id|
-        dup_other_roles.each do |other_role|
-          role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: other_role.id,  project_id: target_program.id, user_id: user_id)
-        end
-      end
-
-      results = RoleUser.import(role_users)
-      binding.pry
-      RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
-
-      # # Assign default read role to all target program users
-      # default_read_project_role = Role.where(name: "read-project", is_default: true, is_portfolio: true).first
       # role_users = []
-      # target_program_user_ids.each do |user_id|
-      #   role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_read_project_role.id,  project_id: target_program.id, user_id: user_id)
+      # source_user_ids_with_access.each do |user_id|
+      #   default_roles.each do |default_role|
+      #     role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_role.id, project_id: target_program.id, user_id: user_id)
+      #   end
       # end
+      portfolio_role_role_users.update_all(project_id: target_program.id)
       
+      other_roles = Role.where(id: program_specific_role_role_users.pluck(:role_id).uniq)
+      # Create new project level roles
+      dup_other_roles = {}
+      other_roles.each do |other_role|
+        r = other_role.dup
+        r.project_id = target_program_id
+        r.name = "#{r.name} - copy of role##{other_role.id}"
+        r.user_id = nil
+
+        # creating hash of new target role against source role 
+        dup_other_roles[other_role.id] = r.id if r.save!
+      end
+
+      # Assign project level roles to target users
+      program_specific_role_role_users.each do |program_specific_role_user|
+        program_specific_role_user.role_id = dup_other_roles[program_specific_role_user.role_id]
+        program_specific_role_user.project_id = target_program.id
+        program_specific_role_user.update!
+        # dup_other_roles.each do |source_role, new_role|
+        #   role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: other_role.id,  project_id: target_program.id, user_id: user_id)
+        # end
+      end
+
       # results = RoleUser.import(role_users)
-      
-      # # delete roles for project for program users
+
       # RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
+      
       facility_project.project_id = target_program.id
       facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
+       
       facility_project.save
       
+      RoleUser.remove_bad_records
+
       return {facility_project_id: facility_project.id, message: "Project moved successfully", status: true}
     
     rescue Exception => e

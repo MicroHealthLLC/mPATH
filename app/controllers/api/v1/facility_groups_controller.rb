@@ -53,8 +53,10 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
   def move_to_program
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
+    facility_group = FacilityGroup.find(params[:facility_group_id])
+    target_program.project_groups << facility_group
 
-    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: params[:facility_group_id])
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
     failed_facility_projects = []
     all_facility_projects.each do |fp|
       result = fp.move_to_program(target_program.id, params[:target_facility_group_id])
@@ -63,6 +65,8 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       end 
     end
     
+    source_program.project_facility_groups.where(facility_group_id: facility_group.id).first.destroy
+
     # self.update(project_id: target_program_id)
 
     # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
