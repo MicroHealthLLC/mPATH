@@ -31,8 +31,7 @@
             <div class="context-menu-btns">
               <button
                 class="btn btn-sm btn-success ml-2"
-                @click="duplicateSelectedTasks"
-                :disabled="submitDisabled"
+               :disabled="submitDisabled"
               >
                 Save
               </button>
@@ -135,7 +134,7 @@
      treeFormattedData() {
       if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.forEach((program, index) => {    
+        this.portfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {    
           data.push({
             id: index,
             label: program.label,            
@@ -209,92 +208,7 @@
           }
         });
       },
-    updateContracts(updatedTask) {
-        var contracts = this.currentProject.contracts;
-        contracts.forEach((c) => {       
-            c.tasks.push(updatedTask);
-      
-        });
-      },
-      updateVehicles(updatedTask) {
-        var vehicles = this.currentProject.vehicles;
-        vehicles.forEach((c) => {       
-            c.tasks.push(updatedTask);
-      
-        });
-      },
-      updateFacilityTask(task) {
-        var facilities = this.getUnfilteredFacilities;
-  
-        var facilityIndex = facilities.findIndex(
-          (item) => item.facilityProjectId === task.facilityProjectId
-        );
-  
-        facilities[facilityIndex].tasks.push(task);
-      },
-      createDuplicate() {
-        let url;
-        if (this.$route.params.contractId) {
-            url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_duplicate.json`;
-        } if (this.$route.params.vehicleId) {
-            url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}/create_duplicate.json`;
-        } else {
-            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
-        }
-        let method = "POST";
-        let callback = "task-created";
-  
-        let formData = new FormData();
-        formData.append("id", this.task.id);
-  
-        axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-          .then((response) => {
-            let responseTask = humps.camelizeKeys(response.data.task);
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
-  
-            if (this.$route.params.contractId){
-                this.updateContractTasks({
-                 task: responseTask 
-                });
-              } else if (this.$route.params.vehicleId){
-                this.updateVehicleTasks({
-                 task: responseTask 
-                });
-              } else {
-                this.updateFacilityTask(
-                responseTask,
-                this.task.facilityProjectId
-               );
-              }      
-            if (response.status === 200) {
-              this.$message({
-                message: `${this.task.text} was duplicated successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
-          })
-          .catch((err) => {
-            this.$message({
-              message: `Unable to duplicate ${this.task.text}. Please try again.`,
-              type: "error",
-              showClose: true,
-            });
-            // var errors = err.response.data.errors
-            console.log(err);
-          })
-          .finally(() => {
-            // this.loading = false
-          });
-      },
+
       selectAllNodes() {
         this.$refs.duplicatetree.setCheckedNodes(this.treeFormattedData);
       },
@@ -315,7 +229,7 @@
             targetGroupId: this.target_group_id
           }           
         }
-        this.exportGroup({...data})
+      //   this.exportGroup({...data})
         console.log("this works", data)
       },
       duplicateSelectedTasks() {

@@ -6,7 +6,7 @@
       ref="context"
       tabindex="0"
       @mouseleave="close"
-    >
+      >
     <!-- Nothing to see here -->
       <el-menu collapse class="context-menu-inner">
         <hr />
@@ -61,6 +61,7 @@
             ></el-input>
             <el-tree
               :data="treeFormattedData"
+              class="treeFormattedData"
               :props="defaultProps"
               :filter-node-method="filterNode"
               ref="movetree"       
@@ -116,7 +117,7 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus", "fetchFacilities"]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus"]),
       // get position of context menu
       style() {
         return {
@@ -134,7 +135,7 @@
      treeFormattedData() {
       if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.forEach((program, index) => {
+        this.portfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {
           // console.log("treeFormattedData", program)    
           data.push({
             id: index,
@@ -158,7 +159,7 @@
       },
     },
     methods: {
-      ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "moveGroup"]),
+      ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "moveGroup", "fetchCurrentProject"]),
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_MOVE_GROUP_STATUS"]),
       // log(e){
       //   console.log(e)
@@ -431,14 +432,15 @@
       moveGroupStatus: {
       handler() {
         if (this.moveGroupStatus == 200) {
+
+          console.log("Group move worked")
           this.$message({
             message: `Group moved successfully.`,
             type: "success",
             showClose: true,
           });
           this.SET_MOVE_GROUP_STATUS(0);
-          this.fetchFacilities(this.$route.params.programId);
-          //  this.newGroupName =
+          this.fetchCurrentProject(this.$route.params.programId);      
         }
       },
     },
@@ -490,4 +492,11 @@
     text-align: center;
     margin-top: 10px;
   }
+
+  ::v-deep .el-tree-node.is-selected {  
+   background-color: black !important;
+   } 
+  
+
+  
   </style>

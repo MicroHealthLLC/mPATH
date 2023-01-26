@@ -286,6 +286,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 #customtabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
