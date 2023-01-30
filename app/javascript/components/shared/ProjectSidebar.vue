@@ -68,7 +68,7 @@
             >
               <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
-                  @mouseup.right="openProjectContextMenu($event, 'project')" @contextmenu.prevent=""
+                  @mouseup.right="openProjectContextMenu($event, facility.id )" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
@@ -143,6 +143,7 @@
     <!-- <router-link  >  -->
       <MoveProjectContextMenu
         :display="showProjectContextMenu"
+        :projectId="projectId"
         ref="moveProjectContextMenu"
         >  
       </MoveProjectContextMenu>
@@ -192,6 +193,7 @@ export default {
       totalGroupContract: 0,
       totalGroupVehicle: 0,
       groupId: null, 
+      projectId: null, 
       filteredGroupSize: null,
       projectCount: 0,
       showProjectContextMenu: false, 
@@ -316,12 +318,13 @@ export default {
       "createVehicle",
       "updateVehicle",
     ]),
-    openProjectContextMenu(e) {
+    openProjectContextMenu(e, id) {
+      this.projectId = id
       e.preventDefault();
       this.$refs.moveProjectContextMenu.open(e);
    },
-    openGroupContextMenu(e, groupId) {
-      this.groupId = groupId
+    openGroupContextMenu(e, id) {
+      this.groupId = id
       e.preventDefault();
       this.$refs.moveGroupContextMenu.open(e);
    },

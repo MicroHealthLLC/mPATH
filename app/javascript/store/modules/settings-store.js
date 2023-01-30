@@ -37,6 +37,7 @@ const settingsStore = {
     contracts_status: 0,
     vehicles_status: 0,
     vehicle_status: 0,
+    export_project_status: 0,
     move_group_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
@@ -244,16 +245,15 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-    exportProject({ commit }, { group }) {
-
+    exportProject({ commit }, { project }) {
       let formData = new FormData();
-      console.log(group);
+      console.log(project)
       commit("TOGGLE_GROUPS_LOADED", false);
 
-      formData.append("facility_id", group.projectId);
-      formData.append("source_program_id", group.sourceProgramId);
-      formData.append("target_program_id", group.targetProgramId);
-      formData.append("target_facility_group_id", group.targetGroupId);
+      formData.append("facility_id", project.projectId);
+      formData.append("source_program_id", project.sourceProgramId);
+      formData.append("target_program_id", project.targetProgramId);
+      formData.append("target_facility_group_id", project.targetGroupId);
 
       axios({
         method: "POST",
@@ -1769,6 +1769,7 @@ const settingsStore = {
     vehiclesStatus: (state) => state.vehicles_status,
 
     moveGroupStatus: (state) => state.move_group_status,
+    exportProjectStatus: (state) => state.export_project_status,
 
     getNewUserId: (state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
