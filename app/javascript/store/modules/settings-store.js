@@ -1502,7 +1502,7 @@ const settingsStore = {
     deleteProgramProject({ commit }, { programId, id }) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/programs/${programId}/projects/${id}`)
+          .delete(`${API_BASE_PATH}/program_settings/facilities/${id}?project_id=${programId}`)
           .then((res) => {
             resolve(res.status);
           })
