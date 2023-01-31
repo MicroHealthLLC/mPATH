@@ -21,35 +21,127 @@ class FacilityProject < ApplicationRecord
   before_create :assign_default_facility_group 
   before_update :assign_default_facility_group
 
-
-  def move_to_program(target_program_id)
+  def duplicate_to_program(target_program_id, target_facility_group_id = nil)
     begin
-      facility = self.facility
-      source_program = self.project
-      target_program = Project.find(target_program_id)
+      
       facility_project = self
-      
-      source_program_user_ids = source_program.user_ids
-      target_program_user_ids = target_program.user_ids
-      
-      # Assign default read role to all target program users
-      default_read_project_role = Role.where(name: "read-project", is_default: true, is_portfolio: true).first
-      role_users = []
-      target_program_user_ids.each do |user_id|
-        role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_read_project_role.id, resource_id: facility_project.id, project_id: target_program.id, resource_type: "FacilityProject",user_id: user_id)
-      end
-      
-      results = RoleUser.import(role_users)
-      
-      # delete roles for project for program users
-      RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, resource_id: facility_project.id, resource_type: "FacilityProject", user_id: source_program_user_ids).destroy_all
-      
-      facility_project.update(project_id: target_program.id)
+      facility = facility_project.facility
+      source_program = facility_project.project
+      target_program = Project.find(target_program_id)
+      all_objs = []
 
-      return {message: "Project moved successfully", status: true}
+      duplicate_facility_project = facility_project.dup
+      duplicate_facility_project.project_id = target_program.id
+      duplicate_facility_project.facility_group_id = target_facility_group_id
+      
+      if duplicate_facility_project.save
+
+        dup_tasks = []
+        facility_project.tasks.each do |task|
+          _t = task.amoeba_dup
+          _t.facility_project_id = duplicate_facility_project.id
+          dup_tasks << _t.save!
+        end
+
+        dup_risks = []
+        facility_project.risks.each do |risk|
+          _r = risk.amoeba_dup
+          _r.facility_project_id = duplicate_facility_project.id
+          dup_risks << _r.save!
+        end
+
+        dup_issues = []
+        facility_project.issues.each do |issue|
+          _i = issue.amoeba_dup
+          _i.facility_project_id = duplicate_facility_project.id
+          dup_issues << _i.save!
+        end
+
+        dup_lessons = []
+        facility_project.lessons.each do |lesson|
+          _l = lesson.amoeba_dup
+          _l.facility_project_id = duplicate_facility_project.id
+          dup_lessons << _l.save!
+        end
+
+        return {facility_project_id: duplicate_facility_project.id, message: "Project duplicate successfully", status: true}
+      else
+        return {facility_project_id: duplicate_facility_project.id, message: duplicate_facility_project.errors.full_messages, status: false}
+      end
+
+    rescue Exception => e
+      return {facility_project_id: self.id, message: e.message, status: false}
+    end
+  end
+
+  # When moving a program, we are also allowing user to move from source program to 
+  # target program, so that user will be able to access the project in target program
+  # we are assigning roles to those users in target program with same privilages.
+  def move_to_program(target_program_id, target_facility_group_id = nil)
+    begin
+      facility_project = self
+      facility = facility_project.facility
+      source_program = facility_project.project
+      target_program = Project.find(target_program_id)
+
+      # Moving source program users to target program users who has access to this project
+      # source_program_user_ids = source_program.user_ids
+      # target_program_user_ids = target_program.user_ids
+
+      # source_role_users = RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id)
+      portfolio_role_role_users = RoleUser.includes(:role).where(project_id: source_program.id, facility_project_id: facility_project.id, roles: {is_default: true, is_portfolio: true})
+
+      program_specific_role_role_users = RoleUser.includes(:role).where(project_id: source_program.id, facility_project_id: facility_project.id, roles: {project_id: source_program.id })
+
+      target_program.user_ids = (target_program.user_ids + portfolio_role_role_users.pluck(:user_id) + program_specific_role_role_users.pluck(:user_id)).uniq
+      
+      # Assign portfolio level roles to target users
+      # role_users = []
+      # source_user_ids_with_access.each do |user_id|
+      #   default_roles.each do |default_role|
+      #     role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: default_role.id, project_id: target_program.id, user_id: user_id)
+      #   end
+      # end
+      portfolio_role_role_users.update_all(project_id: target_program.id)
+      
+      other_roles = Role.where(id: program_specific_role_role_users.pluck(:role_id).uniq)
+      # Create new project level roles
+      dup_other_roles = {}
+      other_roles.each do |other_role|
+        r = other_role.dup
+        r.project_id = target_program.id
+        r.name = "#{r.name} - copy of role##{other_role.id}"
+        r.user_id = nil
+
+        # creating hash of new target role against source role 
+        dup_other_roles[other_role.id] = r.id if r.save!
+      end
+
+      # Assign project level roles to target users
+      program_specific_role_role_users.each do |program_specific_role_user|
+        program_specific_role_user.role_id = dup_other_roles[program_specific_role_user.role_id]
+        program_specific_role_user.project_id = target_program.id
+        program_specific_role_user.update!
+        # dup_other_roles.each do |source_role, new_role|
+        #   role_users << RoleUser.new(facility_project_id: facility_project.id, role_id: other_role.id,  project_id: target_program.id, user_id: user_id)
+        # end
+      end
+
+      # results = RoleUser.import(role_users)
+
+      # RoleUser.where(project_id: source_program.id, facility_project_id: facility_project.id, user_id: source_program_user_ids).destroy_all
+      
+      facility_project.project_id = target_program.id
+      facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
+       
+      facility_project.save
+      
+      # RoleUser.remove_bad_records
+
+      return {facility_project_id: facility_project.id, message: "Project moved successfully", status: true}
     
     rescue Exception => e
-      return {message: e.message, status: false}
+      return {facility_project_id: facility_project.id, message: e.message, status: false}
     end
 
   end

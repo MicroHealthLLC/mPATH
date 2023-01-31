@@ -1,5 +1,5 @@
 class Api::V1::FacilityGroupsController < AuthenticatedController
-  # before_action :check_permission, only: [:move_to_program]
+  before_action :check_permission, only: [:move_to_program]
 
   def check_permission
     source_program_id = params[:source_program_id]
@@ -50,27 +50,55 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     render json: groups
   end
 
+
+  def duplicate_to_program
+    source_program = Project.find(params[:source_program_id])
+    target_program = Project.find(params[:target_program_id])
+    facility_group = FacilityGroup.find(params[:facility_group_id])
+    target_program.project_groups << facility_group
+
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
+    failed_facility_projects = []
+    all_facility_projects.each do |fp|
+      result = fp.duplicate_to_program(target_program.id, params[:target_facility_group_id])
+      if !result[:status]
+        failed_facility_projects << result
+      end 
+    end
+
+    if failed_facility_projects.any?
+      render json: {message: "Fail to move all projects from given group", data: failed_facility_projects}, status: 406
+    else
+      render json: {message: "Facility group projects are moved to program"}, status: 200
+    end
+  end
+
   def move_to_program
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
+    facility_group = FacilityGroup.find(params[:facility_group_id])
+    target_program.project_groups << facility_group
 
-    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: params[:facility_group_id])
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
     failed_facility_projects = []
     all_facility_projects.each do |fp|
-      result = fp.move_to_program(target_program.id)
+      result = fp.move_to_program(target_program.id, params[:target_facility_group_id])
       if !result[:status]
-        failed_facility_projects << fp
+        failed_facility_projects << result
       end 
     end
     
+    source_project_facility_group = source_program.project_facility_groups.where(facility_group_id: facility_group.id).first
+    source_project_facility_group.destroy if source_project_facility_group
+
     # self.update(project_id: target_program_id)
 
     # project_facility_group = ProjectFacilityGroup.where(project_id: source_project.id, facility_group_id: params[:id]).first
     # project_facility_group.move_to_program(target_program_id)
     if failed_facility_projects.any?
-      render json: {message: "Facility group projects are moved to program"}, status: 200
+      render json: {message: "Fail to move all projects from given group", data: failed_facility_projects}, status: 406
     else
-      render json: {message: "Fail to move all projects from given group"}, status: 406
+      render json: {message: "Facility group projects are moved to program"}, status: 200
     end
   end
 
