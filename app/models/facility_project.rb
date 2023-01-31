@@ -30,9 +30,15 @@ class FacilityProject < ApplicationRecord
       target_program = Project.find(target_program_id)
       all_objs = []
 
-      duplicate_facility = facility.dup
-      duplicate_facility.facility_name = "#{facility.facility_name} - Copy"
-      duplicate_facility.save
+      if !facility.is_portfolio?
+        duplicate_facility = facility.dup
+        duplicate_facility.facility_name = "#{facility.facility_name} - Copy"
+        duplicate_facility.project_id = target_program.id
+        
+        duplicate_facility.save
+      else
+        duplicate_facility = facility
+      end
 
       duplicate_facility_project = facility_project.dup
       duplicate_facility_project.project_id = target_program.id
