@@ -128,6 +128,7 @@ Rails.application.routes.draw do
         collection do
           put :bulk_project_update
           post :move_to_program
+          post :duplicate_to_program
         end
       end
 
@@ -135,6 +136,7 @@ Rails.application.routes.draw do
         collection do
           put :bulk_projects_update
           post :move_to_program
+          post :duplicate_to_program
         end
       end
 

@@ -51,6 +51,20 @@ class Api::V1::FacilitiesController < AuthenticatedController
     render json: {}, status: :not_found
   end
 
+  def duplicate_to_program
+    facility_project = FacilityProject.where(facility_id: params[:facility_id], project_id: params[:source_program_id]).first
+    if facility_project
+      result = facility_project.duplicate_to_program(params[:target_program_id], params[:target_facility_group_id])
+      if result[:status]
+        render json: {message: result[:message]}
+      else
+        render json: {message: result[:message]}
+      end
+    else
+      render json: {message: "Can't find project!"}, status: 404
+    end
+  end
+
   def move_to_program
     facility_project = FacilityProject.where(facility_id: params[:facility_id], project_id: params[:source_program_id]).first
     if facility_project

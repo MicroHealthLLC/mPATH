@@ -21,7 +21,62 @@ class FacilityProject < ApplicationRecord
   before_create :assign_default_facility_group 
   before_update :assign_default_facility_group
 
+  def duplicate_to_program(target_program_id, target_facility_group_id = nil)
+    begin
+      
+      facility_project = self
+      facility = facility_project.facility
+      source_program = facility_project.project
+      target_program = Project.find(target_program_id)
+      all_objs = []
 
+      duplicate_facility_project = facility_project.dup
+      duplicate_facility_project.project_id = target_program.id
+      duplicate_facility_project.facility_group_id = target_facility_group_id
+      
+      if duplicate_facility_project.save
+
+        dup_tasks = []
+        facility_project.tasks.each do |task|
+          _t = task.amoeba_dup
+          _t.facility_project_id = duplicate_facility_project.id
+          dup_tasks << _t.save!
+        end
+
+        dup_risks = []
+        facility_project.risks.each do |risk|
+          _r = risk.amoeba_dup
+          _r.facility_project_id = duplicate_facility_project.id
+          dup_risks << _r.save!
+        end
+
+        dup_issues = []
+        facility_project.issues.each do |issue|
+          _i = issue.amoeba_dup
+          _i.facility_project_id = duplicate_facility_project.id
+          dup_issues << _i.save!
+        end
+
+        dup_lessons = []
+        facility_project.lessons.each do |lesson|
+          _l = lesson.amoeba_dup
+          _l.facility_project_id = duplicate_facility_project.id
+          dup_lessons << _l.save!
+        end
+
+        return {facility_project_id: duplicate_facility_project.id, message: "Project duplicate successfully", status: true}
+      else
+        return {facility_project_id: duplicate_facility_project.id, message: duplicate_facility_project.errors.full_messages, status: false}
+      end
+
+    rescue Exception => e
+      return {facility_project_id: self.id, message: e.message, status: false}
+    end
+  end
+
+  # When moving a program, we are also allowing user to move from source program to 
+  # target program, so that user will be able to access the project in target program
+  # we are assigning roles to those users in target program with same privilages.
   def move_to_program(target_program_id, target_facility_group_id = nil)
     begin
       facility_project = self

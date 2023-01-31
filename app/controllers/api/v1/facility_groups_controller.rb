@@ -50,6 +50,29 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     render json: groups
   end
 
+
+  def duplicate_to_program
+    source_program = Project.find(params[:source_program_id])
+    target_program = Project.find(params[:target_program_id])
+    facility_group = FacilityGroup.find(params[:facility_group_id])
+    target_program.project_groups << facility_group
+
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
+    failed_facility_projects = []
+    all_facility_projects.each do |fp|
+      result = fp.duplicate_to_program(target_program.id, params[:target_facility_group_id])
+      if !result[:status]
+        failed_facility_projects << result
+      end 
+    end
+
+    if failed_facility_projects.any?
+      render json: {message: "Fail to move all projects from given group", data: failed_facility_projects}, status: 406
+    else
+      render json: {message: "Facility group projects are moved to program"}, status: 200
+    end
+  end
+
   def move_to_program
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
