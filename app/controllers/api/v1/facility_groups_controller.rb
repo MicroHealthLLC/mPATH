@@ -54,13 +54,22 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
   def duplicate_to_program
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
-    facility_group = FacilityGroup.find(params[:facility_group_id])
-    target_program.project_groups << facility_group
+    source_facility_group = FacilityGroup.find(params[:facility_group_id])
+    target_facility_group = source_facility_group
+    if !source_facility_group.is_portfolio?
+      dup_facility_group = source_facility_group.dup
+      dup_facility_group.name = "#{source_facility_group} - copy"
+      dup_facility_group.save
+      target_program.project_groups << source_facility_group
+      target_facility_group = dup_facility_group
+    elsif !target_program.facility_groups.include?(source_facility_group)
+      target_program.project_groups << source_facility_group
+    end    
 
-    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: source_facility_group.id)
     failed_facility_projects = []
     all_facility_projects.each do |fp|
-      result = fp.duplicate_to_program(target_program.id, params[:target_facility_group_id])
+      result = fp.duplicate_to_program(target_program.id, target_facility_group.id)
       if !result[:status]
         failed_facility_projects << result
       end 
@@ -77,7 +86,9 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
     facility_group = FacilityGroup.find(params[:facility_group_id])
-    target_program.project_groups << facility_group
+    if !target_program.facility_groups.include?(facility_group)
+      target_program.project_groups << facility_group
+    end
 
     all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
     failed_facility_projects = []
