@@ -38,6 +38,8 @@ const settingsStore = {
     vehicles_status: 0,
     vehicle_status: 0,
     export_project_status: 0,
+    duplicate_group_status: 0,
+    duplicate_project_status: 0,
     move_group_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
@@ -164,32 +166,6 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* createVehicle({ commit }, { vehicle }) {
-      // Displays loader on front end
-      commit("TOGGLE_VEHICLES_LOADED", false);
-      // Utilize utility function to prep Lesson form data
-      let formData = vehicleFormData(vehicle);
-
-      axios({
-        method: "POST",
-        url: `${API_BASE_PATH}/vehicles?project_id=${vehicle.project_id}`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          commit("SET_VEHICLE", res.data.vehicle);
-          commit("SET_VEHICLE_STATUS", res.status);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_VEHICLES_LOADED", true);
-        });
-    }, */
     createGroup({ commit }, { group }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = groupFormData(group);
@@ -245,6 +221,37 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    duplicateGroup({ commit }, { group }) {
+
+      let formData = new FormData();
+      console.log(group);
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_group_id", group.groupId);
+      formData.append("source_program_id", group.sourceProgramId);
+      formData.append("target_program_id", group.targetProgramId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facility_groups/duplicate_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          // commit("SET_GROUP_STATUS", res.status);
+          commit("SET_DUPLICATE_GROUP_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
     exportProject({ commit }, { project }) {
       let formData = new FormData();
       console.log(project)
@@ -266,6 +273,35 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_EXPORT_PROJECT_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    duplicateProject({ commit }, { project }) {
+      let formData = new FormData();
+      console.log(project)
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_id", project.projectId);
+      formData.append("source_program_id", project.sourceProgramId);
+      formData.append("target_program_id", project.targetProgramId);
+      formData.append("target_facility_group_id", project.targetGroupId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facilities/duplicate_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_DUPLICATE_PROJECT_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
@@ -1666,6 +1702,10 @@ const settingsStore = {
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     SET_MOVE_GROUP_STATUS: (state, value) => (state.move_group_status = value),
     SET_EXPORT_PROJECT_STATUS: (state, value) => (state.export_project_status = value),
+
+    SET_DUPLICATE_GROUP_STATUS: (state, value) => (state.duplicate_group_status = value),
+    SET_DUPLICATE_PROJECT_STATUS: (state, value) => (state.duplicate_project_status = value),
+
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) =>
       (state.portfolio_projects_status = status),
 
@@ -1770,6 +1810,9 @@ const settingsStore = {
 
     moveGroupStatus: (state) => state.move_group_status,
     exportProjectStatus: (state) => state.export_project_status,
+
+    duplicateGroupStatus: (state) => state.duplicate_group_status,
+    duplicateProjectStatus: (state) => state.duplicate_project_status,
 
     getNewUserId: (state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,

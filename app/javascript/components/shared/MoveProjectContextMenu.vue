@@ -12,7 +12,7 @@
         <el-submenu index="1" v-if="$route.params.programId">
           <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate Project to Another Program </template>
           <div>
-            <div class="menu-subwindow-title">Duplicate Project to Another Program</div>
+            <div class="menu-subwindow-title px-2">Duplicate Project to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -22,8 +22,7 @@
               :data="treeFormattedData"
               :props="defaultProps"
               :filter-node-method="filterNode"
-              @check-change="toggleSubmitBtn"
-              show-checkbox
+              @node-click="duplicateSelection"
               ref="duplicatetree"
               node-key="id"
             >
@@ -31,19 +30,11 @@
             <div class="context-menu-btns">
               <button
                 class="btn btn-sm btn-success ml-2"
+                @click="confirmProjectDuplicate"  
                :disabled="submitDisabled"
               >
-                Save
-              </button>
-              <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">
-                Select All
-              </button>
-              <button
-                class="btn btn-sm btn-outline-secondary ml-2"
-                @click="clearAllNodes"
-              >
-                Clear All
-              </button>
+                Confirm Dupllicate
+              </button>          
             </div>
           </div>
         </el-submenu>
@@ -51,7 +42,7 @@
         <el-submenu index="2" v-if="$route.params.programId">
           <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move Project to Another Program</template>
           <div>
-            <div class="menu-subwindow-title">Move Project to Another Program</div>
+            <div class="menu-subwindow-title px-2">Move Project to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -110,7 +101,15 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "exportProjectStatus"]),
+      ...mapGetters([
+        "currentProject",
+        "getUnfilteredFacilities",
+        "projectContracts",
+        "filteredFacilityGroups", 
+        "portfolioPrograms",
+        "exportProjectStatus",
+        "duplicateProjectStatus"
+      ]),
       // get position of context menu
       style() {
         return {
@@ -161,8 +160,20 @@
       },
     },
     methods: {
-      ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "exportProject", "fetchCurrentProject"]),
-      ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_EXPORT_PROJECT_STATUS"]),
+      ...mapActions([
+        "taskDeleted", 
+        "fetchPortfolioPrograms", 
+        "exportProject", 
+        "duplicateProject", 
+        "fetchCurrentProject"
+      ]),
+      ...mapMutations([
+        "updateTasksHash",
+        "updateContractTasks", 
+        "updateVehicleTasks", 
+        "SET_EXPORT_PROJECT_STATUS", 
+        "SET_DUPLICATE_PROJECT_STATUS"
+      ]),
       log(e){
         console.log(e)
       },
@@ -204,10 +215,6 @@
           }
         });
       },
-
-      selectAllNodes() {
-        this.$refs.duplicatetree.setCheckedNodes(this.treeFormattedData);
-      },
       clearAllNodes() {
         this.$refs.duplicatetree.setCheckedNodes([]);
       },
@@ -215,6 +222,11 @@
       console.log("move", node)
       this.target_program_id = node.targetProgramId,
       this.target_group_id = node.targetGroupId      
+      },
+      duplicateSelection(node) {
+        console.log("move", node)
+        this.target_program_id = node.targetProgramId,
+        this.target_group_id = node.targetGroupId      
       },
       confirmProjectMove(){
       let data = {
@@ -226,6 +238,18 @@
           }           
         }
         this.exportProject({...data})
+        console.log("this works", data)
+      },
+      confirmProjectDuplicate(){
+      let data = {
+          project:{
+            projectId: this.projectId ,
+            sourceProgramId: this.$route.params.programId,
+            targetProgramId: this.target_program_id,
+            targetGroupId: this.target_group_id
+          }           
+        }
+       this.duplicateProject({...data})
         console.log("this works", data)
       },
     filterNode(value, data) {
@@ -257,6 +281,19 @@
         }
       },
     },
+    duplicateProjectStatus: {
+      handler() {
+        if (this.duplicateProjectStatus == 200) {
+          this.$message({
+            message: `Project duplicate successful.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_DUPLICATE_PROJECT_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);      
+        }
+      },
+    },
     },
   };
   </script>
@@ -269,8 +306,9 @@
     outline: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     cursor: pointer;
-  }.context-menu-inner{
-    width: 14vw;
+  }
+  .context-menu-inner{
+    width: 17.5vw;
   }
   hr {
     margin: 0;
@@ -296,7 +334,7 @@
   }
   .el-tree {
     padding: 10px;
-    max-width: 300px;
+    max-width: 400px;
     max-height: 300px;
     overflow-y: auto;
   }
