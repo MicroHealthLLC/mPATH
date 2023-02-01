@@ -6,6 +6,10 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"   
   >
+<!-- Planned Effort 
+Actual Effort
+%Complete
+  Description -->
    <form
     id="tasks-form"
     @submit.prevent="saveTask"
@@ -613,7 +617,7 @@
           </div>
 
           <div class="form-group pt-3 mx-4">
-            <label class="font-md">Checklists</label>
+            <label class="font-md">Subtasks</label>
             <span
               class="ml-2 clickable"
               v-if="_isallowed('write')"
@@ -654,7 +658,7 @@
                     style="background-color:#fafafa;position:relative"
                   >
                     <div class="row" style="width:97%">
-                      <div class="col-8 justify-content-start">
+                      <div class="col-6 justify-content-start">
                         <input
                           type="checkbox"
                           name="check"
@@ -668,25 +672,46 @@
                           name="text"
                           @input="updateCheckItem($event, 'text', index)"
                           :key="`text_${index}`"
-                          placeholder="Checkpoint name here"
+                          placeholder="Subtask name here"
                           type="text"
                           class="checklist-text pl-1"
                           maxlength="80"
                           :readonly="!_isallowed('write')"
                         />
+                    
+                      </div>
+                       <div class="col-1 pr-0">                            
+                          <span class="font-sm dueDate pr-0">Planned Effort:</span>                           
+                       </div>
+                      <div class="col-1 pl-0">         
+                        <input
+                        :value="plannedHours"                         
+                       placeholder=""
+                        type="text"                          
+                        class="checklist-text pl-1 "                        
+                        :readonly="!_isallowed('write')"
+                      />                      
                       </div>
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 pl-0 pr-0"
                       >
-                        <span class="font-sm dueDate">Due Date:</span>
+                      
+                        <span class="font-sm dueDate">Actual Effort:</span>
                       </div>
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
-                        <v2-date-picker
+                      <input
+                        :value="plannedHours"                         
+                        placeholder=""
+                        type="text"                          
+                        class="checklist-text pl-1 "                        
+                        :readonly="!_isallowed('write')"
+                      />              
+                        <!-- <v2-date-picker
                           v-model="check.dueDate"
                           :value="check.dueDate"
                           :disabled="!_isallowed('write') || !check.text"
@@ -696,10 +721,10 @@
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="dueDate"
-                          class="w-100 vue2-datepicker d-flex ml-auto"
+                          class="w-75 vue2-datepicker "
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
-                        />
+                        /> -->
                       </div>
                     </div>
 
@@ -708,6 +733,7 @@
                       <el-collapse-item
                         title="Details"
                         name="1"
+                        class="fafafa"
                         style="background-color:#fafafa"
                       >
                         <div
@@ -715,6 +741,7 @@
                           class="row justify-content-end pt-2 pb-5"
                           style="background-color:#fafafa;position:relative"
                         >
+                       
                           <div
                             class="d-flex col mb-0"
                             style="position:absolute"
@@ -809,7 +836,8 @@
                           >
                             <thead>
                               <tr>
-                                <th style="width:50%">Progress</th>
+                                <th style="width:30%">Progress</th>
+                                <th style="width:25%">Actual Hours</th>
                                 <th>Last Updated</th>
                                 <th>By</th>
                                 <th
@@ -853,6 +881,9 @@
                                   <span v-else>
                                     {{ progress.body }}
                                   </span>
+                                </td>
+                                <td>
+                                  4
                                 </td>
                                 <td>
                                   <span v-if="!progress.user"></span>
@@ -1322,6 +1353,7 @@ export default {
       DV_task: this.INITIAL_TASK_STATE(),
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
+      plannedHours: '',
       destroyedFiles: [],
       editTimeLive: "",   
       programId: this.$route.params.programId,         
@@ -1362,7 +1394,7 @@ export default {
           form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
         },
         {
-          label: "Checklist",
+          label: "Subtasks",
           key: "tab3",
           closable: false,
           form_fields: ["Checklists"],
@@ -2475,6 +2507,9 @@ ul {
   }
   a.active {
     background-color: rgba(211, 211, 211, 10%);
+  }
+  .fafafa{
+    background-color: #fafafa;
   }
   li.next:before {
     content: " | ";
