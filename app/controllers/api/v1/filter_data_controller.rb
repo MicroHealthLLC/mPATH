@@ -19,6 +19,7 @@ class Api::V1::FilterDataController < AuthenticatedController
         
         projects_group_by_facility_group.each do |fg_id, facilities|
           fg = facility_groups.detect{|g| g.id == fg_id} 
+          next if !fg
           fp_ids = facilities.map{|h| h[:facility_project_id]}.compact.uniq
           project_children << {id: SecureRandom.uuid, project_group_id: fg.id, label: fg.name, all_facility_project_ids: fp_ids, children: facilities }
         end
