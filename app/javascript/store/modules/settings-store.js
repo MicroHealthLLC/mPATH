@@ -169,6 +169,7 @@ const settingsStore = {
     createGroup({ commit }, { group }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = groupFormData(group);
+     
 
       axios({
         method: "POST",
@@ -193,13 +194,13 @@ const settingsStore = {
     moveGroup({ commit }, { group }) {
 
       let formData = new FormData();
+      
       console.log(group);
       commit("TOGGLE_GROUPS_LOADED", false);
 
       formData.append("facility_group_id", group.groupId);
       formData.append("source_program_id", group.sourceProgramId);
       formData.append("target_program_id", group.targetProgramId);
-
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/facility_groups/move_to_program.json`,
@@ -209,13 +210,24 @@ const settingsStore = {
             .attributes["content"].value,
         },
       })
-        .then((res) => {
+        .then((res) => {   
           commit("SET_GROUP", res.data.facility_groups);
-          // commit("SET_GROUP_STATUS", res.status);
-          commit("SET_MOVE_GROUP_STATUS", res.status);
+          if(res){
+            console.log(res);
+            commit("SET_MOVE_GROUP_STATUS", res.status);
+          }     
         })
         .catch((err) => {
-          console.log(err);
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_MOVE_GROUP_STATUS", err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -226,7 +238,6 @@ const settingsStore = {
       let formData = new FormData();
       console.log(group);
       commit("TOGGLE_GROUPS_LOADED", false);
-
       formData.append("facility_group_id", group.groupId);
       formData.append("source_program_id", group.sourceProgramId);
       formData.append("target_program_id", group.targetProgramId);
@@ -243,10 +254,24 @@ const settingsStore = {
         .then((res) => {
           commit("SET_GROUP", res.data.facility_groups);
           // commit("SET_GROUP_STATUS", res.status);
-          commit("SET_DUPLICATE_GROUP_STATUS", res.status);
+         
+          if(res){
+            console.log(res);
+            commit("SET_DUPLICATE_GROUP_STATUS", res.status);
+          }   
         })
         .catch((err) => {
-          console.log(err);
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_DUPLICATE_GROUP_STATUS",  err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
+         
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -272,10 +297,23 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_EXPORT_PROJECT_STATUS", res.status);
+        if(res){
+            console.log(res);
+            commit("SET_EXPORT_PROJECT_STATUS", res.status);
+          }   
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err);    
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_EXPORT_PROJECT_STATUS",err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -285,12 +323,10 @@ const settingsStore = {
       let formData = new FormData();
       console.log(project)
       commit("TOGGLE_GROUPS_LOADED", false);
-
       formData.append("facility_id", project.projectId);
       formData.append("source_program_id", project.sourceProgramId);
       formData.append("target_program_id", project.targetProgramId);
       formData.append("target_facility_group_id", project.targetGroupId);
-
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/facilities/duplicate_to_program.json`,
@@ -301,10 +337,23 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_DUPLICATE_PROJECT_STATUS", res.status);
+          if(res){
+            console.log(res);
+            commit("SET_DUPLICATE_PROJECT_STATUS", res.status);
+          }   
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err);    
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_DUPICATE_PROJECT_STATUS",err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -1502,7 +1551,7 @@ const settingsStore = {
     deleteProgramProject({ commit }, { programId, id }) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/programs/${programId}/projects/${id}`)
+          .delete(`${API_BASE_PATH}/program_settings/facilities/${id}?project_id=${programId}`)
           .then((res) => {
             resolve(res.status);
           })

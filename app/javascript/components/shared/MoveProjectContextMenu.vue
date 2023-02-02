@@ -279,6 +279,22 @@
           this.SET_EXPORT_PROJECT_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);      
         }
+        if (this.exportProjectStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to make this move.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_EXPORT_PROJECT_STATUS(0);
+        }      
+        if (this.exportProjectStatus == 404 ) {        
+          this.$message({
+          message: `Sorry. Something went wrong.`,
+          type: "danger",
+          showClose: true,
+        }); 
+        this.SET_EXPORT_PROJECT_STATUS(0);
+        }              
       },
     },
     duplicateProjectStatus: {
@@ -292,6 +308,23 @@
           this.SET_DUPLICATE_PROJECT_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);      
         }
+        if (this.duplicateGroupStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to duplicate.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_PROJECT_STATUS(0);
+        }
+        if (this.duplicateGroupStatus == 404 ) {
+          this.$message({
+          message: `Sorry.  Something went wrong.`,
+          type: "danger",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_PROJECT_STATUS(0);
+        }
+             
       },
     },
     },

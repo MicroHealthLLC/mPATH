@@ -30,10 +30,21 @@ class FacilityProject < ApplicationRecord
       target_program = Project.find(target_program_id)
       all_objs = []
 
+      if !facility.is_portfolio?
+        duplicate_facility = facility.dup
+        duplicate_facility.facility_name = "#{facility.facility_name} - Copy"
+        duplicate_facility.project_id = target_program.id
+        
+        duplicate_facility.save
+      else
+        duplicate_facility = facility
+      end
+
       duplicate_facility_project = facility_project.dup
       duplicate_facility_project.project_id = target_program.id
       duplicate_facility_project.facility_group_id = target_facility_group_id
-      
+      duplicate_facility_project.facility_id = duplicate_facility.id
+
       if duplicate_facility_project.save
 
         dup_tasks = []
@@ -134,8 +145,9 @@ class FacilityProject < ApplicationRecord
       facility_project.project_id = target_program.id
       facility_project.facility_group_id = target_facility_group_id if target_facility_group_id
        
-      facility_project.save
-      
+      if !facility_project.save
+        raise facility_project.errors.full_messages.join(", ")
+      end
       # RoleUser.remove_bad_records
 
       return {facility_project_id: facility_project.id, message: "Project moved successfully", status: true}
