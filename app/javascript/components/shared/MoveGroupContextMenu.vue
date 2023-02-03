@@ -105,7 +105,7 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus"]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus", "duplicateGroupStatus"]),
       // get position of context menu
       style() {
         return {
@@ -233,7 +233,6 @@
       moveGroupStatus: {
       handler() {
         if (this.moveGroupStatus == 200) {
-
           console.log("Group move worked")
           this.$message({
             message: `Group moved successfully.`,
@@ -242,9 +241,73 @@
           });
           this.SET_MOVE_GROUP_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);      
+        } 
+        if (this.moveGroupStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to make this move.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
         }
+        if (this.moveGroupStatus == 406 ) {
+          this.$message({
+          message: `Warning.  Group successfully moved, but not all projects were included.`,
+          type: "info",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
+        this.fetchCurrentProject(this.$route.params.programId);      
+        }
+        if (this.moveGroupStatus == 500 ) {        
+          this.$message({
+          message: `Sorry. This group already exists in target program.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
+        }                
       },
-    },
+      },
+      duplicateGroupStatus: {
+      handler() {
+        if (this.duplicateGroupStatus == 200) {
+          console.log("Group move worked")
+          this.$message({
+            message: `Group duplicated successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_DUPLICATE_GROUP_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);      
+        } 
+        if (this.duplicateGroupStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to duplicate.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        }
+        if (this.duplicateGroupStatus == 406 ) {
+          this.$message({
+          message: `Warning.  Group successfully duplicated, but not all projects were included.`,
+          type: "info",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        this.fetchCurrentProject(this.$route.params.programId);      
+        }
+        if (this.duplicateGroupStatus == 500 ) {        
+          this.$message({
+          message: `Sorry. This group already exists in target program.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        }                
+      },
+      },
     },
   };
   </script>
