@@ -31,7 +31,7 @@
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
-              <span class="d-flex">
+              <span class="d-flex" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
                 <span v-show="getExpandedGroup != group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
@@ -68,6 +68,7 @@
             >
               <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
+                  @mouseup.right="openProjectContextMenu($event, facility.id )" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
@@ -93,6 +94,7 @@
                 "
               >
                 <div 
+                  @mouseup.right="openProjectContextMenu" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{
@@ -139,6 +141,18 @@
       </div>
     </div>
     <!-- <router-link  >  -->
+      <MoveProjectContextMenu
+        :display="showProjectContextMenu"
+        :projectId="projectId"
+        ref="moveProjectContextMenu"
+        >  
+      </MoveProjectContextMenu>
+      <MoveGroupContextMenu      
+        :display="showGroupContextMenu"
+        :groupId="groupId"
+        ref="moveGroupContextMenu"
+        >  
+      </MoveGroupContextMenu>
     <button
       v-if="_isallowedProgramSettings('read')"
       class="btn btn-sm btn-light program-settings-btn"
@@ -153,12 +167,16 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import MoveProjectContextMenu from "./MoveProjectContextMenu";
+import MoveGroupContextMenu from "./MoveGroupContextMenu";
 import Loader from "./loader";
 
 export default {
   name: "ProjectSidebar",
   components: {
     Loader,
+    MoveProjectContextMenu,
+    MoveGroupContextMenu
   },
   props: [
     "title",
@@ -166,7 +184,6 @@ export default {
     "currentFacilityGroup",
     "currentContract",
     "currentContractGroup",
-    ,
     "currentVehicle",
     "currentVehicleGroup",
   ],
@@ -175,8 +192,12 @@ export default {
       value: "",
       totalGroupContract: 0,
       totalGroupVehicle: 0,
+      groupId: null, 
+      projectId: null, 
       filteredGroupSize: null,
       projectCount: 0,
+      showProjectContextMenu: false, 
+      showGroupContextMenu: false, 
     };
   },
   computed: {
@@ -297,6 +318,16 @@ export default {
       "createVehicle",
       "updateVehicle",
     ]),
+    openProjectContextMenu(e, id) {
+      this.projectId = id
+      e.preventDefault();
+      this.$refs.moveProjectContextMenu.open(e);
+   },
+    openGroupContextMenu(e, id) {
+      this.groupId = id
+      e.preventDefault();
+      this.$refs.moveGroupContextMenu.open(e);
+   },
     expandFacilityGroup(group) {
       if (this.currentContract && this.currentFacility == {}) {
         group = this.currentContract.facilityGroup.id;
