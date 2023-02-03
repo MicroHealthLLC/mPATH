@@ -237,6 +237,9 @@
             targetGroupId: this.target_group_id
           }           
         }
+         if(this.$route.params.projectId == this.projectId){
+            this.$router.push(`/programs/${this.$route.params.programId}/sheet/`)
+          } 
         this.exportProject({...data})
         console.log("this works", data)
       },
@@ -276,8 +279,8 @@
             type: "success",
             showClose: true,
           });
-          this.SET_EXPORT_PROJECT_STATUS(0);
-          this.fetchCurrentProject(this.$route.params.programId);      
+          this.SET_EXPORT_PROJECT_STATUS(0);               
+          this.fetchCurrentProject(this.$route.params.programId);  
         }
         if (this.exportProjectStatus == 401 ) {        
           this.$message({
