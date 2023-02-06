@@ -55,6 +55,10 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
     source_facility_group = FacilityGroup.find(params[:facility_group_id])
+    if source_facility_group.is_default
+      render json: {message: "Can't duplicate default group"}, status: 406
+      return
+    end
     target_facility_group = source_facility_group
     if !source_facility_group.is_portfolio?
       dup_facility_group = source_facility_group.dup
@@ -86,6 +90,12 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
     facility_group = FacilityGroup.find(params[:facility_group_id])
+
+    if source_facility_group.is_default
+      render json: {message: "Can't move default group"}, status: 406
+      return
+    end
+
     if !target_program.facility_groups.include?(facility_group)
       target_program.project_groups << facility_group
     end

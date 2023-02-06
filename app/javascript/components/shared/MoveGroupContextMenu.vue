@@ -2,6 +2,7 @@
     <div
       class="context-menu"
       v-show="show"
+      :load="log(treeFormattedData)"
       :style="style"
       ref="context"
       tabindex="0"
@@ -105,7 +106,7 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus", "duplicateGroupStatus"]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "authorizedPortfolioPrograms", "moveGroupStatus", "duplicateGroupStatus"]),
       // get position of context menu
       style() {
         return {
@@ -121,9 +122,9 @@
         } else return "Filter Programs & Groups"
       },
      treeFormattedData() {
-      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+      if(this.authorizedPortfolioPrograms && this.authorizedPortfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {
+        this.authorizedPortfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {
           // console.log("treeFormattedData", program)    
           data.push({
             id: index,
@@ -147,11 +148,11 @@
       },
     },
     methods: {
-      ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "moveGroup", "duplicateGroup","fetchCurrentProject"]),
+      ...mapActions(["taskDeleted", "fetchAuthorizedPortfolioPrograms", "moveGroup", "duplicateGroup","fetchCurrentProject"]),
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_MOVE_GROUP_STATUS", "SET_DUPLICATE_GROUP_STATUS"]),
-      // log(e){
-      //   console.log(e)
-      // },
+      log(e){
+        console.log(e)
+      },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
       },
@@ -222,7 +223,7 @@
       },
     },
     mounted() {
-    this.fetchPortfolioPrograms()
+    this.fetchAuthorizedPortfolioPrograms()
     },
     watch: {
       filterTree(value) {

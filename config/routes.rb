@@ -188,6 +188,7 @@ Rails.application.routes.draw do
       end
 
       # Filter data
+      get "/filter_data/program_admin_programs", to: "filter_data#program_admin_programs"
       get "/filter_data/programs", to: "filter_data#programs"
       get "/filter_data/users", to: "filter_data#users"
       get "/filter_data/statuses", to: "filter_data#statuses"

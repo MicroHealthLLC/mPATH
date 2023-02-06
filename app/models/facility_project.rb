@@ -75,6 +75,13 @@ class FacilityProject < ApplicationRecord
           dup_lessons << _l.save!
         end
 
+        dup_notes = []
+        facility_project.notes.each do |note|
+          _l = note.dup
+          _l.facility_project_id = duplicate_facility_project.id
+          dup_notes << _l.save!
+        end
+        
         return {facility_project_id: duplicate_facility_project.id, message: "Project duplicate successfully", status: true}
       else
         return {facility_project_id: duplicate_facility_project.id, message: duplicate_facility_project.errors.full_messages, status: false}
