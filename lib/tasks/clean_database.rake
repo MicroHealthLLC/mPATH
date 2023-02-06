@@ -14,4 +14,7 @@ task :clean_database => :environment do
   end 
   puts "Total FacilityProject with invalid facility group: #{invalid_facility_project_ids.size}"
 
+  puts "Cleaning Role User data"  
+  puts "Total RoleUser cleared: #{RoleUser.remove_bad_records.size}"
+  
 end
