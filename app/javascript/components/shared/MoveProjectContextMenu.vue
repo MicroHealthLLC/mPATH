@@ -108,7 +108,8 @@
         "filteredFacilityGroups", 
         "portfolioPrograms",
         "exportProjectStatus",
-        "duplicateProjectStatus"
+        "duplicateProjectStatus",
+        "authorizedPortfolioPrograms"
       ]),
       // get position of context menu
       style() {
@@ -125,9 +126,9 @@
         } else return "Filter Programs & Groups"
       },
      treeFormattedData() {
-      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+      if(this.authorizedPortfolioPrograms && this.authorizedPortfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {    
+        this.authorizedPortfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {    
           data.push({
             id: index,
             label: program.label,      
@@ -162,7 +163,7 @@
     methods: {
       ...mapActions([
         "taskDeleted", 
-        "fetchPortfolioPrograms", 
+        "fetchAuthorizedPortfolioPrograms",
         "exportProject", 
         "duplicateProject", 
         "fetchCurrentProject"
@@ -264,7 +265,7 @@
       },
     },
     mounted() {
-    this.fetchPortfolioPrograms()
+      this.fetchAuthorizedPortfolioPrograms()
   },
     watch: {
       filterTree(value) {

@@ -31,7 +31,16 @@
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
-              <span class="d-flex" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
+              <span class="d-flex" v-if="!group.isDefault" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
+                <span v-show="getExpandedGroup != group.id">
+                  <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
+                </span>
+                <span v-show="getExpandedGroup == group.id">
+                  <i class="fa fa-angle-down font-md mr-2 clickable"></i>
+                </span>
+                <p class="clickable groupName expandText">{{ group.name }}</p>
+              </span>
+              <span class="d-flex" v-else>
                 <span v-show="getExpandedGroup != group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
