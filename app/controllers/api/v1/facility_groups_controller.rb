@@ -96,7 +96,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       return
     end
 
-    if !target_program.facility_groups.include?(facility_group)
+    if !target_program.project_groups.include?(facility_group)
       target_program.project_groups << facility_group
     end
 
