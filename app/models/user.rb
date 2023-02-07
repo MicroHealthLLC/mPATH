@@ -465,7 +465,7 @@ class User < ApplicationRecord
     pv.each do |p|
       pids = p.project_ids.map(&:to_s)
       project_ids_with_privileges = project_ids_with_privileges + pids
-      module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+      module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids", "contracts","cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons", "admin_groups","admin_contracts","admin_facilities")
       module_permissions.transform_values{|v| v.delete(""); v}
 
       pids.each do |pid|
