@@ -56,9 +56,9 @@ class Api::V1::FacilitiesController < AuthenticatedController
     if facility_project
       result = facility_project.duplicate_to_program(params[:target_program_id], params[:target_facility_group_id])
       if result[:status]
-        render json: {message: result[:message]}
+        render json: {message: result[:message]}, status: 200
       else
-        render json: {message: result[:message]}
+        render json: {message: result[:message]}, status: 406
       end
     else
       render json: {message: "Can't find project!"}, status: 404
@@ -70,9 +70,9 @@ class Api::V1::FacilitiesController < AuthenticatedController
     if facility_project
       result = facility_project.move_to_program(params[:target_program_id], params[:target_facility_group_id])
       if result[:status]
-        render json: {message: result[:message]}
+        render json: {message: result[:message]}, status: 200
       else
-        render json: {message: result[:message]}
+        render json: {message: result[:message]}, status: 406
       end
     else
       render json: {message: "Can't find project!"}, status: 404
