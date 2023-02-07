@@ -68,7 +68,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   def destroy
     group = FacilityGroup.find(params[:id])
     program = Project.find(params[:project_id])
-    
+
     if program.project_groups.include?(group)
       project_facility_group = program.project_facility_groups.find_by(facility_group_id: group.id)
       if !group.is_portfolio? && !project_facility_group.is_default?

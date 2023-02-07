@@ -16,5 +16,20 @@ task :clean_database => :environment do
 
   puts "Cleaning Role User data"  
   puts "Total RoleUser cleared: #{RoleUser.remove_bad_records.size}"
+
+  puts "Cleaning FacilityProject with missing Project"
   
+  project_ids = Project.ids
+  invalid_facility_project_ids = []
+  FacilityProject.in_batches do |fps|
+    fps.includes(:project).each do |f|
+      if !project_ids.include?(f.project_id)
+        invalid_facility_project_ids << f.id
+        f.destroy
+      end
+    end  
+  end 
+  puts "Total FacilityProject with missing project: #{invalid_facility_project_ids.size}"
+
+
 end
