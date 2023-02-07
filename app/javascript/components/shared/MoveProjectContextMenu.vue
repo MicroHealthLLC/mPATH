@@ -6,13 +6,15 @@
       ref="context"
       tabindex="0"
       @mouseleave="close"
+      :load="log(sourceProjectName)"
+      
     >
       <el-menu collapse class="context-menu-inner">
         <hr />
         <el-submenu index="1" v-if="$route.params.programId">
           <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate Project to Another Program </template>
           <div>
-            <div class="menu-subwindow-title px-2">Duplicate Project to Another Program</div>
+            <div class="menu-subwindow-title px-2">Duplicate <span class="text-info px-1"> {{ sourceProjectName }}</span> to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -42,7 +44,7 @@
         <el-submenu index="2" v-if="$route.params.programId">
           <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move Project to Another Program</template>
           <div>
-            <div class="menu-subwindow-title px-2">Move Project to Another Program</div>
+            <div class="menu-subwindow-title px-2">Move <span class="text-info px-1"> {{ sourceProjectName }}</span> to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -124,6 +126,11 @@
         } else if(this.$route.params.vehicleId){
           return "Filter Vehicles"
         } else return "Filter Programs & Groups"
+      },
+      sourceProjectName(){
+        if(this.currentProject && this.currentProject.facilities  && this.currentProject.facilities.length > 0 && this.projectId){
+          return this.currentProject.facilities.filter(t => t.facilityId == this.projectId)[0].facilityName
+        }
       },
      treeFormattedData() {
       if(this.authorizedPortfolioPrograms && this.authorizedPortfolioPrograms.length > 0){
@@ -266,11 +273,17 @@
     },
     mounted() {
       this.fetchAuthorizedPortfolioPrograms()
+      this.fetchCurrentProject(this.$route.params.programId); 
   },
     watch: {
       filterTree(value) {
         this.$refs.duplicatetree.filter(value);
         this.$refs.movetree.filter(value);
+      },
+      sourceProjectName(){
+        if(this.sourceProjectName){
+          return this.sourceProjectName
+        } else return 'Project'
       },
       exportProjectStatus: {
       handler() {
