@@ -53,7 +53,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
 
   def duplicate_to_program
     source_program = Project.find(params[:source_program_id])
-    target_program = Project.find(params[:target_program_id])
+    target_program = Project.includes(:project_groups).find(params[:target_program_id])
     source_facility_group = FacilityGroup.find(params[:facility_group_id])
     if source_facility_group.is_default
       render json: {message: "Can't duplicate default group"}, status: 406
@@ -62,11 +62,11 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     target_facility_group = source_facility_group
     if !source_facility_group.is_portfolio?
       dup_facility_group = source_facility_group.dup
-      dup_facility_group.name = "#{source_facility_group} - copy"
+      dup_facility_group.name = "#{source_facility_group.name} - copy"
       dup_facility_group.save
-      target_program.project_groups << source_facility_group
+      target_program.project_groups << dup_facility_group
       target_facility_group = dup_facility_group
-    elsif !target_program.facility_groups.include?(source_facility_group)
+    elsif !target_program.project_groups.include?(source_facility_group)
       target_program.project_groups << source_facility_group
     end    
 
@@ -96,7 +96,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       return
     end
 
-    if !target_program.facility_groups.include?(facility_group)
+    if !target_program.project_groups.include?(facility_group)
       target_program.project_groups << facility_group
     end
 
