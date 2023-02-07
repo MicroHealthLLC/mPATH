@@ -290,7 +290,15 @@
           showClose: true,
         }); 
         this.SET_EXPORT_PROJECT_STATUS(0);
-        }      
+        }    
+        if (this.exportProjectStatus == 406 ) {        
+          this.$message({
+          message: `Sorry. This project already exists in target program.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_EXPORT_PROJECT_STATUS(0);
+        }   
         if (this.exportProjectStatus == 404 ) {        
           this.$message({
           message: `Sorry. Something went wrong.`,
