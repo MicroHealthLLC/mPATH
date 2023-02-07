@@ -71,14 +71,14 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
 
     if program.project_groups.include?(group)
       project_facility_group = program.project_facility_groups.find_by(facility_group_id: group.id)
-      if !group.is_portfolio? && !project_facility_group.is_default?
+      if !group.is_portfolio? && !group.is_default?
         project_facility_group.apply_unassigned_to_resource
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {errors: group.errors.full_messages}, status: 406
         end
-      elsif group.is_portfolio? && !project_facility_group.is_default?
+      elsif group.is_portfolio? && !group.is_default?
         if project_facility_group.apply_unassigned_to_resource
           project_facility_group.destroy
           render json: {message: "Group removed successfully"}, status: 200
