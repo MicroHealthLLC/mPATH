@@ -7,7 +7,7 @@ class ProjectFacilityGroup < ApplicationRecord
   after_destroy :apply_unassigned_to_resource
 
   def apply_unassigned_to_resource
-    
+    return if self.project_group.nil?
     facility_projects_group = self.project_group.facility_projects.includes(:project).where(project_id: self.project_id).group_by{|fp| fp.project }
     project_contract_group = self.project_group.project_contracts.includes(:project).where(project_id: self.project_id).group_by{|fp| fp.project }
     project_contract_vehicles = self.project_group.project_contract_vehicles.includes(:project).where(project_id: self.project_id).group_by{|fp| fp.project }

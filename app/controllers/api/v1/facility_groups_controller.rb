@@ -60,15 +60,14 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       return
     end
     target_facility_group = source_facility_group
-    if !source_facility_group.is_portfolio?
-      dup_facility_group = source_facility_group.dup
-      dup_facility_group.name = "#{source_facility_group.name} - copy"
-      dup_facility_group.save
-      target_program.project_groups << dup_facility_group
-      target_facility_group = dup_facility_group
-    elsif !target_program.project_groups.include?(source_facility_group)
-      target_program.project_groups << source_facility_group
-    end    
+    
+    dup_facility_group = source_facility_group.dup
+    dup_facility_group.name = "#{source_facility_group.name} - copy"
+    dup_facility_group.is_default = false
+    dup_facility_group.is_portfolio = false
+    dup_facility_group.save
+    target_program.project_groups << dup_facility_group
+    target_facility_group = dup_facility_group  
 
     all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: source_facility_group.id)
     failed_facility_projects = []
