@@ -92,7 +92,7 @@ class Project < SortableRecord
     g = self.project_groups.where(is_default: true).first
     if !g
       g = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name, is_default: true)
-      pg = self.project_facility_groups.create(facility_group_id: group.id)
+      pg = self.project_facility_groups.create(facility_group_id: g.id)
     end
     g
   end
