@@ -57,6 +57,12 @@ export default {
           closable: false,
           hidden: false,
         },
+        {
+          label: "Time",
+          key: "time",
+          closable: false,
+          hidden: false,
+        },
       ],
     };
   },

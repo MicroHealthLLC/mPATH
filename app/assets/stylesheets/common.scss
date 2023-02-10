@@ -30,7 +30,9 @@ body {
 .allCaps {
   text-transform: uppercase;
 }
-
+ul.a {
+  list-style-type: circle;
+}
 .portfolio {
   .v-label {
     margin-bottom: 0;

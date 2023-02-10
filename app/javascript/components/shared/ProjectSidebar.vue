@@ -31,12 +31,13 @@
             </span>
             <h5 class="clickable">{{ group.name }}</h5>
           </div>
-          <div v-show="expanded.id == group.id" class="ml-2">
+          <div class="ml-2">
             <div
               v-for="(facility, index) in facilityGroupFacilities(group)"
               :key="index"
             >
-              <router-link
+            {{ facility.facility.facilityName }}
+              <!-- <router-link
                 :to="
                   `/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`
                 "
@@ -50,7 +51,7 @@
                     {{ facility.facility.facilityName }}
                   </p>
                 </div>
-              </router-link>
+              </router-link> -->
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
+  <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index" :load="log(filteredTasks.filtered.tasks)">
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
@@ -567,9 +567,9 @@
       }
         this.currentSort = s;
       },
-      // log(e){
-      //   console.log("Task:  " + e)
-      // },
+      log(e){
+        console.log(e)
+      },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
       },
