@@ -34,6 +34,7 @@ import SheetLessons from "./../components/views/sheet/SheetLessons";
 import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+import SheetTime from "./../components/views/sheet/SheetTime";
 // Kanban Routes Components
 import KanbanView from "./../components/views/kanban/KanbanView";
 import KanbanDefault from "./../components/views/kanban/KanbanDefault";
@@ -221,6 +222,11 @@ export default new VueRouter({
           name: "SheetRollup",
           path: "",
           component: ProjectRollup,
+        },
+        {
+          name: "SheetTime",
+          path: "",
+          component: SheetTime,
         },
         {
           name: "SheetOverview",
