@@ -360,6 +360,9 @@ class Task < ApplicationRecord
       on_hold: on_hold,
       closed_date: closed_date,
 
+      planned_effort: self.planned_effort,
+      actual_effort: self.actual_effort,
+
       # Add RACI user names
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,

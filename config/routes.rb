@@ -187,6 +187,9 @@ Rails.application.routes.draw do
         end
       end
 
+      # Report
+      get "/reports/user_progress_report", to: "reports#user_progress_report"
+
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
       get "/filter_data/users", to: "filter_data#users"
