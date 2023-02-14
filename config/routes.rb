@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'timesheets/index'
+  get 'timesheets/create'
+  get 'timesheets/update'
+  get 'timesheets/destroy'
 
   devise_for :users, controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
   authenticate :user, lambda {|u| u.admin?} do
@@ -243,6 +247,8 @@ Rails.application.routes.draw do
           resources :lessons do
             get :count, on: :collection
           end
+
+          resources :timesheets
         end
       end
 

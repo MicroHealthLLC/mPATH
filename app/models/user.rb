@@ -19,6 +19,8 @@ class User < ApplicationRecord
   has_many :role_users, dependent: :destroy
   has_many :roles, through: :role_users
   has_many :role_privileges, through: :roles
+  has_many :timesheets, dependent: :destroy
+  
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create

@@ -9,6 +9,7 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
+  has_many :timesheets, as: :resource, dependent: :destroy
 
   validates :text, presence: true
   validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }

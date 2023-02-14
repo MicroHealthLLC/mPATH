@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_10_220337) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_14_212703) do
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -1011,6 +1011,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_10_220337) do
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
+  end
+
+  create_table "timesheets", charset: "utf8", force: :cascade do |t|
+    t.datetime "date_of_week", null: false
+    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
+    t.integer "user_id", null: false
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "facility_project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", charset: "utf8", force: :cascade do |t|
