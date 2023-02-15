@@ -1,6 +1,57 @@
 <template>
   <div id="notes-index" data-cy="note_list">
-<h1>TEST</h1>
+    <div>
+    <el-table
+      v-if="tableTasks && tableTasks.length > 0"
+      :data="tableTasks "
+      height="450"
+      class="crudRow"
+      :header-row-style="{textAlign: 'center'}"
+    >
+    <el-table-column
+      fixed
+      prop="planned_effort"
+      label="Planned Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="actual_effort"
+      label="Actual Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="name"
+      label="Tasks"
+      width="275"
+      header-align="center"
+    >
+   
+    </el-table-column>
+    <el-table-column label="Week of" header-align="center">
+      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+     <template slot-scope="scope">    
+      <span v-if="scope.row.users.filter(t => t.taskId == scope.row.id)">
+
+        {{ scope.row.users
+          .filter(t => t.taskId == scope.row.id)
+          .map(t => t.time)
+          .flat()
+          .filter(t => t.week == weekof)
+          .map(t => t.a_effort).reduce((partialSum, a) => partialSum + a, 0)       
+        }}
+      </span>
+       
+     </template>              
+      </el-table-column>
+    </el-table-column>
+    </el-table>
+    </div>
   </div>
 
 </template>
@@ -23,7 +74,199 @@
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
-        DV_facility: Object.assign({}, this.facility)
+        DV_facility: Object.assign({}, this.facility),
+        Weeks: [ '2-Jan', '9-Jan', '16-Jan','30-Jan', '6-Feb', '13-Feb', '20-Feb', '27-Feb','6-Mar', '20-Mar', '27-Mar' ],
+      tableTasks: [
+      {
+       name: 'Task 1',
+       id: 10,
+       planned_effort: 100, 
+       actual_effort: 90, 
+       users: [
+           {
+            name: 'Joe Smith',
+            taskId: 10,    
+            time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Ricky Bobby',
+          taskId: 10,    
+          time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Juan Garcia',
+          taskId: 10,    
+          time: [
+            {week: '6-Feb',
+            a_effort: 40
+            },
+            {week: '13-Feb',
+            a_effort: 40
+            },
+            {week: '20-Feb',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Bob Smith',
+          taskId: 10,    
+          time: [
+            {week: '27-Feb',
+            a_effort: 40
+            },
+            {week: '6-Mar',
+            a_effort: 40
+            },
+            {week: '20-Mar',
+             a_effort: 40
+            },
+            {week: '27-Mar',
+             a_effort: 40
+            },
+           ]
+        },
+
+       ]    
+      },
+      { 
+       name: 'Task 2',
+       planned_effort: 110,
+       id: 12, 
+       actual_effort: 95,  
+       users: [
+          {
+          name: 'Joe Tasker',
+          taskId: 12,    
+          time: [
+          {
+             week: '30-Jan',
+             a_effort: 40
+            },
+            {
+             week: '6-Feb',
+             a_effort: 40
+            },
+            {
+             week: '13-Feb',
+             a_effort: 40
+            },
+           ]
+        },    
+        {
+          name: 'Bob Smith',
+          taskId: 12,    
+          time: [
+          {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+       ]      
+    
+      },
+      { 
+       name: 'Task 3',
+       planned_effort: 150, 
+       id: 13, 
+       actual_effort: 110, 
+       users: [
+        
+         {
+          name: 'Bambam Three',
+          taskId: 13, 
+          time: [
+          {
+             week: '6-Mar',
+             a_effort: 40
+            },
+            {
+             week: '20-Mar',
+             a_effort: 40
+            },
+            {
+             week: '27-Mar',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Juan Garcia',
+          taskId: 13,    
+          time: [
+           {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Bob Smith',
+          taskId: 13,    
+          time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+
+       ]      
+    
+      },
+
+      ],   
       }
     },
     methods: {
@@ -107,6 +350,13 @@
 </script>
 
 <style lang="scss" scoped>
+/deep/ .el-table .cell {
+    word-break: break-word;
+}
+
+/deep/ .el-table thead {
+    color: #383838 !important;
+}
   #search-addon {
     background-color: #ededed !important;
   }

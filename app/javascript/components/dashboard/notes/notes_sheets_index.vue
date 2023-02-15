@@ -1,74 +1,55 @@
 <template>
-  <div id="notes-index" data-cy="note_list">
-    <div v-if="_isallowed('write') && newNote" class="mb-3">    
-      <notes-form
-        title="Add Note"
-        :facility="DV_facility"
-        @close-note-input="newNote=false"
-        @note-created="noteCreated"
-        class="notes_form_modal"
-      ></notes-form> 
-    </div>
-    <div v-else >
-     <span class="filters-wrapper w-70 pr-2">
-      <div class="mb-3 row px-3" :class="{'justify-content-center': _isallowed('write')}">
-        <div class="col-md-11 px-0">
-          <div class="input-group" :class="{'search-tab': _isallowed('write')}">
-           <el-input
-            type="search"          
-            placeholder="Search Notes"
-            aria-label="Search"            
-            aria-describedby="search-addon"    
-             v-model="notesQuery"  
-            data-cy="search_notes"
-        >
-          <el-button slot="prepend" icon="el-icon-search"></el-button>
-        </el-input>
-          
-          </div>
-        </div>
-      </div>
-          </span>
-      <div class="row">
-      <div class="col-md-11 form-check-inline w-100 mb-2 mx-0 font-sm pr-0">
-        <div class="px-1 float-left" v-if="_isallowed('write')">
-          <button @click.prevent="addNewNote"
-          class="btn btn-md btn-primary addNote"
-          data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>
-          Add Note</button>
-        </div>
-        <div class="float-right ml-auto">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
-          </label>
-          <!-- <label class="form-check-label ml-2 text-primary">
-            <h5 class="mb-0 mr-2" data-cy="note_total">Total Notes: {{filteredNotes.length}}</h5>
-          </label> -->
-        </div>
-      </div>
-      </div>
+  <div id="notes-index" data-cy="note_list" class="mt-5">
+    <el-table
+      v-if="tableTasks && tableTasks.length > 0"
+      :data="tableTasks "
+      height="450"
+      class="crudRow mt-4"
+      :header-row-style="{textAlign: 'center'}"
+    >
+    <el-table-column
+      fixed
+      prop="planned_effort"
+      label="Planned Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="actual_effort"
+      label="Actual Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="name"
+      label="Tasks"
+      width="275"
+      header-align="center"
+    >
+   
+    </el-table-column>
+    <el-table-column label="Week of" header-align="center">
+      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+     <template slot-scope="scope">    
+      <span v-if="scope.row.users.filter(t => t.taskId == scope.row.id)">
 
-      
-      <div class="notes-container row justify-content-center pt-2">
-      <div v-if="_isallowed('read')" class="notes-rows pr-0 col-md-11" > 
-        <div v-if="filteredNotes.length > 0" class="mb-3">
-          <notes-sheets
-            v-for="note in filteredNotes.slice().reverse()" 
-            :key="note.id" 
-            :facility="DV_facility"
-            :note="note"
-            id="notesHover"
-            :from="from"
-            @note-updated="noteUpdated"
-            @note-deleted="noteDeleted"
-            class="notes"
-          ></notes-sheets>
-        </div>      
-        <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
-        </div>
-      <div v-else class="text-danger mx-2 my-4">You don't have permissions to read!</div>
-    </div>
-  </div>
+        {{ scope.row.users
+          .filter(t => t.taskId == scope.row.id)
+          .map(t => t.time)
+          .flat()
+          .filter(t => t.week == weekof)
+          .map(t => t.a_effort).reduce((partialSum, a) => partialSum + a, 0)       
+        }}
+      </span>
+       
+     </template>              
+      </el-table-column>
+    </el-table-column>
+    </el-table>
   </div>
 
 </template>
@@ -93,7 +74,199 @@
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
-        DV_facility: Object.assign({}, this.facility)
+        DV_facility: Object.assign({}, this.facility),
+        Weeks: [ '2-Jan', '9-Jan', '16-Jan','30-Jan', '6-Feb', '13-Feb', '20-Feb', '27-Feb','6-Mar', '20-Mar', '27-Mar' ],
+        tableTasks: [
+      {
+       name: 'Task 1',
+       id: 10,
+       planned_effort: 100, 
+       actual_effort: 90, 
+       users: [
+           {
+            name: 'Joe Smith',
+            taskId: 10,    
+            time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Ricky Bobby',
+          taskId: 10,    
+          time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Juan Garcia',
+          taskId: 10,    
+          time: [
+            {week: '6-Feb',
+            a_effort: 40
+            },
+            {week: '13-Feb',
+            a_effort: 40
+            },
+            {week: '20-Feb',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Bob Smith',
+          taskId: 10,    
+          time: [
+            {week: '27-Feb',
+            a_effort: 40
+            },
+            {week: '6-Mar',
+            a_effort: 40
+            },
+            {week: '20-Mar',
+             a_effort: 40
+            },
+            {week: '27-Mar',
+             a_effort: 40
+            },
+           ]
+        },
+
+       ]    
+      },
+      { 
+       name: 'Task 2',
+       planned_effort: 110,
+       id: 12, 
+       actual_effort: 95,  
+       users: [
+          {
+          name: 'Joe Tasker',
+          taskId: 12,    
+          time: [
+          {
+             week: '30-Jan',
+             a_effort: 40
+            },
+            {
+             week: '6-Feb',
+             a_effort: 40
+            },
+            {
+             week: '13-Feb',
+             a_effort: 40
+            },
+           ]
+        },    
+        {
+          name: 'Bob Smith',
+          taskId: 12,    
+          time: [
+          {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+       ]      
+    
+      },
+      { 
+       name: 'Task 3',
+       planned_effort: 150, 
+       id: 13, 
+       actual_effort: 110, 
+       users: [
+        
+         {
+          name: 'Bambam Three',
+          taskId: 13, 
+          time: [
+          {
+             week: '6-Mar',
+             a_effort: 40
+            },
+            {
+             week: '20-Mar',
+             a_effort: 40
+            },
+            {
+             week: '27-Mar',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Juan Garcia',
+          taskId: 13,    
+          time: [
+           {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+        {
+          name: 'Bob Smith',
+          taskId: 13,    
+          time: [
+            {
+             week: '2-Jan',
+             a_effort: 40
+            },
+            {
+             week: '9-Jan',
+             a_effort: 40
+            },
+            {
+             week: '16-Jan',
+             a_effort: 40
+            },
+           ]
+        },
+
+       ]      
+    
+      },
+
+      ],   
       }
     },
     methods: {
@@ -177,6 +350,13 @@
 </script>
 
 <style lang="scss" scoped>
+/deep/ .el-table .cell {
+    word-break: break-word;
+}
+
+/deep/ .el-table thead {
+    color: #383838 !important;
+}
   #search-addon {
     background-color: #ededed !important;
   }
