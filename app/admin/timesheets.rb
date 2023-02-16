@@ -21,6 +21,40 @@ ActiveAdmin.register Timesheet do
     ]
   end
 
+  index do
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
+
+    column "Date of Week", :date_of_week
+    column "Hours", :hours
+    column "User", :users do |timesheet|
+      if current_user.admin_write?
+        timesheet.user
+      else
+        "<span>#{timesheet.user&.full_name}</span>".html_safe
+      end
+    end
+    column "Resource", :resource, nil, sortable: 'projects.name' do |timesheet|
+      if current_user.admin_write?
+        link_to "#{timesheet.resource_type}##{timesheet.resource_id}", "#{edit_admin_task_path(timesheet.resource)}" if timesheet.resource.present?
+      else
+        "<span>#{timesheet.resource&.text}</span>".html_safe
+      end
+    end
+
+    column "Project", :facility, nil, sortable: 'facility.facility_name' do |timesheet|
+      if current_user.admin_write?
+        link_to "#{timesheet.facility.facility_name}", "#{admin_facility_path(timesheet.facility)}" if timesheet.facility.present?
+      else
+        "<span>#{timesheet.facility&.facility_name}</span>".html_safe
+      end
+    end
+
+    actions defaults: false do |timesheet|
+      item "Edit", edit_admin_timesheet_path(timesheet), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_timesheet_path(timesheet), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    end
+  end
+
   form do |f|
     f.semantic_errors *f.object.errors
     f.inputs  do
@@ -53,5 +87,11 @@ ActiveAdmin.register Timesheet do
 
     f.actions
   end
+  filter :facility_project_facility_id, as: :select, collection: -> { Facility.pluck(:facility_name, :id) }, label: 'Project', input_html: { multiple: true }
 
+  filter :user, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'User'
+
+  filter :date_of_week
+  filter :hours
+  
 end

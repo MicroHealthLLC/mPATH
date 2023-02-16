@@ -2,7 +2,8 @@ class Timesheet < ApplicationRecord
   belongs_to :resource, polymorphic: true
   belongs_to :user
   belongs_to :facility_project
-
+  has_one :facility, through: :facility_project
+  
   validates :date_of_week, presence: true
   validates :hours, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
