@@ -25,8 +25,26 @@ class Api::V1::TimesheetsController < AuthenticatedController
   def index
 
     all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id = ?", @owner.id).paginate(:page => params[:page], :per_page => 15)
+    all_users = User.where(id: all_timesheets.map(&:user_id))
+    all_tasks = Task.where(id: all_timesheets.map(&:resource_id))
     
-    render json: {timesheets: all_timesheets, total_pages: all_timesheets.total_pages, current_page: all_timesheets.current_page, next_page: all_timesheets.next_page }
+    total_pages = all_timesheets.total_pages
+    current_page = all_timesheets.current_page
+    next_page = all_timesheets.next_page
+
+    response = []
+    all_timesheets.group_by{|t| t.user}.each do |user, timesheets|
+
+      task_timesheets = timesheets.group_by(&:resource_id)
+      h = []
+      task_timesheets.each do |task_id, timesheets|
+        task = all_tasks.detect{|t| t.id == task_id}
+        h << task.as_json.merge!({timesheets: timesheets}) 
+      end
+      response <<  user.as_json.merge!({tasks: h})
+    end
+
+    render json: {timesheets: response, total_pages: total_pages, current_page: current_page, next_page: next_page }
   end
 
   def create
