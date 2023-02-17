@@ -26,7 +26,7 @@ class Api::V1::TimesheetsController < AuthenticatedController
 
     all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id = ?", @owner.id).paginate(:page => params[:page], :per_page => 15)
     all_users = User.where(id: all_timesheets.map(&:user_id))
-    all_tasks = Task.where(id: all_timesheets.map(&:resource_id))
+    all_tasks = Task.where(facility_project_id: @owner.id)
     
     total_pages = all_timesheets.total_pages
     current_page = all_timesheets.current_page
@@ -37,9 +37,10 @@ class Api::V1::TimesheetsController < AuthenticatedController
 
       task_timesheets = timesheets.group_by(&:resource_id)
       h = []
-      task_timesheets.each do |task_id, timesheets|
-        task = all_tasks.detect{|t| t.id == task_id}
+      all_tasks.each do |task|
+        timesheets = task_timesheets[task.id] || []
         h << task.as_json.merge!({timesheets: timesheets}) 
+
       end
       response <<  user.as_json.merge!({tasks: h})
     end
