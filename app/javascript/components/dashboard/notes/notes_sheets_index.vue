@@ -1,6 +1,13 @@
 <template>
-  <div id="notes-index" data-cy="note_list" class="mt-5">
-    <el-table
+  <div id="notes-index" data-cy="note_list" class="mt-5"> 
+    <el-tabs type="border-card"  v-model="editableTabsValue" >   
+      <el-tab-pane>
+        <template slot="label" >          
+          <span class="text-right">
+           <i class="fa-solid fa-plus-large"    @click="addTab(editableTabsValue)"> </i>           
+          </span>
+        </template>
+      <el-table
       v-if="tableTasks && tableTasks.length > 0"
       :data="tableTasks "
       height="450"
@@ -34,22 +41,79 @@
     </el-table-column>
     <el-table-column label="Week of" header-align="center">
       <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
-     <template slot-scope="scope">    
-      <span v-if="scope.row.users.filter(t => t.taskId == scope.row.id)">
-
-        {{ scope.row.users
-          .filter(t => t.taskId == scope.row.id)
-          .map(t => t.time)
-          .flat()
-          .filter(t => t.week == weekof)
-          .map(t => t.a_effort).reduce((partialSum, a) => partialSum + a, 0)       
-        }}
-      </span>
-       
+     <template>    
+      <!-- <template slot-scope="scope">     -->
+      <el-input placeholder="hrs" v-model="input" :key="i"></el-input>
      </template>              
       </el-table-column>
     </el-table-column>
-    </el-table>
+         </el-table>
+
+      </el-tab-pane>
+    
+      <el-tab-pane label="Summary">   
+      <el-table
+      v-if="tableTasks && tableTasks.length > 0"
+      :data="tableTasks "
+      height="450"
+      class="crudRow mt-4"
+      :header-row-style="{textAlign: 'center'}"
+    >
+    <el-table-column
+      fixed
+      prop="planned_effort"
+      label="Planned Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="actual_effort"
+      label="Actual Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="name"
+      label="Tasks"
+      width="275"
+      header-align="center"
+    >
+   
+    </el-table-column>
+    <el-table-column label="Week of" header-align="center">
+      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+     <template slot-scope="scope">  
+      <span>
+          {{ 
+          userTime
+          .filter(t => t.id == scope.row.id) 
+          .map(t => t.timesheets)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours).reduce((partialSum, a) => partialSum + a, 0)            
+          }}           
+      </span>
+     </template>              
+      </el-table-column>
+    </el-table-column>
+      </el-table>
+      </el-tab-pane>
+      <el-tab-pane
+        v-for="(item, index) in timesheets"
+        :key="item"
+        :label="item.full_name"
+        :name="index"
+      >
+        {{ index }}
+      </el-tab-pane>
+     
+
+    </el-tabs>
+   
   </div>
 
 </template>
@@ -69,14 +133,258 @@
     },
     props: ['facility', 'from'],
     data() {
-      return {
+      return {       
+        tabIndex: this.editableTabsValue,
         loading: true,
+        input: '',
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         Weeks: [ '2-Jan', '9-Jan', '16-Jan','30-Jan', '6-Feb', '13-Feb', '20-Feb', '27-Feb','6-Mar', '20-Mar', '27-Mar' ],
-        tableTasks: [
+    
+      //PROJECT
+      timesheets: [
+
+        {
+           id: 1,
+           full_name: "Frank Tucker",
+           organization: "Test Org",
+           tasks: [
+
+                {
+
+                    id: 10,
+                    text: "Task One",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 100,
+                    actual_effort: 90,
+                    timesheets: [
+
+                        {
+
+                            id: 19,
+                            date_of_week: "2-Jan",
+                            hours: 2.5,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+
+                    ]
+
+                },
+                {
+                    id: 12,
+                    text: "Task Two",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 85,
+                    actual_effort: 65,
+                    timesheets: [
+
+                        {
+
+                            id: 19,
+                            date_of_week: "2-Jan",
+                            hours: 2,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+
+                    ]
+
+                },
+                {
+
+                id: 13,
+                text: "Task Three",  
+                due_date: "2023-02-19",
+                progress: 0,                  
+                start_date: "2023-02-16",
+                facility_project_id: 1445,              
+                planned_effort: 85,
+                actual_effort: 65,
+                timesheets: [
+
+                    {
+
+                        id: 19,
+                        date_of_week: "27-Mar",
+                        hours: 5,
+                        user_id: 1,
+                        facility_project_id: 1460,
+                        created_at: "2023-02-16T16:56:25.112-05:00",
+                        updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                    }
+
+                ]
+
+                },
+            ]
+
+        },
+          {
+            id: 2,        
+            full_name: "Juan Rivera",
+            tasks: [
+
+                {
+
+                    id: 10,
+                    text: "Task One",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 100,
+                    actual_effort: 90,
+                    timesheets: [
+
+                        {
+
+                            id: 19,
+                            date_of_week: "2-Jan",
+                            hours: 1,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+
+                    ]
+
+                },
+                {
+
+                    id: 12,
+                    text: "Task Two",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 85,
+                    actual_effort: 65,
+                    timesheets: [
+
+                        {
+
+                            id: 19,
+                            date_of_week: "2-Jan",
+                            hours: 1.5,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+
+                    ]
+
+                },
+                {
+
+                  id: 13,
+                  text: "Task Three",  
+                  due_date: "2023-02-19",
+                  progress: 0,                  
+                  start_date: "2023-02-16",
+                  facility_project_id: 1445,              
+                  planned_effort: 85,
+                  actual_effort: 65,
+                  timesheets: [
+
+                      {
+
+                          id: 19,
+                          date_of_week: "27-Mar",
+                          hours: 2.5,
+                          user_id: 1,
+                          facility_project_id: 1460,
+                          created_at: "2023-02-16T16:56:25.112-05:00",
+                          updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                      }
+
+                  ]
+
+                  },
+            ]
+
+        },
+          {
+            id: 3,    
+            full_name: "Billy Bob",
+            organization: "Test Org",
+            tasks: [
+
+                {
+
+                    id: 12,
+                    text: "Task Two",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 100,
+                    actual_effort: 90,
+                    timesheets: [
+                        {
+                            id: 19,
+                            date_of_week: "9-Jan",
+                            hours: 3,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+                    ]
+                },
+                {
+                    id: 13,
+                    text: "Task Two",  
+                    due_date: "2023-02-19",
+                    progress: 0,                  
+                    start_date: "2023-02-16",
+                    facility_project_id: 1445,              
+                    planned_effort: 85,
+                    actual_effort: 65,
+                    timesheets: [
+
+                        {
+
+                            id: 19,
+                            date_of_week: "2-Jan",
+                            hours: 6,
+                            user_id: 1,
+                            facility_project_id: 1460,
+                            created_at: "2023-02-16T16:56:25.112-05:00",
+                            updated_at: "2023-02-16T16:56:25.112-05:00"
+
+                        }
+
+                    ]
+
+                },
+            ]
+
+        }
+
+    ],
+      tableTasks: [
       {
        name: 'Task 1',
        id: 10,
@@ -271,10 +579,29 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager',
-        'setMyActionsFilter',
-        'updateFacilityHash'
+   
       ]),
+      addTab(targetName) {
+        let newTabName = ++this.tabIndex + '';
+        this.timesheets.push({
+          full_name: this.$currentUser.full_name,
+          name: newTabName,
+          content: 'New Tab content',
+          id: this.$currentUser.id 
+        });
+        this.editableTabsValue = newTabName;
+      },
+
+      // addTab() {
+      //   let newTabName = ++this.tabIndex + '';
+      //   this.timesheets.push({
+      //     title: this.$currentUser.full_name,
+      //     name: newTabName,
+      //     id: 4,
+      //     content: 'New Tab content'
+      //   });
+      //   this.editableTabsValue = newTabName;
+      // },
       //TODO: change the method name of isAllowed
       _isallowed(salut) {
         var programId = this.$route.params.programId;
@@ -318,6 +645,14 @@
       ...mapGetters([
         'myActionsFilter'
       ]),
+     userTime(){
+        if(this.timesheets && this.timesheets.length > 0){
+          return this.timesheets.map(t => t.tasks).flat()
+        }
+      },
+      editableTabsValue(){
+        return this.timesheets.length
+      }, 
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         return _.filter(this.DV_facility.notes, n => {
@@ -350,10 +685,12 @@
 </script>
 
 <style lang="scss" scoped>
+/deep/ #tab-0 {
+  background-color: yellow !important;
+}
 /deep/ .el-table .cell {
     word-break: break-word;
 }
-
 /deep/ .el-table thead {
     color: #383838 !important;
 }
