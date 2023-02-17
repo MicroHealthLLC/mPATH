@@ -26,15 +26,6 @@ class Timesheet < ApplicationRecord
     timesheet = self
     t_params = timesheet_params.dup
 
-    if t_params.has_key?(:task_id)
-      t_params[:resource_id] = t_params.delete(:task_id)
-      t_params[:resource_type] = "Task"
-    else
-      timesheet.errors.add(:base, "Task must be provided to enter time.")
-      return timesheet
-    end
-    timesheet.attributes = t_params 
-    
     if t_params.has_key?(:facility_project_id)
       timesheet.facility_project_id = FacilityProject.find(params[:facility_project_id]).id
     else
@@ -42,6 +33,18 @@ class Timesheet < ApplicationRecord
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
       timesheet.facility_project_id = facility_project.id
     end
+    
+    if !t_params.has_key?(:task_id)
+      timesheet.errors.add(:base, "Task must be provided to enter time.")
+      return timesheet
+    elsif !timesheet.facility_project.task_ids.include?(t_params[:task_id].to_i)
+      timesheet.errors.add(:base, "Task must be part of project.")
+      return timesheet
+    else
+      t_params[:resource_id] = t_params.delete(:task_id)
+      t_params[:resource_type] = "Task"
+    end
+    timesheet.attributes = t_params
 
     timesheet.transaction do
       timesheet.save
