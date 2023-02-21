@@ -8,7 +8,8 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-
+  has_many :timesheets, as: :resource, dependent: :destroy
+  
   validates :text, presence: true
   validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
@@ -347,6 +348,9 @@ class Task < ApplicationRecord
       draft: draft,
       on_hold: on_hold,
       closed_date: closed_date,
+
+      planned_effort: self.planned_effort,
+      actual_effort: self.actual_effort,
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

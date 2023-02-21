@@ -13,7 +13,8 @@ class User < ApplicationRecord
   has_many :query_filters, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
   has_many :project_privileges, dependent: :destroy
-
+  has_many :timesheets, dependent: :destroy
+  
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create

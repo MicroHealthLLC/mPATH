@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_202001) do
+ActiveRecord::Schema.define(version: 2023_02_14_212703) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "content_type"
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
+    t.string "checksum"
     t.datetime "created_at", null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
@@ -88,13 +88,259 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
+  create_table "contract_agencies", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_award_tos", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_award_types", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_categories", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_classifications", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_client_types", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_current_pops", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_customers", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_naics", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_numbers", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_pocs", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_pops", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_primes", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "--- []\n"
+    t.string "tasks", default: "--- []\n"
+    t.string "notes", default: "--- []\n"
+    t.string "issues", default: "--- []\n"
+    t.string "admin", default: "--- []\n"
+    t.string "risks", default: "--- []\n"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.string "contract_ids", default: "--- []\n"
+    t.string "lessons", default: "--- []\n"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_project_data", charset: "utf8", force: :cascade do |t|
+    t.string "charge_code"
+    t.string "name"
+    t.integer "contract_customer_id"
+    t.integer "contract_award_to_id"
+    t.integer "contract_type_id"
+    t.string "prime_or_sub"
+    t.datetime "contract_start_date"
+    t.datetime "contract_end_date"
+    t.decimal "total_contract_value", precision: 19, scale: 4, default: "0.0"
+    t.integer "contract_pop_id"
+    t.integer "contract_current_pop_id"
+    t.datetime "contract_current_pop_start_date"
+    t.datetime "contract_current_pop_end_date"
+    t.decimal "total_founded_value", precision: 19, scale: 4, default: "0.0"
+    t.decimal "billings_to_date", precision: 19, scale: 4, default: "0.0"
+    t.string "comments"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "contract_naic_id"
+    t.integer "contract_vehicle_id"
+    t.integer "contract_award_type_id"
+    t.integer "user_id"
+    t.string "number"
+    t.integer "co_contract_poc_id"
+    t.integer "gov_contract_poc_id"
+    t.integer "pm_contract_poc_id"
+    t.integer "contract_number_id"
+    t.text "notes"
+    t.boolean "ignore_expired", default: false
+  end
+
+  create_table "contract_project_poc_resources", charset: "utf8", force: :cascade do |t|
+    t.string "resource_type", null: false
+    t.integer "resource_id", null: false
+    t.integer "contract_project_poc_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "poc_type"
+  end
+
+  create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "poc_type"
+    t.string "email"
+    t.string "title"
+    t.string "work_number"
+    t.string "mobile_number"
+    t.string "notes"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_statuses", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_sub_categories", charset: "utf8", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_types", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_vehicle_numbers", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_vehicle_types", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_vehicles", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "contract_sub_category_id"
+    t.integer "contract_agency_id"
+    t.integer "contract_vehicle_type_id"
+    t.integer "user_id"
+    t.text "full_name"
+    t.decimal "ceiling", precision: 19, scale: 4, default: "0.0"
+    t.datetime "base_period_start"
+    t.datetime "base_period_end"
+    t.datetime "option_period_start"
+    t.datetime "option_period_end"
+    t.integer "contract_number_id"
+    t.decimal "caf_fees", precision: 4, scale: 2, default: "0.0"
+    t.text "subprime_name"
+    t.text "prime_name"
+    t.text "contract_name"
+    t.boolean "is_subprime", default: false
+  end
+
+  create_table "contracts", charset: "utf8", force: :cascade do |t|
+    t.bigint "contract_type_id", null: false
+    t.integer "project_code"
+    t.string "nickname"
+    t.bigint "contract_status_id"
+    t.bigint "contract_customer_id"
+    t.bigint "contract_vehicle_id"
+    t.bigint "contract_vehicle_number_id"
+    t.bigint "contract_number_id"
+    t.bigint "contract_classification_id"
+    t.bigint "subcontract_number_id"
+    t.bigint "contract_prime_id"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.bigint "contract_current_pop_id"
+    t.datetime "current_pop_start_time"
+    t.datetime "current_pop_end_time"
+    t.integer "days_remaining"
+    t.float "total_contract_value"
+    t.float "current_pop_value"
+    t.float "current_pop_funded"
+    t.float "total_contract_funded"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "facility_group_id"
+    t.bigint "project_id"
+    t.string "name"
+    t.integer "total_subcontracts", default: 0
+    t.integer "contract_category_id"
+    t.integer "contract_client_type_id"
+    t.text "remarks"
+    t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
+    t.index ["project_id"], name: "index_contracts_on_project_id"
+  end
+
   create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
     t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
-    t.string "email", default: "", null: false
+    t.string "email", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "facility_group_id"
@@ -103,8 +349,13 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "lng"
     t.integer "status", default: 1
     t.string "country_code", default: ""
+    t.integer "project_facility_group_id"
+    t.boolean "is_portfolio", default: true
+    t.integer "project_id"
     t.index ["creator_id"], name: "index_facilities_on_creator_id"
     t.index ["facility_group_id"], name: "index_facilities_on_facility_group_id"
+    t.index ["is_portfolio"], name: "index_facilities_on_is_portfolio"
+    t.index ["project_id"], name: "index_facilities_on_project_id"
     t.index ["status"], name: "index_facilities_on_status"
   end
 
@@ -113,11 +364,16 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "code"
-    t.integer "status", default: 0
+    t.integer "status", default: 1
     t.integer "region_type", default: 0
     t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
+    t.boolean "is_portfolio", default: false
+    t.integer "user_id"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.boolean "is_default", default: false
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -148,6 +404,8 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.bigint "status_id"
     t.integer "progress", default: 0
     t.string "color", default: "#ff0000"
+    t.integer "facility_group_id"
+    t.integer "project_facility_group_id"
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
@@ -215,6 +473,11 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
+    t.integer "contract_id"
+    t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -262,6 +525,11 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.integer "facility_project_id"
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
+    t.integer "contract_id"
+    t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -308,6 +576,8 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "calendar_view"
     t.string "lessons"
     t.string "portfolio_view"
+    t.string "settings_view", default: "R"
+    t.string "contract_data"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -319,6 +589,34 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.datetime "updated_at", null: false
     t.index ["checklist_id"], name: "index_progress_lists_on_checklist_id"
     t.index ["user_id"], name: "index_progress_lists_on_user_id"
+  end
+
+  create_table "project_contract_vehicles", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "contract_vehicle_id", null: false
+    t.integer "user_id"
+    t.integer "facility_group_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "progeress", default: 0
+  end
+
+  create_table "project_contracts", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "contract_project_datum_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+    t.integer "facility_group_id"
+    t.integer "progress", default: 0
+  end
+
+  create_table "project_facility_groups", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "facility_group_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_default", default: false
   end
 
   create_table "project_issue_severities", charset: "utf8", force: :cascade do |t|
@@ -368,6 +666,16 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "project_ids", default: "--- []\n"
+    t.string "contracts"
+    t.string "cn_overview", default: "--- []\n"
+    t.string "cn_tasks", default: "--- []\n"
+    t.string "cn_notes", default: "--- []\n"
+    t.string "cn_issues", default: "--- []\n"
+    t.string "cn_risks", default: "--- []\n"
+    t.string "cn_lessons", default: "--- []\n"
+    t.string "admin_groups", default: "--- []\n"
+    t.string "admin_contracts", default: "--- []\n"
+    t.string "admin_facilities", default: "--- []\n"
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
@@ -410,6 +718,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["id"], name: "index_project_types_on_id"
   end
 
   create_table "project_users", charset: "utf8", force: :cascade do |t|
@@ -553,11 +862,54 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "duration_name"
     t.string "status_name"
     t.boolean "reportable", default: false
+    t.date "closed_date"
+    t.integer "contract_id"
+    t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
+  end
+
+  create_table "role_privileges", charset: "utf8", force: :cascade do |t|
+    t.integer "role_id", null: false
+    t.string "name", null: false
+    t.string "privilege"
+    t.string "role_type", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["role_id", "role_type"], name: "index_role_privileges_on_role_id_and_role_type"
+  end
+
+  create_table "role_users", charset: "utf8", force: :cascade do |t|
+    t.integer "role_id"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.integer "facility_project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.index ["facility_project_id", "project_contract_id"], name: "index_role_users_on_facility_project_id_and_project_contract_id"
+    t.index ["role_id", "user_id", "project_id"], name: "index_role_users_on_role_id_and_user_id_and_project_id"
+  end
+
+  create_table "roles", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "project_id"
+    t.integer "user_id"
+    t.boolean "is_portfolio", default: false
+    t.boolean "is_default", default: false
+    t.string "type_of"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id", "user_id", "is_default"], name: "index_roles_on_project_id_and_user_id_and_is_default"
   end
 
   create_table "settings", charset: "utf8", force: :cascade do |t|
@@ -595,6 +947,12 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
+  end
+
+  create_table "subcontract_numbers", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "task_stages", charset: "utf8", force: :cascade do |t|
@@ -642,10 +1000,29 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
+    t.date "closed_date"
+    t.integer "contract_id"
+    t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.decimal "planned_effort", precision: 10, default: "0"
+    t.decimal "actual_effort", precision: 10, default: "0"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
+  end
+
+  create_table "timesheets", charset: "utf8", force: :cascade do |t|
+    t.datetime "date_of_week", precision: 6, null: false
+    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
+    t.integer "user_id", null: false
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "facility_project_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", charset: "utf8", force: :cascade do |t|
@@ -684,6 +1061,8 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"
+  add_foreign_key "contracts", "facility_groups"
+  add_foreign_key "contracts", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
   add_foreign_key "facility_groups", "projects"
   add_foreign_key "facility_projects", "facilities"
