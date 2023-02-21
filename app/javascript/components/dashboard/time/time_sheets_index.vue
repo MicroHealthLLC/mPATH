@@ -350,13 +350,13 @@
 </script>
 
 <style lang="scss" scoped>
-/deep/ .el-table .cell {
-    word-break: break-word;
-}
+// /deep/ .el-table .cell {
+//     word-break: break-word;
+// }
 
-/deep/ .el-table thead {
-    color: #383838 !important;
-}
+// /deep/ .el-table thead {
+//     color: #383838 !important;
+// }
   #search-addon {
     background-color: #ededed !important;
   }

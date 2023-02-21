@@ -134,18 +134,18 @@
    .notes_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .notes_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-    min-width: 80vw;
-    max-height: 80vh;
-    .sweet-content {
-      padding-top: 30px;
-      text-align: unset;
-    }   
-      .form-inside-modal {
-      form {
-        position: inherit !important;
-      }
-    }
+  // .notes_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  //   min-width: 80vw;
+  //   max-height: 80vh;
+  //   .sweet-content {
+  //     padding-top: 30px;
+  //     text-align: unset;
+  //   }   
+  //     .form-inside-modal {
+  //     form {
+  //       position: inherit !important;
+  //     }
+  //   }
     
-  }
+  // }
 </style>
