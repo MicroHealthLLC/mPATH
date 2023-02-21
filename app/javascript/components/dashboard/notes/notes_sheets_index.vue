@@ -1,6 +1,6 @@
 <template>
   <div id="notes-index" data-cy="note_list" class="mt-5"> 
-    <el-tabs type="border-card"  v-model="editableTabsValue" >   
+    <el-tabs type="border-card"  v-model="editableTabsValue"  @tab-click="handleClick" >   
       <el-tab-pane>
         <template slot="label" >          
           <span class="text-right">
@@ -48,10 +48,13 @@
       </el-table-column>
     </el-table-column>
          </el-table>
+         <span v-else>
+          BOBN
+         </span>
 
       </el-tab-pane>
     
-      <el-tab-pane label="Summary">   
+      <el-tab-pane label="Summary" :class="active">   
       <el-table
       v-if="tableTasks && tableTasks.length > 0"
       :data="tableTasks "
@@ -108,10 +111,66 @@
         :label="item.full_name"
         :name="index"
       >
-        {{ index }}
+      <el-table
+      v-if="tableTasks && tableTasks.length > 0"
+      :data="tableTasks "
+      height="450"
+      class="crudRow mt-4"
+      :header-row-style="{textAlign: 'center'}"
+    >
+    <el-table-column
+      fixed
+      prop="planned_effort"
+      label="Planned Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="actual_effort"
+      label="Actual Effort"
+      width="80"
+      header-align="center"
+    >
+    </el-table-column>
+    <el-table-column
+      fixed
+      prop="name"
+      label="Tasks"
+      width="275"
+      header-align="center"
+    >
+   
+    </el-table-column>
+    <el-table-column label="Week of" header-align="center">
+      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+     <template slot-scope="scope">  
+      <span v-if="!editMode">
+         {{ 
+          item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.timesheets)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours)[0]          
+          }}   
+      </span>
+      <span v-if="editMode">
+        <el-input placeholder="hrs" v-model="item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.timesheets)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours)[0]" :key="i"></el-input>
+      </span>
+     </template>              
+      </el-table-column>
+    </el-table-column>
+      </el-table>
       </el-tab-pane>
+      <el-button type="primary" @click="editToggle" class="calendarBtn"  circle>
+        <i class="fa-light fa-calendar-pen text-light"></i>
+      </el-button>
      
-
     </el-tabs>
    
   </div>
@@ -137,6 +196,7 @@
         tabIndex: this.editableTabsValue,
         loading: true,
         input: '',
+        editMode: false, 
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
@@ -333,7 +393,7 @@
                 {
 
                     id: 12,
-                    text: "Task Two",  
+                    text: "Task 2",  
                     due_date: "2023-02-19",
                     progress: 0,                  
                     start_date: "2023-02-16",
@@ -355,7 +415,7 @@
                 },
                 {
                     id: 13,
-                    text: "Task Two",  
+                    text: "Task 3",  
                     due_date: "2023-02-19",
                     progress: 0,                  
                     start_date: "2023-02-16",
@@ -383,7 +443,7 @@
 
         }
 
-    ],
+      ],
       tableTasks: [
       {
        name: 'Task 1',
@@ -591,18 +651,13 @@
         });
         this.editableTabsValue = newTabName;
       },
-
-      // addTab() {
-      //   let newTabName = ++this.tabIndex + '';
-      //   this.timesheets.push({
-      //     title: this.$currentUser.full_name,
-      //     name: newTabName,
-      //     id: 4,
-      //     content: 'New Tab content'
-      //   });
-      //   this.editableTabsValue = newTabName;
-      // },
-      //TODO: change the method name of isAllowed
+      handleClick(tab, event){
+        console.log(tab)
+        console.log(event)
+      },
+      editToggle(){
+        this.editMode = !this.editMode
+      },
       _isallowed(salut) {
         var programId = this.$route.params.programId;
         var projectId = this.$route.params.projectId
@@ -685,8 +740,14 @@
 </script>
 
 <style lang="scss" scoped>
+.calendarBtn {
+  font-size: 2.5rem;
+  margin-top: 1rem;
+  float: right;
+}
+
 /deep/ #tab-0 {
-  background-color: yellow !important;
+  background-color: rgb(234, 234, 185) !important;
 }
 /deep/ .el-table .cell {
     word-break: break-word;
