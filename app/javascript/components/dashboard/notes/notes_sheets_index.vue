@@ -107,7 +107,7 @@
       </el-tab-pane>
       <el-tab-pane
         v-for="(item, index) in timesheets"
-        :key="item"
+        :key="item.id"
         :label="item.full_name"
         :name="index"
       >
@@ -147,7 +147,9 @@
       <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
      <template slot-scope="scope">  
       <span v-if="!editMode">
-         {{ 
+        <!-- {{ i }} -->
+
+        {{ 
           item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)
           .flat()
@@ -744,6 +746,13 @@
   font-size: 2.5rem;
   margin-top: 1rem;
   float: right;
+  transition: all .2s ease-in-out; 
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+      0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+.calendarBtn:hover {
+  transform: scale(1.06);
 }
 
 /deep/ #tab-0 {

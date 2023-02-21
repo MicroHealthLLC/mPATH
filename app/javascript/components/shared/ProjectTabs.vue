@@ -58,7 +58,7 @@ export default {
           hidden: false,
         },
         {
-          label: "Time",
+          label: "Effort",
           key: "notes",
           closable: false,
           hidden: false,
