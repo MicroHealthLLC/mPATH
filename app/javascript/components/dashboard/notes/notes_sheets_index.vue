@@ -167,7 +167,7 @@
     </el-table-column>
       </el-table>
       </el-tab-pane>
-      <el-button type="primary" @click="editToggle" class="calendarBtn"  circle>
+      <el-button type="primary" @click="editToggle" class="calendarBtn" xlarge circle>
         <i class="fa-light fa-calendar-pen text-light"></i>
       </el-button>
      
@@ -741,9 +741,14 @@
 
 <style lang="scss" scoped>
 .calendarBtn {
-  font-size: 2.5rem;
+  font-size: 2rem ;
   margin-top: 1rem;
   float: right;
+  transition: all .2s ease-in-out; 
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+}
+.calendarBtn:hover { 
+  transform: scale(1.06); 
 }
 
 /deep/ #tab-0 {
