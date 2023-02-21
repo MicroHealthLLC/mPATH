@@ -10,6 +10,7 @@ class FacilityProject < ApplicationRecord
   has_many :lessons, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
+  has_many :timesheets, dependent: :destroy
   
   scope :active, -> {joins(:facility).where("facilities.status = ?", 1).distinct}
 
