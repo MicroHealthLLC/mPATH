@@ -1,5 +1,5 @@
 <template>
-  <div id="notes-index" data-cy="note_list" class="mt-5"> 
+  <div id="notes-index" data-cy="note_list" class="mt-5" :load="log(weekOfArr)"> 
     <el-tabs type="border-card"  v-model="editableTabsValue"  @tab-click="handleClick" >   
       <el-tab-pane>
         <template slot="label" >          
@@ -7,16 +7,16 @@
            <i class="fa-solid fa-plus-large"    @click="addTab(editableTabsValue)"> </i>           
           </span>
         </template>
-      <el-table
-      v-if="tableTasks && tableTasks.length > 0"
-      :data="tableTasks "
+    <el-table
+      v-if="facility && facility.tasks && facility.tasks.length > 0"
+      :data="facility.tasks"
       height="450"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
     >
     <el-table-column
       fixed
-      prop="planned_effort"
+      prop="plannedEffort"
       label="Planned Effort"
       width="80"
       header-align="center"
@@ -24,7 +24,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="actual_effort"
+      prop="actualEffort"
       label="Actual Effort"
       width="80"
       header-align="center"
@@ -32,7 +32,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="name"
+      prop="text"
       label="Tasks"
       width="275"
       header-align="center"
@@ -56,15 +56,15 @@
     
       <el-tab-pane label="Summary" :class="active">   
       <el-table
-      v-if="tableTasks && tableTasks.length > 0"
-      :data="tableTasks "
+      v-if="facility && facility.tasks && facility.tasks.length > 0"
+      :data="facility.tasks"
       height="450"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
     >
     <el-table-column
       fixed
-      prop="planned_effort"
+      prop="plannedEffort"
       label="Planned Effort"
       width="80"
       header-align="center"
@@ -72,7 +72,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="actual_effort"
+      prop="actualEffort"
       label="Actual Effort"
       width="80"
       header-align="center"
@@ -80,7 +80,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="name"
+      prop="text"
       label="Tasks"
       width="275"
       header-align="center"
@@ -90,7 +90,7 @@
     <el-table-column label="Week of" header-align="center">
       <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
      <template slot-scope="scope">  
-      <span>
+      <span v-if="userTime && userTime.length > 0">
           {{ 
           userTime
           .filter(t => t.id == scope.row.id) 
@@ -112,15 +112,15 @@
         :name="index"
       >
       <el-table
-      v-if="tableTasks && tableTasks.length > 0"
-      :data="tableTasks "
+      v-if="facility && facility.tasks && facility.tasks.length > 0"
+      :data="facility.tasks"
       height="450"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
     >
     <el-table-column
       fixed
-      prop="planned_effort"
+      prop="plannedEffort"
       label="Planned Effort"
       width="80"
       header-align="center"
@@ -128,7 +128,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="actual_effort"
+      prop="actualEffort"
       label="Actual Effort"
       width="80"
       header-align="center"
@@ -136,7 +136,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      prop="name"
+      prop="text"
       label="Tasks"
       width="275"
       header-align="center"
@@ -146,10 +146,8 @@
     <el-table-column label="Week of" header-align="center">
       <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
      <template slot-scope="scope">  
-      <span v-if="!editMode">
-        <!-- {{ i }} -->
-
-        {{ 
+      <span v-if="!editMode"> 
+      {{ 
           item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)
           .flat()
@@ -157,12 +155,16 @@
           .map(t => t.hours)[0]          
           }}   
       </span>
+  
       <span v-if="editMode">
         <el-input placeholder="hrs" v-model="item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours)[0]" :key="i"></el-input>
+      </span>
+      <span>
+
       </span>
      </template>              
       </el-table-column>
@@ -180,7 +182,7 @@
 </template>
 
 <script>
-  import {mapMutations, mapGetters} from "vuex"
+  import { mapMutations, mapGetters, mapActions } from "vuex"
   import NotesForm from './notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
@@ -197,6 +199,8 @@
       return {       
         tabIndex: this.editableTabsValue,
         loading: true,
+        rowIndex: null, 
+        rowId: null, 
         input: '',
         editMode: false, 
         newNote: false,
@@ -206,7 +210,7 @@
         Weeks: [ '2-Jan', '9-Jan', '16-Jan','30-Jan', '6-Feb', '13-Feb', '20-Feb', '27-Feb','6-Mar', '20-Mar', '27-Mar' ],
     
       //PROJECT
-      timesheets: [
+      stimesheets: [
 
         {
            id: 1,
@@ -446,7 +450,7 @@
         }
 
       ],
-      tableTasks: [
+      tvableTasks: [
       {
        name: 'Task 1',
        id: 10,
@@ -641,8 +645,43 @@
     },
     methods: {
       ...mapMutations([
-   
+      "SET_TIMESHEET",
+      "SET_TIMESHEET_STATUS",
+      "TOGGLE_TIMESHEET_LOADED"
       ]),
+      ...mapActions([
+      "createTimesheet",
+      "updateTimesheet",
+      "fetchTimesheets",
+    ]),
+    log(e){
+      console.log("Timesheets Vue: ")
+      console.log(e)
+    },
+    saveTimesheet(index, rows){
+      this.rowIndex = null;
+      this.rowId = null;
+      let id = null;    
+
+  
+      // Row edit action will occur here
+      let timeSheetData = {
+          timesheetData: {
+            hours: rows.hours,
+            week: rows.date_of_week,
+            taskId: rows.task_id,
+            userId: this.$currentUser.id, 
+         
+        },
+      };
+      console.log(timeSheetData)
+      if (id){
+        this.updateTimesheet({...timeSheetData, id})
+        console.log(timeSheetDataa)
+      } else {
+        this.createTimesheet({...timeSheetData})     
+      }
+    }, 
       addTab(targetName) {
         let newTabName = ++this.tabIndex + '';
         this.timesheets.push({
@@ -700,7 +739,10 @@
     },
     computed: {
       ...mapGetters([
-        'myActionsFilter'
+        'myActionsFilter',
+        "timesheets",
+        "timeSheetsStatus",
+        "timeSheetsLoaded",    
       ]),
      userTime(){
         if(this.timesheets && this.timesheets.length > 0){
@@ -708,8 +750,40 @@
         }
       },
       editableTabsValue(){
-        return this.timesheets.length
+        if(this.timesheets){
+          return this.timesheets.length
+        }
+      
       }, 
+      weekOfArr(){
+        if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+          let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
+          let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
+          let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
+          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+         
+            console.log( earliestTaskDate)      
+            console.log( latestTaskDate)
+            // var curr = earliestTaskDate; // get current date
+            // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+            // var last = first + 4; // last day is the first day + 6
+
+            // var lastday = new Date(curr.setDate(last)).toUTCString()
+            // console.log(lastday)
+
+          var start = earliestTaskDate;          
+          var end = latestTaskDate;
+
+          var loop = new Date(start);
+          while(loop <= end){
+          //  console.log(loop)     
+
+            var newDate = loop.setDate(loop.getDate() + 7);
+            loop = new Date(newDate);
+          }
+     
+        }        
+      },
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         return _.filter(this.DV_facility.notes, n => {
@@ -730,7 +804,15 @@
         }
       }
     },
+    mounted() {
+     this.fetchTimesheets(this.$route.params)
+    },
     watch: {
+      timesheets(){
+        if(this.timesheets){
+          console.log('timesheets: ' + this.timesheets)
+        }
+      },
       facility: {
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
