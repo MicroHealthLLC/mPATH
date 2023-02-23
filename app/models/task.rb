@@ -60,6 +60,8 @@ class Task < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
+      :planned_effort, 
+      :actual_effort,
       task_files: [],
       file_links: [],
       user_ids: [],
