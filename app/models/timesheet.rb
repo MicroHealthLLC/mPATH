@@ -21,6 +21,9 @@ class Timesheet < ApplicationRecord
       :resource_type
     ]
   end
+  def to_json(options = {})
+    self.as_json.merge({"date_of_week" => self.date_of_week.strftime("%d %b %y")})
+  end
 
   def update_acutal_effort_to_task
     resource.update_actual_effort
