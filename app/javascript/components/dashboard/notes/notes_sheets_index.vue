@@ -4,10 +4,11 @@
       <div class="form-group w-100 mr-1 row">
               <!-- <label class="font-md mb-0"><i class="fa-solid fa-user-plus text-light"> </i> </label> -->
               
-              <div class="col-4 d-flex">
+              <div class="col-3">
+                <label class="font-sm mb-0">Project Task Users</label>
                 <el-select
                 v-model="addedUser"
-                class="w-100 mr-2"
+                class="w-75 mr-2"
                 track-by="id"
                 value-key="id"             
                 clearable
@@ -23,8 +24,8 @@
                 </el-option>
               </el-select>
               <el-button 
-              v-tooltip="`Add User`" 
-              v-if="addedUser.id"
+              v-tooltip="`Add User`"     
+              :disabled="!addedUser.id"
               size="small"
               class="calendarBtn" 
               type="primary"  
@@ -36,6 +37,7 @@
              
              
               <div class="col-4">
+                <label class="font-sm mb-0">Search Tasks</label>
                 <el-input
                   type="search"          
                   placeholder="Filter by Task"
@@ -46,11 +48,31 @@
               >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>      
-        </div>      
+              </div>  
+                 
+              <div class="col-4">
+                <div>
+              <label class="font-sm mb-0">Task Due Date Range</label>
+              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
+             </div>
+              </div>      
+              <!-- <div class="col-1">
+                <div>
+                  <label class="font-sm mb-0" style="visibility: hidden">Search Tasks</label>
+              <el-button 
+              v-tooltip="`View Users Reports`" 
+         
+              size="small"
+              class="calendarBtn" 
+              type="primary"  
+              @click="openUserTasksReport">   
+              <i class="fas fa-users text-light grow pr-2"  v-tooltip="`View Users Report`"  ></i>  
+              </el-button>    
 
-            </div>
+              </div>      
+            </div> -->
   
-  
+      </div>
 
          
     </span>
@@ -277,6 +299,7 @@
       </el-button> -->
      
     </el-tabs>
+
    
   </div>
 
@@ -299,6 +322,7 @@
     data() {
       return {       
         tabIndex: this.editableTabsValue,
+        userTasksDialog : false, 
         loading: true,
         tasksQuery: '',
         rowIndex: null, 
@@ -321,16 +345,21 @@
       "SET_TIMESHEET",
       "SET_TIMESHEET_STATUS",
       "SET_TIMESHEETS_STATUS",
-      "TOGGLE_TIMESHEET_LOADED"
+      "TOGGLE_TIMESHEET_LOADED",
+      "setTaskIssueDueDateFilter"
       ]),
       ...mapActions([
       "createTimesheet",
       "updateTimesheet",
       "fetchTimesheets",
+      "fetchCurrentProject"
     ]),
     log(e){
       console.log("Timesheets Vue: ")
       console.log(e)
+    },
+    openUserTasksReport() {
+      this.userTasksDialog = true;
     },
     saveTimesheetRow(index, rows, userId){
       this.rowIndex = null;
@@ -396,10 +425,21 @@
       ...mapGetters([
         'myActionsFilter',
         "timesheets",
+        "currentProject",
+        "taskIssueDueDateFilter",
         "timeSheetStatus",
         "timeSheetsLoaded",  
         "activeProjectUsers"  
       ]),
+      C_taskIssueDueDateFilter: {
+      get() {
+        if (!this.taskIssueDueDateFilter) return this.taskIssueDueDateFilter
+        return this.taskIssueDueDateFilter.map(d => d ? new Date(d) : d)
+      },
+      set(value) {
+        this.setTaskIssueDueDateFilter(value)
+      }
+     },
      userTime(){
         if(this.timesheets && this.timesheets.length > 0){
           return this.timesheets.map(t => t.tasks).flat()
@@ -458,11 +498,15 @@
     },
     mounted() {
      this.fetchTimesheets(this.$route.params)
+    //  this.fetchCurrentProject(this.$route.params.programId)
     },
     watch: {
       timesheets(){
         if(this.timesheets){
-          console.log(this.timesheets)
+          console.log('UserTime: ')
+          console.log(this.userTime)
+          console.log('Current projec: ')
+          console.log(this.currentProject)
         }
       },
      timeSheetStatus: {
