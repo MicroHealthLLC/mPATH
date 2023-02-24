@@ -40,7 +40,7 @@ class Api::V1::TimesheetsController < AuthenticatedController
       h = []
       all_tasks.each do |task|
         timesheets = task_timesheets[task.id] || []
-        h << task.as_json.merge!({timesheets: timesheets.map(&:to_json)}) 
+        h << task.as_json.merge!({timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours) }) 
 
       end
       response <<  user.as_json.merge!({tasks: h})
