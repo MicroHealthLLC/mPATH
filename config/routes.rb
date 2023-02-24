@@ -57,13 +57,17 @@ Rails.application.routes.draw do
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
 
-      resources :projects, path: 'programs', only: [:index, :show] do
+      resources :projects, path: 'programs', only: [:index, :show, :project_timesheets] do
         resources :query_filters do
           collection do
             delete "reset" => "query_filters#reset"
           end
         end
         
+        collection do
+          get "project_timesheets/:program_id", to: 'projects#project_timesheets'
+        end
+
         member do
           # used in Admin
           get 'task_issues', to: 'projects#task_issues'
