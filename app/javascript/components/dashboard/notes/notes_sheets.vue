@@ -1,4 +1,3 @@
-
 <template>
   <div data-cy="notes">
     <div v-if="C_editForManager" class="blur_show float-right">      
@@ -52,7 +51,6 @@
   import NotesForm from './notes_form'
   import {SweetModal} from 'sweet-modal-vue'
   import {API_BASE_PATH} from './../../../mixins/utils'
-
   export default {
     props: ['facility', 'note', 'from'],
     components: {
@@ -108,7 +106,6 @@
       deleteNote() {
         var confirm = window.confirm(`Are you sure, you want to delete this note?`)
         if (!confirm) return;
-
         http
           .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
           .then((res) => {

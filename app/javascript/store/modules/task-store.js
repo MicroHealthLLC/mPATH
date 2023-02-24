@@ -13,10 +13,6 @@ const taskStore = {
       timesheet: {},
       timesheet_status: 0,
       timesheet_loaded: true,
-
-
-
-
     }),
     actions: {
     // Get  All Timesheets
@@ -62,8 +58,11 @@ const taskStore = {
         },
       })
         .then((res) => {
+          console.log(res.status)
           commit("SET_TIMESHEET", res.data.timesheets);
+          commit("SET_TIMESHEETS", res.data.timesheets);          
           commit("SET_TIMESHEET_STATUS", res.status);
+          commit("SET_TIMESHEETS_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
@@ -72,17 +71,19 @@ const taskStore = {
           commit("TOGGLE_TIMESHEET_LOADED", true);
         });
     },
+
     //Update Individual Timesheet
-    updateTimesheet({ commit }, {  timesheetData, id }) {
+    updateTimesheet({ commit }, {  timesheetData }) {
       commit("TOGGLE_TIMESHEET_LOADED", false);
       // let formData = new FormData();
       formData.append("timesheet[hours]",  timesheetData.hours);
       formData.append("timesheet[date_of_week]",  timesheetData.week);
       formData.append("timesheet[task_id]",  timesheetData.taskId);
+      formData.append("timesheet[user_id]",  timesheetData.userId);   
   
         axios({
           method: "PUT",
-          url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/tasks/${id}`,
+          url: `${API_BASE_PATH}/programs/${timesheetData.programId}/projects/${timesheetData.projectId}/timesheets/${timesheetId}`,
           data: formData,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -91,7 +92,9 @@ const taskStore = {
         })
         .then((res) => {
           commit("SET_TIMESHEET", res.data.timesheets);
+          commit("SET_TIMESHEETS", res.data.timesheets);          
           commit("SET_TIMESHEET_STATUS", res.status);
+          commit("SET_TIMESHEETS_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
