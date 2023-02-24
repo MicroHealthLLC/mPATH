@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_14_212703) do
+ActiveRecord::Schema.define(version: 2023_02_23_174135) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -1006,8 +1006,8 @@ ActiveRecord::Schema.define(version: 2023_02_14_212703) do
     t.integer "project_contract_vehicle_id"
     t.integer "owner_id"
     t.string "owner_type"
-    t.decimal "planned_effort", precision: 10, default: "0"
-    t.decimal "actual_effort", precision: 10, default: "0"
+    t.decimal "planned_effort", precision: 4, scale: 2, default: "0.0"
+    t.decimal "actual_effort", precision: 4, scale: 2, default: "0.0"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

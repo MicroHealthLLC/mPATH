@@ -61,7 +61,6 @@ class Task < ApplicationRecord
       :important,
       :reportable,
       :planned_effort, 
-      :actual_effort,
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -94,6 +93,14 @@ class Task < ApplicationRecord
         :body
       ]
     ]
+  end
+
+  def calculate_actual_effort
+    timesheets.sum(:hours).to_f
+  end
+
+  def update_actual_effort
+    self.update(actual_effort: calculate_actual_effort)
   end
 
   def update_facility_project

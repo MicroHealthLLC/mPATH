@@ -7,6 +7,9 @@ class Timesheet < ApplicationRecord
   validates :date_of_week, presence: true
   validates :hours, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
+  after_create :update_acutal_effort_to_task
+  after_update :update_acutal_effort_to_task
+
   def self.params_to_permit
     [
       :hours,
@@ -17,6 +20,13 @@ class Timesheet < ApplicationRecord
       :resource_id,
       :resource_type
     ]
+  end
+  def to_json(options = {})
+    self.as_json.merge({"date_of_week" => self.date_of_week.strftime("%d %b %y")})
+  end
+
+  def update_acutal_effort_to_task
+    resource.update_actual_effort
   end
 
   def create_or_update_timesheet(params, user)
