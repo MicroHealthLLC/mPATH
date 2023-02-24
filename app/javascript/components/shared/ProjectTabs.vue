@@ -57,6 +57,12 @@ export default {
           closable: false,
           hidden: false,
         },
+        {
+          label: "Effort",
+          key: "notes",
+          closable: false,
+          hidden: false,
+        },
       ],
     };
   },
@@ -64,16 +70,16 @@ export default {
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId;
 
-    let fPrivilege = this.$projectPrivileges[programId][projectId];
+    // let fPrivilege = this.$projectPrivileges[programId][projectId];
 
     // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
 
-    if (fPrivilege) {
-      for (var i = 0; i < this.tabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
-      }
-    }
+    // if (fPrivilege) {
+    //   for (var i = 0; i < this.tabs.length; i++) {
+    //     // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+    //     this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+    //   }
+    // }
   },
   methods: {
     changeTab(tab) {
@@ -108,23 +114,23 @@ export default {
       return this.tabs.some((tab) => tab.hidden === false);
     },
   },
-  watch: {
-    "$route.path": {
-      handler() {
-        if (this.contentLoaded) {
-          let privileges = this.$projectPrivileges[
-            this.$route.params.programId
-          ][this.$route.params.projectId];
+  // watch: {
+  //   "$route.path": {
+  //     handler() {
+  //       if (this.contentLoaded) {
+  //         let privileges = this.$projectPrivileges[
+  //           this.$route.params.programId
+  //         ][this.$route.params.projectId];
 
-          if (privileges) {
-            for (var i = 0; i < this.tabs.length; i++) {
-              this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
-            }
-          }
-        }
-      },
-    },
-  },
+  //         if (privileges) {
+  //           for (var i = 0; i < this.tabs.length; i++) {
+  //             this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
+  //           }
+  //         }
+  //       }
+  //     },
+  //   },
+  // },
 };
 </script>
 

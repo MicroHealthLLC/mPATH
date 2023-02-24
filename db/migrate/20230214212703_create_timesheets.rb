@@ -1,5 +1,5 @@
 
-class CreateTimesheets < ActiveRecord::Migration[7.0]
+class CreateTimesheets < ActiveRecord::Migration[6.1]
   def change
     create_table :timesheets do |t|
       t.datetime :date_of_week, null: false

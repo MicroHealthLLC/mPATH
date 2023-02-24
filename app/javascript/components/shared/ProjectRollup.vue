@@ -16,18 +16,296 @@
       </div>
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded" class="float-right mt-1">
-          <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
           <router-link :to="ProgramView" > 
-               <button                
-                  class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
-                  {{ currentProject.name }} DATA VIEWER
-                </button>   
-          </router-link>             
-        </span>         
-       
-      </div>
+          <button                
+            class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
+            {{ currentProject.name }} DATA VIEWER
+          </button>   
+          </router-link>     
+        <button                
+        class="btn btn-sm profile-btns allCaps pl-2" >
+         TASK REPORTS 
+        <i class="fas fa-clipboard mh-green-text grow pl-3 pr-1"  v-tooltip="`BY PROJECT`" @click="openProjectGroup"></i>
+        <i class="fas fa-users mh-blue-text grow pr-2"  v-tooltip="`BY USERS`"  @click="openUserTasksReport"></i>
+        <i class="fas fa-print text-dark grow" @click="printTaskReport"></i>
+      </button>    
+               
+      <el-dialog
+        :visible.sync="dialog2Visible"
+        append-to-body
+        center   
+      >
+     <h3 class="centerLogo">{{ currentProject.name }}'s Task Progress</h3>      
+     <table
+      class="table table-sm table-bordered mt-3"
+      ref="table" id="taskSheetsList1"
+      style=""
+      >
+      <thead>        
+        <tr style="background-color:#ededed">
+          <th style="width:10%">Project</th>
+          <th style="width:16%">Task</th>
+          <th style="width:6%">Start Date</th>
+          <th style="width:6%">Due Date</th>
+          <th style="width:20%">Staff on Task</th>
+          <th style="width:5%">Planned <br> Effort</th>
+          <th style="width:5%">Actual <br>Effort</th>
+          <th style="width:6%">Progress</th>
+          <th style="width:5%">Status</th>
+          <th style="width:21%">Last Update</th>
+        </tr>
+      </thead>
+      <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
+       <tr class="mb-2">
+        <td>{{task.facilityName}}</td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ each.text }}</li>         
+          </ul>         
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ formatDate(each.startDate)}}</li>         
+          </ul>          
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ formatDate(each.dueDate)}}</li>         
+          </ul>          
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{  each.userNames }}</li>         
+          </ul>          
+        </td>        
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>12<span style="visibility: hidden"> {{  each.progress }}</span>                
+          </li>         
+          </ul>          
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>9<span style="visibility: hidden"> {{  each.progress }}</span>
+            </li>     
+          </ul>          
+        </td>       
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li v-if="each && each.progress !== null">{{ each.progress }}</li>         
+          <li v-else>{{  }}</li>         
+          </ul>          
+        </td>
+        <td class="updates"> 
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>+<span style="visibility: hidden"> {{  each.progress }}</span>
+            </li>     
+          </ul>       
+        </td>
+        <td class="updates" >            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li v-if="each && each.lastUpdate !== null">{{ each.lastUpdate.body }}</li>    
+          <li v-else>{{  }}</li>         
+          </ul>          
+        </td>
+      </tr>  
+      <!-- Second Table Row for Effort Totals per project -->
+      <tr class="py-2">
+       <td >     
+      </td> 
+      <td>    
+      </td> 
+      <td >    
+      </td> 
+      <td >
+
+      </td> 
+      <td >
+        <em class="text-dark">Project Efforts Totals: </em>
+      </td> 
+      <td >
+       <em class="text-dark">200</em>
+      </td> 
+      <td >
+        <em class="text-dark"> 188</em>
+      </td> 
+      <td>      
+      </td> 
+      <td>      
+      </td> 
+      <td>   
+      </td>    
+      </tr>
+        
+    </tbody>  
+    </table>
+    <table
+      class="table table-sm"     
+      style=""
+      >
+      <thead>        
+        <tr>
+          <th style="width:12%"></th>
+          <th style="width:12%"></th>
+          <th style="width:7%"></th>
+          <th style="width:7%"></th>
+          <th style="width:20%; text-align: left;"><h6><em class="text-dark">Program Effort Totals</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">800</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">752</em></h6></th>
+          <th style="width:6%"></th>
+          <th style="width:5%"></th>
+          <th style="width:21%"></th>
+        </tr>
+      </thead>
+    </table>
   
+    <span class="centerLogo" >
+        <img
+          class="my-2"
+          style="width: 147px;cursor:pointer"
+          :src="require('../../../assets/images/microhealthllc.png')"
+        />
+      </span>
+      </el-dialog>
+      <el-dialog
+        :visible.sync="userTasksDialog"
+        append-to-body
+        center   
+      >
+     <h3 class="centerLogo">{{ currentProject.name }}'s Task Progress</h3>   
      
+     <div class="taskUserInfo">
+      <b>As of Date:</b><br>
+      <b>Name of Staff:</b><br>
+      <b>Position:</b> 
+     </div>
+     <table
+      class="table table-sm table-bordered mt-3"     
+      style=""
+      >
+      <thead>        
+        <tr style="background-color:#ededed">
+          <th style="width:15%">Project</th>
+          <th style="width:21%">Task</th>
+          <th style="width:6%">Start Date</th>
+          <th style="width:6%">Due Date</th>      
+          <th style="width:5%">Planned <br> Effort</th>
+          <th style="width:5%">Actual <br>Effort</th>
+          <th style="width:6%">Progress</th>
+          <th style="width:5%">Status</th>
+          <th style="width:31%">Last Update</th>
+        </tr>
+      </thead>
+      <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
+       <tr class="mb-2">
+        <td>{{task.facilityName}}</td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ each.text }}</li>         
+          </ul>         
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ formatDate(each.startDate)}}</li>         
+          </ul>          
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li>{{ formatDate(each.dueDate)}}</li>         
+          </ul>          
+        </td>           
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>12<span style="visibility: hidden"> {{  each.progress }}</span>                
+          </li>         
+          </ul>          
+        </td>
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>9<span style="visibility: hidden"> {{  each.progress }}</span>
+            </li>     
+          </ul>          
+        </td>       
+        <td class="updates">            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li v-if="each && each.progress !== null">{{ each.progress }}</li>         
+          <li v-else>{{  }}</li>         
+          </ul>          
+        </td>
+        <td class="updates"> 
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+            <li>+<span style="visibility: hidden"> {{  each.progress }}</span>
+            </li>     
+          </ul>       
+        </td>
+        <td class="updates" >            
+          <ul class="a" v-for="each, i in task.tasks" :key="i">           
+          <li v-if="each && each.lastUpdate !== null">{{ each.lastUpdate.body }}</li>    
+          <li v-else>{{  }}</li>         
+          </ul>          
+        </td>
+      </tr>  
+      <!-- Second Table Row for Effort Totals per project -->
+      <!-- <tr class="py-2">
+       <td >     
+      </td> 
+      <td>    
+      </td> 
+      <td >    
+      </td> 
+      <td >
+
+      </td> 
+      <td >
+        <em class="text-dark">Project Efforts Totals: </em>
+      </td> 
+      <td >
+       <em class="text-dark">200</em>
+      </td> 
+      <td >
+        <em class="text-dark"> 188</em>
+      </td> 
+      <td>      
+      </td> 
+      <td>      
+      </td> 
+      <td>   
+      </td>    
+      </tr>
+         -->
+    </tbody>  
+    </table>
+    <table
+      class="table table-sm"     
+      style=""
+      >
+      <thead>        
+        <tr>
+          <th style="width:12%"></th>
+          <th style="width:12%"></th>
+          <th style="width:7%"></th>
+          <th style="width:7%"></th>
+          <th style="width:20%; text-align: left;"><h6><em class="text-dark">Effort Totals</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">800</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">752</em></h6></th>
+          <th style="width:6%"></th>
+          <th style="width:5%"></th>
+          <th style="width:21%"></th>
+        </tr>
+      </thead>
+    </table>
+  
+    <span class="centerLogo" >
+        <img
+          class="my-2"
+          style="width: 147px;cursor:pointer"
+          :src="require('../../../assets/images/microhealthllc.png')"
+        />
+      </span>
+      </el-dialog>
+                  
+        </span>         
+       </div>       
     </div>
 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
@@ -982,6 +1260,8 @@
 
 <script>
 import Loader from "./loader";
+import {jsPDF} from "jspdf"
+
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
@@ -992,7 +1272,9 @@ export default {
   data() {
     return {
       showLess: "Show More",
-      showMore: true,      
+      showMore: true,  
+      dialog2Visible: false,  
+      userTasksDialog: false,    
       today: new Date().toISOString().slice(0, 10),
     };
   },
@@ -1691,10 +1973,22 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+      openProjectGroup() {
+      this.dialog2Visible = true;
+    },
+    openUserTasksReport() {
+      this.userTasksDialog = true;
+    },
 
     showLessToggle() {
       this.showLess = "Show Less";
     },
+    printTaskReport() {
+        const doc = new jsPDF("l")
+        const html =  this.$refs.table.innerHTML
+        doc.autoTable({html: "#taskSheetsList1"})
+        doc.save("Task_List.pdf")
+      },
     log(e){
       // console.log(e)
     },
@@ -1954,6 +2248,31 @@ i.grow:hover{
   font-size: 0.75rem;
   height: 20px;
 }
+
+
+ td.updates {
+ max-width: 0;
+ overflow: hidden;
+ text-overflow: ellipsis !important;
+ white-space: nowrap;
+  // display: -webkit-box;
+  // -webkit-line-clamp: 1;
+  // -webkit-box-orient: vertical;  
+  // overflow: hidden;
+  // &:hover
+  // {
+  //   display: -webkit-box;
+  //   -webkit-line-clamp: unset;
+  // }
+}
+
+
+.centerLogo{
+  display:block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
 .smallerFont {
   font-size: 10px;
 }
@@ -1968,6 +2287,9 @@ i.grow:hover{
   border-bottom: none !important;
 }
 
+/deep/.el-dialog, /deep/.el-dialog--center  {
+  width: 90% !important;
+}
 /deep/.el-card__body {
     padding-bottom: 0 !important;
 }
@@ -1989,6 +2311,9 @@ i.grow:hover{
 }
 .card-title {
   text-decoration-line: underline;
+}
+em.text-dark{
+  font-weight: 700;
 }
 /deep/.el-progress-circle {
   height: 118px !important;

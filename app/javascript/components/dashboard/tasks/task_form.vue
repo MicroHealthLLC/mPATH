@@ -421,6 +421,26 @@
               </div>
             </div>
             <div class="form-group col-md-6 pr-0">
+      
+              <span >           
+               <label class="font-md"
+                >Planned Effort </label
+              ></span>
+          
+              <el-input
+              type="text"
+              v-model="DV_task.plannedEffort"
+              placeholder="Planned Effort Hours"
+              ></el-input>
+          
+            <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
+              THIS TASK IS ONGOING
+            </span> -->
+            </div>
+               
+          </div>
+          <div class="form-row mx-4">
+            <div class="form-group col-md-6 pl-0">
               <span v-if="DV_task.ongoing ">           
                <label class="font-md"
                 ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
@@ -463,6 +483,16 @@
                 {{ errors.first("Due Date") }}
               </div>
               
+            </div>
+            <div class="form-group col-md-6 pr-0">
+            
+              <span >           
+               <label class="font-md"
+                >Actual Effort </label
+              ></span>
+          
+                <el-input></el-input>
+          
           
             <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
               THIS TASK IS ONGOING
@@ -470,6 +500,7 @@
             </div>
                
           </div>
+
 
           <!-- closing div for tab1 -->
         </div>
@@ -1392,6 +1423,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
+        plannedEffort: "",
         facilityProjectId: this.$route.params.programId,
         checklistDueDate: "",
         taskTypeId: "",
@@ -1660,7 +1692,9 @@ export default {
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.dueDate);
         formData.append("task[start_date]", this.DV_task.startDate);
-        formData.append("task[task_type_id]", this.DV_task.taskTypeId);
+        formData.append("task[planned_effort]", this.DV_task.plannedEffort);
+         formData.append("task[task_type_id]", this.DV_task.taskTypeId);
+
         formData.append("task[task_stage_id]", this.DV_task.taskStageId);
         formData.append("task[progress]", this.DV_task.progress);
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
