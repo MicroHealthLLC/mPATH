@@ -27,7 +27,7 @@
          TASK REPORTS 
         <i class="fas fa-clipboard mh-green-text grow pl-3 pr-1"  v-tooltip="`BY PROJECT`" @click="openProjectGroup"></i>
         <i class="fas fa-users mh-blue-text grow pr-2"  v-tooltip="`BY USERS`"  @click="openUserTasksReport"></i>
-        <i class="fas fa-print text-dark grow" @click="printTaskReport"></i>
+        <!-- <i class="fas fa-print text-dark grow" @click="printTaskReport"></i> -->
       </button>    
                
       <el-dialog
@@ -35,7 +35,8 @@
         append-to-body
         center   
       >
-     <h3 class="centerLogo">{{ currentProject.name }}'s Task Progress</h3>      
+     <h3 class="centerLogo">{{ currentProject.name }}'s Task Progress</h3>    
+   <!-- {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0).map(t => t.tasks).flat()}}   -->
      <table
       class="table table-sm table-bordered mt-3"
       ref="table" id="taskSheetsList1"
@@ -43,16 +44,16 @@
       >
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:10%">Project</th>
-          <th style="width:16%">Task</th>
-          <th style="width:6%">Start Date</th>
-          <th style="width:6%">Due Date</th>
-          <th style="width:20%">Staff on Task</th>
-          <th style="width:5%">Planned <br> Effort</th>
-          <th style="width:5%">Actual <br>Effort</th>
-          <th style="width:6%">Progress</th>
-          <th style="width:5%">Status</th>
-          <th style="width:21%">Last Update</th>
+          <th style="width:10%;">Project</th>
+          <th style="width:16%;">Task</th>
+          <th style="width:6%;">Start Date</th>
+          <th style="width:6%;">Due Date</th>
+          <th style="width:20%;">Staff on Task</th>
+          <th style="width:5%;">Planned <br> Effort</th>
+          <th style="width:5%;">Actual <br>Effort</th>
+          <th style="width:6%;">Progress</th>
+          <th style="width:5%;">Status</th>
+          <th style="width:21%;">Last Update</th>
         </tr>
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
@@ -80,13 +81,13 @@
         </td>        
         <td class="updates">            
           <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li>12<span style="visibility: hidden"> {{  each.progress }}</span>                
-          </li>         
+            <li> {{  each.plannedEffort }}</li>                
+                
           </ul>          
         </td>
         <td class="updates">            
           <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li>9<span style="visibility: hidden"> {{  each.progress }}</span>
+            <li> {{  each.actualEffort }}
             </li>     
           </ul>          
         </td>       
@@ -124,10 +125,10 @@
         <em class="text-dark">Project Efforts Totals: </em>
       </td> 
       <td >
-       <em class="text-dark">200</em>
+       <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td >
-        <em class="text-dark"> 188</em>
+        <em class="text-dark"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td> 
@@ -150,8 +151,8 @@
           <th style="width:7%"></th>
           <th style="width:7%"></th>
           <th style="width:20%; text-align: left;"><h6><em class="text-dark">Program Effort Totals</em></h6></th>
-          <th style="width:5%; text-align: left;"><h6><em class="text-dark">800</em></h6></th>
-          <th style="width:5%; text-align: left;"><h6><em class="text-dark">752</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">---</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">---</em></h6></th>
           <th style="width:6%"></th>
           <th style="width:5%"></th>
           <th style="width:21%"></th>
@@ -172,10 +173,10 @@
         append-to-body
         center   
       >
-     <h3 class="centerLogo">{{ currentProject.name }}'s Task Progress</h3>   
+     <h3 class="centerLogo">{{ currentProject.name }}'s User Task Progress</h3>   
      
      <div class="taskUserInfo">
-      <b>As of Date:</b><br>
+      <b>Week of:</b><br>
       <b>Name of Staff:</b><br>
       <b>Position:</b> 
      </div>
@@ -185,15 +186,12 @@
       >
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:15%">Project</th>
-          <th style="width:21%">Task</th>
-          <th style="width:6%">Start Date</th>
-          <th style="width:6%">Due Date</th>      
-          <th style="width:5%">Planned <br> Effort</th>
-          <th style="width:5%">Actual <br>Effort</th>
-          <th style="width:6%">Progress</th>
-          <th style="width:5%">Status</th>
-          <th style="width:31%">Last Update</th>
+          <th style="width:20%; font-size: 1rem">Project</th>
+          <th style="width:17%; font-size: 1rem">Task</th>
+          <th style="width:28%; font-size: 1rem">Task Description</th>
+          <th style="width:12%; font-size: 1rem">Actual <br>Effort</th>
+          <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
+
         </tr>
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
@@ -203,20 +201,10 @@
           <ul class="a" v-for="each, i in task.tasks" :key="i">           
           <li>{{ each.text }}</li>         
           </ul>         
-        </td>
+        </td>       
         <td class="updates">            
           <ul class="a" v-for="each, i in task.tasks" :key="i">           
-          <li>{{ formatDate(each.startDate)}}</li>         
-          </ul>          
-        </td>
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-          <li>{{ formatDate(each.dueDate)}}</li>         
-          </ul>          
-        </td>           
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li>12<span style="visibility: hidden"> {{  each.progress }}</span>                
+            <li> {{  each.description }}        
           </li>         
           </ul>          
         </td>
@@ -231,48 +219,27 @@
           <li v-if="each && each.progress !== null">{{ each.progress }}</li>         
           <li v-else>{{  }}</li>         
           </ul>          
-        </td>
-        <td class="updates"> 
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li>+<span style="visibility: hidden"> {{  each.progress }}</span>
-            </li>     
-          </ul>       
-        </td>
-        <td class="updates" >            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-          <li v-if="each && each.lastUpdate !== null">{{ each.lastUpdate.body }}</li>    
-          <li v-else>{{  }}</li>         
-          </ul>          
-        </td>
+        </td> 
+  
       </tr>  
-      <!-- Second Table Row for Effort Totals per project -->
-      <!-- <tr class="py-2">
-       <td >     
-      </td> 
-      <td>    
-      </td> 
+      <tr class="py-2">
+    
       <td >    
       </td> 
       <td >
-
       </td> 
       <td >
         <em class="text-dark">Project Efforts Totals: </em>
       </td> 
       <td >
-       <em class="text-dark">200</em>
-      </td> 
-      <td >
-        <em class="text-dark"> 188</em>
-      </td> 
-      <td>      
-      </td> 
-      <td>      
-      </td> 
-      <td>   
+        ---
+       <!-- <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em> -->
       </td>    
+      <td>      
+      </td> 
+         
       </tr>
-         -->
+
     </tbody>  
     </table>
     <table
@@ -286,8 +253,8 @@
           <th style="width:7%"></th>
           <th style="width:7%"></th>
           <th style="width:20%; text-align: left;"><h6><em class="text-dark">Effort Totals</em></h6></th>
-          <th style="width:5%; text-align: left;"><h6><em class="text-dark">800</em></h6></th>
-          <th style="width:5%; text-align: left;"><h6><em class="text-dark">752</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark">---</em></h6></th>
+          <th style="width:5%; text-align: left;"><h6><em class="text-dark"></em></h6></th>
           <th style="width:6%"></th>
           <th style="width:5%"></th>
           <th style="width:21%"></th>
@@ -1979,7 +1946,6 @@ export default {
     openUserTasksReport() {
       this.userTasksDialog = true;
     },
-
     showLessToggle() {
       this.showLess = "Show Less";
     },
