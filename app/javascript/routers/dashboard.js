@@ -224,7 +224,7 @@ export default new VueRouter({
           component: ProjectRollup,
         },
         {
-          name: "effort",
+          name: "SheetTimeEffort",
           path: "projects/:projectId/effort",
           component: SheetTime,
         },
