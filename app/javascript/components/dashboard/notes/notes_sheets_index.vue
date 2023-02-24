@@ -1,9 +1,11 @@
 <template>
   <div id="notes-index" data-cy="note_list" class="mt-5 pl-1" :load="log(weekOfArr)">      
-    <span>
-      <div class="form-group w-25 mr-1 d-flex">
+    <span :load="log(editableTabsValue)">
+      <div class="form-group w-100 mr-1 row">
               <!-- <label class="font-md mb-0"><i class="fa-solid fa-user-plus text-light"> </i> </label> -->
-              <el-select
+              
+              <div class="col-4 d-flex">
+                <el-select
                 v-model="addedUser"
                 class="w-100 mr-2"
                 track-by="id"
@@ -13,7 +15,7 @@
                 filterable
               >
                 <el-option
-                  v-for="item in activeProjectUsers"
+                  v-for="item in activeProjectUsers.filter( t => !timesheets.map(f => f.id).includes(t.id))"
                   :value="item"
                   :key="item.id"
                   :label="item.fullName"
@@ -30,6 +32,22 @@
               <i class="fa-solid fa-user-plus text-light"> </i> 
               </el-button>    
 
+              </div>
+             
+             
+              <div class="col-4">
+                <el-input
+                  type="search"          
+                  placeholder="Filter by Task"
+                  aria-label="Search"            
+                  aria-describedby="search-addon"    
+                  v-model="tasksQuery"     
+                  data-cy="search_tasks"
+              >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>      
+        </div>      
+
             </div>
   
   
@@ -37,7 +55,7 @@
          
     </span>
 
- <el-tabs type="border-card"  v-model="editableTabsValue"  @tab-click="handleClick" >   
+ <el-tabs type="border-card"  v-model="editableTabsValue" >   
       <!-- <el-tab-pane>
         <template slot="label" >          
           <span class="text-right">
@@ -91,10 +109,10 @@
 
       </el-tab-pane> -->
     
-    <el-tab-pane label="Summary" >   
+    <el-tab-pane label="Summary" class="is-active">   
       <el-table
-      v-if="facility && facility.tasks"
-      :data="facility.tasks"
+      v-if="tableData"
+      :data="tableData"
       height="450"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
@@ -154,8 +172,8 @@
         :name="index"
       >
       <el-table
-      v-if="facility && facility.tasks && facility.tasks.length > 0"
-      :data="facility.tasks"
+      v-if="tableData"
+      :data="tableData"
       height="450"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
@@ -282,6 +300,7 @@
       return {       
         tabIndex: this.editableTabsValue,
         loading: true,
+        tasksQuery: '',
         rowIndex: null, 
         addedUser: [],
         rowId: null, 
@@ -347,13 +366,14 @@
     
     }, 
       addTab(targetName) {
-        let newTabName = ++this.tabIndex + '';
+        let newTabName = this.timesheets.length;
         this.timesheets.push({
           full_name: this.addedUser.fullName,
           name: newTabName,
           content: 'New Tab content',
           id: this.addedUser.id 
         });
+        console.log(this.timesheets.length)
         this.editableTabsValue = newTabName;
         this.addedUser = []
       },
@@ -385,11 +405,28 @@
           return this.timesheets.map(t => t.tasks).flat()
         }
       },
-      editableTabsValue(){
-        if(this.timesheets){
-          return this.timesheets.length
-        }      
-      }, 
+      tableData() {
+          if (this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+            let tasks = this.facility.tasks
+            .filter((task) => {
+            if (this.tasksQuery !== "") {
+              return (
+                task.text.toLowerCase().match(this.tasksQuery.toLowerCase())
+              );
+            } else return true;
+            // Filtering 7 Task States
+          });
+
+        return tasks
+          }
+      
+      },
+      // filteredProjectUsers(){
+      //   if(this.timesheets && this.activeProjectUsers && this.timesheets.length > 0){
+      //     let ids = this.activeProjectUsers.map(t => t.id)
+      //     return !this.timesheets.filter(t => ids.includes(t.id))
+      //   }
+      // },
       weekOfArr(){
         if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  

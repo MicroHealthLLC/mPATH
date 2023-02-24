@@ -1692,7 +1692,7 @@ export default {
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.dueDate);
         formData.append("task[start_date]", this.DV_task.startDate);
-        formData.append("task[planned_hours]", this.DV_task.plannedEffort);
+        formData.append("task[planned_effort]", this.DV_task.plannedEffort);
          formData.append("task[task_type_id]", this.DV_task.taskTypeId);
 
         formData.append("task[task_stage_id]", this.DV_task.taskStageId);
