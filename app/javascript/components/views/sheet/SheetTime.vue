@@ -1,5 +1,5 @@
 <template>
-  <SheetTIme :facility="facility" class="mt-4" />
+  <SheetTime :facility="facility" class="mt-4" />
 </template>
 
 <script>

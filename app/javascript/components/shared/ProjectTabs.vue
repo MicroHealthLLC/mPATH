@@ -70,11 +70,16 @@ export default {
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId;
     let fPrivilege = this.$projectPrivileges[programId][projectId];
+
     // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
     if (fPrivilege) {
       for (var i = 0; i < this.tabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+        if(this.tabs[i].key == 'effort'){
+          this.tabs[i].hidden = false  
+        }else{
+          this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+        }
       }
     }
   },
