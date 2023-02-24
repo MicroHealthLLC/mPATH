@@ -592,7 +592,7 @@ export default new VueRouter({
           component: SheetLessons,
         },
         {
-          name: "SheetTime",
+          name: "effort",
           path: "projects/:projectId/effort",
           component: SheetTime,
         },
