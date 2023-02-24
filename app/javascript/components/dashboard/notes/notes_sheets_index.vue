@@ -1,7 +1,44 @@
 <template>
-  <div id="notes-index" data-cy="note_list" class="mt-5" :load="log(weekOfArr)"> 
-    <el-tabs type="border-card"  v-model="editableTabsValue"  @tab-click="handleClick" >   
-      <el-tab-pane>
+  <div id="notes-index" data-cy="note_list" class="mt-5 pl-1" :load="log(weekOfArr)">      
+    <span>
+      <div class="form-group w-25 mr-1 d-flex">
+              <!-- <label class="font-md mb-0"><i class="fa-solid fa-user-plus text-light"> </i> </label> -->
+              <el-select
+                v-model="addedUser"
+                class="w-100 mr-2"
+                track-by="id"
+                value-key="id"             
+                clearable
+                placeholder="Search and select a User" 
+                filterable
+              >
+                <el-option
+                  v-for="item in activeProjectUsers"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.fullName"
+                >
+                </el-option>
+              </el-select>
+              <el-button 
+              v-tooltip="`Add User`" 
+              v-if="addedUser.id"
+              size="small"
+              class="calendarBtn" 
+              type="primary"  
+              @click="addTab(editableTabsValue)">   
+              <i class="fa-solid fa-user-plus text-light"> </i> 
+              </el-button>    
+
+            </div>
+  
+  
+
+         
+    </span>
+
+ <el-tabs type="border-card"  v-model="editableTabsValue"  @tab-click="handleClick" >   
+      <!-- <el-tab-pane>
         <template slot="label" >          
           <span class="text-right">
            <i class="fa-solid fa-plus-large"    @click="addTab(editableTabsValue)"> </i>           
@@ -34,15 +71,15 @@
       fixed
       prop="text"
       label="Tasks"
-      width="275"
+      width="250"
       header-align="center"
     >
    
     </el-table-column>
     <el-table-column label="Week of" header-align="center">
-      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+      <el-table-column v-for="weekof, i in Week" :key="i" :label='weekof'>
      <template>    
-      <!-- <template slot-scope="scope">     -->
+     <template slot-scope="scope">    
       <el-input placeholder="hrs" v-model="input" :key="i"></el-input>
      </template>              
       </el-table-column>
@@ -52,11 +89,11 @@
           BOBN
          </span>
 
-      </el-tab-pane>
+      </el-tab-pane> -->
     
-      <el-tab-pane label="Summary" :class="active">   
+    <el-tab-pane label="Summary" >   
       <el-table
-      v-if="facility && facility.tasks && facility.tasks.length > 0"
+      v-if="facility && facility.tasks"
       :data="facility.tasks"
       height="450"
       class="crudRow mt-4"
@@ -82,21 +119,26 @@
       fixed
       prop="text"
       label="Tasks"
-      width="275"
+      width="250"
       header-align="center"
     >
    
     </el-table-column>
     <el-table-column label="Week of" header-align="center">
-      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+      <el-table-column 
+      v-for="weekof, i in matrixDates" 
+      :key="i" 
+      :label='weekof'
+      width="90"
+      >
      <template slot-scope="scope">  
       <span v-if="userTime && userTime.length > 0">
           {{ 
           userTime
-          .filter(t => t.id == scope.row.id) 
+          .filter(t => t && t.id && t.id == scope.row.id) 
           .map(t => t.timesheets)
           .flat()
-          .filter(t => t.date_of_week == weekof)    
+          .filter(t => moment(t.date_of_week).format("DD MMM YY") == weekof)    
           .map(t => t.hours).reduce((partialSum, a) => partialSum + a, 0)            
           }}           
       </span>
@@ -138,42 +180,83 @@
       fixed
       prop="text"
       label="Tasks"
-      width="275"
+      width="250"
       header-align="center"
     >
    
     </el-table-column>
+    <!-- Column of individual users -->
     <el-table-column label="Week of" header-align="center">
-      <el-table-column v-for="weekof, i in Weeks" :key="i" :label='weekof'>
+      <el-table-column 
+        v-for="weekof, weekofIndex in matrixDates" 
+        :key="weekofIndex" 
+        :label='weekof'  
+        width="90">
      <template slot-scope="scope">  
-      <span v-if="!editMode"> 
-      {{ 
+      <span v-if="rowId == scope.row.id">
+          <el-input 
+            type="text" 
+            :name="weekof"           
+            v-model="input[weekofIndex]"
+            :id="weekof"
+            >
+           </el-input>
+      </span>
+      <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">       
+        {{ 
           item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)
           .flat()
-          .filter(t => t.date_of_week == weekof)    
+          .filter(t => moment(t.date_of_week).format("DD MMM YY") == weekof)    
           .map(t => t.hours)[0]          
           }}   
-      </span>
-  
-      <span v-if="editMode">
-        <el-input placeholder="hrs" v-model="item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)
-          .flat()
-          .filter(t => t.date_of_week == weekof)    
-          .map(t => t.hours)[0]" :key="i"></el-input>
-      </span>
+      </span>   
+      <span v-if="!item.tasks && rowId !== scope.row.id">         
+      </span>  
       <span>
-
       </span>
-     </template>              
+       </template>              
       </el-table-column>
-    </el-table-column>
+       </el-table-column>            
+      <el-table-column
+        label="Actions"
+        width="110"     
+        fixed="right"
+        align="center"
+        >
+          <template slot-scope="scope">
+              <el-button 
+              size="mini"
+              type="default" 
+              v-tooltip="`Cancel Edit`"       
+              v-if="scope.$index == rowIndex"
+              @click.prevent="cancelEdits(scope.$index, scope.row)"  
+              class="bg-secondary text-light  px-2">
+            <i class="fas fa-ban"></i>
+              </el-button>
+            <el-button
+              size="mini"
+              type="default"
+              v-tooltip="`Edit`" 
+              class="bg-light px-2"    
+              v-if="scope.$index !== rowIndex"       
+              @click.prevent="editToggle(scope.$index, scope.row)"> <i class="fa-light fa-calendar-pen text-primary"></i>
+              </el-button>            
+              <el-button
+              type="default"
+              size="mini"
+              @click.prevent="saveTimesheetRow(scope.$index, scope.row, item.id )"           
+              v-tooltip="`Save`" 
+              class="bg-primary text-light  px-2">           
+            <i class="far fa-save"></i>
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       </el-tab-pane>
-      <el-button type="primary" @click="editToggle" class="calendarBtn"  circle>
+      <!-- <el-button type="primary"   @click="editToggle(scope.$index, scope.row)" class="calendarBtn"  circle>
         <i class="fa-light fa-calendar-pen text-light"></i>
-      </el-button>
+      </el-button> -->
      
     </el-tabs>
    
@@ -200,453 +283,25 @@
         tabIndex: this.editableTabsValue,
         loading: true,
         rowIndex: null, 
+        addedUser: [],
         rowId: null, 
-        input: '',
+        matrixDates: [],
+        input: [],
         editMode: false, 
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
+        Week: [],
         DV_facility: Object.assign({}, this.facility),
-        Weeks: [ '2-Jan', '9-Jan', '16-Jan','30-Jan', '6-Feb', '13-Feb', '20-Feb', '27-Feb','6-Mar', '20-Mar', '27-Mar' ],
-    
-      //PROJECT
-      stimesheets: [
-
-        {
-           id: 1,
-           full_name: "Frank Tucker",
-           organization: "Test Org",
-           tasks: [
-
-                {
-
-                    id: 10,
-                    text: "Task One",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 100,
-                    actual_effort: 90,
-                    timesheets: [
-
-                        {
-
-                            id: 19,
-                            date_of_week: "2-Jan",
-                            hours: 2.5,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-
-                    ]
-
-                },
-                {
-                    id: 12,
-                    text: "Task Two",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 85,
-                    actual_effort: 65,
-                    timesheets: [
-
-                        {
-
-                            id: 19,
-                            date_of_week: "2-Jan",
-                            hours: 2,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-
-                    ]
-
-                },
-                {
-
-                id: 13,
-                text: "Task Three",  
-                due_date: "2023-02-19",
-                progress: 0,                  
-                start_date: "2023-02-16",
-                facility_project_id: 1445,              
-                planned_effort: 85,
-                actual_effort: 65,
-                timesheets: [
-
-                    {
-
-                        id: 19,
-                        date_of_week: "27-Mar",
-                        hours: 5,
-                        user_id: 1,
-                        facility_project_id: 1460,
-                        created_at: "2023-02-16T16:56:25.112-05:00",
-                        updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                    }
-
-                ]
-
-                },
-            ]
-
-        },
-          {
-            id: 2,        
-            full_name: "Juan Rivera",
-            tasks: [
-
-                {
-
-                    id: 10,
-                    text: "Task One",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 100,
-                    actual_effort: 90,
-                    timesheets: [
-
-                        {
-
-                            id: 19,
-                            date_of_week: "2-Jan",
-                            hours: 1,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-
-                    ]
-
-                },
-                {
-
-                    id: 12,
-                    text: "Task Two",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 85,
-                    actual_effort: 65,
-                    timesheets: [
-
-                        {
-
-                            id: 19,
-                            date_of_week: "2-Jan",
-                            hours: 1.5,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-
-                    ]
-
-                },
-                {
-
-                  id: 13,
-                  text: "Task Three",  
-                  due_date: "2023-02-19",
-                  progress: 0,                  
-                  start_date: "2023-02-16",
-                  facility_project_id: 1445,              
-                  planned_effort: 85,
-                  actual_effort: 65,
-                  timesheets: [
-
-                      {
-
-                          id: 19,
-                          date_of_week: "27-Mar",
-                          hours: 2.5,
-                          user_id: 1,
-                          facility_project_id: 1460,
-                          created_at: "2023-02-16T16:56:25.112-05:00",
-                          updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                      }
-
-                  ]
-
-                  },
-            ]
-
-        },
-          {
-            id: 3,    
-            full_name: "Billy Bob",
-            organization: "Test Org",
-            tasks: [
-
-                {
-
-                    id: 12,
-                    text: "Task 2",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 100,
-                    actual_effort: 90,
-                    timesheets: [
-                        {
-                            id: 19,
-                            date_of_week: "9-Jan",
-                            hours: 3,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-                    ]
-                },
-                {
-                    id: 13,
-                    text: "Task 3",  
-                    due_date: "2023-02-19",
-                    progress: 0,                  
-                    start_date: "2023-02-16",
-                    facility_project_id: 1445,              
-                    planned_effort: 85,
-                    actual_effort: 65,
-                    timesheets: [
-
-                        {
-
-                            id: 19,
-                            date_of_week: "2-Jan",
-                            hours: 6,
-                            user_id: 1,
-                            facility_project_id: 1460,
-                            created_at: "2023-02-16T16:56:25.112-05:00",
-                            updated_at: "2023-02-16T16:56:25.112-05:00"
-
-                        }
-
-                    ]
-
-                },
-            ]
-
-        }
-
-      ],
-      tvableTasks: [
-      {
-       name: 'Task 1',
-       id: 10,
-       planned_effort: 100, 
-       actual_effort: 90, 
-       users: [
-           {
-            name: 'Joe Smith',
-            taskId: 10,    
-            time: [
-            {
-             week: '2-Jan',
-             a_effort: 40
-            },
-            {
-             week: '9-Jan',
-             a_effort: 40
-            },
-            {
-             week: '16-Jan',
-             a_effort: 40
-            },
-           ]
-        },
-        {
-          name: 'Ricky Bobby',
-          taskId: 10,    
-          time: [
-            {
-             week: '2-Jan',
-             a_effort: 40
-            },
-            {
-             week: '9-Jan',
-             a_effort: 40
-            },
-            {
-             week: '16-Jan',
-             a_effort: 40
-            },
-           ]
-        },
-        {
-          name: 'Juan Garcia',
-          taskId: 10,    
-          time: [
-            {week: '6-Feb',
-            a_effort: 40
-            },
-            {week: '13-Feb',
-            a_effort: 40
-            },
-            {week: '20-Feb',
-             a_effort: 40
-            },
-           ]
-        },
-        {
-          name: 'Bob Smith',
-          taskId: 10,    
-          time: [
-            {week: '27-Feb',
-            a_effort: 40
-            },
-            {week: '6-Mar',
-            a_effort: 40
-            },
-            {week: '20-Mar',
-             a_effort: 40
-            },
-            {week: '27-Mar',
-             a_effort: 40
-            },
-           ]
-        },
-
-       ]    
-      },
-      { 
-       name: 'Task 2',
-       planned_effort: 110,
-       id: 12, 
-       actual_effort: 95,  
-       users: [
-          {
-          name: 'Joe Tasker',
-          taskId: 12,    
-          time: [
-          {
-             week: '30-Jan',
-             a_effort: 40
-            },
-            {
-             week: '6-Feb',
-             a_effort: 40
-            },
-            {
-             week: '13-Feb',
-             a_effort: 40
-            },
-           ]
-        },    
-        {
-          name: 'Bob Smith',
-          taskId: 12,    
-          time: [
-          {
-             week: '2-Jan',
-             a_effort: 40
-            },
-            {
-             week: '9-Jan',
-             a_effort: 40
-            },
-            {
-             week: '16-Jan',
-             a_effort: 40
-            },
-           ]
-        },
-       ]      
-    
-      },
-      { 
-       name: 'Task 3',
-       planned_effort: 150, 
-       id: 13, 
-       actual_effort: 110, 
-       users: [
-        
-         {
-          name: 'Bambam Three',
-          taskId: 13, 
-          time: [
-          {
-             week: '6-Mar',
-             a_effort: 40
-            },
-            {
-             week: '20-Mar',
-             a_effort: 40
-            },
-            {
-             week: '27-Mar',
-             a_effort: 40
-            },
-           ]
-        },
-        {
-          name: 'Juan Garcia',
-          taskId: 13,    
-          time: [
-           {
-             week: '2-Jan',
-             a_effort: 40
-            },
-            {
-             week: '9-Jan',
-             a_effort: 40
-            },
-            {
-             week: '16-Jan',
-             a_effort: 40
-            },
-           ]
-        },
-        {
-          name: 'Bob Smith',
-          taskId: 13,    
-          time: [
-            {
-             week: '2-Jan',
-             a_effort: 40
-            },
-            {
-             week: '9-Jan',
-             a_effort: 40
-            },
-            {
-             week: '16-Jan',
-             a_effort: 40
-            },
-           ]
-        },
-
-       ]      
-    
-      },
-
-      ],   
+      
+      //PROJECT  
       }
     },
     methods: {
       ...mapMutations([
       "SET_TIMESHEET",
       "SET_TIMESHEET_STATUS",
+      "SET_TIMESHEETS_STATUS",
       "TOGGLE_TIMESHEET_LOADED"
       ]),
       ...mapActions([
@@ -658,91 +313,72 @@
       console.log("Timesheets Vue: ")
       console.log(e)
     },
-    saveTimesheet(index, rows){
+    saveTimesheetRow(index, rows, userId){
       this.rowIndex = null;
       this.rowId = null;
-      let id = null;    
-
-  
-      // Row edit action will occur here
-      let timeSheetData = {
+     for (var i = 0; i < this.input.length; i++) {
+        if(this.matrixDates[i] && this.input[i] ){
+           console.log(this.matrixDates[i])
+           console.log(this.input[i])
+         let timeSheetData = {
           timesheetData: {
-            hours: rows.hours,
-            week: rows.date_of_week,
-            taskId: rows.task_id,
-            userId: this.$currentUser.id, 
-         
-        },
-      };
-      console.log(timeSheetData)
-      if (id){
-        this.updateTimesheet({...timeSheetData, id})
-        console.log(timeSheetDataa)
-      } else {
+            hours: this.input[i],
+            week: this.matrixDates[i],
+            taskId: rows.id,
+            userId: userId,   
+            programId: this.$route.params.programId,
+            projectId: this.$route.params.projectId
+         },
+        };
+         console.log(timeSheetData)
+         console.log(timeSheetData)
+      // if (id){
+      //   this.updateTimesheet({...timeSheetData, id})
+      //   console.log(timeSheetDataa)
+      // } else {
         this.createTimesheet({...timeSheetData})     
-      }
+      // }
+
+        }
+  
+    }
+      // Row edit action will occur here
+    
+    
     }, 
       addTab(targetName) {
         let newTabName = ++this.tabIndex + '';
         this.timesheets.push({
-          full_name: this.$currentUser.full_name,
+          full_name: this.addedUser.fullName,
           name: newTabName,
           content: 'New Tab content',
-          id: this.$currentUser.id 
+          id: this.addedUser.id 
         });
         this.editableTabsValue = newTabName;
+        this.addedUser = []
       },
       handleClick(tab, event){
         console.log(tab)
         console.log(event)
       },
-      editToggle(){
-        this.editMode = !this.editMode
+      editToggle(index, row ){
+        this.rowIndex = index
+        console.log(row);   
+        this.rowId = row.id
       },
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.notes.includes(s); 
+      cancelEdits(index, rows) {
+        this.rowIndex = null;
+        this.rowId = null;  
       },
-     addNewNote() {
-        this.setTaskForManager({key: 'note', value: {}})
-        // Route to new task form page
-        this.$router.push(
-          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/new`
-        );
-      },
-      noteCreated(note) {
-        this.$emit('refresh-facility')
-        this.newNote = false
-        this.facility.notes.unshift(note)
-      },
-      noteUpdated(note, refresh=true) {
-        let index = this.facility.notes.findIndex((t) => t.id == note.id)
-        if (index > -1) Vue.set(this.facility.notes, index, note)
-        if (refresh) {
-          this.newNote = false
-          this.$emit('refresh-facility')
-        } else {
-          this.updateFacilityHash(this.facility)
-        }
-      },
-      // noteUpdated(note) {
-      //   let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
-      //   if (index > -1) Vue.set(this.DV_facility.notes, index, note)
-      // },
-      noteDeleted(note) {
-        this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
-      }
+
     },
     computed: {
       ...mapGetters([
         'myActionsFilter',
         "timesheets",
-        "timeSheetsStatus",
-        "timeSheetsLoaded",    
+        "timeSheetStatus",
+        "timeSheetsLoaded",  
+        "activeProjectUsers"  
       ]),
      userTime(){
         if(this.timesheets && this.timesheets.length > 0){
@@ -752,37 +388,27 @@
       editableTabsValue(){
         if(this.timesheets){
           return this.timesheets.length
-        }
-      
+        }      
       }, 
       weekOfArr(){
         if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-          let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
+          // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
           let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
-          let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
+          // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
           let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
-         
-            console.log( earliestTaskDate)      
-            console.log( latestTaskDate)
-            // var curr = earliestTaskDate; // get current date
-            // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-            // var last = first + 4; // last day is the first day + 6
 
-            // var lastday = new Date(curr.setDate(last)).toUTCString()
-            // console.log(lastday)
-
-          var start = earliestTaskDate;          
-          var end = latestTaskDate;
+          var start = new Date("01/06/2023");          
+          var end = latestTaskDate;  
 
           var loop = new Date(start);
           while(loop <= end){
-          //  console.log(loop)     
 
+            console.log(moment(loop).format("DD MMM YY") );    
+            this.matrixDates.push(moment(loop).format("DD MMM YY"))
             var newDate = loop.setDate(loop.getDate() + 7);
             loop = new Date(newDate);
-          }
-     
-        }        
+          }     
+        }     
       },
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
@@ -791,18 +417,7 @@
           if (resp) valid = valid && resp.test(n.body)
           return valid
         })
-      },
-      C_myNotes: {
-        get() {
-          return this.myNotesCheckbox;
-          // return _.map(this.myActionsFilter, 'value').includes('notes')
-        },
-        set(value) {
-          this.myNotesCheckbox = value
-          // if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Notes", value: "notes"}])
-          // else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "notes"))
-        }
-      }
+      },     
     },
     mounted() {
      this.fetchTimesheets(this.$route.params)
@@ -810,7 +425,33 @@
     watch: {
       timesheets(){
         if(this.timesheets){
-          console.log('timesheets: ' + this.timesheets)
+          console.log(this.timesheets)
+        }
+      },
+     timeSheetStatus: {
+      //Need to add weekOfArr value here to handle data better than the current load property within the template
+      handler() {
+        if (this.timeSheetStatus == 200) {
+          this.$message({
+            message: `Task Effort successfully saved.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_TIMESHEET_STATUS(0);
+          this.fetchTimesheets(this.$route.params)
+        }
+      },
+    },  
+      matrixDates(){
+        if(this.matrixDates){
+      
+          console.log(this.matrixDates)
+        }
+      },
+     input(){
+        if(this.input && this.input.length > 0){
+          console.log('input array:')
+          console.log(this.input)
         }
       },
       facility: {
@@ -825,14 +466,10 @@
 
 <style lang="scss" scoped>
 .calendarBtn {
-  font-size: 2.5rem;
-  margin-top: 1rem;
-  float: right;
   transition: all .2s ease-in-out; 
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
       0 3px 3px rgba(56, 56, 56, 0.23);
 }
-
 .calendarBtn:hover {
   transform: scale(1.06);
 }
