@@ -98,7 +98,6 @@ export default {
     },
     tab() {
       let url = this.$route.path;
-
       if (url.includes("sheet")) {
         return "sheet";
       }

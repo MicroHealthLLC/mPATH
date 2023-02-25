@@ -1,6 +1,6 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container-fluid m-2" data-cy="facility_rollup">
+  <div class="container-fluid m-2" data-cy="facility_rollup" :load="log(programTimesheets)">
 
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
@@ -175,54 +175,56 @@
       >
      <h3 class="centerLogo">{{ currentProject.name }}'s User Task Progress</h3>   
      
-     <div class="taskUserInfo">
-      <b>Week of:</b><br>
-      <b>Name of Staff:</b><br>
-      <b>Position:</b> 
-     </div>
-     <table
-      class="table table-sm table-bordered mt-3"     
-      style=""
-      >
-      <thead>        
+     <div class="taskUserInfo" v-for="user, userIndex in programTimesheets" :key="user.id">
+      <span><h6>Week of:  </h6> </span> 
+      <span><h6>Name of Staff: {{ user.full_name }} </h6> </span> 
+      <span><h6>Position:{{ user.title }} </h6></span> 
+      <table class="table table-sm table-bordered mt-3" style="">     
+      <thead>      
         <tr style="background-color:#ededed">
           <th style="width:20%; font-size: 1rem">Project</th>
           <th style="width:17%; font-size: 1rem">Task</th>
           <th style="width:28%; font-size: 1rem">Task Description</th>
           <th style="width:12%; font-size: 1rem">Actual <br>Effort</th>
           <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
-
         </tr>
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
        <tr class="mb-2">
-        <td>{{task.facilityName}}</td>
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-          <li>{{ each.text }}</li>         
-          </ul>         
-        </td>       
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li> {{  each.description }}        
-          </li>         
-          </ul>          
-        </td>
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-            <li>9<span style="visibility: hidden"> {{  each.progress }}</span>
-            </li>     
-          </ul>          
-        </td>       
-        <td class="updates">            
-          <ul class="a" v-for="each, i in task.tasks" :key="i">           
-          <li v-if="each && each.progress !== null">{{ each.progress }}</li>         
-          <li v-else>{{  }}</li>         
-          </ul>          
-        </td> 
+        <td>  
   
+          <span v-if="user.tasks.filter(t => t.timesheets.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }}</span>         
+          
+        </td>
+        <td>
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.text }}</li>       
+        
+          </ul>    
+
+        </td>
+        <td>
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.description }}</li>         
+          </ul>     
+
+        </td>
+        <td>
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <li v-if="each.facility_project_id == task.facilityProjectId"
+          >
+          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+                    
+          </li>         
+          </ul>    
+
+        </td>
+        <td>
+          <!-- %Completion -->
+        </td>
+     
       </tr>  
-      <tr class="py-2">
+      <!-- <tr class="py-2"  v-if="user.tasks.filter(t => t.timesheets.length > 0)[0].facility_project_id == task.facilityProjectId">
     
       <td >    
       </td> 
@@ -232,13 +234,12 @@
         <em class="text-dark">Project Efforts Totals: </em>
       </td> 
       <td >
-        ---
-       <!-- <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em> -->
+ 
       </td>    
       <td>      
       </td> 
          
-      </tr>
+      </tr> -->
 
     </tbody>  
     </table>
@@ -261,6 +262,8 @@
         </tr>
       </thead>
     </table>
+     </div>
+
   
     <span class="centerLogo" >
         <img
@@ -1247,6 +1250,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "programTimesheets",
       "contentLoaded",
       "currentProject",
       "lessonsLoaded",
@@ -1928,7 +1932,8 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts'
+     'fetchProgramLessonCounts',
+     'fetchProgramTimesheets'
      ]), 
      ...mapMutations([
         'setHideComplete',
@@ -1945,6 +1950,7 @@ export default {
     },
     openUserTasksReport() {
       this.userTasksDialog = true;
+      this.fetchProgramTimesheets(this.$route.params.programId)
     },
     showLessToggle() {
       this.showLess = "Show Less";
@@ -1956,7 +1962,7 @@ export default {
         doc.save("Task_List.pdf")
       },
     log(e){
-      // console.log(e)
+      console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);

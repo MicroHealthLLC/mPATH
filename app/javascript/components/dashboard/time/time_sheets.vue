@@ -231,7 +231,7 @@
               <el-button 
               size="mini"
               type="default" 
-              v-tooltip="`Cancel Edit`"       
+              v-tooltip="`Cancel`"       
               v-if="scope.$index == rowIndex"
               @click.prevent="cancelEdits(scope.$index, scope.row)"  
               class="bg-secondary text-light  px-2">
@@ -240,7 +240,7 @@
             <el-button
               size="mini"
               type="default"
-              v-tooltip="`Edit`" 
+              v-tooltip="`Add Effort`" 
               class="bg-light px-2"    
               v-if="scope.$index !== rowIndex"       
               @click.prevent="editToggle(scope.$index, scope.row)"> <i class="fa-light fa-calendar-pen text-primary"></i>

@@ -4,6 +4,11 @@ const formData = new FormData();
 const taskStore = {
     state: () => ({
 
+      //Program Level Timesheet
+      program_timesheets: [],
+      program_timesheets_status: 0,
+      program_timesheets_loaded: true,
+
       //All timesheets
       timesheets: [],
       timesheets_status: 0,
@@ -35,6 +40,27 @@ const taskStore = {
         })
         .finally(() => {
           commit("TOGGLE_TIMESHEETS_LOADED", true);
+        });
+    },
+    fetchProgramTimesheets({ commit },  programId) {
+      commit("TOGGLE_PROGRAM_TIMESHEETS_LOADED", false);      
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/programs/project_timesheets/${programId}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_PROGRAM_TIMESHEETS", res.data.timesheets);
+          console.log(res.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PROGRAM_TIMESHEETS_LOADED", true);
         });
     },
 
@@ -105,6 +131,12 @@ const taskStore = {
       },
     },
     mutations: {
+
+      //Program Timesheets
+      SET_PROGRAM_TIMESHEETS: (state, value) => (state.program_timesheets = value),
+      SET_PROGRAM_TIMESHEETS_STATUS: (state, status) => (state.program_timesheets_status = status), 
+      TOGGLE_PROGRAM_TIMESHEETS_LOADED: (state, loaded) => (state.program_timesheets_loaded = loaded),
+
       //Individual Timesheets
       SET_TIMESHEET: (state, value) => (state.timesheet = value),
       SET_TIMESHEET_STATUS: (state, status) => (state.timesheet_status = status), 
@@ -114,6 +146,8 @@ const taskStore = {
       SET_TIMESHEETS: (state, value) => (state.timesheets = value),
       SET_TIMESHEETS_STATUS: (state, status) => (state.timesheets_status = status), 
       TOGGLE_TIMESHEETS_LOADED: (state, loaded) => (state.timesheets_loaded = loaded),
+
+
 
     },
     getters: {
@@ -127,6 +161,11 @@ const taskStore = {
      timesheets: (state) => state.timesheets, 
      timeSheetsStatus: (state) => state.timesheets_status,
      timeSheetsLoaded: (state) => state.timesheets_loaded,
+
+     //Program Timesheets
+     programTimesheets: (state) => state.program_timesheets,
+     programTimesheetsStatus: (state) => state.program_timesheets_status,
+     programTimeSheetsLoaded: (state) => state.program_timesheets_loaded,
 
     },
   };
