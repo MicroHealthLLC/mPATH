@@ -491,7 +491,12 @@
                 >Actual Effort </label
               ></span>
           
-                <el-input></el-input>
+              <el-input
+              :disabled="true"
+              type="text"
+              v-model="DV_task.actualEffort"
+              placeholder="READ ONLY"
+              ></el-input>
           
           
             <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>

@@ -65,7 +65,7 @@
     
     <el-tab-pane label="Summary" class="is-active">   
       <el-table
-      v-if="tableData"
+      v-if="tableData && matrixDates && matrixDates.length > 0"
       :data="tableData"
       height="450"
       class="crudRow mt-4"
@@ -118,6 +118,9 @@
       </el-table-column>
     </el-table-column>
       </el-table>
+      <div v-else>
+        You currently have no Tasks in this Project or the Task due date has passed. Please add a task or ensure the due date is a future date.
+      </div>
       </el-tab-pane>
       <el-tab-pane
         v-for="(item, index) in timesheets"
@@ -126,7 +129,7 @@
         :name="index"
       >
       <el-table
-      v-if="tableData"
+      v-if="tableData && matrixDates && matrixDates.length > 0"
       :data="tableData"
       height="450"
       class="crudRow mt-4"
@@ -253,6 +256,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div v-else>
+        You currently have no Tasks in this Project or the Task due date has passed. Please add a task or ensure the due date is a future date.
+      </div>
       </el-tab-pane>
       <!-- <el-button type="primary"   @click="editToggle(scope.$index, scope.row)" class="calendarBtn"  circle>
         <i class="fa-light fa-calendar-pen text-light"></i>
@@ -429,12 +435,15 @@
       filteredActiveProjectUsers(){
         if(this.timesheets && this.activeProjectUsers && this.timesheets.length > 0){
            return this.activeProjectUsers.filter( t => !this.timesheets.map(f => f.id).includes(t.id))
+        } else {
+          return this.activeProjectUsers
         }
       },
       weekOfArr(){
         if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
           let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
+        
           // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
           let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
 
@@ -446,6 +455,9 @@
 
             console.log(moment(loop).format("DD MMM YY") );    
             this.matrixDates.push(moment(loop).format("DD MMM YY"))
+            console.log("MAtrix Dates:  ")
+          console.log( this.matrixDates)
+        
             var newDate = loop.setDate(loop.getDate() + 7);
             loop = new Date(newDate);
           }     
@@ -494,9 +506,9 @@
     },      
       matrixDates(){
         if(this.matrixDates){
-      
-          console.log(this.editableTabsValue )
-        }
+          console.log("Matrix Dates in Watch: ")
+          console.log(this.matrixDates)
+        }        
       },
      input(){
         if(this.input && this.input.length > 0){
