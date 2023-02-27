@@ -187,14 +187,60 @@
           .map(t => t.timesheets)
           .flat()
           .filter(t => t.date_of_week == weekof)    
-          .map(t => t.hours)[0] "   >       
-        {{ 
+          .map(t => t.hours)[0] ">     
+          
+          <!-- IF edit dateOfWeek, display input field with v-model that will capture the  -->
+       
+          <!-- <el-input 
+            v-if="editMode"
+            type="text" 
+            :name="weekof"           
+            v-model="item.tasks.filter(t => t.id == scope.row.id )
+             .map(t => t.timesheets)
+             .flat()
+             .filter(t => t.date_of_week == weekof)    
+             .map(t => t.hours)[0]          
+            "
+            :id="weekof"
+            >
+           </el-input>    -->
+
+           <i class="fa-light fa-calendar-pen text-primary "  
+           v-tooltip="`Edit Effort`" 
+           @click="timeEdit(
+            scope.$index, 
+            scope.row, 
+            weekof, 
+            weekofIndex,
+            item.tasks
+            .filter(t => t.id == scope.row.id )
+            .map(t => t.timesheets)
+            .flat()
+            .filter(t => t.date_of_week == weekof)           
+            )"></i>
+           <!-- <i class="fas fa-ban" v-tooltip="`Cancel`"  v-if="columnIndex == weekofIndex" @click="cancelTimeEdit"></i> -->
+
+          <el-input 
+            v-if="editMode && weekofIndex == columnIndex"
+            type="text" 
+            class="editCol"       
+            :name="weekof"           
+             v-model="editColValue"
+            :id="weekof"
+            >
+           </el-input>    
+
+           
+          <span v-else>
+          {{ 
           item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)
           .flat()
           .filter(t => t.date_of_week == weekof)    
-          .map(t => t.hours)[0]          
-          }}   
+          .map(t => t.hours)[0] 
+          }} 
+          </span> 
+
       </span>   
           <el-input 
           v-else
@@ -284,7 +330,11 @@
         loading: true,
         tasksQuery: '',
         rowIndex: null, 
+        updatedTimesheet: null, 
+        editColValue: '',
+        columnIndex: null, 
         addedUser: [],
+        hover: false,
         rowId: null, 
         matrixDates: [],
         input: [],
@@ -319,18 +369,32 @@
     openUserTasksReport() {
       this.userTasksDialog = true;
     },
-    saveTimesheetRow(index, rows, userId){
-      if (this.timesheets.filter(t => t  && t.id == userId)[0].tasks){
-        // this.updateTimesheet({...timeSheetData, id})
-        console.log(this.timesheets.filter(t => t  && t.id == userId)[0].tasks)
-      } else {
-        console.log("User DOES NOT exist.  Create.")
-        // this.createTimesheet({...timeSheetData})     
-      }
-      console.log(userId)
+    saveTimesheetRow(index, rows, userId){ 
+
       this.rowIndex = null;
       this.rowId = null;
-     for (var i = 0; i < this.input.length; i++) {
+      
+      // IF EDITING, UPDATE TIMESHEET
+      if(this.updatedTimesheet){
+        let t = this.updatedTimesheet
+        let timeSheetData = {
+          timesheetData: {
+            hours: this.editColValue,           
+            taskId: t[0].resource_id,
+            userId: userId,   
+            id: t[0].id, 
+            programId: this.$route.params.programId,
+            projectId: this.$route.params.projectId
+         },
+        };
+        console.log(this.updatedTimesheet)
+        console.log(timeSheetData)
+      this.updateTimesheet({...timeSheetData})
+
+      //ELSE, CREATE NEW TIMESHEET
+
+      } else {
+        for (var i = 0; i < this.input.length; i++) {
         if(this.matrixDates[i] && this.input[i] ){
            console.log(this.matrixDates[i])
            console.log(this.input[i])
@@ -344,21 +408,13 @@
             projectId: this.$route.params.projectId
          },
         };
-         console.log(timeSheetData)
-         console.log(timeSheetData)
-
-        // this.updateTimesheet({...timeSheetData, id})
-
-
+         console.log(timeSheetData) 
         this.createTimesheet({...timeSheetData})     
     
 
-        }
-  
-    }
-      // Row edit action will occur here
-    
-    
+        } 
+      }    
+    }    
     }, 
       addTab(targetName) {
         let newTabName = this.timesheets.length;
@@ -379,14 +435,25 @@
         console.log(event)
       },
       editToggle(index, row ){
+        this.editMode = true;
         this.rowIndex = index
         console.log(row);   
         this.rowId = row.id
       },
-      cancelEdits(index, rows) {
+     timeEdit(index, row, weekof, weekofIndex, timeSheet ){
+        this.columnIndex = weekofIndex 
+        console.log(timeSheet);  
+        this.updatedTimesheet =  timeSheet 
+      },    
+      cancelTimeEdit() {
+        this.columnIndex = null
+      },
+      cancelEdits() {
+        this.editMode = false; 
         this.rowIndex = null;
         this.rowId = null;  
-        this.input = []
+        this.input = [];
+        this.columnIndex = null
       },
 
     },
@@ -532,12 +599,31 @@
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
       0 3px 3px rgba(56, 56, 56, 0.23);
 }
-// .calendarBtn:hover {
-//   transform: scale(1.06);
-// }
-
 /deep/ #tab-0 {
   background-color: rgb(234, 234, 185) !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.editCol{
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+  width: 70% !important;
 }
 /deep/ .el-table .cell {
     word-break: break-word;

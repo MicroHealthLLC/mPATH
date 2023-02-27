@@ -175,7 +175,7 @@
       >
      <h3 class="centerLogo">{{ currentProject.name }}'s User Task Progress</h3>   
      
-     <div class="taskUserInfo" v-for="user, userIndex in programTimesheets" :key="user.id">
+     <div class="taskUserInfo" v-for="user, userIndex in programTimesheets.filter(t => t.tasks.map(t => t.timesheets.length > 0))" :key="user.id">
       <span><h6>Week of:  </h6> </span> 
       <span><h6>Name of Staff: {{ user.full_name }} </h6> </span> 
       <span><h6>Position:{{ user.title }} </h6></span> 
@@ -190,10 +190,10 @@
         </tr>
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
-       <tr class="mb-2">
+       <tr class="mb-1" >
         <td>  
   
-          <span v-if="user.tasks.filter(t => t.timesheets.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }}</span>         
+          <span v-if="user.tasks.filter(t => t.timesheets.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }} {{ userIndex }}</span>         
           
         </td>
         <td>
