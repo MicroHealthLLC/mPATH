@@ -387,13 +387,15 @@
             projectId: this.$route.params.projectId
          },
         };
+        console.log("update") 
         console.log(this.updatedTimesheet)
         console.log(timeSheetData)
       this.updateTimesheet({...timeSheetData})
 
       //ELSE, CREATE NEW TIMESHEET
 
-      } else {
+      }
+      if(this.input.length > 0) {
         for (var i = 0; i < this.input.length; i++) {
         if(this.matrixDates[i] && this.input[i] ){
            console.log(this.matrixDates[i])
@@ -408,13 +410,15 @@
             projectId: this.$route.params.projectId
          },
         };
+        console.log("create") 
          console.log(timeSheetData) 
         this.createTimesheet({...timeSheetData})     
     
 
         } 
-      }    
-    }    
+      }   
+    } 
+    
     }, 
       addTab(targetName) {
         let newTabName = this.timesheets.length;
