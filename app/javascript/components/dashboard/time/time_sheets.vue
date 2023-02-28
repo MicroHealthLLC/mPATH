@@ -376,7 +376,7 @@
     ]),
     log(e){
       // console.log("Timesheets Vue: ")
-      console.log(e)
+      // console.log(e)
     },
     openUserTasksReport() {
       this.userTasksDialog = true;
@@ -545,26 +545,24 @@
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
           let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
         
-          return taskDueDates
-        }
           // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
-        //   let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
 
-        //   var start = new Date("01/06/2023");          
-        //   var end = latestTaskDate;  
+          var start = new Date("01/06/2023");          
+          var end = latestTaskDate;  
 
-        //   var loop = new Date(start);
-        //   while(loop <= end){
+          var loop = new Date(start);
+          while(loop <= end){
 
-        //     console.log(moment(loop).format("DD MMM YY") );    
-        //     this.matrixDates.push(moment(loop).format("DD MMM YY"))
-        //     console.log("MAtrix Dates:  ")
-        //   console.log( this.matrixDates)
+            console.log(moment(loop).format("DD MMM YY") );    
+            this.matrixDates.push(moment(loop).format("DD MMM YY"))
+            console.log("MAtrix Dates:  ")
+          console.log( this.matrixDates)
         
-        //     var newDate = loop.setDate(loop.getDate() + 7);
-        //     loop = new Date(newDate);
-        //   }     
-        // }     
+            var newDate = loop.setDate(loop.getDate() + 7);
+            loop = new Date(newDate);
+          }     
+        }     
       },
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
