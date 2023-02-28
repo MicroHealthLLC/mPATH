@@ -232,6 +232,10 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
+  def timesheet_json
+    as_json.merge(timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours))
+  end
+
   def to_json(options = {})
     attach_files = []
     tf = self.task_files

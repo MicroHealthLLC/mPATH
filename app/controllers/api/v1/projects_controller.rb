@@ -5,27 +5,46 @@ class Api::V1::ProjectsController < AuthenticatedController
 
   def project_timesheets
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
+    
+    all_project_users = Project.find(params[:program_id]).users
+    facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
+    
+    all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?)", facility_project_ids)#.paginate(:page => params[:page], :per_page => 15)
 
-    all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?)", facility_project_ids)#.paginate(:page => params[:page], :per_page => 15)
-
-    all_users = User.where(id: all_timesheets.map(&:user_id))
-    all_tasks = Task.where(facility_project_id: facility_project_ids)
+    timesheet_by_users = all_timesheets.group_by{|t| t.user}
 
     # total_pages = all_timesheets.total_pages
     # current_page = all_timesheets.current_page
     # next_page = all_timesheets.next_page
 
     response = []
-    all_timesheets.group_by{|t| t.user}.each do |user, timesheets|
 
-      task_timesheets = timesheets.group_by(&:resource_id)
-      h = []
-      all_tasks.each do |task|
-        timesheets = task_timesheets[task.id] || []
-        h << task.as_json.merge!({timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours) }) 
+    all_project_users.each do |user|
+      user_hash = user.as_json
+      user_hash[:facilities] = []
+      timesheets = timesheet_by_users[user] || []
+      timesheet_task_ids = timesheets.map(&:resource_id).uniq
+      t_facility_projects = timesheets.map(&:facility_project).uniq
+      fp_array = []
+      
+      timesheet_by_tasks = timesheets.group_by{|t| t.resource }
+      tasks = timesheet_by_tasks.keys
+      tasks_by_facility_project = tasks.group_by{|task, timesheets| task.facility_project_id }
 
+      t_facility_projects.each do |fp|
+        tasks = tasks_by_facility_project[fp.id] || []
+        fp_hash = fp.facility.attributes
+        fp_hash[:tasks] = []
+        tasks.each do |task|
+          fp_hash[:tasks] << task.as_json.merge(timesheets: timesheet_by_tasks[task])
+        end
+        
+        fp_array << fp_hash
       end
-      response <<  user.as_json.merge!({tasks: h})
+      user_hash[:facilities] = fp_array
+
+      response << user_hash
+
     end
 
     # render json: {timesheets: response, total_pages: total_pages, current_page: current_page, next_page: next_page }
