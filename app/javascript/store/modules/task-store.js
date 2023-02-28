@@ -33,6 +33,7 @@ const taskStore = {
       })
         .then((res) => {
           commit("SET_TIMESHEETS", res.data.timesheets);
+          commit("SET_TIMESHEETS_STATUS", res.status);
           console.log(res.data)
         })
         .catch((err) => {
@@ -85,8 +86,9 @@ const taskStore = {
       })
         .then((res) => {
           console.log(res.status)
-          commit("SET_TIMESHEET", res.data.timesheets);
-          commit("SET_TIMESHEETS", res.data.timesheets);          
+          commit("SET_TIMESHEET", res.data.timesheet);
+          commit("SET_TIMESHEETS", res.data.timesheets);       
+          console.log(res)
           commit("SET_TIMESHEET_STATUS", res.status);
           commit("SET_TIMESHEETS_STATUS", res.status);
         })
@@ -102,6 +104,7 @@ const taskStore = {
     updateTimesheet({ commit }, {  timesheetData }) {
       commit("TOGGLE_TIMESHEET_LOADED", false);
       formData.append("timesheet[hours]",  timesheetData.hours);
+      formData.append("timesheet[date_of_week]",  timesheetData.week);
       formData.append("timesheet[task_id]",  timesheetData.taskId);
       formData.append("timesheet[user_id]",  timesheetData.userId);     
         axios({

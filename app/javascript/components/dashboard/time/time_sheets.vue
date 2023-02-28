@@ -51,8 +51,18 @@
               </el-input>      
               </div>  
                  
-              <div class="col-4" v-show="false">
-                <div>
+              <div class="col-4 mt-4">
+               <el-switch
+                v-model="taskProgressFilter"
+                active-text="Tasks In Progress"
+                inactive-text="All Tasks">
+              </el-switch>
+              <!-- <el-switch
+                v-model="hasTimesheet"
+                active-text="Effort Only"
+                inactive-text="All">
+              </el-switch> -->
+                <div  v-show="false">
               <label class="font-sm mb-0">Task Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
              </div>
@@ -331,6 +341,8 @@
         tasksQuery: '',
         rowIndex: null, 
         updatedTimesheet: null, 
+        taskProgressFilter: true, 
+        hasTimesheet: true, 
         editColValue: '',
         columnIndex: null, 
         addedUser: [],
@@ -363,8 +375,8 @@
       "fetchCurrentProject"
     ]),
     log(e){
-      console.log("Timesheets Vue: ")
-      console.log(e)
+      // console.log("Timesheets Vue: ")
+      // console.log(e)
     },
     openUserTasksReport() {
       this.userTasksDialog = true;
@@ -375,7 +387,7 @@
       this.rowId = null;
       
       // IF EDITING, UPDATE TIMESHEET
-      if(this.updatedTimesheet){
+      if(this.updatedTimesheet && this.updatedTimesheet !== null){
         let t = this.updatedTimesheet
         let timeSheetData = {
           timesheetData: {
@@ -383,6 +395,7 @@
             taskId: t[0].resource_id,
             userId: userId,   
             id: t[0].id, 
+            week:t[0].date_of_week, 
             programId: this.$route.params.programId,
             projectId: this.$route.params.projectId
          },
@@ -390,7 +403,8 @@
         console.log("update") 
         console.log(this.updatedTimesheet)
         console.log(timeSheetData)
-      this.updateTimesheet({...timeSheetData})
+        console.log(this.editColValue)
+    this.updateTimesheet({...timeSheetData})
 
       //ELSE, CREATE NEW TIMESHEET
 
@@ -412,7 +426,8 @@
         };
         console.log("create") 
          console.log(timeSheetData) 
-        this.createTimesheet({...timeSheetData})     
+         console.log(this.editColValue)
+         this.createTimesheet({...timeSheetData})     
     
 
         } 
@@ -440,6 +455,7 @@
       },
       editToggle(index, row ){
         this.editMode = true;
+        this.editColValue = null;
         this.rowIndex = index
         console.log(row);   
         this.rowId = row.id
@@ -468,6 +484,7 @@
         "currentProject",
         "taskIssueDueDateFilter",
         "timeSheetStatus",
+        "timeSheetsStatus",
         "timeSheetsLoaded",  
         "activeProjectUsers"  
       ]),
@@ -482,13 +499,26 @@
      },
      userTime(){
         if(this.timesheets && this.timesheets.length > 0){
-          return this.timesheets.map(t => t.tasks).flat()
+          let time = this.timesheets.map(t => t.tasks).flat()        
+          .filter((task) => {
+              if (this.hasTimesheet) {                  
+                return task.timesheets.length > 0;
+              } else return true;
+            })     
+            console.log(time)
+            return time   
         }
       },
       tableData() {
           if (this.facility && this.facility.tasks && this.facility.tasks.length > 0){
             let tasks = this.facility.tasks
-            
+
+            .filter((task) => {
+              if (this.taskProgressFilter) {    
+                console.log(task)      
+                return task.progress < 100;
+              } else return true;
+            })           
             .filter((task) => {
             if (this.tasksQuery !== "") {
               return (
@@ -567,6 +597,8 @@
             showClose: true,
           });
           this.input = [];
+          this.editColValue = null;
+          this.updatedTimesheet = null, 
           this.SET_TIMESHEET_STATUS(0);
           this.SET_TIMESHEETS_STATUS(0)
           this.fetchTimesheets(this.$route.params)

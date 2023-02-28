@@ -632,7 +632,7 @@
           </div>
 
           <div class="form-group pt-3 mx-4">
-            <label class="font-md">Checklists</label>
+            <label class="font-md">Subtasks</label>
             <span
               class="ml-2 clickable"
               v-if="_isallowed('write')"
@@ -1379,7 +1379,7 @@ export default {
           form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
         },
         {
-          label: "Checklist",
+          label: "Subtasks",
           key: "tab3",
           closable: false,
           form_fields: ["Checklists"],
