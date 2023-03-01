@@ -1578,10 +1578,9 @@ export default {
           // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
           let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
 
-          var start = new Date("01/05/2023");  
+          var start = new Date("01/06/2023");  
           //Change this datre or Change the DTG Format on backend        
           var end = latestTaskDate;  
-
           var loop = new Date(start);
           while(loop <= end){
 
