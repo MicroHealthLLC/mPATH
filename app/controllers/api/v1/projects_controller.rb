@@ -13,7 +13,6 @@ class Api::V1::ProjectsController < AuthenticatedController
     else
       all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?)", facility_project_ids)
     end
-    binding.pry
     timesheet_by_users = all_timesheets.group_by{|t| t.user}
 
     # total_pages = all_timesheets.total_pages
