@@ -154,26 +154,30 @@
     >
     </el-table-column>
     <el-table-column
-      fixed
-      prop="actualEffort"
+      fixed      
       label="Actual Effort"
       width="80"
       header-align="center"
     >
-    <!-- <template slot-scope="scope">  
+
+    <template slot-scope="scope">  
       
-      <span v-if="item.tasks && item.tasks.length > 0">       
-        {{ 
-          item.tasks.filter(t => t.id == scope.row.id )
+      <span >
+         {{ item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.timesheets)      
+          .flat()
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) 
+          }} 
+          <!-- {{ 
+          userTime
+          .filter(t => t && t.id && t.id == scope.row.id) 
           .map(t => t.timesheets)
-          .flat()  
-          .map(t => t.actual_effort)        
-          }}   
-      </span>   
-     
-      <span>
+          .flat()    
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+          }}            -->
       </span>
-       </template>   -->
+    
+       </template>   
     </el-table-column>
     <el-table-column
       fixed

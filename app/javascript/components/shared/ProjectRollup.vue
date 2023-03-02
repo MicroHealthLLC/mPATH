@@ -307,14 +307,14 @@
       >
      <h3 class="centerLogo">{{ currentProject.name }}
          <button                
-            class="btn mh-orange text-light allCaps" data-cy=program_viewer_btn>
-            Task Effort Report Center
+            class="btn mh-orange text-light allCaps py-1" data-cy=program_viewer_btn>
+            <h3 class="py-0">Task Effort Report Center</h3>
           </button>  
       </h3>   
 
       <div class="row mt-3">
         <div class="col">
-        <label class="font-sm mb-0 d-flex">Select Users</label>
+        <h6 class="mb-1 d-flex">Select Users </h6>
         <el-select
         v-model="filteredUsers"
         multiple
@@ -322,25 +322,25 @@
         track-by="id"
         value-key="id"             
         clearable
-        placeholder="Search and select a User" 
+        placeholder="Program users with saved effort" 
         filterable
       >
         <el-option
-          v-for="item in activeProjectUsers"
+          v-for="item in effortUsers"
           :value="item"
           :key="item.id"
-          :label="item.fullName"
+          :label="item.full_name"
         >
         </el-option> 
       </el-select> 
         </div>  
         <div class="col"> 
-        <label class="font-sm mb-0 d-flex">Select <b class="mx-1">Week Of</b> Date</label>
+        <h6 class="mb-1 d-flex">Select Week Of Date</h6>
         <el-select
         v-model="dateOfWeekFilter"
         class="w-50 mr-2"            
         clearable
-        placeholder="Search and select a User" 
+        placeholder="Select Week of Date" 
         filterable
       >
         <el-option
@@ -366,7 +366,7 @@
 
 
         <button                
-            class="btn btn-sm mh-orange profile-btns text-light  allCaps pl-2" >
+            class="btn btn-sm mh-orange profile-btns text-light allCaps pl-2" >
             CREATE REPORT
           
             <i class="fas fa-print text-light grow" @click="printTaskReport"></i> 
@@ -381,7 +381,7 @@
      :key="user.id">
       <button 
         @click="printTaskReport(userIndex)"               
-        class="btn btn-sm profile-btns text-light  allCaps pl-2 mb-1" > <i class="fas fa-print text-dark grow" ></i>  
+        class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-1" > <i class="fas fa-print text-dark grow" ></i>  
       </button>    
 
 
@@ -401,7 +401,7 @@
         </tr>
       </thead>
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
-       <tr class="mb-1" >
+       <tr class="mb-1" v-if="task">
 
         <td>{{ task.facility_name }}</td>
         <td>
@@ -462,6 +462,7 @@
         </td>
       -->
       </tr>  
+     
       <!-- <tr class="py-2">
     
       <td >    
@@ -1542,35 +1543,22 @@ export default {
 
     ]),
     tableData() {
-          if (this.programTimesheets && this.activeProjectUsers && this.programTimesheets.length > 0){
-            
+          if (this.programTimesheets && this.activeProjectUsers && this.programTimesheets.length > 0){            
             let tasks = this.programTimesheets
-            // if(this.filteredUsers && this.filteredUsers.length > 0) {
-            //   return this.programTimesheets.filter( t => this.filteredUsers.map(f => f.id).includes(t.id)
             .filter((task) => {
-            if (this.filteredUsers) {
-              // console.log(task)         
+            if (this.filteredUsers) {       
               let status = this.filteredUsers.map((t) => t.id);
               return status.includes(task.id);         
              } else return true;
             })
-            // .filter((task) => {
-            // if (this.dateOfWeekFilter !== "") {
-            //   console.log(this.dateOfWeekFilter)                  
-            //   return task.facilities
-            //     .filter(t => t.tasks.length > 0)
-            //     .map(t => t.tasks)
-            //     .flat()
-            //     .filter(t => t.timesheets.length > 0)
-            //     // .map(t => t.timesheets).flat().map(t => moment(t.date_of_week).format("DD MMM YY"))
-            //     // .includes(this.dateOfWeekFilter)
-       
-            //  } else return true;
-            // })
-             return tasks
-                
+             return tasks                
           }      
       },
+     effortUsers(){
+      if(this.programTimesheets && this.activeProjectUsers){
+          return this.programTimesheets.filter( t => t && t.facilities.length > 0)    
+      }
+     },
      weekOfArr(){      
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
          let taskDueDates = this.facilities.filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => new Date(t.dueDate))
@@ -2443,7 +2431,7 @@ export default {
           this.fetchProgramTimesheets(dateObj)
           console.log(dateObj)
       //  this.fetchDateOfWeekQuery(dateObj)
-        }
+        } else  this.fetchProgramTimesheets({programId: this.$route.params.programId})
       }, 
     }
 };
