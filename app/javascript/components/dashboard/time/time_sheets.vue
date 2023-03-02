@@ -54,7 +54,7 @@
               <div class="col-4 mt-4">
                <el-switch
                 v-model="taskProgressFilter"
-                active-text="Tasks In Progress"
+                active-text="Incomplete Tasks"
                 inactive-text="All Tasks">
               </el-switch>
               <!-- <el-switch
@@ -598,6 +598,7 @@
           });
           this.input = [];
           this.editColValue = null;
+          this.columnIndex = null;
           this.updatedTimesheet = null, 
           this.SET_TIMESHEET_STATUS(0);
           this.SET_TIMESHEETS_STATUS(0)

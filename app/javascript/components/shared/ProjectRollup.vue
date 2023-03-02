@@ -1543,6 +1543,7 @@ export default {
     ]),
     tableData() {
           if (this.programTimesheets && this.activeProjectUsers && this.programTimesheets.length > 0){
+            
             let tasks = this.programTimesheets
             // if(this.filteredUsers && this.filteredUsers.length > 0) {
             //   return this.programTimesheets.filter( t => this.filteredUsers.map(f => f.id).includes(t.id)
@@ -1553,20 +1554,19 @@ export default {
               return status.includes(task.id);         
              } else return true;
             })
-            .filter((task) => {
-            if (this.dateOfWeekFilter !== "") {
-              console.log(this.dateOfWeekFilter)        
-             
-              return task.facilities
-                .filter(t => t.tasks.length > 0)
-                .map(t => t.tasks)
-                .flat()
-                .filter(t => t.timesheets.length > 0)
-                .map(t => t.timesheets).flat().map(t => moment(t.date_of_week).format("DD MMM YY"))
-                .includes(this.dateOfWeekFilter)
+            // .filter((task) => {
+            // if (this.dateOfWeekFilter !== "") {
+            //   console.log(this.dateOfWeekFilter)                  
+            //   return task.facilities
+            //     .filter(t => t.tasks.length > 0)
+            //     .map(t => t.tasks)
+            //     .flat()
+            //     .filter(t => t.timesheets.length > 0)
+            //     // .map(t => t.timesheets).flat().map(t => moment(t.date_of_week).format("DD MMM YY"))
+            //     // .includes(this.dateOfWeekFilter)
        
-             } else return true;
-            })
+            //  } else return true;
+            // })
              return tasks
                 
           }      
@@ -1578,18 +1578,12 @@ export default {
           // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
           let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
 
-          var start = new Date("01/05/2023");  
+          var start = new Date("01/06/2023");  
           //Change this datre or Change the DTG Format on backend        
           var end = latestTaskDate;  
-
           var loop = new Date(start);
-          while(loop <= end){
-
-            console.log(moment(loop).format("DD MMM YY") );    
-            this.matrixDates.push(moment(loop).format("DD MMM YY"))
-            console.log("MAtrix Dates:  ")
-          console.log( this.matrixDates)
-        
+          while(loop <= end){  
+            this.matrixDates.push(moment(loop).format("DD MMM YY"))        
             var newDate = loop.setDate(loop.getDate() + 7);
             loop = new Date(newDate);
           }     
@@ -2233,7 +2227,8 @@ export default {
   methods: {
       ...mapActions([
      'fetchProgramLessonCounts',
-     'fetchProgramTimesheets'
+     'fetchProgramTimesheets',
+     'fetchDateOfWeekQuery'
      ]), 
      ...mapMutations([
         'setHideComplete',
@@ -2251,7 +2246,7 @@ export default {
     openUserTasksReport() {
       // this.userTasksDialog = true;
       this.reportCenterModal = true
-      this.fetchProgramTimesheets(this.$route.params.programId)
+      this.fetchProgramTimesheets({programId: this.$route.params.programId})
     },
     showLessToggle() {
       this.showLess = "Show Less";
@@ -2265,11 +2260,11 @@ export default {
     },
     viewTaskEffortReport() {
       console.log("this btn works")
-      this.fetchProgramTimesheets(this.$route.params.programId)
+      // this.fetchProgramTimesheets({programId: this.$route.params.programId})
       this.viewTable = true
     },
     log(e){
-      console.log(e)
+      // console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);
@@ -2438,14 +2433,18 @@ export default {
   mounted() {
     this.fetchProgramLessonCounts(this.$route.params)  
   },
-  watch: { 
-      matrixDates(){
-        if(this.matrixDates){
-          console.log("Matrix Dates in Watch: ")
-          console.log(this.matrixDates)
-        }        
-      },
-
+  watch: {          
+      dateOfWeekFilter(){
+        if(this.dateOfWeekFilter !== ""){        
+          let dateObj = {
+            programId: this.$route.params.programId,
+            date: this.dateOfWeekFilter.replace(/\s+/g, '-')
+          }
+          this.fetchProgramTimesheets(dateObj)
+          console.log(dateObj)
+      //  this.fetchDateOfWeekQuery(dateObj)
+        }
+      }, 
     }
 };
 </script>
