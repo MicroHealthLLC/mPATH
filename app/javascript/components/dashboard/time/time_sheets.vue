@@ -154,27 +154,27 @@
     >
     </el-table-column>
     <el-table-column
-      fixed      
+      fixed    
+      prop="actualEffort"  
       label="Actual Effort"
       width="80"
       header-align="center"
     >
 
-    <template slot-scope="scope">  
-      
-      <span >
+    <template slot-scope="scope">        
+      <span v-if="item.tasks && item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.timesheets)      
+          .flat()
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) " >
          {{ item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.timesheets)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) 
-          }} 
-          <!-- {{ 
-          userTime
-          .filter(t => t && t.id && t.id == scope.row.id) 
-          .map(t => t.timesheets)
-          .flat()    
-          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-          }}            -->
+          }}    
+      </span>
+      <span v-else>
+         {{ 0
+          }}    
       </span>
     
        </template>   
@@ -504,12 +504,12 @@
      userTime(){
         if(this.timesheets && this.timesheets.length > 0){
           let time = this.timesheets.map(t => t.tasks).flat()        
-          .filter((task) => {
-              if (this.hasTimesheet) {                  
-                return task.timesheets.length > 0;
-              } else return true;
-            })     
-            console.log(time)
+          // .filter((task) => {
+          //     if (this.hasTimesheet && task.timesheets && task.timesheets.length > 0) {                  
+          //       return task.timesheets.length > 0;
+          //     } else return true;
+          //   })     
+          //   console.log(time)
             return time   
         }
       },
