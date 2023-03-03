@@ -175,7 +175,7 @@
       >
      <h3 class="centerLogo">{{ currentProject.name }}'s User Task Progress</h3>   
      
-     <div class="taskUserInfo" v-for="user, userIndex in programTimesheets.filter(t => t.facilities.map(t => t.tasks.length > 0))" :key="user.id">
+     <div class="taskUserInfo" v-for="user, userIndex in programEfforts.filter(t => t.facilities.map(t => t.tasks.length > 0))" :key="user.id">
       <span><h6>Week of: {{ dateOfWeekFilter }}  </h6> </span> 
       <span><h6>Name of Staff: {{ user.full_name }} </h6> </span> 
       <span><h6>Position:{{ user.title }} </h6></span> 
@@ -194,24 +194,24 @@
 
         <td>{{ task.facility_name }}</td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li >{{ each.text }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li >{{ each.description }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
           <li
           >
-          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+          {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
                     
           </li>         
           </ul>    
@@ -219,27 +219,27 @@
         </td>
         <!-- <td>  
   
-          <span v-if="user.tasks.filter(t => t.timesheets.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }} {{ userIndex }}</span>         
+          <span v-if="user.tasks.filter(t => t.efforts.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }} {{ userIndex }}</span>         
           
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.text }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.description }}</li>         
           </ul>     
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId"
           >
-          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+          {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
                     
           </li>         
           </ul>    
@@ -250,7 +250,7 @@
         </td>
       -->
       </tr>  
-      <!-- <tr class="py-2"  v-if="user.tasks.filter(t => t.timesheets.length > 0)[0].facility_project_id == task.facilityProjectId">
+      <!-- <tr class="py-2"  v-if="user.tasks.filter(t => t.efforts.length > 0)[0].facility_project_id == task.facilityProjectId">
     
       <td >    
       </td> 
@@ -405,25 +405,25 @@
 
         <td>{{ task.facility_name }}</td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li >{{ each.text }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li >{{ each.description }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
           <li
           >
         
-           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+           {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
                      
           </li>         
           </ul>    
@@ -431,27 +431,27 @@
         </td>
         <!-- <td>  
   
-          <span v-if="user.tasks.filter(t => t.timesheets.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }} {{ userIndex }}</span>         
+          <span v-if="user.tasks.filter(t => t.efforts.length > 0).filter(f => f.facility_project_id == task.facilityProjectId)">{{task.facilityName }} {{ userIndex }}</span>         
           
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.text }}</li>       
         
           </ul>    
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId">{{ each.description }}</li>         
           </ul>     
 
         </td>
         <td>
-          <ul class="a" v-for="each, i in user.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in user.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li v-if="each.facility_project_id == task.facilityProjectId"
           >
-          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+          {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
                     
           </li>         
           </ul>    
@@ -470,7 +470,7 @@
       <td >
       </td> 
       <td >
-        <em class="text-dark">Project Efforts Totals:     {{ task.tasks.map(t => t.timesheets).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}</em>
+        <em class="text-dark">Project Efforts Totals:     {{ task.tasks.map(t => t.efforts).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}</em>
       </td> 
       <td >
  
@@ -1497,7 +1497,7 @@ export default {
   computed: {
     ...mapGetters([
       "activeProjectUsers",
-      "programTimesheets",
+      "programEfforts",
       "contentLoaded",
       "currentProject",
       "lessonsLoaded",
@@ -1543,8 +1543,8 @@ export default {
 
     ]),
     tableData() {
-          if (this.programTimesheets && this.activeProjectUsers && this.programTimesheets.length > 0){            
-            let tasks = this.programTimesheets
+          if (this.programEfforts && this.activeProjectUsers && this.programEfforts.length > 0){            
+            let tasks = this.programEfforts
             .filter((task) => {
             if (this.filteredUsers) {       
               let status = this.filteredUsers.map((t) => t.id);
@@ -1555,8 +1555,8 @@ export default {
           }      
       },
      effortUsers(){
-      if(this.programTimesheets && this.activeProjectUsers){
-          return this.programTimesheets.filter( t => t && t.facilities.length > 0)    
+      if(this.programEfforts && this.activeProjectUsers){
+          return this.programEfforts.filter( t => t && t.facilities.length > 0)    
       }
      },
      weekOfArr(){      
@@ -2215,7 +2215,7 @@ export default {
   methods: {
       ...mapActions([
      'fetchProgramLessonCounts',
-     'fetchProgramTimesheets',
+     'fetchProgramEfforts',
      'fetchDateOfWeekQuery'
      ]), 
      ...mapMutations([
@@ -2234,7 +2234,7 @@ export default {
     openUserTasksReport() {
       // this.userTasksDialog = true;
       this.reportCenterModal = true
-      this.fetchProgramTimesheets({programId: this.$route.params.programId})
+      this.fetchProgramEfforts({programId: this.$route.params.programId})
     },
     showLessToggle() {
       this.showLess = "Show Less";
@@ -2248,7 +2248,7 @@ export default {
     },
     viewTaskEffortReport() {
       console.log("this btn works")
-      // this.fetchProgramTimesheets({programId: this.$route.params.programId})
+      // this.fetchProgramEfforts({programId: this.$route.params.programId})
       this.viewTable = true
     },
     log(e){
@@ -2428,10 +2428,10 @@ export default {
             programId: this.$route.params.programId,
             date: this.dateOfWeekFilter.replace(/\s+/g, '-')
           }
-          this.fetchProgramTimesheets(dateObj)
+          this.fetchProgramEfforts(dateObj)
           console.log(dateObj)
       //  this.fetchDateOfWeekQuery(dateObj)
-        } else  this.fetchProgramTimesheets({programId: this.$route.params.programId})
+        } else  this.fetchProgramEfforts({programId: this.$route.params.programId})
       }, 
     }
 };

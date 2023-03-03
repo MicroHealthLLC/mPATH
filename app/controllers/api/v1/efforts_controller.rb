@@ -1,6 +1,6 @@
-class Api::V1::TimesheetsController < AuthenticatedController 
+class Api::V1::EffortsController < AuthenticatedController 
   before_action :set_resources#, except: [:show]
-  before_action :set_timesheet, only: [:update, :destroy]
+  before_action :set_effort, only: [:update, :destroy]
   # before_action :check_permission
 
   def check_permission
@@ -24,55 +24,55 @@ class Api::V1::TimesheetsController < AuthenticatedController
 
   def index
 
-    all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id = ?", @owner.id)#.paginate(:page => params[:page], :per_page => 15)
+    all_efforts = Effort.includes([ :user, {facility_project: :facility} ]).where("efforts.facility_project_id = ?", @owner.id)#.paginate(:page => params[:page], :per_page => 15)
 
-    all_users = User.where(id: all_timesheets.map(&:user_id))
+    all_users = User.where(id: all_efforts.map(&:user_id))
     all_tasks = Task.where(facility_project_id: @owner.id)
 
-    # total_pages = all_timesheets.total_pages
-    # current_page = all_timesheets.current_page
-    # next_page = all_timesheets.next_page
+    # total_pages = all_efforts.total_pages
+    # current_page = all_efforts.current_page
+    # next_page = all_efforts.next_page
 
     response = []
-    all_timesheets.group_by{|t| t.user}.each do |user, timesheets|
+    all_efforts.group_by{|t| t.user}.each do |user, efforts|
 
-      task_timesheets = timesheets.group_by(&:resource_id)
+      task_efforts = efforts.group_by(&:resource_id)
       h = []
       all_tasks.each do |task|
-        timesheets = task_timesheets[task.id] || []
-        h << task.as_json.merge!({timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours) }) 
+        efforts = task_efforts[task.id] || []
+        h << task.as_json.merge!({efforts: efforts.map(&:to_json), actual_effort: efforts.sum(&:hours) }) 
 
       end
       response <<  user.as_json.merge!({tasks: h})
     end
 
-    # render json: {timesheets: response, total_pages: total_pages, current_page: current_page, next_page: next_page }
-    render json: {timesheets: response }
+    # render json: {efforts: response, total_pages: total_pages, current_page: current_page, next_page: next_page }
+    render json: {efforts: response }
   end
 
   def create
-    @timesheet = Timesheet.new.create_or_update_timesheet(params, current_user)
+    @effort = Effort.new.create_or_update_effort(params, current_user)
 
-    if @timesheet.errors.any?
-      render json: {errors: @timesheet.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    if @effort.errors.any?
+      render json: {errors: @effort.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {timesheet: @timesheet}
+      render json: {effort: @effort}
     end
   end
 
   def update
-    @timesheet.create_or_update_timesheet(params, current_user)
-    @timesheet.reload
-    if @timesheet.errors.any?
-      render json: {timesheet: @timesheet, errors: @timesheet.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    @effort.create_or_update_effort(params, current_user)
+    @effort.reload
+    if @effort.errors.any?
+      render json: {effort: @effort, errors: @effort.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {timesheet: @timesheet}
+      render json: {effort: @effort}
     end
   end
 
   def destroy
-    @timesheet.destroy!
-    render json: {timesheet: @timesheet}, status: 200
+    @effort.destroy!
+    render json: {effort: @effort}, status: 200
   end
 
   private
@@ -88,12 +88,12 @@ class Api::V1::TimesheetsController < AuthenticatedController
     end
   end
 
-  def set_timesheet
-    @timesheet = @owner.timesheets.find(params[:id])
+  def set_effort
+    @effort = @owner.efforts.find(params[:id])
   end
 
-  def timesheet_params
-    params.require(:timesheet).permit(Timesheet.params_to_permit)
+  def effort_params
+    params.require(:effort).permit(Effort.params_to_permit)
   end
 
 end

@@ -8,7 +8,7 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :timesheets, as: :resource, dependent: :destroy
+  has_many :efforts, as: :resource, dependent: :destroy
   
   validates :text, presence: true
   validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
@@ -96,7 +96,7 @@ class Task < ApplicationRecord
   end
 
   def calculate_actual_effort
-    timesheets.sum(:hours).to_f
+    efforts.sum(:hours).to_f
   end
 
   def update_actual_effort
@@ -232,8 +232,8 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
-  def timesheet_json
-    as_json.merge(timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours))
+  def effort_json
+    as_json.merge(efforts: efforts.map(&:to_json), actual_effort: efforts.sum(&:hours))
   end
 
   def to_json(options = {})

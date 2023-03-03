@@ -1,11 +1,11 @@
-ActiveAdmin.register Timesheet do
+ActiveAdmin.register Effort do
   menu priority: 5
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Timesheets', admin_timesheets_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Efforts', admin_efforts_path)]
     if %(show edit).include?(params['action'])
-      links << link_to(timesheet.resource.text, edit_admin_timesheet_path)
+      links << link_to(effort.resource.text, edit_admin_effort_path)
     end
     links
   end
@@ -26,32 +26,32 @@ ActiveAdmin.register Timesheet do
 
     column "Date of Week", :date_of_week
     column "Hours", :hours
-    column "User", :users do |timesheet|
+    column "User", :users do |effort|
       if current_user.admin_write?
-        timesheet.user
+        effort.user
       else
-        "<span>#{timesheet.user&.full_name}</span>".html_safe
+        "<span>#{effort.user&.full_name}</span>".html_safe
       end
     end
-    column "Resource", :resource, nil, sortable: 'projects.name' do |timesheet|
+    column "Resource", :resource, nil, sortable: 'projects.name' do |effort|
       if current_user.admin_write?
-        link_to "#{timesheet.resource_type}##{timesheet.resource_id}", "#{edit_admin_task_path(timesheet.resource)}" if timesheet.resource.present?
+        link_to "#{effort.resource_type}##{effort.resource_id}", "#{edit_admin_task_path(effort.resource)}" if effort.resource.present?
       else
-        "<span>#{timesheet.resource&.text}</span>".html_safe
-      end
-    end
-
-    column "Project", :facility, nil, sortable: 'facility.facility_name' do |timesheet|
-      if current_user.admin_write?
-        link_to "#{timesheet.facility.facility_name}", "#{admin_facility_path(timesheet.facility)}" if timesheet.facility.present?
-      else
-        "<span>#{timesheet.facility&.facility_name}</span>".html_safe
+        "<span>#{effort.resource&.text}</span>".html_safe
       end
     end
 
-    actions defaults: false do |timesheet|
-      item "Edit", edit_admin_timesheet_path(timesheet), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
-      item "Delete", admin_timesheet_path(timesheet), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    column "Project", :facility, nil, sortable: 'facility.facility_name' do |effort|
+      if current_user.admin_write?
+        link_to "#{effort.facility.facility_name}", "#{admin_facility_path(effort.facility)}" if effort.facility.present?
+      else
+        "<span>#{effort.facility&.facility_name}</span>".html_safe
+      end
+    end
+
+    actions defaults: false do |effort|
+      item "Edit", edit_admin_effort_path(effort), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_effort_path(effort), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
     end
   end
 
