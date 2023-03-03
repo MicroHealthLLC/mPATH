@@ -25,7 +25,7 @@
         <button                
         class="btn btn-sm profile-btns allCaps pl-2" >
          TASK EFFORT REPORTS 
-        <i class="fas fa-clipboard mh-green-text grow pl-3 pr-1"  v-tooltip="`BY PROJECT`" @click="openProjectGroup"></i>
+        <i class="fas fa-clipboard mh-green-text grow pl-3 pr-1"  v-tooltip="`BY PROJECTS`" @click="openProjectGroup"></i>
         <i class="fas fa-users mh-blue-text grow pr-2"  v-tooltip="`BY USERS`"  @click="openUserTasksReport"></i>
         <!-- <i class="fas fa-print text-dark grow" @click="printTaskReport"></i> -->
       </button>    
@@ -46,7 +46,7 @@
       <button 
         @click="printProgramEffortReport(currentProject.name)"   
         v-tooltip="`Export to PDF`"            
-        class="btn btn-sm  float-right profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
+        class="btn btn-sm  float-left profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
 
       </button> 
      <table
@@ -131,13 +131,13 @@
 
       </td> 
       <td >
-        <em class="text-dark">Project Efforts Totals: </em>
+        <span class="bold">Project Efforts Totals: </span>
       </td> 
       <td >
-       <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+       <b class="bold" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td >
-        <em class="text-dark"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <b class="bold"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>      
       </td> 
@@ -161,21 +161,21 @@
         <!-- <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em> -->
       </td> 
       <td >
-        <b class="text-dark float-left">PROGRAM EFFORT TOTAL: </b>  
+        <b class="bold" >PROGRAM EFFORT TOTAL: </b>  
       </td> 
       <td >
-        <em class="text-dark float-left">
+        <span class="bold">
         {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat().map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
-        }}</em>  
+        }}</span>  
       </td> 
       <td >
-        <em class="text-dark float-left">
+        <b class="bold">
         {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat().map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
-        }}</em>  
+        }}</b>  
       
       </td> 
       <td >
@@ -256,13 +256,13 @@
     
       </td> 
       <td > 
-        <em class="text-dark float-left">Project Efforts Totals: </em>   
+        <em class="bold float-left">Project Efforts Totals: </em>   
       </td> 
       <td >
-        <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td >
-        <em class="text-dark"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td >
       
@@ -328,10 +328,10 @@
         class="reportCenter"
         center   
       >
-     <h4 class="centerLogo mb-5">{{ currentProject.name }}
+     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s 
       <button                
         class="btn mh-orange text-light profile-btns allCaps py-1" data-cy=program_viewer_btn>
-       User Task Effort Reports
+        User Task Effort Reports
       </button>  
       </h4>   
       <hr class="my-3">
@@ -342,7 +342,7 @@
         v-model="dateOfWeekFilter"
         class="w-75 mr-2"            
         clearable
-        placeholder="Select Week of Date" 
+        placeholder="Search and select Week of Date" 
         filterable
       >
         <el-option
@@ -364,7 +364,7 @@
         track-by="id"
         value-key="id"             
         clearable
-        placeholder="Program users with entered effort" 
+        placeholder="Search and select Program users with entered effort" 
         filterable
       >
         <el-option
@@ -384,7 +384,7 @@
           <button                
            @click="viewTaskEffortReport"
             class="btn btn-sm mh-green profile-btns text-light allCaps pl-2 mr-2" >
-           View Report       
+           View Reports      
             <i class="fas fa-binoculars text-light grow"></i> 
           </button>    
 
@@ -462,7 +462,7 @@
        
       </td> 
       <td >
-        <span class="text-dark">Project Efforts Totals:   
+        <span class="bold">Project Efforts Totals:   
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </span>
       </td>    
@@ -516,11 +516,11 @@
       <td >       
       </td>  
       <td >
-        <em class="text-dark">Project Efforts Totals:  
+        <em class="bold">Project Efforts Totals:  
         </em>
       </td> 
       <td >
-        <em class="text-dark">
+        <em class="bold">
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </em>
       </td>   
@@ -1622,7 +1622,7 @@ export default {
 
     ]),
     tableData() {
-          if (this.programTimesheets && this.activeProjectUsers && this.programTimesheets.length > 0){            
+          if (this.programTimesheets && this.programTimesheets.length > 0){            
             let tasks = this.programTimesheets
             .filter((task) => {
             if (this.filteredUsers) {       
@@ -2327,15 +2327,17 @@ export default {
         link.click();
       },
     printTaskReport(index, week, username, title) {
-
         const doc = new jsPDF("l")
-        const html =  this.$refs.table.innerHTML    
-        // const img = new Image();
-        const img = $('#img1').attr('src');
+        const html =  this.$refs.table.innerHTML       
+        const logo = require('../../../assets/images/microhealthllc.png')
+        var imgLogo = new Image()
+        imgLogo.src = logo  
+        doc.addImage(imgLogo, 'PNG', 129, 195, 30, 10)
+        //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
 
         doc.autoTable({
         html:  `#taskSheetsList1${index}`,
-        margin: { top: 30, left: 10, right: 10, bottom: 0 },
+        margin: { top: 30, left: 10, right: 10, bottom: 15 },
         columnStyles: {
           0: {cellWidth: 60},
           1: {cellWidth: 65},
@@ -2356,25 +2358,29 @@ export default {
           }               
         },
       });
+      doc.setTextColor(33,33,33);
+      doc.setFontSize(12);
       doc.text(5, 10, `Week of:  ${week}`); 
       doc.text(5, 16, `Name of Staff:  ${username} `); 
       doc.text(5, 21, `Position:  ${title} `); 
       doc.text(5, 26, `Date of Report:  ${new Date().toLocaleDateString()} `); 
-      
+
       doc.save("User_Task_Effort_Totals.pdf")
-      doc.addImage(img, 'PNG', 10, 78, 12, 15)
-      // doc.addImage(img, 'PNG', 15, 40, 180, 160);
+
+
     },
     printProgramEffortReport(programName) {
-
     const doc = new jsPDF("l")
     const html =  this.$refs.table1.innerHTML    
-    // const img = new Image();
-    // const img = $('#img1').attr('src');
+    const logo = require('../../../assets/images/microhealthllc.png')
+    var imgLogo = new Image()
+    imgLogo.src = logo
+    doc.addImage(imgLogo, 'PNG', 129, 195, 30, 10)
+    //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
 
     doc.autoTable({
     html:  `#taskSheetsList1`,
-    margin: { top: 30, left: 10, right: 10, bottom: 0 },
+    margin: { top: 30, left: 10, right: 10, bottom: 15 },
     columnStyles: {
       0: {cellWidth: 60},
       1: {cellWidth: 40},
@@ -2398,10 +2404,10 @@ export default {
       }               
     },
     });
+    doc.setTextColor(33,33,33);
+    doc.setFontSize(14);
     doc.text(5, 10, `${programName}'s Task Effort Report`); 
     doc.text(5, 18, `Date of Report:  ${new Date().toLocaleDateString()} `)
-    // doc.text(5, 15, `Name of Staff:  ${username} `); 
-    // doc.text(5, 20, `Position:  ${title} `); 
     doc.save("Program_Task_Effort_Report.pdf")
     },
     viewTaskEffortReport() {
@@ -2760,12 +2766,15 @@ i.grow:hover{
   font-size: 3.7rem;
 }
 .giantMapView {
-  font-size: 3.25rem;
+  font-size: 3.25rem; 
 }
 .card-title {
   text-decoration-line: underline;
 }
 em.text-dark{
+  font-weight: 700;
+}
+.bold{
   font-weight: 700;
 }
 /deep/.el-progress-circle {
