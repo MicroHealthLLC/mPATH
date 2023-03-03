@@ -54,7 +54,7 @@ class Timesheet < ApplicationRecord
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
     end
-    timesheet.date_of_week = DateTime.parse(t_params.delete(:date_of_week) ) rescue raise("Invalid date")
+    timesheet.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
     timesheet.attributes = t_params
 
     timesheet.transaction do
