@@ -37,7 +37,7 @@ class Timesheet < ApplicationRecord
     t_params = timesheet_params.dup
 
     if t_params.has_key?(:facility_project_id)
-      timesheet.facility_project_id = FacilityProject.find(params[:facility_project_id]).id
+      timesheet.facility_project_id = FacilityProject.find(t_params[:facility_project_id]).id
     else
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
@@ -54,6 +54,7 @@ class Timesheet < ApplicationRecord
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
     end
+    timesheet.date_of_week = DateTime.parse(t_params.delete(:date_of_week) ) rescue raise("Invalid date")
     timesheet.attributes = t_params
 
     timesheet.transaction do
