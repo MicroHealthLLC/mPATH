@@ -421,10 +421,11 @@
       style="">     
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:20%; font-size: 1rem">Project</th>
-          <th style="width:17%; font-size: 1rem">Task</th>
-          <th style="width:28%; font-size: 1rem">Task Description</th>
-          <th style="width:12%; font-size: 1rem">Actual <br>Effort</th>
+          <th style="width:17%; font-size: 1rem">Project</th>
+          <th style="width:14%; font-size: 1rem">Task</th>
+          <th style="width:22%; font-size: 1rem">Task Description</th>
+          <th style="width:12%; font-size: 1rem">Task <br>Planned Effort</th>
+          <th style="width:12%; font-size: 1rem">User <br> Actual Effort</th>
           <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
         </tr>
       </thead>
@@ -445,11 +446,22 @@
           </ul> -->
         </td>
         <td>
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.planned_effort }}<br>
+        </span>
+         
+        </td>   
+        <td>
           <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
         </span>
          
         </td>   
+        <td>
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.progress }}<br>
+        </span>
+        </td>
       </tr>  
      
       <tr class="py-2">
@@ -462,13 +474,15 @@
        
       </td> 
       <td >
+       
+      </td>    
+      <td>   
         <span class="bold">Project Efforts Totals:   
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
-        </span>
-      </td>    
+        </span>   
+      </td> 
       <td>      
       </td> 
-         
       </tr>
 
       </tbody>  
@@ -483,6 +497,7 @@
           <th style="width:20%; font-size: 1rem">Project</th>
           <th style="width:17%; font-size: 1rem">Task</th>
           <th style="width:28%; font-size: 1rem">Task Description</th>
+          <th style="width:12%; font-size: 1rem">Planned<br>Effort</th>
           <th style="width:12%; font-size: 1rem">Actual <br>Effort</th>
           <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
         </tr>
@@ -502,9 +517,23 @@
           </ul>
         </td>
         <td>
+          <ul class="a" v-for="each, i in task.tasks" :key="i">          
+          <li>        
+           {{ each.planned_effort }} <br>
+          </li>         
+          </ul> 
+        </td>   
+        <td>
           <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
           <li>        
            {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
+          </li>         
+          </ul> 
+        </td>   
+         <td>
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
+          <li>        
+           {{ each.progress }} <br>
           </li>         
           </ul> 
         </td>   
@@ -520,13 +549,16 @@
         </em>
       </td> 
       <td >
+       
+      </td>   
+      <td> 
         <em class="bold">
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
-        </em>
-      </td>   
-      <td>      
+        </em>     
       </td> 
-         
+         <td>
+
+         </td>
       </tr>
 
       </tbody>  
@@ -538,9 +570,10 @@
       <td >
         <em class="text-dark">EFFORT TOTALS: 
         </em>
-      </td> 
+      </td>
+      <td></td>
       <td >
-      {{   user.facilities
+      {{ user.facilities
          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
          .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
        }}
@@ -2339,10 +2372,12 @@ export default {
         html:  `#taskSheetsList1${index}`,
         margin: { top: 30, left: 10, right: 10, bottom: 15 },
         columnStyles: {
-          0: {cellWidth: 60},
-          1: {cellWidth: 65},
-          2: {cellWidth: 100},
+          0: {cellWidth: 55},
+          1: {cellWidth: 45},
+          2: {cellWidth: 74},
           3: {cellWidth: 25},
+          4: {cellWidth: 25},
+          5: {cellWidth: 35},
           // 2: {cellWidth: 90},
           // etc
         },
