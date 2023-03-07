@@ -42,8 +42,53 @@
        Task Effort Report
       </button>
     </h4>   
-   <!-- {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0).map(t => t.tasks).flat()}}   -->
-      <button 
+   <!-- WIP:  Adding Filters to Program Task Effort Report   -->
+     <!-- <div class="row my-2">
+        <div class="col-3">
+          <h6 class="mb-1 d-flex">Select Week Of Date</h6>
+        <el-select
+        v-model="dateOfWeekFilter"
+        class="w-100"            
+        clearable
+        placeholder="Search and select Week of Date" 
+        filterable
+      >
+        <el-option
+          v-for="item in matrixDates"
+          :value="item"
+          :key="item"
+          :label="item"
+        >
+        </el-option> 
+      </el-select> 
+   
+        </div>   
+        <div class="col-3"> 
+          <h6 class="mb-1 d-flex">Select Users </h6>
+        <el-select
+        v-model="filteredUsers"
+        multiple
+        class="w-100 mr-2"
+        track-by="id"
+        value-key="id"             
+        clearable
+        placeholder="Search and select Program users with entered effort" 
+        filterable
+      >
+        <el-option
+          v-for="item in effortUsers"
+          :value="item"
+          :key="item.id"
+          :label="item.full_name"
+        >
+        </el-option> 
+      </el-select> 
+
+        </div>
+
+
+      </div>  -->
+   <button 
         @click="printProgramEffortReport(currentProject.name)"   
         v-tooltip="`Export to PDF`"            
         class="btn btn-sm  float-left profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
@@ -87,7 +132,7 @@
         </td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-          {{  each.userNames }}        
+          {{  each.userNames }} <br>
           </span>          
         </td>        
         <td class="updates">            
@@ -216,7 +261,7 @@
   
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-          {{  each.userNames }}        
+          {{  each.userNames }} <br>       
           </span>          
         </td>        
         <td class="updates">            
@@ -379,6 +424,7 @@
         </div>
 
       </div> 
+     
       <div class="row mb-5">
         <div class="col">
           <button                
@@ -417,46 +463,54 @@
       <span class="mt-2"><h6><b class="mr-1">Week of:</b>{{ dateOfWeekFilter }}</h6></span> 
       <span><h6><b class="mr-1">Name of Staff:</b> {{ user.full_name }} </h6> </span> 
       <span><h6><b class="mr-1">Position:</b>{{ user.title }} </h6></span> 
-      <table class="table table-sm table-bordered mt-3"  
+    
+      <table 
+      class="table table-sm table-bordered mt-3"  
       style="">     
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:17%; font-size: 1rem">Project</th>
+          <th style="width:15%; font-size: 1rem">Project</th>
           <th style="width:14%; font-size: 1rem">Task</th>
           <th style="width:22%; font-size: 1rem">Task Description</th>
-          <th style="width:12%; font-size: 1rem">Task <br>Planned Effort</th>
-          <th style="width:12%; font-size: 1rem">User <br> Actual Effort</th>
+          <th style="width:14%; font-size: 1rem">Planned Effort <br>for Entire Task</th>
+          <th style="width:12%; font-size: 1rem">Actual Effort for<br> User This Week</th>
           <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
         </tr>
       </thead>
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
        <tr class="mb-1" v-if="task">
-        <td>{{ task.facility_name }}</td>
+        <!-- Col 1 -->
+        <td>{{ task.facility_name }}
+        </td>
+        <!-- Col 2 -->
         <td>
           <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.text }}<br>
         </span>
         </td>
+         <!-- Col 3 -->
         <td class="updates">
         <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.description }}<br>
-        </span>
-          <!-- <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
-           <li class="updates" >{{ each.description }}<br></li>        
-          </ul> -->
+        </span>       
         </td>
+        <!-- Col 4 -->
         <td>
           <span v-for="each, i in task.tasks" :key="i">
           {{ each.planned_effort }}<br>
         </span>
-         
+      
         </td>   
-        <td>
+         
+        <!-- Col 5 -->
+      
+         <td>
           <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
         </span>
          
-        </td>   
+        </td> 
+         <!-- Col 6 -->  
         <td>
           <span v-for="each, i in task.tasks" :key="i">
           {{ each.progress }}<br>
@@ -465,42 +519,69 @@
       </tr>  
      
       <tr class="py-2">
-    
-      <td >    
+     <!-- Col 1 -->  
+      <td ></td> 
+      <!-- Col 2 -->  
+      <td ></td> 
+       <!-- Col 3 -->  
+      <td ></td> 
+       <!-- Col 4 -->  
+      <td class="text-right" >
+        <span class="bold">Project's Actual Effort Total:   
+            
+        </span>   
+
       </td> 
-      <td >
-      </td> 
-      <td >
-       
-      </td> 
-      <td >
-       
-      </td>    
-      <td>   
-        <span class="bold">Project Efforts Totals:   
+      <!-- Col 5 -->  
+      <td class="text-left">   
+        <span class="bold">
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </span>   
       </td> 
+       <!-- Col 6 -->  
       <td>      
       </td> 
       </tr>
-
-      </tbody>  
+      </tbody>       
       </table>
-    
+      <table
+      class="table table-sm table-bordered"     
+      style=""
+      >
+      <thead style="background-color:#ededed"> 
+        <tr style="background-color:#ededed">
+          <th style="width:15%; font-size: 1rem"></th>
+          <th style="width:14%; font-size: 1rem"></th>
+          <th style="width:22%; font-size: 1rem"></th>
+          <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Actual Effort Total: </th>
+          <th style="width:12%; font-size: .80rem; text-align: left; padding-left: 4px">  
+          {{ user.facilities
+         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
+         .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+          }}
+          </th>
+          <th style="width:12%; font-size: 1rem"></th>
+        </tr>       
+        
+      </thead>
+    </table> 
+
+   <!-- BEGIN USER EFFORT PRINT OUT TABLE -->    
     <table class="table table-sm table-bordered mt-3" 
       :id="`taskSheetsList1${userIndex}`"
       ref="table" 
       style="display:none">   
       <thead>     
-      <tr style="background-color:#ededed">
-          <th style="width:20%; font-size: 1rem">Project</th>
-          <th style="width:17%; font-size: 1rem">Task</th>
-          <th style="width:28%; font-size: 1rem">Task Description</th>
-          <th style="width:12%; font-size: 1rem">Planned<br>Effort</th>
-          <th style="width:12%; font-size: 1rem">Actual <br>Effort</th>
-          <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
+    
+        <tr style="background-color:#ededed">
+          <th>Project</th>
+          <th>Task</th>
+          <th>Task Description</th>
+          <th >Planned Effort <br>for Entire Task</th>
+          <th>Actual Effort for<br> User This Week</th>
+          <th>%Completion <br>(if applicable)</th>
         </tr>
+  
       </thead>
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
 
@@ -545,11 +626,11 @@
       <td >       
       </td>  
       <td >
-        <em class="bold">Project Efforts Totals:  
-        </em>
+       
       </td> 
       <td >
-       
+        <em class="bold">Project's Actual Effort Total:  
+        </em>
       </td>   
       <td> 
         <em class="bold">
@@ -563,51 +644,27 @@
 
       </tbody>  
       <tr class="py-2">    
-      <td >    
-      </td>      
-      <td >       
-      </td>  
+      <td></td>      
+      <td></td>  
+      <td></td>
+      <!-- Col 4 -->
       <td >
-        <em class="text-dark">EFFORT TOTALS: 
+        <em class="text-dark">Program's Actual Effort Total:
         </em>
       </td>
-      <td></td>
-      <td >
-      {{ user.facilities
+      <!-- Col 5 -->
+      <td>
+        {{ user.facilities
          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
          .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
        }}
-      </td>   
-      <td>      
-      </td> 
-         
+      </td>
+      <!-- Col 6 -->
+      <td></td>           
       </tr>
     </table>
-
-    <table
-      class="table table-sm table-bordered"     
-      style=""
-      >
-      <thead style="background-color:#ededed">        
-        <tr>
-          <th style="width:20%; font-size: 1rem"></th>
-          <th style="width:17%; font-size: 1rem"></th>
-          <th style="width:28%; font-size: 1rem">
-          </th>
-          <th style="width:12%; font-size: 1rem">
-            Effort Totals: 
-          </th>
-          <th style="width:12%; font-size: 1rem">
-            {{  
-            user.facilities  
-              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
-              .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)   
-              }} 
-          
-          </th>
-        </tr>
-      </thead>
-    </table> 
+   <!-- END USER EFFORT PRINT OUT TABLE -->
+   
     <span class="centerLogo" >
         <img
           class="my-2"
@@ -2370,14 +2427,14 @@ export default {
 
         doc.autoTable({
         html:  `#taskSheetsList1${index}`,
-        margin: { top: 30, left: 10, right: 10, bottom: 15 },
+        margin: { top: 30, left: 3, right: 3, bottom: 15 },
         columnStyles: {
-          0: {cellWidth: 55},
-          1: {cellWidth: 45},
-          2: {cellWidth: 74},
-          3: {cellWidth: 25},
-          4: {cellWidth: 25},
-          5: {cellWidth: 35},
+          0: {cellWidth: 40},
+          1: {cellWidth: 35},
+          2: {cellWidth: 69},
+          3: {cellWidth: 50},
+          4: {cellWidth: 50},
+          5: {cellWidth: 25},
           // 2: {cellWidth: 90},
           // etc
         },
@@ -2389,7 +2446,6 @@ export default {
           }     
           if (hookData.table.body) {
             hookData.cell.styles.overflow = 'ellipsize';
-
           }               
         },
       });

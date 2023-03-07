@@ -348,7 +348,7 @@
       </el-button> -->
      
     </el-tabs>
-    <span class="float-right"><small>*Excludes <em>On Hold</em> Tasks</small> </span>
+    <span class="float-right"><small>*Excludes <em>On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
 
    
   </div>
@@ -457,8 +457,6 @@
          console.log(timeSheetData) 
          console.log(this.editColValue)
          this.createTimesheet({...timeSheetData})     
-    
-
         } 
       }   
     } 
@@ -510,6 +508,8 @@
       ...mapGetters([
         'myActionsFilter',
         "timesheets",
+        "timesheet",
+        "facilities",
         "currentProject",
         "taskIssueDueDateFilter",
         "timeSheetStatus",
@@ -533,9 +533,9 @@
         }
       },
       tableData() {
-          if (this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-            let tasks = this.facility.tasks.filter( t => !t.onHold)
-
+         let project = this.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)     
+          if (project && project.tasks && project.tasks.length > 0){
+            let tasks = project.tasks.filter( t => !t.onHold && !t.draft && !t.planned)
             .filter((task) => {
               if (this.taskProgressFilter) {    
                 console.log(task)      
@@ -618,18 +618,10 @@
     
     },
     mounted() {
-     this.fetchTimesheets(this.$route.params)
-       
+     this.fetchTimesheets(this.$route.params)   
+     this.fetchCurrentProject(this.$route.params.programId)    
     },
     watch: {
-      timesheets(){
-        if(this.timesheets){
-          console.log('UserTime: ')
-          console.log(this.userTime)
-          console.log('Current projec: ')
-          console.log(this.currentProject)
-        }
-      },
      timeSheetStatus: {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
       
@@ -641,14 +633,15 @@
             type: "success",
             showClose: true,
           });
+   
           this.input = [];
           this.editColValue = null;
           this.columnIndex = null;
           this.updatedTimesheet = null, 
           this.SET_TIMESHEET_STATUS(0);
-          this.SET_TIMESHEETS_STATUS(0)
-          this.fetchTimesheets(this.$route.params)
+          this.SET_TIMESHEETS_STATUS(0)          
           this.fetchCurrentProject(this.$route.params.programId)
+          this.fetchTimesheets(this.$route.params)       
         }
       },      
     },  

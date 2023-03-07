@@ -24,9 +24,7 @@ const taskStore = {
     actions: {
     // Get  All Timesheets
     fetchTimesheets({ commit }, { programId, projectId } ) {
-      commit("TOGGLE_TIMESHEETS_LOADED", false);      
-
-
+      commit("TOGGLE_TIMESHEETS_LOADED", false);  
       axios({
         method: "GET",
         url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/timesheets`,
@@ -76,7 +74,7 @@ const taskStore = {
 
       //Create Individual Timesheet
     createTimesheet({ commit }, { timesheetData }) {
-      commit("TOGGLE_TIMESHEET_LOADED", false);
+      commit("TOGGLE_TIMESHEETS_LOADED", false);
       
       console.log(timesheetData)
         formData.append("timesheet[hours]",  timesheetData.hours);
@@ -95,7 +93,7 @@ const taskStore = {
       })
         .then((res) => {
           console.log(res.status)
-          commit("SET_TIMESHEET", res.data.timesheet);
+          // commit("SET_TIMESHEET", res.data.timesheet);
           commit("SET_TIMESHEETS", res.data.timesheets);       
           console.log(res)
           commit("SET_TIMESHEET_STATUS", res.status);
@@ -105,7 +103,7 @@ const taskStore = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_TIMESHEET_LOADED", true);
+          commit("TOGGLE_TIMESHEETS_LOADED", true);
         });
     },
        // Date of eek query oming from Program Level User Report
