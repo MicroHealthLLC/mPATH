@@ -100,10 +100,8 @@
       >
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:10%;">Project</th>
-          <th style="width:16%;">Task</th>
-          <th style="width:6%;">Start Date</th>
-          <th style="width:6%;">Due Date</th>
+          <th style="width:16%;">Project</th>
+          <th style="width:22%;">Task</th>         
           <th style="width:20%;">Staff on Task</th>
           <th style="width:5%;">Planned <br> Effort</th>
           <th style="width:5%;">Actual <br>Effort</th>
@@ -113,22 +111,12 @@
         </tr>
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
-       <tr class="mb-2">
+       <tr class="mb-2" style="line-height: 3;">
         <td>{{task.facilityName}}</td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           {{ each.text }}  <br>    
           </span>         
-        </td>
-        <td class="updates">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
-          {{ formatDate(each.startDate)}}<br>       
-          </span>          
-        </td>
-        <td class="updates">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
-          {{ formatDate(each.dueDate)}}<br>
-          </span>          
         </td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
@@ -160,7 +148,7 @@
         <td class="updates" >            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           <span v-if="each && each.lastUpdate !== null">{{ each.lastUpdate.body }}</span>    
-            
+            <br> 
           </span>          
         </td>
       </tr>  
@@ -168,10 +156,7 @@
       <tr class="py-2">
        <td >     
       </td> 
-      <td>    
-      </td> 
-      <td >    
-      </td> 
+     
       <td >
 
       </td> 
@@ -196,12 +181,7 @@
     <tr class="py-2">
        <td >     
       </td> 
-      <td>  
-    
-      </td> 
-      <td > 
-       
-      </td> 
+      
       <td >
         <!-- <em class="text-dark" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em> -->
       </td> 
@@ -252,7 +232,7 @@
       </thead>
       <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
        <tr class="mb-2">
-        <td>{{task.facilityName}}</td>
+        <td class="updates">{{task.facilityName}}</td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           {{ each.text }}  <br>    
@@ -289,7 +269,7 @@
         <td class="updates" >            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           <span v-if="each && each.lastUpdate !== null">{{ each.lastUpdate.body }}</span>    
-            
+          <br>    
           </span>          
         </td>
       </tr>  
@@ -446,9 +426,9 @@
         </div>
       </div>
    
-    <div v-if="viewTable == true" class="row">
+    <div v-if="viewTable == true" class="row ml-1">
   
-    <div class="taskUserInfo col-12" v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
+    <div class="taskUserInfo mb-2 col-11" v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
      :key="user.id">
       <button 
         v-tooltip="`Export to PDF`"   
@@ -463,7 +443,7 @@
       <span class="mt-2"><h6><b class="mr-1">Week of:</b>{{ dateOfWeekFilter }}</h6></span> 
       <span><h6><b class="mr-1">Name of Staff:</b> {{ user.full_name }} </h6> </span> 
       <span><h6><b class="mr-1">Position:</b>{{ user.title }} </h6></span> 
-    
+      <span><h6><b class="mr-1">Date of Report:</b>{{ new Date().toLocaleDateString() }} </h6></span>      
       <table 
       class="table table-sm table-bordered mt-3"  
       style="">     
@@ -478,12 +458,12 @@
         </tr>
       </thead>
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
-       <tr class="mb-1" v-if="task">
+       <tr class="mb-1" style="line-height: 3;" v-if="task">
         <!-- Col 1 -->
-        <td>{{ task.facility_name }}
+        <td class="updates">{{ task.facility_name }}
         </td>
         <!-- Col 2 -->
-        <td>
+        <td class="updates">
           <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.text }}<br>
         </span>
@@ -495,7 +475,7 @@
         </span>       
         </td>
         <!-- Col 4 -->
-        <td>
+        <td class="text-center">
           <span v-for="each, i in task.tasks" :key="i">
           {{ each.planned_effort }}<br>
         </span>
@@ -504,14 +484,14 @@
          
         <!-- Col 5 -->
       
-         <td>
+       <td class="text-center">
           <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
         </span>
          
         </td> 
          <!-- Col 6 -->  
-        <td>
+        <td class="text-center">
           <span v-for="each, i in task.tasks" :key="i">
           {{ each.progress }}<br>
         </span>
@@ -533,7 +513,7 @@
 
       </td> 
       <!-- Col 5 -->  
-      <td class="text-left">   
+      <td class="text-center">   
         <span class="bold">
             {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </span>   
@@ -554,7 +534,7 @@
           <th style="width:14%; font-size: 1rem"></th>
           <th style="width:22%; font-size: 1rem"></th>
           <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Actual Effort Total: </th>
-          <th style="width:12%; font-size: .80rem; text-align: left; padding-left: 4px">  
+          <th style="width:12%; font-size: .80rem; text-align: center">  
           {{ user.facilities
          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
          .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
@@ -567,7 +547,7 @@
     </table> 
 
    <!-- BEGIN USER EFFORT PRINT OUT TABLE -->    
-    <table class="table table-sm table-bordered mt-3" 
+    <table class="table table-sm mt-3" 
       :id="`taskSheetsList1${userIndex}`"
       ref="table" 
       style="display:none">   
@@ -577,7 +557,7 @@
           <th>Project</th>
           <th>Task</th>
           <th>Task Description</th>
-          <th >Planned Effort <br>for Entire Task</th>
+          <th>Planned Effort for<br>Entire Task</th>
           <th>Actual Effort for<br> User This Week</th>
           <th>%Completion <br>(if applicable)</th>
         </tr>
@@ -585,7 +565,7 @@
       </thead>
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
 
-       <tr class="mb-1" v-if="task">
+       <tr class="mb-1" v-if="task" style="line-height: 3">
         <td>{{ task.facility_name }}</td>
         <td>
           <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
@@ -597,21 +577,21 @@
            <li >{{ each.description }}<br></li>        
           </ul>
         </td>
-        <td>
+         <td class="text-center">
           <ul class="a" v-for="each, i in task.tasks" :key="i">          
           <li>        
            {{ each.planned_effort }} <br>
           </li>         
           </ul> 
         </td>   
-        <td>
+        <td class="text-center">
           <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
           <li>        
            {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
           </li>         
           </ul> 
         </td>   
-         <td>
+         <td class="text-center">
           <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
           <li>        
            {{ each.progress }} <br>
@@ -672,7 +652,7 @@
           :src="require('../../../assets/images/microhealthllc.png')"
         />
       </span>
-      <hr class="my-3">
+     
      </div>  
     </div> 
   
@@ -2417,48 +2397,64 @@ export default {
         link.click();
       },
     printTaskReport(index, week, username, title) {
-        const doc = new jsPDF("l")
-        const html =  this.$refs.table.innerHTML       
-        const logo = require('../../../assets/images/microhealthllc.png')
-        var imgLogo = new Image()
-        imgLogo.src = logo  
-        doc.addImage(imgLogo, 'PNG', 129, 195, 30, 10)
-        //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
+      //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
+      const doc = new jsPDF({orientation: "l", rowHeight:2})
+      const html =  this.$refs.table.innerHTML       
+      const logo = require('../../../assets/images/microhealthllc.png')
+      var imgLogo = new Image()
+      imgLogo.src = logo    
 
-        doc.autoTable({
+      doc.autoTable({
         html:  `#taskSheetsList1${index}`,
-        margin: { top: 30, left: 3, right: 3, bottom: 15 },
+        margin: { top: 30, left: 5, right: 5, bottom: 15 },
+        theme: 'grid',
         columnStyles: {
           0: {cellWidth: 40},
-          1: {cellWidth: 35},
+          1: {cellWidth: 45},
           2: {cellWidth: 69},
-          3: {cellWidth: 50},
-          4: {cellWidth: 50},
-          5: {cellWidth: 25},
-          // 2: {cellWidth: 90},
-          // etc
+          3: {cellWidth: 50, halign: 'center'},
+          4: {cellWidth: 50, halign: 'center'},
+          5: {cellWidth: 32.5, halign: 'center'}     
+        },
+      //didDrawPage function is for standard content you want on all pages (eg, header, footer)
+        didDrawPage: function (data) {
+        // Header        
+        var str = "Page " + doc.internal.getNumberOfPages();
+        doc.setFontSize(10);
+        doc.setTextColor(33,33,33);
+        doc.text(str, 280, 10);
+        doc.text(5, 10, `Week of:  ${week}`); 
+        doc.text(5, 15, `Name of Staff:  ${username} `); 
+        doc.text(5, 20, `Position:  ${title} `); 
+        doc.text(5, 25, `Date of Report:  ${new Date().toLocaleDateString()} `); 
+
+        // Footer
+        doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
+
         },
         didParseCell: function(hookData) {
           console.log(hookData)
           if (hookData.section == "head") {
-            hookData.cell.styles.fillColor = "#383838";
-            hookData.cell.styles.textColor = [255, 255, 255];
+            hookData.cell.styles.fillColor = [237, 237, 237];
+            hookData.cell.styles.textColor = "#383838";
+            // hookData.cell.styles.minCellHeight = 3;  
           }     
           if (hookData.table.body) {
-            hookData.cell.styles.overflow = 'ellipsize';
+              hookData.cell.styles.overflow = 'ellipsize';
+            //  hookData.cell.styles.lineHeight = 3;
+            //  hookData.cell.styles.rowHeight = 3;
+            //  hookData.cell.styles.minCellHeight = 3;  
+                    
+          }  
+          if (hookData.section == 'row') {
+            hookData.cell.styles.rowHeight = 3;
+            // hookData.cell.styles.lineHeight = 3;
+            // hookData.cell.styles.minCellHeight = 3;     
           }               
         },
-      });
-      doc.setTextColor(33,33,33);
-      doc.setFontSize(12);
-      doc.text(5, 10, `Week of:  ${week}`); 
-      doc.text(5, 16, `Name of Staff:  ${username} `); 
-      doc.text(5, 21, `Position:  ${title} `); 
-      doc.text(5, 26, `Date of Report:  ${new Date().toLocaleDateString()} `); 
-
+        });        
+      doc.setLineHeightFactor(3)
       doc.save("User_Task_Effort_Totals.pdf")
-
-
     },
     printProgramEffortReport(programName) {
     const doc = new jsPDF("l")
@@ -2466,28 +2462,39 @@ export default {
     const logo = require('../../../assets/images/microhealthllc.png')
     var imgLogo = new Image()
     imgLogo.src = logo
-    doc.addImage(imgLogo, 'PNG', 129, 195, 30, 10)
     //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
 
     doc.autoTable({
     html:  `#taskSheetsList1`,
-    margin: { top: 30, left: 10, right: 10, bottom: 15 },
+    margin: { top: 30, left: 5, right: 5, bottom: 15 },
+    theme: 'grid',
     columnStyles: {
       0: {cellWidth: 60},
       1: {cellWidth: 40},
       2: {cellWidth: 45},
-      3: {cellWidth: 18},
-      4: {cellWidth: 18},
-      5: {cellWidth: 25},
-      6: {cellWidth: 65},
+      3: {cellWidth: 18, halign: 'center'},
+      4: {cellWidth: 18, halign: 'center'},
+      5: {cellWidth: 25, halign: 'center'},
+      6: {cellWidth: 65},  
+    },
+    didDrawPage: function (data) {
+      // Header        
+      var str = "Page " + doc.internal.getNumberOfPages();
+      doc.setFontSize(10);
+      doc.setTextColor(33,33,33);
+      doc.text(str, 280, 10);
+      doc.text(5, 10, `${programName}'s Task Effort Report`); 
+      doc.text(5, 15, `Date of Report:  ${new Date().toLocaleDateString()} `)
 
-  
+      // Footer
+      doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
+
     },
     didParseCell: function(hookData) {
       console.log(hookData)
       if (hookData.section == "head") {
-         hookData.cell.styles.fillColor = "#383838";
-         hookData.cell.styles.textColor = [255, 255, 255];
+         hookData.cell.styles.fillColor = [237, 237, 237];
+         hookData.cell.styles.textColor = "#383838";
       }     
       if (hookData.table.body) {
         hookData.cell.styles.overflow = 'ellipsize';
@@ -2495,10 +2502,7 @@ export default {
       }               
     },
     });
-    doc.setTextColor(33,33,33);
-    doc.setFontSize(14);
-    doc.text(5, 10, `${programName}'s Task Effort Report`); 
-    doc.text(5, 18, `Date of Report:  ${new Date().toLocaleDateString()} `)
+
     doc.save("Program_Task_Effort_Report.pdf")
     },
     viewTaskEffortReport() {
@@ -2890,6 +2894,13 @@ em.text-dark{
   position: absolute;
   top: 10%;
   right: 1%;
+}
+
+.taskUserInfo {
+  border-radius: 2px;  
+  margin-bottom: 15px;
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
 .filterDiv {
