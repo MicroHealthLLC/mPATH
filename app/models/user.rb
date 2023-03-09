@@ -854,7 +854,7 @@ class User < ApplicationRecord
     if project_ids.any?
       fids = FacilityProject.where(project_id: project_ids, id: fids).pluck(:id)
     end
-    fids
+    FacilityProject.includes(:facility_group).where("facility_groups.status": "active",id: fids).pluck(:id)
   end
 
   def program_settings_privileges_hash_by_role(program_ids: [])
@@ -885,6 +885,7 @@ class User < ApplicationRecord
       fids = ProjectContract.where(project_id: project_ids, id: fids).pluck(:id)
     end
     fids
+    ProjectContract.includes(:facility_group).where("facility_groups.status": "active", id: fids).pluck(:id)
 
   end
 
@@ -901,7 +902,7 @@ class User < ApplicationRecord
     if project_ids.any?
       fids = ProjectContractVehicle.where(project_id: project_ids, id: fids).pluck(:id)
     end
-    fids
+    ProjectContractVehicle.includes(:facility_group).where("facility_groups.status": "active", id: fids).pluck(:id)
 
   end
 
