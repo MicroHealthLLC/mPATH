@@ -9,9 +9,9 @@ class Api::V1::ProjectsController < AuthenticatedController
     all_project_users = Project.find(params[:program_id]).users
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ?", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ? and timehseets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
     else
-      all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?)", facility_project_ids)
+      all_timesheets = Timesheet.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and timehseets.hours > 0", facility_project_ids)
     end
     timesheet_by_users = all_timesheets.group_by{|t| t.user}
 
