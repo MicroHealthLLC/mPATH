@@ -22,13 +22,13 @@ AllCops:
 # Metrics Cops
 
 Metrics/ClassLength:
-  Description: 'Avoid classes longer than 100 lines of code.'
-  Max: 100
+  Description: 'Avoid classes longer than 150 lines of code.'
+  Max: 150
   Enabled: true
 
 Metrics/ModuleLength:
-  Description: 'Avoid modules longer than 100 lines of code.'
-  Max: 100
+  Description: 'Avoid modules longer than 150 lines of code.'
+  Max: 150
   Enabled: true
 
 Metrics/ParameterLists:
