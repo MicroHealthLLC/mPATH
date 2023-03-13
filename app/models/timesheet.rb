@@ -1,4 +1,5 @@
 class Timesheet < ApplicationRecord
+  # self.table_name = "efforts"
   belongs_to :resource, polymorphic: true
   belongs_to :user
   belongs_to :facility_project

@@ -232,8 +232,10 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
-  def timesheet_json
-    as_json.merge(timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours))
+  def timesheet_json(options = {})
+    _timesheets = options[:timesheets] || timesheets
+    _last_update =  notes.sort_by(&:created_at).reverse.first&.as_json
+    as_json.merge( last_update: _last_update, timesheets: _timesheets )
   end
 
   def to_json(options = {})
