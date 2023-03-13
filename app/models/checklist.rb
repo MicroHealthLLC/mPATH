@@ -6,6 +6,12 @@ class Checklist < ApplicationRecord
   belongs_to :user, optional: true
   has_many :progress_lists, dependent: :destroy
   accepts_nested_attributes_for :progress_lists, reject_if: :all_blank, allow_destroy: true
+  
+  after_save :calculate_planned_effort
+
+  def calculate_planned_effort
+    listable.calculate_planned_effort
+  end
 
   def as_json(options=nil)
     json = super(options)

@@ -61,6 +61,7 @@ class Task < ApplicationRecord
       :important,
       :reportable,
       :planned_effort, 
+      :auto_calculate_planned_effort,
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -78,6 +79,7 @@ class Task < ApplicationRecord
         :listable_type,
         :listable_id,
         :position,
+        :planned_effort,
         progress_lists_attributes: [
           :id,
           :_destroy,
@@ -101,6 +103,12 @@ class Task < ApplicationRecord
 
   def update_actual_effort
     self.update(actual_effort: calculate_actual_effort)
+  end
+
+  def calculate_planned_effort
+    if auto_calculate_planned_effort
+      planned_effort = checklists.sum(:planned_effort)
+    end
   end
 
   def update_facility_project
@@ -490,6 +498,7 @@ class Task < ApplicationRecord
             end
             c.save
           end
+          task.calculate_planned_effort
         end
         # NOTE: as currently we don't have solution for nested attributes
         #Checklist.import(checklist_objs) if checklist_objs.any?
