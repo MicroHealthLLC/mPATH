@@ -55,7 +55,6 @@ class Api::V1::ProjectsController < AuthenticatedController
       end
 
     elsif filter_by == "project"
-      binding.pry
       all_tasks = Task.includes(:facility_project).where(id: all_timesheets.pluck(:resource_id).uniq )
       fps_tasks = all_tasks.group_by{|t| t.facility_project }
       fps_tasks.each do |facility_project, tasks|
