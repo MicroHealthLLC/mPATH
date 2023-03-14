@@ -47,7 +47,7 @@
         <div class="col-3">
           <h6 class="mb-1 d-flex">Select Week Of Date</h6>
         <el-select
-        v-model="dateOfWeekFilter"
+        v-model="programDateOfWeekFilter"
         class="w-100"            
         clearable
         placeholder="Search and select Week of Date" 
@@ -101,12 +101,12 @@
           <th style="font-size: 1rem">Progress</th>
         </tr>
       </thead>
-      <tbody v-for="(task, i) in currentProject.facilities
+      <tbody v-for="(task, i) in programTaskEffort
         .filter(t => t  && t.tasks.length > 0 && t.tasks
-        .map(t =>  !t.onHold && !t.draft && !t.planned))" :key="i" class="mb-2"
+        .map(t =>  !t.on_hold && !t.draft && !t.planned))" :key="i" class="mb-2"
         >
        <tr class="mb-2" style="line-height: 3;">
-        <td class="updates">{{task.facilityName}}</td>
+        <td class="updates">{{task.facility_name}}</td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           {{ each.text }}  <br>    
@@ -114,12 +114,12 @@
         </td>          
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-             {{  each.plannedEffort }}<br>                  
+             {{  each.planned_effort }}<br>                  
           </span>          
         </td>
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-            {{  each.actualEffort }} <br>    
+            {{  each.actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -136,10 +136,10 @@
         <span class="bold">Project Efforts Totals: </span>
       </td>         
       <td class="text-center">     
-       <b class="bold" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+       <b class="bold" >{{ task.tasks.map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>        
       </td>
@@ -153,16 +153,16 @@
       </td> 
       <td class="text-center">     
         <span class="bold">
-        {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat().map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</span>  
       </td> 
       <td class="text-center">     
         <b class="bold">
-        {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -184,9 +184,9 @@
           <th class="text-center">Progress</th>
         </tr>
       </thead>
-      <tbody v-for="(task, i) in currentProject.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
+      <tbody v-for="(task, i) in programTaskEffort.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
        <tr class="mb-2">
-        <td class="updates">{{task.facilityName}}</td>
+        <td class="updates">{{task.facility_name}}</td>
         <td class="updates">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
           {{ each.text }}  <br>    
@@ -194,12 +194,12 @@
         </td>      
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-             {{  each.plannedEffort }}<br>                  
+             {{  each.planned_effort }}<br>                  
           </span>          
         </td>
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-            {{  each.actualEffort }} <br>    
+            {{  each.actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -216,10 +216,10 @@
         <em class="bold float-left">Project Efforts Totals: </em>   
       </td> 
       <td class="text-center">    
-        <em class="bold" >{{ task.tasks.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold" >{{ task.tasks.map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -233,16 +233,16 @@
       </td>    
       <td class="text-center">
         <em class="text-dark ">
-        {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat().map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>  
       </td> 
       <td class="text-center">
         <em class="text-dark">
-        {{ currentProject.facilities.filter(t => t  && t.tasks.length > 0) 
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.actualEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td>     
@@ -342,7 +342,7 @@
         </div>
       </div>
    
-    <div v-if="viewTable == true" class="row ml-1">
+    <div v-if="viewTable == true" class="row ml-1" :load="log(programTaskEffort)">
   
     <div class="taskUserInfo mb-4 col-11" v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
      :key="user.id">
@@ -387,7 +387,7 @@
          <!-- Col 3 -->
         <td class="updates">
         <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
-          {{ each.description }}<br>
+         <span v-if="each.last_update && each.last_update.body"> {{ each.last_update.body }}</span>  <br>
         </span>       
         </td>
         <!-- Col 4 -->
@@ -490,7 +490,7 @@
         </td>
         <td>
           <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
-           <li >{{ each.description }}<br></li>        
+           <li v-if="each.last_update && each.last_update.body" >{{each.last_update.body }}<br></li>       
           </ul>
         </td>
          <td class="text-center">
@@ -1555,6 +1555,7 @@ export default {
       matrixDates: [],
       filteredUsers: [],
       dateOfWeekFilter: '',
+      programDateOfWeekFilter: '',
       viewTable: false, 
       today: new Date().toISOString().slice(0, 10),
     };
@@ -1605,6 +1606,7 @@ export default {
       'getHideOnhold',
       'getHideDraft',
       'getHideOverdue',
+      'programTaskEffort'
 
     ]),
     //BEGIN TIMESHEET / EFFORT RELATED CODE
@@ -2288,9 +2290,10 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts',
-     'fetchProgramTimesheets',
-     'fetchDateOfWeekQuery'
+        'fetchProgramLessonCounts',
+        'fetchProgramTimesheets',
+        'fetchDateOfWeekQuery',
+        "fetchProgramEffortReport"
      ]), 
      ...mapMutations([
         'setHideComplete',
@@ -2302,10 +2305,10 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
-      openProjectGroup() {
-      this.dialog2Visible = true;
-      this.dateOfWeekFilter = this.fridayDayOfWeek
-      this.fetchProgramTimesheets({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
+    openProjectGroup() {
+    this.dialog2Visible = true;
+    this.programDateOfWeekFilter = this.fridayDayOfWeek
+    this.fetchProgramEffortReport({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
     },
     openUserTasksReport() {
       // this.userTasksDialog = true;
@@ -2427,7 +2430,7 @@ export default {
       this.viewTable = true
     },
     log(e){
-      // console.log(e)
+      console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);
@@ -2606,6 +2609,15 @@ export default {
           }
           this.fetchProgramTimesheets(dateObj)
         } else  this.fetchProgramTimesheets({programId: this.$route.params.programId})
+      }, 
+      programDateOfWeekFilter(){
+        if(this.programDateOfWeekFilter !== ""){        
+          let dateObj = {
+            programId: this.$route.params.programId,
+            date: this.programDateOfWeekFilter.replace(/\s+/g, '-')
+          }
+          this.fetchProgramEffortReport(dateObj)
+        } else  this.fetchProgramEffortReport({programId: this.$route.params.programId})
       }, 
     }
 };
