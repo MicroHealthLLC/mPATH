@@ -1,6 +1,7 @@
 <template>
   <div 
-   v-loading="!contentLoaded"   
+    v-loading="!contentLoaded"   
+    :load="log(DV_task)"
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -430,17 +431,24 @@
               <label class="font-sm mb-0 d-inline-flex align-items-center">
                 <input
                   type="checkbox"
-                  v-model="DV_task.autoCalculate"
-                  :disabled="!_isallowed('write')"
-                  :readonly="!_isallowed('write')"
+                  v-model="DV_task.autoCalculatePlannedEffort"               
                 />
                 <span>&nbsp;&nbsp;Auto Calculate Effort</span></label
               >
             </span>
               <el-input
               class="d-flex"
+              v-if="DV_task.autoCalculatePlannedEffort"
               type="text"
-              :disabled="true"
+              :disabled="DV_task.autoCalculatePlannedEffort"
+              style="width: 15%;"
+              v-model="autoCalculatedPlannedEffort"
+              placeholder="Planned Effort Hours"
+              ></el-input>
+              <el-input
+              class="d-flex"
+              v-if="!DV_task.autoCalculatePlannedEffort"
+              type="text"
               style="width: 15%;"
               v-model="DV_task.plannedEffort"
               placeholder="Planned Effort Hours"
@@ -711,29 +719,7 @@
                       </div>
 
 
-                      <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-1 text-right pr-0"
-                      >
-                        <span class="font-sm dueDate">Planned Hours:</span>
-                      </div>
-                      <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-2 pl-0"             
-                      >
-                      <input
-                          :value="check.text"
-                          name="text"
-                          @input="updateCheckItem($event, 'text', index)"
-                          :key="`text_${index}`"
-                          placeholder=""
-                          type="text"
-                          class="checklist-text-planned-hrs pl-1"
-                          maxlength="80"
-                          :readonly="!_isallowed('write')"
-                        />
-                      </div>                                   
-                     
+              
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 text-right pr-1"
@@ -759,6 +745,31 @@
                           :class="{ disabled: disabledDateRange }"
                         />
                       </div>
+
+
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-1 text-right pr-0"
+                      >
+                        <span class="font-sm dueDate">Planned Effort:</span>
+                      </div>
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-2 pl-0"             
+                      >
+                      <input
+                          :value="check.plannedEffort"
+                          name="planned_effort"
+                          @input="updateCheckItem($event, 'planned_effort', index)"
+                          :key="`planned_effort_${index}`"
+                          placeholder=""
+                          type="text"
+                          class="checklist-text-planned-hrs pl-1"
+                          maxlength="80"
+                          :readonly="!_isallowed('write')"
+                        />
+                      </div>                                   
+                     
                     </div>
 
                     <!-- Collpase section begins here -->
@@ -1487,6 +1498,7 @@ export default {
         description: "",
         progress: 0,
         autoCalculate: true,
+        autoCalculatePlannedEffort: true,
         taskFiles: [],
         checklists: [],
         notes: [],
@@ -1507,7 +1519,7 @@ export default {
       }
     },
   log(e){
-      // console.log("taskSorted: " + e)
+      console.log(e)
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1735,13 +1747,12 @@ export default {
         let formData = new FormData();
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.dueDate);
-        formData.append("task[start_date]", this.DV_task.startDate);
-        formData.append("task[planned_effort]", this.DV_task.plannedEffort);
-         formData.append("task[task_type_id]", this.DV_task.taskTypeId);
-
+        formData.append("task[start_date]", this.DV_task.startDate);        
+        formData.append("task[task_type_id]", this.DV_task.taskTypeId);
         formData.append("task[task_stage_id]", this.DV_task.taskStageId);
         formData.append("task[progress]", this.DV_task.progress);
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
+        formData.append("task[auto_calculate_planned_effort]", this.DV_task.autoCalculatePlannedEffort);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
         formData.append("task[reportable]", this.DV_task.reportable);
@@ -1752,6 +1763,12 @@ export default {
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
+
+        if (this.DV_task.autoCalculatePlannedEffort){
+          formData.append("task[planned_effort]", this.autoCalculatedPlannedEffort);
+        } else {
+          formData.append("task[planned_effort]", this.DV_task.plannedEffort);
+        }
         // RACI USERS START HERE Awaiting backend work
 
         //Responsible USer Id
@@ -2042,6 +2059,8 @@ export default {
         this.DV_task.checklists[index].checked = event.target.checked;
       } else if (name === "dueDate" && this.DV_task.checklists[index].text) {
         this.DV_task.checklists[index].dueDate = event.target.value;
+      } else if (name === "planned_effort" && this.DV_task.checklists[index].text) {
+        this.DV_task.checklists[index].plannedEffort = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -2128,6 +2147,12 @@ export default {
     taskStagesSorted() {
       var taskStagesSortedReturn = [...this.taskStages]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
+    autoCalculatedPlannedEffort(){
+      if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        return this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)   
+      } else return this.DV_task.plannedEffort
+        
     },
     readyToSave() {
       return (
