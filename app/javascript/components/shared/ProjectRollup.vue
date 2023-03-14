@@ -85,10 +85,14 @@
         </div>
       </div> 
       <button 
-        @click="printProgramEffortReport(currentProject.name)"   
+        @click="printProgramEffortReport(currentProject.name, programDateOfWeekFilter)"   
         v-tooltip="`Export to PDF`"            
-        class="btn btn-sm  float-left profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
+        class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
       </button> 
+    <div class="taskUserInfo col-11 mt-2">
+      <span class="mt-2"><h6><b class="mr-1">Week of:</b>{{ programDateOfWeekFilter }}</h6></span> 
+      <span><h6><b class="mr-1">Date of Report:</b>{{ moment().format("DD MMM YY") }} </h6></span>  
+
      <table
       class="table table-sm table-bordered mt-3"
       >
@@ -170,6 +174,18 @@
     
       </tr>  
     </table>
+    <span class="centerLogo" >
+        <img
+          class="my-2"
+          style="width: 147px;cursor:pointer"
+          id="img1"
+          :src="require('../../../assets/images/microhealthllc.png')"
+        />
+      </span>
+
+</div>
+    
+
     <table
       class="table table-sm table-bordered mt-3"
       ref="table1" id="taskSheetsList1"
@@ -249,14 +265,7 @@
       </td>      
       </tr>   
     </table> 
-    <span class="centerLogo" >
-        <img
-          class="my-2"
-          style="width: 147px;cursor:pointer"
-          id="img1"
-          :src="require('../../../assets/images/microhealthllc.png')"
-        />
-      </span>
+  
       </el-dialog>
       <!-- PROGRAM LEVEL TASK EFFORT REPORT ENDS -->
 
@@ -357,9 +366,10 @@
       </button>   
      
       <span class="mt-2"><h6><b class="mr-1">Week of:</b>{{ dateOfWeekFilter }}</h6></span> 
+      <span><h6><b class="mr-1">Date of Report:</b>{{ moment().format("DD MMM YY") }} </h6></span>     
       <span><h6><b class="mr-1">Name of Staff:</b> {{ user.full_name }} </h6> </span> 
       <span><h6><b class="mr-1">Position:</b>{{ user.title }} </h6></span> 
-      <span><h6><b class="mr-1">Date of Report:</b>{{ new Date().toLocaleDateString() }} </h6></span>      
+       
       <table 
       class="table table-sm table-bordered mt-3"  
       style="">     
@@ -1612,7 +1622,7 @@ export default {
     //BEGIN TIMESHEET / EFFORT RELATED CODE
     tableData() {
       if (this.programTimesheets && this.programTimesheets.length > 0){            
-        let tasks = this.programTimesheets
+        let tasks = this.programTimesheets.filter(t => t.facilities.length > 0)
         .filter((task) => {
         if (this.filteredUsers && this.filteredUsers.length > 0 ) {       
           let status = this.filteredUsers.map((t) => t.id);
@@ -2360,9 +2370,10 @@ export default {
         doc.setFont("undefined","bold").text(120, 11, `USER TASK EFFORT REPORT`)
 
         doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${week}`); 
-        doc.text(5, 15, `Name of Staff:  ${username} `); 
-        doc.text(5, 20, `Position:  ${title} `); 
-        doc.text(5, 25, `Date of Report:  ${new Date().toLocaleDateString()} `); 
+        doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
+        doc.text(5, 20, `Name of Staff:  ${username} `); 
+        doc.text(5, 25, `Position:  ${title} `); 
+      
 
         // Footer
         doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
@@ -2384,7 +2395,7 @@ export default {
       doc.setLineHeightFactor(3)
       doc.save("User_Task_Effort_Totals.pdf")
     },
-    printProgramEffortReport(programName) {
+    printProgramEffortReport(programName, week) {
     const doc = new jsPDF("l")
     const html =  this.$refs.table1.innerHTML    
     const logo = require('../../../assets/images/microhealthllc.png')
@@ -2408,7 +2419,8 @@ export default {
       doc.setTextColor(33,33,33);
       doc.setFont("undefined", "undefined").text(str, 280, 10);
       doc.setFont("undefined","bold").text(120, 10, `${programName}'s Task Effort Report`)   
-      doc.setFont("undefined", "undefined").text(5, 10, `Date of Report:  ${new Date().toLocaleDateString()} `)
+      doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${ week } `)
+      doc.setFont("undefined", "undefined").text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `)
       // Footer
       doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
 
@@ -2608,7 +2620,10 @@ export default {
             date: this.dateOfWeekFilter.replace(/\s+/g, '-')
           }
           this.fetchProgramTimesheets(dateObj)
-        } else  this.fetchProgramTimesheets({programId: this.$route.params.programId})
+        } else  {
+          this.fetchProgramTimesheets({programId: this.$route.params.programId})
+          this.dateOfWeekFilter = "ALL WEEKS"
+        }
       }, 
       programDateOfWeekFilter(){
         if(this.programDateOfWeekFilter !== ""){        
@@ -2617,7 +2632,10 @@ export default {
             date: this.programDateOfWeekFilter.replace(/\s+/g, '-')
           }
           this.fetchProgramEffortReport(dateObj)
-        } else  this.fetchProgramEffortReport({programId: this.$route.params.programId})
+        } else  {
+          this.fetchProgramEffortReport({programId: this.$route.params.programId})
+          this.programDateOfWeekFilter = "ALL WEEKS"
+        }
       }, 
     }
 };

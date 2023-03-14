@@ -1,7 +1,7 @@
 <template>
   <div 
     v-loading="!contentLoaded"   
-    :load="log(DV_task)"
+    :load="log(DV_task.progress)"
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -2038,19 +2038,44 @@ export default {
     calculateProgress(checks = null) {
       try {
         if (!checks) checks = this.DV_task.checklists;
+        console.log(checks)
+        let allUnchecked = checks.filter(t => t.checked == false).length
+       
+        if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        let sum =  this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         let checked = _.filter(
           checks,
           (v) => !v._destroy && v.checked && v.text.trim()
         ).length;
-        let total = _.filter(checks, (v) => !v._destroy && v.text.trim())
-          .length;
-        this.DV_task.progress = Number(
-          ((checked / total) * 100 || 0).toFixed(2)
-        );
+
+        let checkedSubtask = _.filter(
+          checks,
+          (v) => !v._destroy && v.checked && v.text.trim()
+        )     
+
+         for (let i = 0; i < checked; i++) {
+          if (checkedSubtask.length > 1 ){           
+              this.DV_task.progress = Number(
+            ((checkedSubtask.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0) / sum) * 100 || 0).toFixed(2)
+              ); 
+            }      
+            
+          if (checkedSubtask.length == 1){            
+            this.DV_task.progress = Number(
+            ((checkedSubtask[0].plannedEffort / sum) * 100 || 0).toFixed(2)
+            );
+          }                
+        }
+        if (checks.length == allUnchecked) {
+            console.log("all Unchecked")
+            this.DV_task.progress = Number((0));
+          }   
+      }
       } catch (err) {
         this.DV_task.progress = 0;
       }
     },
+
     updateCheckItem(event, name, index) {
       if (name === "text") {
         this.DV_task.checklists[index].text = event.target.value;
@@ -2212,6 +2237,21 @@ export default {
           ? "Edit Task"
           : "Add Task"
         : "Task";
+    },
+    weightedProgress(){
+      //1:  Obtain all subtask plannedHours values
+      //2:  Determine sum of all subtask plannedHours
+      //3:  Divide subtask hours by sum of subtasks
+      let values = []
+      if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        let sum =  this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)   
+        let n =  this.DV_task.checklists.map(t => t.plannedEffort).length
+        for (let i = 0; i < n; i++) {
+          values.push(this.DV_task.checklists[i].plannedEffort)
+          console.log(values[i] / sum)
+        }
+       
+      } 
     },
     tab() {
       if (this.$route.path.includes("map")) {
