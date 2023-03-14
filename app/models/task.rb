@@ -61,6 +61,7 @@ class Task < ApplicationRecord
       :important,
       :reportable,
       :planned_effort, 
+      :auto_calculate_planned_effort,
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -78,6 +79,7 @@ class Task < ApplicationRecord
         :listable_type,
         :listable_id,
         :position,
+        :planned_effort,
         progress_lists_attributes: [
           :id,
           :_destroy,
@@ -101,6 +103,12 @@ class Task < ApplicationRecord
 
   def update_actual_effort
     self.update(actual_effort: calculate_actual_effort)
+  end
+
+  def calculate_planned_effort
+    if auto_calculate_planned_effort
+      planned_effort = checklists.sum(:planned_effort)
+    end
   end
 
   def update_facility_project
@@ -232,8 +240,10 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
-  def timesheet_json
-    as_json.merge(timesheets: timesheets.map(&:to_json), actual_effort: timesheets.sum(&:hours))
+  def timesheet_json(options = {})
+    _timesheets = options[:timesheets] || timesheets
+    _last_update =  notes.sort_by(&:created_at).reverse.first&.as_json
+    as_json.merge( last_update: _last_update, timesheets: _timesheets )
   end
 
   def to_json(options = {})
@@ -488,6 +498,7 @@ class Task < ApplicationRecord
             end
             c.save
           end
+          task.calculate_planned_effort
         end
         # NOTE: as currently we don't have solution for nested attributes
         #Checklist.import(checklist_objs) if checklist_objs.any?

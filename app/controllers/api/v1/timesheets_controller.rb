@@ -23,8 +23,7 @@ class Api::V1::TimesheetsController < AuthenticatedController
   end
 
   def index
-
-    all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id = ?", @owner.id)#.paginate(:page => params[:page], :per_page => 15)
+    all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id = ? and timesheets.hours > 0", @owner.id)#.paginate(:page => params[:page], :per_page => 15)
 
     all_users = User.where(id: all_timesheets.map(&:user_id))
     all_tasks = Task.where(facility_project_id: @owner.id)

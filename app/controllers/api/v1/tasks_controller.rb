@@ -66,6 +66,7 @@ class Api::V1::TasksController < AuthenticatedController
     @task.update(t_params)
     @task.assign_users(params)
     @task.add_link_attachment(params)
+    @task.calculate_planned_effort
     @task.reload
     # @task.create_or_update_task(params, current_user)
     if params[:source] == "portfolio_viewer"
@@ -83,6 +84,7 @@ class Api::V1::TasksController < AuthenticatedController
   def create_duplicate
     duplicate_task = @task.amoeba_dup
     duplicate_task.save
+    duplicate_task.calculate_planned_effort
     # @task.create_or_update_task(params, current_user)
     render json: {task: duplicate_task.reload.to_json}
   end
@@ -94,6 +96,7 @@ class Api::V1::TasksController < AuthenticatedController
         duplicate_task = @task.amoeba_dup
         duplicate_task.facility_project_id = fp_id
         duplicate_task.save
+        duplicate_task.calculate_planned_effort
         all_objs << duplicate_task
       end
     end
