@@ -106,8 +106,9 @@ class Task < ApplicationRecord
   end
 
   def calculate_planned_effort
-    if auto_calculate_planned_effort
-      planned_effort = checklists.sum(:planned_effort)
+    if self.auto_calculate_planned_effort
+      self.planned_effort = self.checklists.sum(:planned_effort)
+      save!
     end
   end
 
