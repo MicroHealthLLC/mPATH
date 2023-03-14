@@ -426,9 +426,22 @@
                <label class="font-md"
                 >Planned Effort </label
               ></span>
-          
+              <span class="ml-3">
+              <label class="font-sm mb-0 d-inline-flex align-items-center">
+                <input
+                  type="checkbox"
+                  v-model="DV_task.autoCalculate"
+                  :disabled="!_isallowed('write')"
+                  :readonly="!_isallowed('write')"
+                />
+                <span>&nbsp;&nbsp;Auto Calculate Effort</span></label
+              >
+            </span>
               <el-input
+              class="d-flex"
               type="text"
+              :disabled="true"
+              style="width: 15%;"
               v-model="DV_task.plannedEffort"
               placeholder="Planned Effort Hours"
               ></el-input>
@@ -494,6 +507,8 @@
               <el-input
               :disabled="true"
               type="text"
+              style="width: 15%;"
+              class="d-flex"
               v-model="DV_task.actualEffort"
               placeholder="READ ONLY"
               ></el-input>
@@ -673,7 +688,7 @@
                     style="background-color:#fafafa;position:relative"
                   >
                     <div class="row" style="width:97%">
-                      <div class="col-8 justify-content-start">
+                      <div class="col-6 justify-content-start">
                         <input
                           type="checkbox"
                           name="check"
@@ -687,23 +702,47 @@
                           name="text"
                           @input="updateCheckItem($event, 'text', index)"
                           :key="`text_${index}`"
-                          placeholder="Checkpoint name here"
+                          placeholder="Subtask name here"
                           type="text"
                           class="checklist-text pl-1"
                           maxlength="80"
                           :readonly="!_isallowed('write')"
                         />
                       </div>
+
+
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-1 pl-0 pr-0"
+                        class="col-1 text-right pr-0"
+                      >
+                        <span class="font-sm dueDate">Planned Hours:</span>
+                      </div>
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-2 pl-0"             
+                      >
+                      <input
+                          :value="check.text"
+                          name="text"
+                          @input="updateCheckItem($event, 'text', index)"
+                          :key="`text_${index}`"
+                          placeholder=""
+                          type="text"
+                          class="checklist-text-planned-hrs pl-1"
+                          maxlength="80"
+                          :readonly="!_isallowed('write')"
+                        />
+                      </div>                                   
+                     
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-1 text-right pr-1"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-3 pl-0"
-                        style="margin-left:-25px"
+                        class="col-2 pl-0"            
                       >
                         <v2-date-picker
                           v-model="check.dueDate"
@@ -715,7 +754,7 @@
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="dueDate"
-                          class="w-100 vue2-datepicker d-flex ml-auto"
+                          class="w-100 vue2-datepicker ml-auto bg-light"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
                         />
@@ -727,7 +766,7 @@
                       <el-collapse-item
                         title="Details"
                         name="1"
-                        style="background-color:#fafafa"
+                        style="background-color:#fafafa; padding-right: 0;"
                       >
                         <div
                           v-if="isMapView"
@@ -937,7 +976,7 @@
                             </tbody>
                           </table>
                           <div v-else class="text-danger">
-                            No Checklist Progress Updates to Display
+                            No Subtask Progress Updates to Display
                           </div>
                           <!-- End Checkbox Progress List -->
                         </div>
@@ -955,7 +994,7 @@
                 </div>
               </draggable>
             </div>
-            <p v-else class="text-danger font-sm">No checks..</p>
+            <p v-else class="text-danger font-sm">No Subtasks..</p>
           </div>
           <!-- closing div for tab2 -->
         </div>
@@ -2321,6 +2360,7 @@ export default {
 <style scoped lang="scss">
 // .tasks-form {
 // }
+
 .line {
   border-top: solid .25px lightgray;
 }
@@ -2345,7 +2385,19 @@ th {
   margin-left: 5px;
   min-height: 33px;
   border: 0;
-  width: 95%;
+  background-color: white;
+  width: 90%;
+  outline: none;
+  border: solid #ededed 1px;
+  border-radius: 4px;
+}
+
+.checklist-text-planned-hrs {
+  margin-left: 5px;
+  min-height: 33px;
+  border: 0;
+  width: 25%;
+  background-color: white;
   outline: none;
   border: solid #ededed 1px;
   border-radius: 4px;
@@ -2392,6 +2444,7 @@ ul {
   a:hover {
     background-color: #ededed;
   }
+
   li.active a {
     font-weight: bold;
     color: #383838;
@@ -2494,6 +2547,7 @@ ul {
   /deep/.el-collapse-item__header {
     float: right;
     padding: 1em;
+    padding-right: 0;
     margin-top: -36px;
     color: #d9534f !important;
     border-bottom: none !important;
