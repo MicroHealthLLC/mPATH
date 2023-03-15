@@ -243,8 +243,8 @@ class Task < ApplicationRecord
 
   def timesheet_json(options = {})
     _timesheets = options[:timesheets] || timesheets
-    _last_update =  notes.sort_by(&:created_at).reverse.first&.as_json
-    as_json.merge( last_update: _last_update, timesheets: _timesheets )
+    _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
+    as_json.merge({ timesheet_actual_effort: _timesheets.sum(&:hours), last_update: _last_update, timesheets: _timesheets })
   end
 
   def to_json(options = {})

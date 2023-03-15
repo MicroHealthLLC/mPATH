@@ -6,13 +6,16 @@ class Api::V1::ProjectsController < AuthenticatedController
   def project_timesheets
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
     
-    all_project_users = Project.find(params[:program_id]).users
+    all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
     else
-      all_timesheets = Timesheet.includes([ :user, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and timesheets.hours > 0", facility_project_ids)
+      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and timesheets.hours > 0", facility_project_ids)
     end
+
+    preloader = ActiveRecord::Associations::Preloader.new
+    preloader.preload(all_timesheets.select { |p| p.resource_type == 'Task' }, resource: [:notes])
 
     # total_pages = all_timesheets.total_pages
     # current_page = all_timesheets.current_page
@@ -41,6 +44,7 @@ class Api::V1::ProjectsController < AuthenticatedController
         t_facility_projects.each do |fp|
           tasks = tasks_by_facility_project[fp.id] || []
           fp_hash = fp.facility.attributes
+          fp_hash[:facility_project_id] = fp.id
           fp_hash[:tasks] = []
           tasks.each do |task|
             fp_hash[:tasks] << task.timesheet_json( { timesheets: timesheet_by_tasks[task] })
@@ -55,10 +59,19 @@ class Api::V1::ProjectsController < AuthenticatedController
       end
 
     elsif filter_by == "project"
-      all_tasks = Task.includes(:facility_project).where(id: all_timesheets.pluck(:resource_id).uniq )
+      all_tasks = Task.includes({facility_project: :facility}, notes: [:user]).where(id: all_timesheets.pluck(:resource_id).uniq )
+      timesheet_by_task_id = all_timesheets.group_by{|t| t.resource_id }
       fps_tasks = all_tasks.group_by{|t| t.facility_project }
-      fps_tasks.each do |facility_project, tasks|
-        response << facility_project.as_json.merge({tasks: tasks})
+
+      fps_tasks.each do |fp, tasks|
+        fp_hash = fp.facility.attributes
+        fp_hash[:facility_project_id] = fp.id
+        fp_hash[:tasks] = []
+        tasks.each do |task|
+          fp_hash[:tasks] << task.timesheet_json( { timesheets: timesheet_by_task_id[task.id] })
+        end
+        
+        response << fp_hash
       end
     end
 
