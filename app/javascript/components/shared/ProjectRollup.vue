@@ -89,7 +89,7 @@
         v-tooltip="`Export to PDF`"            
         class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i> 
       </button> 
-    <div class="taskUserInfo col-11 mt-2">
+    <div class="taskUserInfo col-11 mt-2" >
       <span class="mt-2"><h6><b class="mr-1">Week of:</b>{{ programDateOfWeekFilter }}</h6></span> 
       <span><h6><b class="mr-1">Date of Report:</b>{{ moment().format("DD MMM YY") }} </h6></span>  
 
@@ -101,6 +101,7 @@
           <th style="width:32%; font-size: 1rem">Project</th>
           <th style="width:32%; font-size: 1rem">Task</th>    
           <th style="font-size: 1rem">Planned Effort<br>for Entire Task</th>
+          <th style="font-size: 1rem">Actual Effort<br>for Entire Task</th>
           <th style="font-size: 1rem">Actual Effort<br>for This Week</th>
           <th style="font-size: 1rem">Progress</th>
         </tr>
@@ -123,7 +124,12 @@
         </td>
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
-            {{  each.actual_effort }} <br>    
+            {{ each.actual_effort }} <br>    
+          </span>          
+        </td>       
+        <td class="updates text-center">            
+          <span class="a" v-for="each, i in task.tasks" :key="i">           
+            {{ each.timesheet_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -144,6 +150,9 @@
       </td> 
       <td class="text-center">     
         <b class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+      </td> 
+      <td class="text-center">     
+        <b class="bold"> {{ task.tasks.map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>        
       </td>
@@ -167,6 +176,14 @@
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+        }}</b>  
+      
+      </td> 
+      <td class="text-center">     
+        <b class="bold">
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
+              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
+              .flat().map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -196,6 +213,7 @@
           <th>Project</th>
           <th>Task</th> 
           <th class="text-center">Planned Effort<br>for Entire Task</th>
+          <th class="text-center">Actual Effort<br>for Entire Task</th>
           <th class="text-center">Actual Effort<br>for This Week</th>
           <th class="text-center">Progress</th>
         </tr>
@@ -220,6 +238,11 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks" :key="i">           
+            {{  each.timesheet_actual_effort }} <br>    
+          </span>          
+        </td>       
+        <td class="updates text-center">            
+          <span class="a" v-for="each, i in task.tasks" :key="i">           
          {{ each.progress }}<br>      
           </span>          
         </td>          
@@ -236,6 +259,9 @@
       </td> 
       <td class="text-center">     
         <em class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+      </td> 
+      <td class="text-center">     
+        <em class="bold"> {{ task.tasks.map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -259,6 +285,13 @@
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+        }}</em>        
+      </td> 
+      <td class="text-center">
+        <em class="text-dark">
+        {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
+              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
+              .flat().map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td>     
@@ -332,12 +365,12 @@
      
       <div class="row mb-5">
         <div class="col">
-          <button                
+          <!-- <button                
            @click="viewTaskEffortReport"
             class="btn btn-sm mh-green profile-btns text-light allCaps pl-2 mr-2" >
            View Reports      
             <i class="fas fa-binoculars text-light grow"></i> 
-          </button>    
+          </button>     -->
 
 
         <!-- <button                
@@ -351,10 +384,19 @@
         </div>
       </div>
    
-    <div v-if="viewTable == true" class="row ml-1" :load="log(programTaskEffort)">
+    <div v-if="tableData && tableData.length > 0" class="row ml-1" :load="log(programTaskEffort)">
   
-    <div class="taskUserInfo mb-4 col-11" v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
-     :key="user.id">
+    <div 
+     class="taskUserInfo mb-4 col-11" 
+     v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
+     :key="user.id"
+      
+     >
+     <!-- <button 
+        v-tooltip="`Print All`"   
+        @click="printAllUsers"
+         class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i>  
+      </button> -->
       <button 
         v-tooltip="`Export to PDF`"   
         @click="printTaskReport(userIndex,
@@ -1534,16 +1576,17 @@
     <el-tab-pane label="Analytics">  -->
 <!-- KPI's and visual graphs will go here -->    
        
-      
+
     <!-- </el-tab-pane>
        </el-tabs>  -->
   </div>
 </template>
 
+
 <script>
 import Loader from "./loader";
 import {jsPDF} from "jspdf"
-
+// import { Printd } from 'printd'
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
@@ -1551,6 +1594,7 @@ export default {
   components: {
     Loader,
   },
+  // el: '#printAll', 
   data() {
     return {
       uri :'data:application/vnd.ms-excel;base64,',
@@ -1561,12 +1605,12 @@ export default {
       showMore: true,  
       reportCenterModal: false, 
       dialog2Visible: false,  
+      // d: new Printd(),
       userTasksDialog: false,    
       matrixDates: [],
       filteredUsers: [],
       dateOfWeekFilter: '',
       programDateOfWeekFilter: '',
-      viewTable: false, 
       today: new Date().toISOString().slice(0, 10),
     };
   },
@@ -1622,7 +1666,7 @@ export default {
     //BEGIN TIMESHEET / EFFORT RELATED CODE
     tableData() {
       if (this.programTimesheets && this.programTimesheets.length > 0){            
-        let tasks = this.programTimesheets.filter(t => t.facilities.length > 0)
+        let tasks = this.programTimesheets.filter(t => t.facilities && t.facilities.length > 0)
         .filter((task) => {
         if (this.filteredUsers && this.filteredUsers.length > 0 ) {       
           let status = this.filteredUsers.map((t) => t.id);
@@ -2320,6 +2364,9 @@ export default {
     this.programDateOfWeekFilter = this.fridayDayOfWeek
     this.fetchProgramEffortReport({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
     },
+    // printAllUsers () {
+    //   this.d.print( this.$el, [this.cssText])
+    // },
     openUserTasksReport() {
       // this.userTasksDialog = true;
       this.dateOfWeekFilter = this.fridayDayOfWeek
@@ -2396,50 +2443,48 @@ export default {
       doc.save("User_Task_Effort_Totals.pdf")
     },
     printProgramEffortReport(programName, week) {
-    const doc = new jsPDF("l")
-    const html =  this.$refs.table1.innerHTML    
-    const logo = require('../../../assets/images/microhealthllc.png')
-    var imgLogo = new Image()
-    imgLogo.src = logo
-    //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
+      const doc = new jsPDF("l")
+      const html =  this.$refs.table1.innerHTML    
+      const logo = require('../../../assets/images/microhealthllc.png')
+      var imgLogo = new Image()
+      imgLogo.src = logo
+      //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
 
-    doc.autoTable({
-    html:  `#taskSheetsList1`,
-    margin: { top: 30, left: 5, right: 5, bottom: 15 },
-    theme: 'grid',
-    columnStyles: {
-      2: { halign: 'center'},
-      3: { halign: 'center'},
-      4: { halign: 'center'},
-    },
-    didDrawPage: function (data) {
-      // Header        
-      var str = "Page " + doc.internal.getNumberOfPages();
-      doc.setFontSize(10);
-      doc.setTextColor(33,33,33);
-      doc.setFont("undefined", "undefined").text(str, 280, 10);
-      doc.setFont("undefined","bold").text(120, 10, `${programName}'s Task Effort Report`)   
-      doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${ week } `)
-      doc.setFont("undefined", "undefined").text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `)
-      // Footer
-      doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
+      doc.autoTable({
+        html:  `#taskSheetsList1`,
+        margin: { top: 30, left: 5, right: 5, bottom: 15 },
+        theme: 'grid',
+        columnStyles: {
+          2: { halign: 'center'},
+          3: { halign: 'center'},
+          4: { halign: 'center'},
+          5: { halign: 'center'},
+      },
+      didDrawPage: function (data) {
+        // Header        
+        var str = "Page " + doc.internal.getNumberOfPages();
+        doc.setFontSize(10);
+        doc.setTextColor(33,33,33);
+        doc.setFont("undefined", "undefined").text(str, 280, 10);
+        doc.setFont("undefined","bold").text(120, 10, `${programName}'s Task Effort Report`)   
+        doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${ week } `)
+        doc.setFont("undefined", "undefined").text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `)
+        // Footer
+        doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
 
-    },
-    didParseCell: function(hookData) {
-      if (hookData.section == "head") {
-         hookData.cell.styles.fillColor = [237, 237, 237];
-         hookData.cell.styles.textColor = "#383838";
-      }     
-      if (hookData.table.body) {
-        hookData.cell.styles.overflow = 'ellipsize';
-      }               
-    },
-    });
+      },
+      didParseCell: function(hookData) {
+        if (hookData.section == "head") {
+          hookData.cell.styles.fillColor = [237, 237, 237];
+          hookData.cell.styles.textColor = "#383838";
+        }     
+        if (hookData.table.body) {
+          hookData.cell.styles.overflow = 'ellipsize';
+        }               
+      },
+      });
 
     doc.save("Program_Task_Effort_Report.pdf")
-    },
-    viewTaskEffortReport() {
-      this.viewTable = true
     },
     log(e){
       console.log(e)
@@ -2609,8 +2654,17 @@ export default {
     // },
   },
   mounted() {
-    this.fetchProgramLessonCounts(this.$route.params)  
-   
+    this.fetchProgramLessonCounts(this.$route.params) 
+ 
+      // const { contentWindow } = this.d.getIFrame()
+
+      // contentWindow.addEventListener(
+      //   'beforeprint', () => console.log('before print event!')
+      // )
+      // contentWindow.addEventListener(
+      //   'afterprint', () => console.log('after print event!')
+      // )
+     
   },
   watch: {          
       dateOfWeekFilter(){
