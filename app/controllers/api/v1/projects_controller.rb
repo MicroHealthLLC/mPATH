@@ -3,13 +3,38 @@ class Api::V1::ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
   # before_action :authenticate_request!
 
+  def timesheet_count
+
+    beginning_of_year = Date.today.beginning_of_year()
+    current_friday = beginning_of_year
+    prev_friday = beginning_of_year
+    all_week_timesheets = []
+    facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
+
+    while ( current_friday - beginning_of_year).to_i < 365 do
+      prev_friday = prev_friday == current_friday ? current_friday : (current_friday + 1) 
+      current_friday = current_friday.next_occurring(:friday)
+      if ( current_friday - beginning_of_year).to_i < 365
+        # count = Timesheet.where("timesheets.facility_project_id in (?) and DATE(date_of_week) between ? and ? and timesheets.hours > 0", facility_project_ids, prev_friday.in_time_zone(Time.zone).beginning_of_day, current_friday.in_time_zone(Time.zone).end_of_day).sum(:hours)
+
+
+        count = Timesheet.where("timesheets.facility_project_id in (?) and DATE(date_of_week) = ? and timesheets.hours > 0", facility_project_ids, current_friday).sum(:hours)
+
+        all_week_timesheets << {range: "#{prev_friday} - #{current_friday}", friday: current_friday,count: count.to_f}
+      end
+    end
+    render json: {timesheet_count: all_week_timesheets }
+
+  end
+
   def project_timesheets
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
     
     all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      # all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and DATE(date_of_week) between ? and ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and DATE(date_of_week) = ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]) )
     else
       all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and timesheets.hours > 0", facility_project_ids)
     end

@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         
         collection do
           get "project_timesheets/:program_id", to: 'projects#project_timesheets'
+          get "timesheet_count/:program_id", to: 'projects#timesheet_count'
         end
 
         member do
