@@ -107,33 +107,32 @@
         </tr>
       </thead>
       <tbody v-for="(task, i) in programTaskEffort
-        .filter(t => t  && t.tasks.length > 0 && t.tasks
-        .map(t =>  !t.on_hold && !t.draft && !t.planned))" :key="i" class="mb-2"
+        .filter(t => t  && t.tasks.length > 0 && t.tasks)" :key="i" class="mb-2"
         >
        <tr class="mb-2" style="line-height: 3;">
         <td class="updates">{{task.facility_name}}</td>
         <td class="updates">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
           {{ each.text }}  <br>    
           </span>         
         </td>          
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
              {{  each.planned_effort }}<br>                  
           </span>          
         </td>
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
             {{ each.actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
             {{ each.timesheet_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
          {{ each.progress }}<br>        
           </span>          
         </td>    
@@ -146,13 +145,13 @@
         <span class="bold">Project Efforts Totals: </span>
       </td>         
       <td class="text-center">     
-       <b class="bold" >{{ task.tasks.map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+       <b class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>        
       </td>
@@ -167,15 +166,19 @@
       <td class="text-center">     
         <span class="bold">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
-              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)            
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</span>  
       </td> 
       <td class="text-center">     
         <b class="bold">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -183,7 +186,9 @@
         <b class="bold">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -222,27 +227,27 @@
        <tr class="mb-2">
         <td class="updates">{{task.facility_name}}</td>
         <td class="updates">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
           {{ each.text }}  <br>    
           </span>         
         </td>      
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
              {{  each.planned_effort }}<br>                  
           </span>          
         </td>
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
             {{  each.actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
             {{  each.timesheet_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
-          <span class="a" v-for="each, i in task.tasks" :key="i">           
+          <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
          {{ each.progress }}<br>      
           </span>          
         </td>          
@@ -255,13 +260,13 @@
         <em class="bold float-left">Project Efforts Totals: </em>   
       </td> 
       <td class="text-center">    
-        <em class="bold" >{{ task.tasks.map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -276,22 +281,29 @@
       <td class="text-center">
         <em class="text-dark ">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
-              .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .filter(t => t.tasks && t.tasks.length > 0)
+              .map(t => t.tasks)
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>  
       </td> 
       <td class="text-center">
         <em class="text-dark">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td class="text-center">
         <em class="text-dark">
         {{ programTaskEffort.filter(t => t  && t.tasks.length > 0) 
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
-              .flat().map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .flat()
+              .filter(g => g && g.on_hold == false)
+              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td>     

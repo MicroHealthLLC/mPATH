@@ -137,7 +137,12 @@
       width="90"
       >
      <template slot-scope="scope">  
-      <span v-if="userTime && userTime.length > 0">
+      <span v-if="userTime && userTime.length > 0 &&  userTime
+          .filter(t => t && t.id && t.id == scope.row.id) 
+          .map(t => t.timesheets)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)  !== 0">
           {{ 
           userTime
           .filter(t => t && t.id && t.id == scope.row.id) 
