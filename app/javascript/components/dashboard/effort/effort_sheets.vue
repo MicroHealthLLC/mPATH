@@ -191,29 +191,18 @@
 
     <template slot-scope="scope">        
       <span v-if="item.tasks && item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)      
+          .map(t => t.efforts)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) " >
          {{ item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.efforts)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) 
-<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
-          }} 
-          <!-- {{ 
-          userTime
-          .filter(t => t && t.id && t.id == scope.row.id) 
-          .map(t => t.efforts)
-          .flat()    
-          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-          }}            -->
-=======
           }}    
       </span>
       <span v-else>
          {{ 
           }}    
->>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
       </span>
     
        </template>   
@@ -420,13 +409,8 @@
       "fetchCurrentProject"
     ]),
     log(e){
-<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
-      // console.log("Efforts Vue: ")
-      // console.log(e)
-=======
       console.log("Dates ")
       console.log(this.weekOfFilter)
->>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
     },
     openUserTasksReport() {
       this.userTasksDialog = true;
@@ -477,13 +461,9 @@
         console.log("create") 
          console.log(timeSheetData) 
          console.log(this.editColValue)
-<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
          this.createEffort({...timeSheetData})     
     
 
-=======
-         this.createTimesheet({...timeSheetData})     
->>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         } 
       }   
     } 
@@ -534,13 +514,9 @@
     computed: {
       ...mapGetters([
         'myActionsFilter',
-<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
-        "efforts",
-=======
         "timesheets",
         "timesheet",
         "facilities",
->>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         "currentProject",
         "taskIssueDueDateFilter",
         "timeSheetStatus",
@@ -558,21 +534,9 @@
       }
      },
      userTime(){
-<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
         if(this.efforts && this.efforts.length > 0){
-          let time = this.efforts.map(t => t.tasks).flat()        
-          .filter((task) => {
-              if (this.hasEffort) {                  
-                return task.efforts.length > 0;
-              } else return true;
-            })     
-            console.log(time)
-            return time   
-=======
-        if(this.timesheets && this.timesheets.length > 0){
-          let time = this.timesheets.map(t => t.tasks).flat()   
+          let time = this.efforts.map(t => t.tasks).flat()   
           return time   
->>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         }
       },
       tableData() {
