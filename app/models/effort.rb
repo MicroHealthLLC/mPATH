@@ -54,6 +54,8 @@ class Effort < ApplicationRecord
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
     end
+    effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
+
     effort.attributes = t_params
 
     effort.transaction do

@@ -6,47 +6,73 @@ class Api::V1::ProjectsController < AuthenticatedController
   def project_efforts
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
     
-    all_project_users = Project.find(params[:program_id]).users
+    all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_efforts = Effort.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and date_of_week between ? and ?", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_timesheets = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and date_of_week between ? and ? and efforts.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
     else
-      all_efforts = Effort.includes([ {resource: :facility_project}, :user, {facility_project: :facility} ]).where("efforts.facility_project_id in (?)", facility_project_ids)
+      all_timesheets = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and efforts.hours > 0", facility_project_ids)
     end
-    effort_by_users = all_efforts.group_by{|t| t.user}
+
+    preloader = ActiveRecord::Associations::Preloader.new
+    preloader.preload(all_timesheets.select { |p| p.resource_type == 'Task' }, resource: [:notes])
 
     # total_pages = all_efforts.total_pages
     # current_page = all_efforts.current_page
     # next_page = all_efforts.next_page
 
     response = []
+    
+    filter_by = params[:filter_by] || "user"
 
-    all_project_users.each do |user|
-      user_hash = user.as_json
-      user_hash[:facilities] = []
-      efforts = effort_by_users[user] || []
-      effort_task_ids = efforts.map(&:resource_id).uniq
-      t_facility_projects = efforts.map(&:facility_project).uniq
-      fp_array = []
-      
-      effort_by_tasks = efforts.group_by{|t| t.resource }
-      tasks = effort_by_tasks.keys
-      tasks_by_facility_project = tasks.group_by{|task, efforts| task.facility_project_id }
+    if filter_by == "user"
 
-      t_facility_projects.each do |fp|
-        tasks = tasks_by_facility_project[fp.id] || []
+      timesheet_by_users = all_timesheets.group_by{|t| t.user}
+
+      all_project_users.each do |user|
+        user_hash = user.as_json
+        user_hash[:facilities] = []
+        timesheets = timesheet_by_users[user] || []
+        timesheet_task_ids = timesheets.map(&:resource_id).uniq
+        t_facility_projects = timesheets.map(&:facility_project).uniq
+        fp_array = []
+        
+        timesheet_by_tasks = timesheets.group_by{|t| t.resource }
+        tasks = timesheet_by_tasks.keys
+        tasks_by_facility_project = tasks.group_by{|task, timesheets| task.facility_project_id }
+  
+        t_facility_projects.each do |fp|
+          tasks = tasks_by_facility_project[fp.id] || []
+          fp_hash = fp.facility.attributes
+          fp_hash[:facility_project_id] = fp.id
+          fp_hash[:tasks] = []
+          tasks.each do |task|
+            fp_hash[:tasks] << task.timesheet_json( { timesheets: timesheet_by_tasks[task] })
+          end
+          
+          fp_array << fp_hash
+        end
+        user_hash[:facilities] = fp_array
+  
+        response << user_hash
+  
+      end
+
+    elsif filter_by == "project"
+      all_tasks = Task.includes({facility_project: :facility}, notes: [:user]).where(id: all_timesheets.pluck(:resource_id).uniq )
+      timesheet_by_task_id = all_timesheets.group_by{|t| t.resource_id }
+      fps_tasks = all_tasks.group_by{|t| t.facility_project }
+
+      fps_tasks.each do |fp, tasks|
         fp_hash = fp.facility.attributes
+        fp_hash[:facility_project_id] = fp.id
         fp_hash[:tasks] = []
         tasks.each do |task|
-          fp_hash[:tasks] << task.as_json.merge(efforts: effort_by_tasks[task])
+          fp_hash[:tasks] << task.timesheet_json( { efforts: timesheet_by_task_id[task.id] })
         end
         
-        fp_array << fp_hash
+        response << fp_hash
       end
-      user_hash[:facilities] = fp_array
-
-      response << user_hash
-
     end
 
     # render json: {efforts: response, total_pages: total_pages, current_page: current_page, next_page: next_page }

@@ -7,7 +7,6 @@
               <div class="col-3">
                 <label class="font-sm mb-0">Project Task Users</label>
                 <el-select
-
                 v-model="addedUser"
                 class="w-75 mr-2"
                 track-by="id"
@@ -37,7 +36,7 @@
               </div>
              
              
-              <div class="col-4">
+              <div class="col-3">
                 <label class="font-sm mb-0">Search Tasks</label>
                 <el-input
                   type="search"          
@@ -50,18 +49,42 @@
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>      
               </div>  
+              <!-- <div class="col-3">
+                <label class="font-sm mb-0">Week Of:</label>
+                <el-select
+                v-model="weekOfString"
+                class="w-75 mr-2"
+                track-by="id"
+                value-key="id"             
+                clearable
+                placeholder="Search and select a User" 
+                filterable
+                >
+                <el-option
+                  v-for="item, i in weekOfFilter"
+                  :value="item"
+                  :key="i"
+                  :label="item"
+                >
+                </el-option> 
+              </el-select>
+              </div>   -->
                  
-              <div class="col-4 mt-4">
+      
+
+
+              <div class="col-3 mt-4">
                <el-switch
                 v-model="taskProgressFilter"
-                active-text="Incomplete Tasks"
-                inactive-text="All Tasks">
+                active-text="Active Tasks"
+                inactive-text="All Tasks*">
               </el-switch>
               <!-- <el-switch
                 v-model="hasEffort"
                 active-text="Effort Only"
                 inactive-text="All">
               </el-switch> -->
+              
                 <div  v-show="false">
               <label class="font-sm mb-0">Task Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
@@ -114,7 +137,12 @@
       width="90"
       >
      <template slot-scope="scope">  
-      <span v-if="userTime && userTime.length > 0">
+      <span v-if="userTime && userTime.length > 0 &&  userTime
+          .filter(t => t && t.id && t.id == scope.row.id) 
+          .map(t => t.timesheets)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)  !== 0">
           {{ 
           userTime
           .filter(t => t && t.id && t.id == scope.row.id) 
@@ -154,19 +182,23 @@
     >
     </el-table-column>
     <el-table-column
-      fixed      
+      fixed    
+      prop="actualEffort"  
       label="Actual Effort"
       width="80"
       header-align="center"
     >
 
-    <template slot-scope="scope">  
-      
-      <span >
+    <template slot-scope="scope">        
+      <span v-if="item.tasks && item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.timesheets)      
+          .flat()
+          .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) " >
          {{ item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.efforts)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) 
+<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
           }} 
           <!-- {{ 
           userTime
@@ -175,6 +207,13 @@
           .flat()    
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
           }}            -->
+=======
+          }}    
+      </span>
+      <span v-else>
+         {{ 
+          }}    
+>>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
       </span>
     
        </template>   
@@ -325,6 +364,7 @@
       </el-button> -->
      
     </el-tabs>
+    <span class="float-right"><small>*Excludes <em>On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
 
    
   </div>
@@ -333,9 +373,8 @@
 
 <script>
   import { mapMutations, mapGetters, mapActions } from "vuex"
-
   export default {
-    name: 'SheetTime',
+    name: 'SheetEffort',
     props: ['facility', 'from'],
     data() {
       return {       
@@ -343,6 +382,7 @@
         userTasksDialog : false, 
         loading: true,
         tasksQuery: '',
+        weekOfString: '',
         rowIndex: null, 
         updatedEffort: null, 
         taskProgressFilter: true, 
@@ -353,6 +393,7 @@
         hover: false,
         rowId: null, 
         matrixDates: [],
+        // weekOfFilter: [],
         input: [],
         editMode: false, 
         newNote: false,
@@ -379,8 +420,13 @@
       "fetchCurrentProject"
     ]),
     log(e){
+<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
       // console.log("Efforts Vue: ")
       // console.log(e)
+=======
+      console.log("Dates ")
+      console.log(this.weekOfFilter)
+>>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
     },
     openUserTasksReport() {
       this.userTasksDialog = true;
@@ -431,9 +477,13 @@
         console.log("create") 
          console.log(timeSheetData) 
          console.log(this.editColValue)
+<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
          this.createEffort({...timeSheetData})     
     
 
+=======
+         this.createTimesheet({...timeSheetData})     
+>>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         } 
       }   
     } 
@@ -484,7 +534,13 @@
     computed: {
       ...mapGetters([
         'myActionsFilter',
+<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
         "efforts",
+=======
+        "timesheets",
+        "timesheet",
+        "facilities",
+>>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         "currentProject",
         "taskIssueDueDateFilter",
         "timeSheetStatus",
@@ -502,6 +558,7 @@
       }
      },
      userTime(){
+<<<<<<< HEAD:app/javascript/components/dashboard/time/time_sheets.vue
         if(this.efforts && this.efforts.length > 0){
           let time = this.efforts.map(t => t.tasks).flat()        
           .filter((task) => {
@@ -511,12 +568,17 @@
             })     
             console.log(time)
             return time   
+=======
+        if(this.timesheets && this.timesheets.length > 0){
+          let time = this.timesheets.map(t => t.tasks).flat()   
+          return time   
+>>>>>>> dos_2023:app/javascript/components/dashboard/effort/effort_sheets.vue
         }
       },
       tableData() {
-          if (this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-            let tasks = this.facility.tasks
-
+         let project = this.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)     
+          if (project && project.tasks && project.tasks.length > 0){
+            let tasks = project.tasks.filter( t => !t.onHold && !t.draft && !t.planned)
             .filter((task) => {
               if (this.taskProgressFilter) {    
                 console.log(task)      
@@ -530,12 +592,9 @@
               );
             } else return true;
             // Filtering 7 Task States
-          });
-          
-
-        return tasks
-          }
-      
+          });   
+          return tasks
+          }      
       },
       filteredActiveProjectUsers(){
         if(this.efforts && this.activeProjectUsers && this.efforts.length > 0){
@@ -544,54 +603,71 @@
           return this.activeProjectUsers
         }
       },
+      fridayDayOfWeek( ) {
+        let date = new Date();
+        let friday = 5; 
+        let resultDate = new Date(date.getTime());
+        resultDate.setDate(date.getDate() + (7 + friday - date.getDay()) % 7);
+        return resultDate;
+      },
       weekOfArr(){
         if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-          // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
-          let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
-        
-          // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
-          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+          let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))         
+          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]       
+                        
+          if(taskDueDates.length == 1 ){
+            console.log(taskDueDates[0])   
+            latestTaskDate = new Date(taskDueDates[0])
+          }
 
-          var start = new Date("01/06/2023");          
-          var end = latestTaskDate;  
+      
+         
+          // let start = this.fridayDayOfWeek;     
 
-          var loop = new Date(start);
-          while(loop <= end){
-
-            console.log(moment(loop).format("DD MMM YY") );    
+          let start = new Date("01/06/2023");     
+          let end = latestTaskDate;  
+   
+          let loop = new Date(start);
+          // if (this.weekOfString !== "") {
+          //  start = new Date(this.weekOfString)
+          // }  
+          while(loop <= end){  
             this.matrixDates.push(moment(loop).format("DD MMM YY"))
-            console.log("MAtrix Dates:  ")
-          console.log( this.matrixDates)
-        
-            var newDate = loop.setDate(loop.getDate() + 7);
+            let newDate = loop.setDate(loop.getDate() + 7);
             loop = new Date(newDate);
-          }     
-        }     
+          }            
+       }  
       },
-      filteredNotes() {
-        const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
-        return _.filter(this.DV_facility.notes, n => {
-          let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
-          if (resp) valid = valid && resp.test(n.body)
-          return valid
-        })
-      },     
+      // WIP WeekOf filter to choose what date to focus table on 
+    //   weekOfFilter(){
+    //     if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+    //       let arr = []
+    //       let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
+    //       let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+    //       let pastBeginDate =  new Date("11/04/2022")
+    //       let end1 = latestTaskDate;  
+    //       let loop1 = new Date(pastBeginDate);
+         
+    //       while(loop1 <= end1){        
+    //         arr.push(moment(loop1).format("DD MMM YY"))   
+    //         // console.log(arr)        
+    //         let newDate1 = loop1.setDate(loop1.getDate() + 7);
+    //         loop1 = new Date(newDate1);
+    //       }      
+    //       return arr   
+    //      } 
+       
+    //   },
+    
     },
     mounted() {
-     this.fetchEfforts(this.$route.params)
-    //  this.fetchCurrentProject(this.$route.params.programId)
+     this.fetchEfforts(this.$route.params)   
+     this.fetchCurrentProject(this.$route.params.programId)    
     },
     watch: {
-      efforts(){
-        if(this.efforts){
-          console.log('UserTime: ')
-          console.log(this.userTime)
-          console.log('Current projec: ')
-          console.log(this.currentProject)
-        }
-      },
      timeSheetStatus: {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
+      
       handler() {
         if (this.effortStatus == 200) {
           console.log('timeSheet status OK')
@@ -600,24 +676,23 @@
             type: "success",
             showClose: true,
           });
+   
           this.input = [];
           this.editColValue = null;
           this.columnIndex = null;
           this.updatedEffort = null, 
           this.SET_TIMESHEET_STATUS(0);
-          this.SET_TIMESHEETS_STATUS(0)
-          this.fetchEfforts(this.$route.params)
+          this.SET_TIMESHEETS_STATUS(0)          
           this.fetchCurrentProject(this.$route.params.programId)
+          this.fetchEfforts(this.$route.params)       
         }
-      },
-      
-    },      
-      matrixDates(){
-        if(this.matrixDates){
-          console.log("Matrix Dates in Watch: ")
-          console.log(this.matrixDates)
-        }        
-      },
+      },      
+    },  
+    // matrixDates(){
+    //     if(this.weekOfFilter !== ''){
+    //         this.matrixDates = this.weekOfFilter
+    //     }        
+    //   },
      input(){
         if(this.input && this.input.length > 0){
           console.log('input array:')

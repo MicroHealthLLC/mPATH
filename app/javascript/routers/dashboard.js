@@ -34,7 +34,7 @@ import SheetLessons from "./../components/views/sheet/SheetLessons";
 import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
-import SheetTime from "./../components/views/sheet/SheetTime";
+import SheetEffort from "./../components/views/sheet/SheetEffort";
 // Kanban Routes Components
 import KanbanView from "./../components/views/kanban/KanbanView";
 import KanbanDefault from "./../components/views/kanban/KanbanDefault";
@@ -226,7 +226,7 @@ export default new VueRouter({
         {
           name: "SheetTimeEffort",
           path: "projects/:projectId/effort",
-          component: SheetTime,
+          component: SheetEffort,
         },
         {
           name: "SheetOverview",
@@ -594,7 +594,7 @@ export default new VueRouter({
         {
           name: "effort",
           path: "projects/:projectId/effort",
-          component: SheetTime,
+          component: SheetEffort,
         },
         {
           name: "SheetLessonForm",
