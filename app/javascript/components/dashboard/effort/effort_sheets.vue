@@ -139,7 +139,7 @@
      <template slot-scope="scope">  
       <span v-if="userTime && userTime.length > 0 &&  userTime
           .filter(t => t && t.id && t.id == scope.row.id) 
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)  !== 0">
@@ -396,10 +396,10 @@
     },
     methods: {
       ...mapMutations([
-      "SET_TIMESHEET",
-      "SET_TIMESHEET_STATUS",
-      "SET_TIMESHEETS_STATUS",
-      "TOGGLE_TIMESHEET_LOADED",
+      "SET_EFFORT",
+      "SET_EFFORT_STATUS",
+      "SET_EFFORTS_STATUS",
+      "TOGGLE_EFFORT_LOADED",
       "setTaskIssueDueDateFilter"
       ]),
       ...mapActions([
@@ -420,10 +420,10 @@
       this.rowIndex = null;
       this.rowId = null;
       
-      // IF EDITING, UPDATE TIMESHEET
+      // IF EDITING, UPDATE EFFORT
       if(this.updatedEffort && this.updatedEffort !== null){
         let t = this.updatedEffort
-        let timeSheetData = {
+        let effortData = {
           effortData: {
             hours: this.editColValue,           
             taskId: t[0].resource_id,
@@ -436,11 +436,11 @@
         };
         console.log("update") 
         console.log(this.updatedEffort)
-        console.log(timeSheetData)
+        console.log(effortData)
         console.log(this.editColValue)
-    this.updateEffort({...timeSheetData})
+    this.updateEffort({...effortData})
 
-      //ELSE, CREATE NEW TIMESHEET
+      //ELSE, CREATE NEW EFFORT
 
       }
       if(this.input.length > 0) {
@@ -448,7 +448,7 @@
         if(this.matrixDates[i] && this.input[i] ){
            console.log(this.matrixDates[i])
            console.log(this.input[i])
-         let timeSheetData = {
+         let effortData = {
           effortData: {
             hours: this.input[i],
             week: this.matrixDates[i],
@@ -459,9 +459,9 @@
          },
         };
         console.log("create") 
-         console.log(timeSheetData) 
+         console.log(effortData) 
          console.log(this.editColValue)
-         this.createEffort({...timeSheetData})     
+         this.createEffort({...effortData})     
     
 
         } 
@@ -494,10 +494,10 @@
         console.log(row);   
         this.rowId = row.id
       },
-     timeEdit(index, row, weekof, weekofIndex, timeSheet ){
+     timeEdit(index, row, weekof, weekofIndex, effort ){
         this.columnIndex = weekofIndex 
-        console.log(timeSheet);  
-        this.updatedEffort =  timeSheet 
+        console.log(effort);  
+        this.updatedEffort =  effort 
       },    
       cancelTimeEdit() {
         this.columnIndex = null
@@ -514,14 +514,14 @@
     computed: {
       ...mapGetters([
         'myActionsFilter',
-        "timesheets",
-        "timesheet",
+        "efforts",
+        "effort",
         "facilities",
         "currentProject",
         "taskIssueDueDateFilter",
-        "timeSheetStatus",
-        "timeSheetsStatus",
-        "timeSheetsLoaded",  
+        "effortStatus",
+        "effortsStatus",
+        "effortsLoaded",  
         "activeProjectUsers"  
       ]),
       C_taskIssueDueDateFilter: {
@@ -629,12 +629,12 @@
      this.fetchCurrentProject(this.$route.params.programId)    
     },
     watch: {
-     timeSheetStatus: {
+     effortStatus: {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
       
       handler() {
         if (this.effortStatus == 200) {
-          console.log('timeSheet status OK')
+          console.log('effort status OK')
           this.$message({
             message: `Task Effort successfully saved.`,
             type: "success",
@@ -645,8 +645,8 @@
           this.editColValue = null;
           this.columnIndex = null;
           this.updatedEffort = null, 
-          this.SET_TIMESHEET_STATUS(0);
-          this.SET_TIMESHEETS_STATUS(0)          
+          this.SET_EFFORT_STATUS(0);
+          this.SET_EFFORTS_STATUS(0)          
           this.fetchCurrentProject(this.$route.params.programId)
           this.fetchEfforts(this.$route.params)       
         }
