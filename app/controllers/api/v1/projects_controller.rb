@@ -9,9 +9,9 @@ class Api::V1::ProjectsController < AuthenticatedController
     all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and date_of_week between ? and ? and efforts.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and date_of_week between ? and ? and timesheets.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
     else
-      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and efforts.hours > 0", facility_project_ids)
+      all_timesheets = Timesheet.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("timesheets.facility_project_id in (?) and timesheets.hours > 0", facility_project_ids)
     end
 
     preloader = ActiveRecord::Associations::Preloader.new
