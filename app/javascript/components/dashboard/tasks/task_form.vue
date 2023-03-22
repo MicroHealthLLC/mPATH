@@ -2313,8 +2313,19 @@ export default {
       },
       deep: true,
     },
-    "DV_task.autoCalculate"(value) {
+    "DV_task.autoCalculate"(value) {      
       if (value) this.calculateProgress();
+      if(value && this.DV_task.checklists && this.DV_task.checklists.length == 0){
+      this.DV_task.progress = 0;
+        console.log(value)
+        console.log("autoCalc with 0 subtasks")
+      }
+      
+      if (!value) {
+        this.DV_task.progress = this.task.progress
+        console.log( this.task.progress)
+        console.log( this.DV_task.progress)
+      }
     },
     // RACI USERS HERE awaiting backend work
     responsibleUsers: {
