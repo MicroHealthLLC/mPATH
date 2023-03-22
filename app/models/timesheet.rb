@@ -1,4 +1,7 @@
 class Timesheet < ApplicationRecord
+  include CommonUtilities
+
+  self.table_name = "efforts"
   belongs_to :resource, polymorphic: true
   belongs_to :user
   belongs_to :facility_project
@@ -21,8 +24,12 @@ class Timesheet < ApplicationRecord
       :resource_type
     ]
   end
+  def as_json(options = {})
+    self.to_json
+  end
+
   def to_json(options = {})
-    self.as_json.merge({"date_of_week" => self.date_of_week.strftime("%d %b %y")})
+    self.attributes.with_indifferent_access.merge({hours: strip_trailing_zero(self.hours),"date_of_week" => self.date_of_week.strftime("%d %b %y")})
   end
 
   def update_acutal_effort_to_task
