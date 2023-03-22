@@ -405,7 +405,7 @@ const portfolioModule = {
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=600`,
+          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=2000`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
