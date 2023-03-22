@@ -1,7 +1,8 @@
 class Task < ApplicationRecord
   include Normalizer
   include Tasker
-
+  include CommonUtilities
+  
   belongs_to :task_type
   belongs_to :task_stage, optional: true
   has_many :task_users, dependent: :destroy
@@ -373,8 +374,8 @@ class Task < ApplicationRecord
       on_hold: on_hold,
       closed_date: closed_date,
 
-      planned_effort: self.planned_effort,
-      actual_effort: self.actual_effort,
+      planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort),
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
