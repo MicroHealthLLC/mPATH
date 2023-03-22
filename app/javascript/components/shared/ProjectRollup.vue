@@ -98,8 +98,8 @@
       >
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:32%; font-size: 1rem">Project</th>
-          <th style="width:32%; font-size: 1rem">Task</th>    
+          <th style="width:28%; font-size: 1rem">Project</th>
+          <th style="width:28%; font-size: 1rem">Task</th>    
           <th style="font-size: 1rem">Planned Effort<br>for Entire Task</th>
           <th style="font-size: 1rem">Actual Effort<br>for Entire Task</th>
           <th style="font-size: 1rem">Actual Effort<br>for This Week</th>

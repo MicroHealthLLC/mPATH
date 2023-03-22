@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_13_184128) do
+ActiveRecord::Schema.define(version: 2023_03_22_142504) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 2023_03_13_184128) do
     t.bigint "user_id"
     t.integer "position", default: 0
     t.date "due_date"
-    t.decimal "planned_effort", precision: 10, default: "0"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
     t.index ["listable_id"], name: "index_checklists_on_listable_id"
     t.index ["listable_type"], name: "index_checklists_on_listable_type"
     t.index ["position"], name: "index_checklists_on_position"
