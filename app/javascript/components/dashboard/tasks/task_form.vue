@@ -2039,20 +2039,20 @@ export default {
       try {
         if (!checks) checks = this.DV_task.checklists;
         console.log(checks)
-        let allUnchecked = checks.filter(t => t.checked == false).length
-       
+        let allUnchecked = checks.filter(t => t.checked == false).length       
         if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
         let sum =  this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+        console.log(sum)
         let checked = _.filter(
           checks,
           (v) => !v._destroy && v.checked && v.text.trim()
-        ).length;
-
+         ).length;        
+         if (sum && sum > 0.01){
+      
         let checkedSubtask = _.filter(
           checks,
-          (v) => !v._destroy && v.checked && v.text.trim()
-        )     
-
+            (v) => !v._destroy && v.checked && v.text.trim()
+          )     
          for (let i = 0; i < checked; i++) {
           if (checkedSubtask.length > 1 ){           
               this.DV_task.progress = Number(
@@ -2070,12 +2070,19 @@ export default {
             console.log("all Unchecked")
             this.DV_task.progress = Number((0));
           }   
-      }
-      } catch (err) {
+         }
+         if(sum == 0){
+          let total = _.filter(checks, (v) => !v._destroy && v.text.trim())
+          .length;
+          this.DV_task.progress = Number(
+          ((checked / total) * 100 || 0).toFixed(2)
+           );
+         }
+        }
+       } catch (err) {
         this.DV_task.progress = 0;
-      }
+       }
     },
-
     updateCheckItem(event, name, index) {
       if (name === "text") {
         this.DV_task.checklists[index].text = event.target.value;
