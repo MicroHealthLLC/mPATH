@@ -1,7 +1,8 @@
 class Task < ApplicationRecord
   include Normalizer
   include Tasker
-
+  include CommonUtilities
+  
   belongs_to :task_type
   belongs_to :task_stage, optional: true
   has_many :task_users, dependent: :destroy
@@ -244,9 +245,14 @@ class Task < ApplicationRecord
   def effort_json(options = {})
     _efforts = options[:efforts] || efforts
     _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
-    as_json.merge({ efforts_actual_effort: _efforts.sum(&:hours), last_update: _last_update, efforts: _efforts })
+    as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
   end
 
+  def as_json(options= {})
+    self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort) })
+  end
+  
   def to_json(options = {})
     attach_files = []
     tf = self.task_files
@@ -345,7 +351,7 @@ class Task < ApplicationRecord
 
     
     sorted_notes = notes.sort_by(&:created_at).reverse
-    self.as_json.merge(
+    self.attributes.with_indifferent_access.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       progress_status: progress_status,
@@ -373,8 +379,8 @@ class Task < ApplicationRecord
       on_hold: on_hold,
       closed_date: closed_date,
 
-      planned_effort: self.planned_effort,
-      actual_effort: self.actual_effort,
+      planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort),
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
