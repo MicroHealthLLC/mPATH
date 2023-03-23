@@ -249,7 +249,8 @@ class Task < ApplicationRecord
   end
 
   def as_json(options= {})
-    self.to_json
+    self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort) })
   end
 
   def to_json(options = {})
