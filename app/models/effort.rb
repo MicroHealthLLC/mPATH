@@ -8,7 +8,7 @@ class Effort < ApplicationRecord
 
   validates :date_of_week, presence: true
   validates :hours, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :user_id, presence: true, uniqueness: { scope: [:date_of_week, :resource_id, :resource_type, :facility_project_id] }
+  validates :user_id, presence: true, uniqueness: { scope: [:date_of_week, :resource_id, :resource_type, :facility_project_id] }, on: :create
 
   after_create :update_acutal_effort_to_task
   after_update :update_acutal_effort_to_task
