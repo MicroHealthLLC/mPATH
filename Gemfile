@@ -42,10 +42,8 @@ gem 'devise', '4.8.1' #, '~> 4.7.1'
 gem 'geocoder'
 gem 'jquery-rails'
 gem 'slim-rails'
-# gem 'omniauth-office365', github: 'jcarbo/omniauth-office365'
-gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
-# gem 'omniauth-office365', path: './lib/omniauth-office365'
-gem 'omniauth-microsoft-office365', '~> 0.0.8'
+gem 'omniauth-google-oauth2', '0.5.2'#, '~> 1.1', '>= 1.1.1'
+gem 'omniauth-office365', path: './lib/omniauth-office365'
 # gem 'omniauth-oktaoauth'
 
 gem 'dotenv-rails'
@@ -92,7 +90,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import', '1.4.1'
 
-gem 'omniauth-rails_csrf_protection', '~> 1.0', '>= 1.0.1'
+gem 'omniauth-rails_csrf_protection' , '~> 0.1'#, '~> 1.0', '>= 1.0.1'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
 gem 'amoeba'
@@ -103,6 +101,6 @@ gem 'oj'
 
 gem 'will_paginate', '3.3.1'
 
-gem 'jwt', '2.7.0'
+gem 'jwt', '~> 1.5' #, '2.7.0'
 
 gem 'addressable', '>= 2.8.0'
