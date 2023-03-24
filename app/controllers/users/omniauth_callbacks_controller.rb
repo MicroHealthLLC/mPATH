@@ -1,6 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  def office365
+  def microsoft_office365
     check_omniauth_auth
   end
 
@@ -14,7 +14,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def passthru
-    render status: 404, text: "Not found. Authentication passthru."
+    respond_to do |format|
+      format.html {render status: 404, text: "Not found. Authentication passthru."}
+    end    
   end
 
   def failure
