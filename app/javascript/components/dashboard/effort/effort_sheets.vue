@@ -80,7 +80,7 @@
                 inactive-text="All Tasks*">
               </el-switch>
               <!-- <el-switch
-                v-model="hasTimesheet"
+                v-model="hasEffort"
                 active-text="Effort Only"
                 inactive-text="All">
               </el-switch> -->
@@ -139,14 +139,14 @@
      <template slot-scope="scope">  
       <span v-if="userTime && userTime.length > 0 &&  userTime
           .filter(t => t && t.id && t.id == scope.row.id) 
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)  !== 0">
           {{ 
           userTime
           .filter(t => t && t.id && t.id == scope.row.id) 
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
@@ -161,7 +161,7 @@
       </div>
       </el-tab-pane>
       <el-tab-pane
-        v-for="(item, index) in timesheets"
+        v-for="(item, index) in efforts"
         :key="item.id"
         :label="item.full_name"
         :name="index"
@@ -191,11 +191,11 @@
 
     <template slot-scope="scope">        
       <span v-if="item.tasks && item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)      
+          .map(t => t.efforts)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) " >
          {{ item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)      
+          .map(t => t.efforts)      
           .flat()
           .map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) 
           }}    
@@ -226,7 +226,7 @@
      <template slot-scope="scope">  
       <span v-if="rowId == scope.row.id">
         <span v-if="item.tasks && item.tasks.length > 0 && item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours)[0] ">     
@@ -238,7 +238,7 @@
             type="text" 
             :name="weekof"           
             v-model="item.tasks.filter(t => t.id == scope.row.id )
-             .map(t => t.timesheets)
+             .map(t => t.efforts)
              .flat()
              .filter(t => t.date_of_week == weekof)    
              .map(t => t.hours)[0]          
@@ -256,7 +256,7 @@
             weekofIndex,
             item.tasks
             .filter(t => t.id == scope.row.id )
-            .map(t => t.timesheets)
+            .map(t => t.efforts)
             .flat()
             .filter(t => t.date_of_week == weekof)           
             )"></i>
@@ -276,7 +276,7 @@
           <span v-else>
           {{ 
           item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours)[0] 
@@ -296,7 +296,7 @@
       <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">       
         {{ 
           item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.timesheets)
+          .map(t => t.efforts)
           .flat()
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours)[0]          
@@ -336,7 +336,7 @@
               <el-button
               type="default"
               size="mini"
-              @click.prevent="saveTimesheetRow(scope.$index, scope.row, item.id )"           
+              @click.prevent="saveEffortRow(scope.$index, scope.row, item.id )"           
               v-tooltip="`Save`" 
               class="bg-primary text-light  px-2">           
             <i class="far fa-save"></i>
@@ -373,9 +373,9 @@
         tasksQuery: '',
         weekOfString: '',
         rowIndex: null, 
-        updatedTimesheet: null, 
+        updatedEffort: null, 
         taskProgressFilter: true, 
-        hasTimesheet: true, 
+        hasEffort: true, 
         editColValue: '',
         columnIndex: null, 
         addedUser: [],
@@ -396,16 +396,16 @@
     },
     methods: {
       ...mapMutations([
-      "SET_TIMESHEET",
-      "SET_TIMESHEET_STATUS",
-      "SET_TIMESHEETS_STATUS",
-      "TOGGLE_TIMESHEET_LOADED",
+      "SET_EFFORT",
+      "SET_EFFORT_STATUS",
+      "SET_EFFORTS_STATUS",
+      "TOGGLE_EFFORT_LOADED",
       "setTaskIssueDueDateFilter"
       ]),
       ...mapActions([
-      "createTimesheet",
-      "updateTimesheet",
-      "fetchTimesheets",
+      "createEffort",
+      "updateEffort",
+      "fetchEfforts",
       "fetchCurrentProject"
     ]),
     log(e){
@@ -415,16 +415,16 @@
     openUserTasksReport() {
       this.userTasksDialog = true;
     },
-    saveTimesheetRow(index, rows, userId){ 
+    saveEffortRow(index, rows, userId){ 
 
       this.rowIndex = null;
       this.rowId = null;
       
-      // IF EDITING, UPDATE TIMESHEET
-      if(this.updatedTimesheet && this.updatedTimesheet !== null){
-        let t = this.updatedTimesheet
-        let timeSheetData = {
-          timesheetData: {
+      // IF EDITING, UPDATE EFFORT
+      if(this.updatedEffort && this.updatedEffort !== null){
+        let t = this.updatedEffort
+        let effortData = {
+          effortData: {
             hours: this.editColValue,           
             taskId: t[0].resource_id,
             userId: userId,   
@@ -435,12 +435,12 @@
          },
         };
         console.log("update") 
-        console.log(this.updatedTimesheet)
-        console.log(timeSheetData)
+        console.log(this.updatedEffort)
+        console.log(effortData)
         console.log(this.editColValue)
-    this.updateTimesheet({...timeSheetData})
+    this.updateEffort({...effortData})
 
-      //ELSE, CREATE NEW TIMESHEET
+      //ELSE, CREATE NEW EFFORT
 
       }
       if(this.input.length > 0) {
@@ -448,8 +448,8 @@
         if(this.matrixDates[i] && this.input[i] ){
            console.log(this.matrixDates[i])
            console.log(this.input[i])
-         let timeSheetData = {
-          timesheetData: {
+         let effortData = {
+          effortData: {
             hours: this.input[i],
             week: this.matrixDates[i],
             taskId: rows.id,
@@ -459,21 +459,23 @@
          },
         };
         console.log("create") 
-         console.log(timeSheetData) 
+         console.log(effortData) 
          console.log(this.editColValue)
-         this.createTimesheet({...timeSheetData})     
+         this.createEffort({...effortData})     
+    
+
         } 
       }   
     } 
     
     }, 
       addTab(targetName) {
-        let newTabName = this.timesheets.length;
-        if (this.timesheets.length == 1){    
+        let newTabName = this.efforts.length;
+        if (this.efforts.length == 1){    
             newTabName = 1
             this.editableTabsValue = newTabName;
         }
-        this.timesheets.push({
+        this.efforts.push({
           full_name: this.addedUser.fullName,
           name: newTabName,
           content: 'New Tab content',
@@ -492,10 +494,10 @@
         console.log(row);   
         this.rowId = row.id
       },
-     timeEdit(index, row, weekof, weekofIndex, timeSheet ){
+     timeEdit(index, row, weekof, weekofIndex, effort ){
         this.columnIndex = weekofIndex 
-        console.log(timeSheet);  
-        this.updatedTimesheet =  timeSheet 
+        console.log(effort);  
+        this.updatedEffort =  effort 
       },    
       cancelTimeEdit() {
         this.columnIndex = null
@@ -512,14 +514,14 @@
     computed: {
       ...mapGetters([
         'myActionsFilter',
-        "timesheets",
-        "timesheet",
+        "efforts",
+        "effort",
         "facilities",
         "currentProject",
         "taskIssueDueDateFilter",
-        "timeSheetStatus",
-        "timeSheetsStatus",
-        "timeSheetsLoaded",  
+        "effortStatus",
+        "effortsStatus",
+        "effortsLoaded",  
         "activeProjectUsers"  
       ]),
       C_taskIssueDueDateFilter: {
@@ -532,8 +534,8 @@
       }
      },
      userTime(){
-        if(this.timesheets && this.timesheets.length > 0){
-          let time = this.timesheets.map(t => t.tasks).flat()   
+        if(this.efforts && this.efforts.length > 0){
+          let time = this.efforts.map(t => t.tasks).flat()   
           return time   
         }
       },
@@ -559,8 +561,8 @@
           }      
       },
       filteredActiveProjectUsers(){
-        if(this.timesheets && this.activeProjectUsers && this.timesheets.length > 0){
-           return this.activeProjectUsers.filter( t => !this.timesheets.map(f => f.id).includes(t.id))
+        if(this.efforts && this.activeProjectUsers && this.efforts.length > 0){
+           return this.activeProjectUsers.filter( t => !this.efforts.map(f => f.id).includes(t.id))
         } else {
           return this.activeProjectUsers
         }
@@ -623,16 +625,16 @@
     
     },
     mounted() {
-     this.fetchTimesheets(this.$route.params)   
+     this.fetchEfforts(this.$route.params)   
      this.fetchCurrentProject(this.$route.params.programId)    
     },
     watch: {
-     timeSheetStatus: {
+     effortStatus: {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
       
       handler() {
-        if (this.timeSheetStatus == 200) {
-          console.log('timeSheet status OK')
+        if (this.effortStatus == 200) {
+          console.log('effort status OK')
           this.$message({
             message: `Task Effort successfully saved.`,
             type: "success",
@@ -642,11 +644,11 @@
           this.input = [];
           this.editColValue = null;
           this.columnIndex = null;
-          this.updatedTimesheet = null, 
-          this.SET_TIMESHEET_STATUS(0);
-          this.SET_TIMESHEETS_STATUS(0)          
+          this.updatedEffort = null, 
+          this.SET_EFFORT_STATUS(0);
+          this.SET_EFFORTS_STATUS(0)          
           this.fetchCurrentProject(this.$route.params.programId)
-          this.fetchTimesheets(this.$route.params)       
+          this.fetchEfforts(this.$route.params)       
         }
       },      
     },  
