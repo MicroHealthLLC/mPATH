@@ -3,7 +3,15 @@
   <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
     <template slot="title">
     <div v-if="dynamicObj.length > 0 && dynamicObj[currentLessonSlide] !== undefined" class="container-fluid">
-      <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0"> LESSON </h3>
+         <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
+            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_vehicle_id">
+          <i class="far fa-car text-light py-2 mr-1"></i> </span>
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_id">
+            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          LESSON
+          </h5>
         <div v-for="number in [currentLessonSlide]" :key="number" >
         <div class="row justify-content-center">
           <div class="col-3 pb-0">
@@ -56,15 +64,26 @@
                     </div>    
                 
                     <div class="col truncate-line-two">    
-                          <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
-                      <h4> {{dynamicObj[currentLessonSlide].project_group}}  </h4>
+                          <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
+                      <h4 v-if="dynamicObj[currentLessonSlide].project_group"> {{dynamicObj[currentLessonSlide].project_group}}  </h4>
+                      <h4 v-else> Unassigned</h4>
                                                     
                     </div>  
             
-                      <div class="col py-2">    
-                          <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
-                      <h4>{{ dynamicObj[currentLessonSlide].project_name}}  </h4>                                                                 
-                    </div>  
+                      <div class="col py-2">   
+                          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
+                          <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].contract_nickname}}  </h4>   
+                          </span> 
+                          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_vehicle_id">
+                          <h6 class="leftColLabel text-light mh-orange">VEHICLE</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].vehicle_nickname}}  </h4>   
+                          </span> 
+                          <span v-else>
+                            <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].project_name}}  </h4>       
+                          </span>                                                                                 
+                       </div>  
 
                         <div class="col">    
                           <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
@@ -285,6 +304,7 @@
         v-tooltip="`Presentation Mode`"
         @click.prevent="openPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="fas fa-presentation"></i>
     </button>
@@ -292,6 +312,7 @@
         v-tooltip="`Export to PDF`"
         @click.prevent="exportLessonsToPdf"
         class="btn btn-md exportBtns text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="far fa-file-pdf"></i>
     </button>
@@ -301,6 +322,7 @@
         exportLessonsToExcel('table', 'Program Lessons')
         "
         class="btn btn-md mx-1 exportBtns text-light"
+        :disabled="filteredLessons.filtered.lessons.length == 0"
     >
         <i class="far fa-file-excel"></i>
     </button>
@@ -312,9 +334,9 @@
     >
 </div>
 </div>
-
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredLessons.filtered.lessons.length > 0"
 >
@@ -366,7 +388,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" @click="sortCol2('project_name')">
+        <th class="pl-1 sort-th twenty" v-if="getShowProjectStats == 0" @click="sortCol2('project_name')">
         Project Name 
         <span
             class="inactive-sort-icon scroll"
@@ -406,7 +428,90 @@ v-if="filteredLessons.filtered.lessons.length > 0"
         >
             <i class="fas fa-sort-down"></i
         ></span>
-        </th>                 
+        </th> 
+           <th v-if="getShowProjectStats == 1" class="pl-1 sort-th twenty" @click="sortCol2('contract_nickname')">
+          Contract Name 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'contract_nickname'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>  
+        <th v-if="getShowProjectStats == 2" class="pl-1 sort-th twenty" @click="sortCol2('name')">
+            Nickname 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'name'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>     
+
         <th class="pl-1 sort-th" @click="sort('title')">
             Lessons Learned
             <span
@@ -690,12 +795,13 @@ v-if="filteredLessons.filtered.lessons.length > 0"
            
     </thead>
     <tbody>
+        <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
         <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
-     
-          <td>{{ lesson.project_group }}</td>
-          <td>{{ lesson.project_name }}</td>
+          <td v-if=" lesson.project_group">{{ lesson.project_group }}</td>
+          <td v-else>Unassigned</td>
+          <td>{{ lesson.project_name || lesson.contract_nickname || lesson.vehicle_nickname }}</td>
           <td>{{ lesson.title }}</td>
-          <td class="text-left">
+          <td>
            <span v-if="lesson.notes.length > 0">       
               <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
               {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -704,7 +810,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
                 {{lesson.last_update.body}}
               </span>         
            </span>  
-           <span class="text-left" v-else>No Update</span>
+           <span v-else>No Update</span>
           </td>
           <td>
             <span class="truncate-line-five">{{
@@ -712,7 +818,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             }}</span>
           </td>
           <td>{{ lesson.added_by }}</td>
-          <td>
+          <td class="text-center">
           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
         </td>
        
@@ -810,7 +916,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           {{lesson.last_update.body}}
         </span>         
       </span>  
-      <span class="text-left" v-else>No Update</span>         
+      <span v-else>No Update</span>         
     </td>   
         </tr>
     </tbody>
@@ -868,11 +974,13 @@ v-if="filteredLessons.filtered.lessons.length > 0"
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import { jsPDF } from "jspdf";
+// import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
 import "jspdf-autotable";
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
   name: "ProgramLessons",
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -907,8 +1015,11 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
+    "getShowProjectStats",
     'currLessonPage',
     "lessonsLoaded",
+    "getShowVehicleStats",
+    "getShowContractStats",
     "projectLessons",
     "programLessons",
     'projects',
@@ -919,10 +1030,8 @@ export default {
     'programCategoriesFilter',
     "facilityProgress",
     "filterDataForAdvancedFilter",
-    'projectGroupsFilter',
-    "filteredAllIssues",
+    'projectGroupsFilter',   
     "filteredAllLessons",
-    "filteredAllTasks",
     "filteredFacilities",
     "filteredFacilityGroups",
     "getAllFilterNames",
@@ -1019,7 +1128,17 @@ export default {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredLessons() {
-      let lessons = this.programLessons 
+     let programLessonsObj = [];
+      if(this.getShowProjectStats == 0){
+        programLessonsObj = this.programLessons.filter(l => l.project_id)
+      } 
+      if(this.getShowProjectStats == 1 || this.getShowContractStats){
+        programLessonsObj = this.programLessons.filter(l =>  l.project_contract_id)
+      }  
+      if(this.getShowProjectStats == 2 || this.getShowVehicleStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_contract_vehicle_id)
+      } 
+      let lessons = programLessonsObj
       .filter(lesson => {
         // debugger
       if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
@@ -1047,17 +1166,17 @@ export default {
               l.project_group
                 .toLowerCase()
                 .match(this.searchLessons.toLowerCase()) ||
-              l.project_name
-                .toLowerCase()
-                .match(this.searchLessons.toLowerCase()) ||
+              // l.project_name
+              //   .toLowerCase()
+              //   .match(this.searchLessons.toLowerCase()) ||
               l.added_by.toLowerCase().match(this.searchLessons.toLowerCase())
             );
           } else return true;
           // Filtering 7 Task States
         })
         .filter((l) => {
-          if (this.programCategoriesFilter.length > 0) {
-            let category = this.programCategoriesFilter.map((t) => t);
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t.name);
             return category.includes(l.category);
           } else return true;
         })
@@ -1152,143 +1271,7 @@ export default {
         }
     }
    },
-    filteredTasks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
-          )
-        : this.filteredAllTasks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      _.filter(tasks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      })
-  return {
-       unfiltered: {
-            tasks
-            },
-       filtered: {
-         tasks:  tasks.filter(t => {
-        if (this.getHideOverdue == true) {          
-         return t.isOverdue == false
-       } else return true
-
-      }).filter(t => {
-      if (this.getHideComplete == true) { 
-        return !t.completed
-      } else return true
-
-      }).filter(t => {
-      if (this.getHidePlanned == true) { 
-        return t.planned == false
-      } else return true
-
-      }).filter(t => {
-      if (this.getHideOnhold == true) { 
-        return t.onHold == false
-      } else return true
-
-      }).filter(t => {
-      if (this.getHideInprogress == true) { 
-        return t.inProgress == false
-      } else return true
-
-      }).filter(t => {
-       if (this.getHideDraft == true){
-         return t.draft == false
-       } else return true   
-
-
-      }).filter(t => {
-      if (this.getHideOngoing == true) {
-        return t.ongoing == false
-      } else return true       
-
-      }).filter(t => {
-        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
-        return t.reportable
-      }
-      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
-          return t.reportable + t.watched
-
-      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
-          return t.reportable + t.watched + t.important
-      } else return true
-
-      }).filter(t => {
-        // This and last 2 filters are for Filtered Tags
-         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
-           return t.watched
-        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
-           return t.watched + t.important
-        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
-           return  t.watched + t.reportable
-        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
-           return  t.watched + t.reportable + t.important
-        } else return true          
-       
-      }).filter(t => {
-         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
-          return t.important
-        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
-          return t.important + t.reportable
-       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
-          return t.important + t.reportable + t.watched
-        } else return true           
-       }),  
-        }
-       }     
-    },
-      sortedTasks:function() {
-        return this.filteredTasks.filtered.tasks.sort((a,b) => {
-        let modifier = 1;
-
-        if (this.currentSortDir1 === "desc") modifier = -1;
-        if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
-        if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
-        
-        if (this.currentSortDir2 === "desc") modifier = -1;
-        if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
-        if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
-
-        if (this.currentSortDir === "desc") modifier = -1;
-        if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
-                if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
-                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-                }
-            } else 
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
-        return 0;
-
-           }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
-          let end = this.currentPage*this.C_tasksPerPage.value;
-          if(index >= start && index < end) return true;
-          return this.end
-        });
-    },
-   
+  
   },
   methods: {
       ...mapActions([
@@ -1312,6 +1295,7 @@ export default {
 
         // Used in Program Viewer
         'setTasksPerPageFilter',
+        'setLessonsPerPageFilter',
         // 7 States
         'setHideComplete',
         'setHideInprogress',
@@ -1329,7 +1313,8 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-  openLesson(lesson) {       
+  openLesson(lesson) {  
+    if(this.getShowProjectStats == 0){
       this.$router.push({
       name: "ProgramLessonForm",
       params: {
@@ -1339,6 +1324,30 @@ export default {
         lessonId: lesson.id, 
       },
     });
+    }   
+     if(this.getShowProjectStats == 1){
+      // console.log(lesson)
+      this.$router.push({
+      name: "ProgramContractLessonForm",
+      params: {
+        programId: lesson.program_id,
+        contractId: lesson.project_contract_id,
+        lessonId: lesson.id, 
+      },
+    });
+    }  
+    if(this.getShowProjectStats == 2){
+      // console.log(lesson)
+      this.$router.push({
+      name: "ProgramVehicleLessonForm",
+      params: {
+        programId: lesson.program_id,
+        vehicleId: lesson.project_contract_vehicle_id,
+        lessonId: lesson.id, 
+      },
+    });
+    }            
+ 
     // console.log(this.$route.params)
     },
   exportLessonsToPdf() {

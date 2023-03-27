@@ -15,262 +15,317 @@
     :class="[!contentLoaded ? 'vh100': '']"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)" 
-  >
-     
+  >     
   <el-tabs class="mt-1 mr-3" type="border-card">
     <el-tab-pane class="p-3"  style="postion:relative" >
         <template slot="label" class="text-right" v-if="contentLoaded">
-              <span class="allCaps">{{ currentProject.name }} Data Viewer</span>
-            </template>
+              <span class="allCaps">{{ currentProject.name }} Data Viewer </span>
+            
+            </template>         
                <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
-                        <template slot="title">
-                        <div v-if="dynamicObj.length > 0 && dynamicObj[currentTaskSlide] !== undefined" class="container-fluid">
-                          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">{{ action }}</h3>
-                           <div v-for="number in [currentTaskSlide]" :key="number" >
-                           <div class="row justify-content-center">
-                             <div class="col-3 pb-0">
-                                 <img
-                                    class="mb-0"
-                                    style="width: 125px"
-                                    :src="require('../../../../assets/images/mpath.png')"
-                                  />
-                             </div>
-                             <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentTaskSlide]">
-                              
+                  <template slot="title">
+                  <div v-if="dynamicObj.length > 0 && dynamicObj[currentTaskSlide] !== undefined" class="container-fluid">
+                    <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+                    <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractId">
+                      <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
+                      <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractVehicleId">
+                      <i class="far fa-car text-light py-2 mr-1"></i> </span>
+                      <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectId">
+                      <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+                      {{ action }}
+                      </h5>
+                      <div v-for="number in [currentTaskSlide]" :key="number" >
+                      <div class="row justify-content-center">
+                        <div class="col-3 pb-0">
+                            <img
+                              class="mb-0"
+                              style="width: 125px"
+                              :src="require('../../../../assets/images/mpath.png')"
+                            />
+                        </div>
+                        <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentTaskSlide]">
                         
-                              
-                          <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].isOverdue" v-tooltip="`Overdue`">
-                            <i class="fas fa-calendar text-danger mr-1" style="font-size:1.8rem"></i
-                          ></span>
-                          <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].completed" v-tooltip="`Completed`"
-                            ><i
-                              class="fas fa-clipboard-check text-success mr-1" style="font-size:1.8rem"
-                            ></i
-                          ></span>
-                          <span
-                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].ongoing == true && dynamicObj[currentTaskSlide].closed == false"
-                            v-tooltip="`Ongoing`"
-                            ><i class="fas fa-retweet mr-1 text-success" style="font-size:1.8rem"></i
-                          ></span>
-                          <span
-                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].closed"
-                            v-tooltip="`Ongoing: Closed`"
-                            ><i class="fas fa-retweet mr-1 text-secondary" style="font-size:1.8rem"></i
-                          ></span>
-                         
-                          <span
-                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].onHold == true"
-                            v-tooltip="`On Hold`"
-                          >
-                            <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:1.8rem"></i
-                          ></span>
-                          <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].draft == true" v-tooltip="`Draft`">
-                            <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:1.8rem"></i
-                          ></span>
-                         <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].planned" v-tooltip="`Planned`">
-                            <i class="fas fa-calendar-check text-info mr-1" style="font-size:1.8rem"></i
-                          ></span>
-                          <span
-                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].inProgress"
-                            v-tooltip="`In Progress`"
-                          >
-                            <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
-                          ></span>
+                  
+                        
+                    <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].isOverdue" v-tooltip="`Overdue`">
+                      <i class="fas fa-calendar text-danger mr-1" style="font-size:1.8rem"></i
+                    ></span>
+                    <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].completed" v-tooltip="`Completed`"
+                      ><i
+                        class="fas fa-clipboard-check text-success mr-1" style="font-size:1.8rem"
+                      ></i
+                    ></span>
+                    <span
+                        v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].ongoing == true && dynamicObj[currentTaskSlide].closed == false"
+                      v-tooltip="`Ongoing`"
+                      ><i class="fas fa-retweet mr-1 text-success" style="font-size:1.8rem"></i
+                    ></span>
+                    <span
+                        v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].closed"
+                      v-tooltip="`Ongoing: Closed`"
+                      ><i class="fas fa-retweet mr-1 text-secondary" style="font-size:1.8rem"></i
+                    ></span>
+                    
+                    <span
+                        v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].onHold == true"
+                      v-tooltip="`On Hold`"
+                    >
+                      <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:1.8rem"></i
+                    ></span>
+                    <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].draft == true" v-tooltip="`Draft`">
+                      <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:1.8rem"></i
+                    ></span>
+                    <span  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].planned" v-tooltip="`Planned`">
+                      <i class="fas fa-calendar-check text-info mr-1" style="font-size:1.8rem"></i
+                    ></span>
+                    <span
+                        v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].inProgress"
+                      v-tooltip="`In Progress`"
+                    >
+                      <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
+                    ></span>
 
-                            <span v-if="dynamicObj[currentTaskSlide].text"> 
-                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                      <span v-if="dynamicObj[currentTaskSlide].text"> 
+                        <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                      </span>
+                      
+                        </div>
+                            <div class="col-3 mt-3">
+                            <img
+                                style="width: 145px"
+                              :src="require('../../../../assets/images/microhealthllc.png')"
+                            />
+                        </div>
+                    </div>
+
+                          <div class="row pt-3 justify-content-center">
+
+                            <div class="col-3 text-center slideCol leftProgramCol">                                          
+                            
+                        
+                              <div class="col py-2">  
+                              
+                              <h6 class="mh-orange leftColLabel text-light">PROGRAM</h6>
+                              <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].programName">{{dynamicObj[currentTaskSlide].programName}}</h4>
+                            </div>    
+                        
+                            <div class="col truncate-line-two">    
+                                  <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
+                              <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectGroup"> {{dynamicObj[currentTaskSlide].projectGroup}}  </h4>
+                              <h4 v-else> Unassigned</h4>
+                                                            
+                            </div>  
+                    
+                              <div class="col py-2">   
+                                  <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractId">                                      
+                                    <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
+                                    <h4  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].contractNickname">{{ dynamicObj[currentTaskSlide].contractNickname}}  </h4>  
+                                  </span> 
+                                  <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractVehicleId">                                      
+                                    <h6 class="leftColLabel text-light mh-orange">VEHICLE</h6>
+                                    <h4  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].vehicleNickname">{{ dynamicObj[currentTaskSlide].vehicleNickname}}  </h4>  
+                                  </span> 
+                                  <span v-else>
+                                      <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
+                                      <h4  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].facilityName">{{ dynamicObj[currentTaskSlide].facilityName}}  </h4>     
+                                  </span>
+                                                                                            
+                            </div>  
+
+                                <div class="col">    
+                                  <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
+                              <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].taskType" >{{ dynamicObj[currentTaskSlide].taskType}}  </h4> 
+                              <h4 v-else> -- </h4>                                                                
+                            </div>  
+
+                          </div>    
+                          
+                                                  
+                          <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
+                          <div class="lastUpdateCol">                                
+                            <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
+                            <div style="height:300px; overflow-y:auto">
+                            <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
+                            <span>
+                              <br>
+                              <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].lastUpdate.body }}</em></h4>
                             </span>
-                           
-                             </div>
-                                 <div class="col-3 mt-3">
-                                 <img
-                                     style="width: 145px"
-                                    :src="require('../../../../assets/images/microhealthllc.png')"
-                                  />
-                             </div>
+                              <span
+                              class="px-2"                                                                 
+                              >
+                              <h6 class="mt-2">{{
+                                moment(dynamicObj[currentTaskSlide].lastUpdate.createdAt).format(
+                                  "DD MMM YYYY, h:mm a "
+                                ) + ' By: ' +
+                                dynamicObj[currentTaskSlide].lastUpdate.user.fullName
+                              }} 
+                              </h6>
+                            </span>
+                              </span>
+                              <span v-else>
+                                <br>
+                                <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
+                              </span>
+                          </div>  
+                          </div> 
+                                                  
+                            <div class="issueTypes mt-3" v-if="dynamicObj == filteredTasks.filtered.tasks">
+
+                            <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
+                              <div style="height:100px; overflow-y:auto">
+                                <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
+                            </div>
                           </div>
 
-                               <div class="row pt-3 justify-content-center">
+                          </div>
 
-                                  <div class="col-3 text-center slideCol leftProgramCol">                                          
-                                  
-                             
-                                   <div class="col py-2">  
-                                    
-                                    <h6 class="mh-orange leftColLabel text-light">PROGRAM</h6>
-                                    <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].programName">{{dynamicObj[currentTaskSlide].programName}}</h4>
-                                  </div>    
+
+                              <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentTaskSlide] !== undefined">                                          
+                                  <div class="col pt-2">  
+                                <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
+                              <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentTaskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
+                              <span v-else> -- </span>
+                              - 
+                                <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].dueDate" class="d-inline-block"> <h5> {{ moment(dynamicObj[currentTaskSlide].dueDate).format("DD MMM YYYY") }}</h5></span>
+                                <span v-else>  </span>
                               
-                                  <div class="col truncate-line-two">    
-                                       <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
-                                   <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectGroup"> {{dynamicObj[currentTaskSlide].projectGroup}}  </h4>
-                                                                 
-                                  </div>  
+                            </div>    
+                                          
+                              <div class="col mt-3 truncate-line-two">
+                              <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
+                                    <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].users.length > 0"><h4> {{ dynamicObj[currentTaskSlide].userNames }}</h4></span>
+                                    <span v-else> <h4>No Assignments</h4></span>                                        
+                            </div>  
+        
+                              <div class="col" v-if="!dynamicObj[currentTaskSlide].ongoing" >                               
+                                                          
+                              <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
+                              <el-progress
+                                type="circle"
+                                class="py-2 text-light"                          
+                                :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
+                              ></el-progress>
+                              </span>
+                              <h4>{{action }} PROGRESS</h4>
+                            </div>     
+                          </div>   
+
+                          </div>   
                           
-                                   <div class="col py-2">    
-                                       <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
-                                    <h4  v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].facilityName">{{ dynamicObj[currentTaskSlide].facilityName}}  </h4>                                                                 
-                                  </div>  
+                      </div>
+                  
+                  </div>
+                  <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentTaskSlide] !== undefined">                       
+                      <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
+                        <span
+                      v-if="dynamicObj[currentTaskSlide].watched == true"
+                      v-tooltip="`On Watch`"
+                      ><i class="fas fa-eye mr-1 text-dark" style="font-size:1.5rem"></i
+                    ></span> 
+                    <span
+                      v-if="dynamicObj[currentTaskSlide].important == true"
+                      v-tooltip="`Important`"
+                    >
+                      <i class="fas fa-star text-warning mr-1 " style="font-size:1.5rem"></i
+                    ></span> 
+                    <span v-if="dynamicObj[currentTaskSlide].reportable" v-tooltip="`Briefings`">
+                      <i class="fas fa-presentation mr-1 text-primary" style="font-size:1.5rem"></i
+                    ></span>                
+                      
+                      
+                      </el-button>
+                    
+                  </div>
 
-                                     <div class="col">    
-                                       <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
-                                    <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].taskType" >{{ dynamicObj[currentTaskSlide].taskType}}  </h4> 
-                                    <h4 v-else> -- </h4>                                                                
-                                  </div>  
-
-                                </div>    
-                               
-                                                       
-                                <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
-                                <div class="lastUpdateCol">                                
-                                 <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:300px; overflow-y:auto">
-                                 <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
-                                  <span>
-                                    <br>
-                                   <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].lastUpdate.body }}</em></h4>
-                                  </span>
-                                   <span
-                                    class="px-2"                                                                 
-                                   >
-                                    <h6 class="mt-2">{{
-                                      moment(dynamicObj[currentTaskSlide].lastUpdate.createdAt).format(
-                                        "DD MMM YYYY, h:mm a "
-                                      ) + ' By: ' +
-                                     dynamicObj[currentTaskSlide].lastUpdate.user.fullName
-                                    }} 
-                                    </h6>
-                                  </span>
-                                   </span>
-                                   <span v-else>
-                                     <br>
-                                      <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
-                                   </span>
-                               </div>  
-                                </div> 
-                                                       
-                                 <div class="issueTypes mt-3" v-if="dynamicObj == filteredTasks.filtered.tasks">
-
-                                 <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
-                                   <div style="height:100px; overflow-y:auto">
-                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
-                                  </div>
-                               </div>
-
-                                </div>
-
-
-                                    <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentTaskSlide] !== undefined">                                          
-                                        <div class="col pt-2">  
-                                     <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
-                                    <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentTaskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
-                                    <span v-else> -- </span>
-                                    - 
-                                     <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].dueDate" class="d-inline-block"> <h5> {{ moment(dynamicObj[currentTaskSlide].dueDate).format("DD MMM YYYY") }}</h5></span>
-                                     <span v-else>  </span>
-                                    
-                                  </div>    
-                                                
-                                   <div class="col mt-3 truncate-line-two">
-                                   <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
-                                          <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].users.length > 0"><h4> {{ dynamicObj[currentTaskSlide].userNames }}</h4></span>
-                                          <span v-else> <h4>No Assignments</h4></span>                                        
-                                  </div>  
-             
-                                   <div class="col" v-if="!dynamicObj[currentTaskSlide].ongoing" >                               
-                                                               
-                                    <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
-                                    <el-progress
-                                      type="circle"
-                                      class="py-2 text-light"                          
-                                      :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
-                                    ></el-progress>
-                                    </span>
-                                    <h4>{{action }} PROGRESS</h4>
-                                  </div>     
-                                </div>   
-  
-                               </div>   
-                               
-                           </div>
-                        
-                        </div>
-                        <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentTaskSlide] !== undefined">                       
-                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
-                             <span
-                            v-if="dynamicObj[currentTaskSlide].watched == true"
-                            v-tooltip="`On Watch`"
-                            ><i class="fas fa-eye mr-1 text-dark" style="font-size:1.5rem"></i
-                          ></span> 
-                          <span
-                            v-if="dynamicObj[currentTaskSlide].important == true"
-                            v-tooltip="`Important`"
-                          >
-                            <i class="fas fa-star text-warning mr-1 " style="font-size:1.5rem"></i
-                          ></span> 
-                          <span v-if="dynamicObj[currentTaskSlide].reportable" v-tooltip="`Briefings`">
-                            <i class="fas fa-presentation mr-1 text-primary" style="font-size:1.5rem"></i
-                          ></span>                
-                            
-                            
-                            </el-button>
-                         
-                        </div>
-
-                        <div slot="footer" class="dialog-footer">
-                        <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask"><i class="far fa-chevron-left" style="font-size:1.35rem"></i></el-button>
-                        <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.35rem"><span>{{ action }}</span> {{ currentTaskSlide + 1 }} of {{ dynamicObj.length}}</span></el-button>                      
-                        <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
-                        </div>
-                        </template>
+                  <div slot="footer" class="dialog-footer">
+                  <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask"><i class="far fa-chevron-left" style="font-size:1.35rem"></i></el-button>
+                  <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.35rem"><span>{{ action }}</span> {{ currentTaskSlide + 1 }} of {{ dynamicObj.length}}</span></el-button>                      
+                  <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
+                  </div>
+                  </template>
                </el-dialog>
-                <div class="row pb-4">
-              <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <div class="w-100"  v-if="currentTab == '#tab-tasks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Tasks Search Criteria"
-                    v-model="search_tasks"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-issues'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Issues Search Criteria"
-                    v-model="issuesQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                <div class="w-100" v-if="currentTab == '#tab-risks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Risks Search Criteria"
-                    v-model="risksQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-lessons'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Lessons Search Criteria"
-                    v-model="lessonsQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-
-
+             <div class="row pb-4" v-if="contentLoaded" :load="log(currentProject)" >
+               <div class="col-3 py-2">
+              <!-- <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }"> -->
+                <div class="w-100">
+                <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
+               <el-button-group v-if="currentProject && currentProject.contracts && currentProject.contracts.length > 0">
+                  <el-button :class="[ getShowProjectStats == 0  ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="p-2 ">  
+                    <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats == 0  ? 'mh-green-text' : 'inactive' ]"></i>
+                    PROJECTS
+                    <span 
+                      v-if="currentProject && currentProject.facilities"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.facilities.length }}
+                      </span>
+                  </el-button>
+                  <el-button :class="[ getShowProjectStats == 1  ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="p-2 "> 
+                    <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == 1 ? 'mh-orange-text' : 'inactive' ]"></i>
+                    CONTRACTS
+                    <span 
+                      v-if="currentProject && currentProject.contracts"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.contracts.length }}
+                      </span>
+                  </el-button>
+                  <el-button :class="[ getShowProjectStats == 2  ? 'lightBtn' : 'inactive']" @click.prevent="showVehicleStats" class="p-2 "> 
+                    <i class="far fa-car mr-1" :class="[ getShowProjectStats == 2 ? 'text-info' : 'inactive']"></i>
+                  VEHICLES
+                    <span 
+                      v-if="currentProject && currentProject.contractVehicles"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.contractVehicles.length }}
+                      </span>
+                  </el-button>
+                </el-button-group>                
                 </div>
               </div>
+              <div class="col-3 py-2">
+              <div class="w-100">
+                          <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                          <div class="w-100"  v-if="currentTab == '#tab-tasks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Tasks Search Criteria"
+                            v-model="search_tasks"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-issues'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Issues Search Criteria"
+                            v-model="issuesQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                        <div class="w-100" v-if="currentTab == '#tab-risks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Risks Search Criteria"
+                            v-model="risksQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-lessons'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Lessons Search Criteria"
+                            v-model="lessonsQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
 
-              <div class="col-4 py-2">
-                <div class="d-flex w-100">          
+
+              </div>
+
+              </div>
+              <div class="col-3 py-2">
+                <div class="w-100">          
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
                        <!-- <treeselect  
@@ -294,25 +349,31 @@
                  </template>              
                 </div>         
               </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
+              <div class="col-3 pl-0 py-2">
+                <div class="w-100 pr-3">
                   <div class="font-sm mr-2 mt-2">PROCESS AREA</div>
                   <template>
                     <el-select
                       v-model="C_programCategoryFilter"
-                      class="w-75"
+                      class="w-100"
                       track-by="name"
                       value-key="id"
                       multiple
                       clearable
                       placeholder="Select Process Area"
                     >
-                      <el-option
+                        <el-option
+                        v-for="item in taskTypes"
+                        :value="item"
+                        :key="item.id"
+                        :label="item.name"
+                      >
+                      <!-- <el-option
                         v-for="item in C_categories"
                         :value="item"
                         :key="item"
                         :label="item"
-                      >
+                      > -->
                       </el-option>
                     </el-select>
                   </template>
@@ -329,7 +390,9 @@
              >
                 TASKS
                 <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllTasks.length }}</span>
+                 <span v-if="getShowProjectStats == 0">{{ filteredAllTasks.length }}</span>
+                 <span v-if="getShowProjectStats == 1">{{ filteredAllContractTasks.length }}</span>
+                 <span v-if="getShowProjectStats == 2">{{ filteredAllVehicleTasks.length }}</span>
                 </span>
             </template>
 
@@ -607,6 +670,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -614,6 +678,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -623,6 +688,7 @@
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -634,12 +700,13 @@
                   >
                 </div>
               </div>
-
+              <!-- <ProjectContractSwitch /> -->
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-3 pr-3"
                 style="postion:relative" 
                 v-if="filteredTasks.filtered.tasks.length > 0"
               >
+               
                 <div class="px-3 tableFixHead" >
                   <table
                     class="table table-sm table-bordered"
@@ -648,7 +715,7 @@
                   >
                     <thead style="background-color: #ededed">    
                         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
-                        Project Group
+                        Group
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="currentSortCol1 !== 'projectGroup'"
@@ -688,7 +755,7 @@
                           <i class="fas fa-sort-down"></i
                         ></span>
                       </th> 
-                       <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+                       <th v-if="getShowProjectStats == 0" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
                         Project Name 
                         <span
                           class="inactive-sort-icon scroll"
@@ -728,7 +795,89 @@
                         >
                           <i class="fas fa-sort-down"></i
                         ></span>
-                      </th>                 
+                      </th>  
+                      <th v-if="getShowProjectStats == 1" class="pl-1 sort-th twenty" @click="sortCol2('contractNickname')">
+                        Contract Name 
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="currentSortCol2 !== 'contractNickname'"
+                        >
+                          <i class="fas fa-sort"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'asc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'asc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'desc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'desc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                      </th> 
+                      <th v-if="getShowProjectStats == 2" class="pl-1 sort-th twenty" @click="sortCol2('name')">
+                         Nickname 
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="currentSortCol2 !== 'name'"
+                        >
+                          <i class="fas fa-sort"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'asc' && currentSortCol2 === 'name'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'asc' && currentSortCol2 === 'name'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'desc' && currentSortCol2 === 'name'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'desc' && currentSortCol2 === 'name'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                      </th>                   
                       <th class="pl-1 sort-th twenty" @click="sort('text')">
                         Task
                         <span
@@ -1021,14 +1170,13 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">
+                      <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">                 
                    
-                   
-                        <td>{{ task.projectGroup }}</td>
-                        <td>{{ task.facilityName }}</td>
+                        <td v-if="task.projectGroup">{{ task.projectGroup }}</td>
+                        <td v-else> Unassigned</td>
+                        <td>{{ task.facilityName || task.contractNickname || task.vehicleNickname}}</td>
                         <td>{{ task.text }}</td>
                         <td
-                          class="text-left"
                           v-if="task.notes.length > 0"
                         >
                           <span
@@ -1050,9 +1198,9 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
-                        <td>
+                        <td class="text-center">
                          <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
                            <i class="fas fa-retweet text-success"></i>
                          </span>
@@ -1063,7 +1211,7 @@
                            moment(task.startDate).format("DD MMM YYYY") 
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
@@ -1078,7 +1226,7 @@
                           }}</span>
                         </td>
                         <td>{{ task.userNames }}</td>
-                        <td>                          
+                        <td class="text-center">                          
                            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
@@ -1315,7 +1463,9 @@
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllIssues.length }}</span>
+                 <span v-if="getShowProjectStats == 0">{{ filteredAllIssues.length }}</span>
+                 <span v-if="getShowProjectStats == 1">{{ filteredAllContractIssues.length }}</span>
+                 <span v-if="getShowProjectStats == 2">{{ filteredAllVehicleIssues.length }}</span>
               </span>
             </template>
             <ProgramIssues />
@@ -1330,7 +1480,9 @@
             >
               RISKS
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllRisks.length }}</span>
+                 <span v-if="getShowProjectStats == 0">{{ filteredAllRisks.length }}</span>
+                 <span v-if="getShowProjectStats == 1">{{ filteredAllContractRisks.length }}</span>
+                 <span v-if="getShowProjectStats == 2">{{ filteredAllVehicleRisks.length }}</span>
                </span>
             </template>
             <ProgramRisks />
@@ -1341,7 +1493,7 @@
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
-                {{  programLessonsCount.total_count  }}
+                {{  filteredLessons.filtered.lessons.length  }}
               </span>
             </template>
             <ProgramLessons />
@@ -1362,7 +1514,9 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
+import ProgramTaskForm from "./ProgramTaskForm.vue";
 import ProgramLessons from "./ProgramLessons.vue";
+// import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 Vue.component('treeselect', VueTreeselect.Treeselect)
@@ -1373,6 +1527,7 @@ export default {
     ProgramIssues,
     ProgramRisks,
     ProgramLessons,
+    // ProjectContractSwitch
   },
   data() {
     return {
@@ -1409,8 +1564,11 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
+    "getShowContractStats",
+    "getShowVehicleStats",
     'programCategoriesFilter',
     'currTaskPage',
+    'getShowProjectStats',
     'searchIssues',
     'searchRisks',
     'searchLessons',
@@ -1419,6 +1577,7 @@ export default {
     'portfolioPrograms',
     "lessonsLoaded",
     "projectLessons",
+    "programLessons",
     "programLessonsCount",
     'projects',
     "facilities",
@@ -1429,6 +1588,12 @@ export default {
     "filteredAllIssues",
     "filteredAllRisks",
     "filteredAllTasks",
+    "filteredAllContractTasks",
+    "filteredAllContractRisks",
+    "filteredAllContractIssues",
+    "filteredAllVehicleTasks",
+    "filteredAllVehicleRisks",
+    "filteredAllVehicleIssues",
     "filteredFacilities",
     "filteredFacilityGroups",
     "getAllFilterNames",
@@ -1449,7 +1614,6 @@ export default {
     "taskStageFilter",
     "taskTypeFilter",
     "taskTypes",
-    "taskTypes",
     "taskUserFilter",
     'getShowAdvancedFilter',
     'projectGroupsFilter',
@@ -1469,9 +1633,15 @@ export default {
     'getHideBriefed',
     ]),
     goBack() {
-      return `/programs/${this.$route.params.programId}/sheet`;
+      var backRoute = localStorage.getItem('backRoute');
+      localStorage.getItem('backRoute');
+      if (backRoute) {
+        return `/programs/${this.$route.params.programId}/` + backRoute;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet`;
+      }
     },
-    projectObj() {
+   projectObj() {
     return this.currentProject.facilities
     },
     C_projectGroupsFilter: {
@@ -1603,14 +1773,21 @@ export default {
         : this.facilityCount; 
       
     },
-  //  C_categoryNameFilter: {
-  //     get() {
-  //       return this.portfolioCategoriesFilter;
-  //     },
-  //     set(value) {
-  //       // console.log(value)
-  //       this.setPortfolioCategoriesFilter(value);
-  //     },
+  //  projectContractToggle:{     
+  //    get(){
+  //      return this.getShowProjectStats
+  //    },
+  //    set(e){
+  //      if(this.getShowProjectStats == false){
+  //       // console.log(this.getShowProjectStats)
+  //       this.setShowProjectStats(!this.getShowProjectStats)
+  //         // console.log(this.getShowProjectStats)
+  //     } else if(this.getShowProjectStats == true){
+  //       this.setShowProjectStats(!this.getShowProjectStats)
+  //    } else return
+  //    console.log(e)
+
+  //    }
   //   },
     C_facilityProgress() {
       return this.facilityGroup
@@ -1631,30 +1808,113 @@ export default {
     ProgramView() {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
-    filteredTasks() {
-      // let typeIds = _.map(this.taskTypeFilter, "id");
-      // let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.filteredAllTasks
-        .filter(t => {
-          if (this.facility_project_ids.length > 0) {                
-            return this.facility_project_ids.includes(t.facilityProjectId)
-        } else return true
-        }).filter((task) => {
-          if (this.search_tasks !== "") {
+    filteredLessons() {
+     let programLessonsObj = [];
+      if(this.getShowProjectStats == 0){
+        programLessonsObj = this.programLessons.filter(l => l.project_id)
+      } 
+      if(this.getShowProjectStats == 1 || this.getShowContractStats ){
+        programLessonsObj = this.programLessons.filter(l =>  l.project_contract_id)
+      }  
+      if(this.getShowProjectStats == 2 || this.getShowVehicleStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_contract_vehicle_id)
+      } 
+      let lessons = programLessonsObj
+      .filter(lesson => {
+      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) {
+         this.facility_project_ids = [];
+         let val = this.projectGroupsFilter
+         for(let k = 0; k < val.length; k++){
+        if(val[k].program_id){
+        this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_group_id){
+         this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_id){
+        this.facility_project_ids.push(val[k].facility_project_id)
+        }
+      }
+       return this.facility_project_ids.includes(lesson.facility_project_id)
+      } else return true
+        }).filter((l) => {
+          if (this.searchLessons !== "") {
             return (
-              task.text.toLowerCase().match(this.search_tasks.toLowerCase()) ||
+              l.title.toLowerCase().match(this.searchLessons.toLowerCase()) ||
+              (l.category && l.category
+                .toLowerCase()
+                .match(this.searchLessons.toLowerCase())) ||
+              l.project_group
+                .toLowerCase()
+                .match(this.searchLessons.toLowerCase()) ||
+              l.added_by.toLowerCase().match(this.searchLessons.toLowerCase())
+            );
+          } else return true;
+        })
+        .filter((l) => {
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t);
+            return category.includes(l.category);
+          } else return true;
+        })
+
+      return {
+        unfiltered: {
+          lessons,
+        },
+        filtered : {
+          lessons: lessons.filter(lesson => {
+            if (this.getHideDraft) {
+              return !lesson.draft
+            } else return true
+        }).filter(lesson => {
+          if (this.getHideComplete) {
+            return lesson.draft
+          } else return true
+        }).filter(lesson => {
+          if (this.getHideBriefed && !this.getHideImportant ) {
+            return lesson.reportable
+          }
+          if (this.getHideBriefed && this.getHideImportant) {
+            return lesson.reportable + lesson.important
+          } else return true
+        }).filter(lesson => {
+          if (this.getHideImportant && !this.getHideBriefed) {
+            return lesson.important
+          } if (this.getHideImportant && this.getHideBriefed) {
+            return lesson.important + lesson.reportable
+        } else return true
+        })
+      }
+    }
+   },
+    filteredTasks() {
+     let allTasks = this.filteredAllTasks
+     if (this.getShowProjectStats == 1){
+       allTasks = this.filteredAllContractTasks
+     }
+     if (this.getShowProjectStats == 2){
+       allTasks = this.filteredAllVehicleTasks
+     }
+     let tasks = allTasks.filter(t => {
+          if (this.facility_project_ids.length > 0) {                
+            return this.facility_project_ids.includes(t.facilityProjectId) 
+          } else return true
+          }).filter((task) => {
+          if (this.search_tasks !== '' && task && task.text) {
+            console.log(task)
+            return (            
+              task.text.toLowerCase().match(this.search_tasks.toLowerCase()) ||       
               task.taskType
                 .toLowerCase()
                 .match(this.search_tasks.toLowerCase()) ||
               task.projectGroup
                 .toLowerCase()
                 .match(this.search_tasks.toLowerCase()) ||
-              task.programName
-                .toLowerCase()
-                .match(this.search_tasks.toLowerCase()) ||
-              task.facilityName
-                .toLowerCase()
-                .match(this.search_tasks.toLowerCase()) ||
+              // task.facilityName
+              //   .toLowerCase()
+              //   .match(this.search_tasks.toLowerCase()) ||
+              //  task.contractNickname
+              //   .toLowerCase()
+              //   .match(this.search_tasks.toLowerCase()) ||
               task.userNames.toLowerCase().match(this.search_tasks.toLowerCase())
             );
           } else return true;
@@ -1662,8 +1922,8 @@ export default {
         })
         .filter((task) => {
           if (this.C_programCategoryFilter && this.C_programCategoryFilter.length > 0) {
-            let category = this.C_programCategoryFilter.map((t) => t);
-            return category.includes(task.taskType);
+            let category = this.C_programCategoryFilter.map((t) => t.id);
+            return category.includes(task.taskTypeId);
           } else return true;
         })
   return {
@@ -1747,7 +2007,6 @@ export default {
       sortedTasks:function() {
         return this.filteredTasks.filtered.tasks.sort((a,b) => {
         let modifier = 1;
-
         if (this.currentSortDir1 === "desc") modifier = -1;
         if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
         if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
@@ -1877,6 +2136,7 @@ export default {
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setShowProjectStats',
         'setSearchIssues',
         'setSearchRisks',
         'setSearchLessons',
@@ -1907,7 +2167,35 @@ export default {
         'setHideWatched',
         'setHideImportant',
         'setHideBriefed',
+        'setShowContractStats',
+        'setShowVehicleStats'
       ]),
+      log(e){
+        console.log(e)
+      },
+     _isallowed(salut) {
+        return this.checkPrivileges("ProgramView", salut, this.$route)
+
+      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return pPrivilege.contracts.includes(s);     
+    },
+    showContractStats(){    
+      this.setShowProjectStats(1)
+      this.setShowContractStats(true)
+      this.setShowVehicleStats(false)   
+    },
+    showVehicleStats(){ 
+      this.setShowVehicleStats(true)   
+      this.setShowContractStats(false)
+      this.setShowProjectStats(2)
+    },
+    showProjectStats(){
+      this.setShowProjectStats(0)
+      this.setShowVehicleStats(false)   
+      this.setShowContractStats(false)
+    },
       exportTasksToPdf() {
       const doc = new jsPDF("l");
          console.log( this.$refs.table)
@@ -1957,16 +2245,37 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openTask(task) {       
+   openTask(task) {   
+    if(this.getShowProjectStats == 0){
       this.$router.push({
-      name: "ProgramTaskForm",
-      params: {
-        programId: task.projectId,
-        projectId: task.facilityId,
-        taskId: task.id,
-      },
-    });
-    // console.log(this.$route.params)
+      name: "ProgramTaskForm",   
+        params: {
+          programId: task.projectId,
+          projectId: task.facilityId,
+          taskId: task.id,
+        },
+      });
+      }
+     if(this.getShowProjectStats == 1) {
+       this.$router.push({
+        name: "ProgramContractTaskForm", 
+          params: {
+          programId: this.$route.params.programId,
+          contractId: task.projectContractId,
+          taskId: task.id,
+        },
+       }); 
+      }
+      if(this.getShowProjectStats == 2) {
+       this.$router.push({
+        name: "ProgramVehicleTaskForm", 
+          params: {
+          programId: this.$route.params.programId,
+          vehicleId: task.projectContractVehicleId,
+          taskId: task.id,
+        },
+       }); 
+      }
     },
     openTpresentation(){
       this.dialogVisible = true; 
@@ -2162,7 +2471,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .backBtn {
   z-index: 1040;
   top:1rem;
@@ -2172,5 +2481,22 @@ export default {
   z-index: 1045;
   width: 350px;
 }
-
+::v-deep.el-switch__label, .el-switch__label--left {
+  color: lightgray;
+}
+::v-deep.el-switch__label, .el-switch__label--right {
+  color: lightgray;
+}
+::v-deep.el-switch__label.is-active, .el-switch__label--left {
+  color: #383838;
+}
+::v-deep.vue-treeselect__control {
+  height: 40px !important;
+}
+.lightBtn {
+  background-color: #ededed;
+}
+.inactive {
+  color: lightgray ;
+}
 </style>

@@ -1,3 +1,4 @@
+// import                           'element-ui/lib/theme-chalk/index.css';   
 import                           'core-js/stable'
 import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
@@ -12,6 +13,7 @@ import Dashboard            from 'components/dashboard/index.vue'
 import router               from 'routers/dashboard'
 import store                from './../store'
 import utils                from './../mixins/utils'
+import AuthorizationService from '../services/authorization_service'
 import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
@@ -26,10 +28,14 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
+// import ElementUI            from 'element-ui';
+// import locale               from 'element-ui/lib/locale/lang/en'
 
+// Vue.use(ElementUI, { locale })
 
 Vue.use(vco)
 Vue.mixin(utils)
+Vue.use(AuthorizationService)
 Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)
@@ -60,36 +66,15 @@ if(!window.google){
 }
 
 Vue.prototype.$mpath_instance = window.mpath_instance
-var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
-// Format: {<program_id> : {
-    // <project_id>:{
-    //   modules: ["R", "W", "D"]
-    // }
-// }}
-var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
-var programPrivileges = JSON.parse(window.program_privilegs.replace(/&quot;/g,'"'))
 
-var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
+AuthorizationService.getRolePrivileges();
+Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
+  return AuthorizationService.checkPrivileges(page, salut, route, extraData);
+};
 
-var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
-
-var topNavigationPermissions = {}
-for (var key in privilege) {
-  if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
-  var value = privilege[key]
-  topNavigationPermissions[key] = {
-    read: value.includes('R'),
-    write: value.includes('W'),
-    delete: value.includes('D')
-  }
-}
-
-Vue.prototype.$currentUser = current_user
-Vue.prototype.$topNavigationPermissions = topNavigationPermissions
-Vue.prototype.$projectPrivileges = projectPrivileges
-Vue.prototype.$programPrivileges = programPrivileges
-
-Vue.prototype.$preferences = preferences
+Vue.prototype.$currentUser = AuthorizationService.current_user;
+Vue.prototype.$topNavigationPermissions = AuthorizationService.topNavigationPermissions();
+Vue.prototype.$preferences = AuthorizationService.preferences;
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
@@ -100,3 +85,7 @@ const dashboardApp = new Vue({
   template: '<Dashboard />',
   components: { Dashboard }
 })
+
+// Adding global logger so that we can debug data in template 
+// e.g. {{$log("projectUsers", projectUsers)}} and it will do console.log
+Vue.prototype.$log = console.log

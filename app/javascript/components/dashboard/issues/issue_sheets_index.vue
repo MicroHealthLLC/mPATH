@@ -243,7 +243,7 @@
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
                   <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
@@ -253,9 +253,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueType'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueType'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                    <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueType'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueType'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueType'">
@@ -265,9 +265,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueSeverity'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueSeverity'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueSeverity'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueSeverity'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueSeverity'">
@@ -277,9 +277,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'startDate'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'startDate'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'startDate'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'startDate'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'startDate'">
@@ -289,9 +289,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDate'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDate'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDate'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDate'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
@@ -333,17 +333,17 @@
                <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser">
               <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">
-                <i class="fas fa-sort-up"></i></span></span>
+                <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">
-                <i class="fas fa-sort-up"></i></span></span>
+                <i class="fas fa-sort-up"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">
                 <i class="fas fa-sort-down"></i></span>
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">
                 <i class="fas fa-sort-down"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">
-                <i class="fas fa-sort-up"></i></span></span>
+                <i class="fas fa-sort-up"></i></span>
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">
-                <i class="fas fa-sort-up"></i></span></span>
+                <i class="fas fa-sort-up"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">
                 <i class="fas fa-sort-down"></i></span>
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">
@@ -354,9 +354,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
@@ -370,9 +370,9 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
                   <i class="fas fa-sort"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
-                  <i class="fas fa-sort-up"></i></span></span>
+                  <i class="fas fa-sort-up"></i></span>
                   <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
                   <i class="fas fa-sort-down"></i></span>
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
@@ -421,10 +421,9 @@
      </div>
 
       </div>
-        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
-
-
+      <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
       <table
         class="table table-sm table-bordered table-striped"
         ref="table" id="issueSheetsList1"
@@ -496,7 +495,6 @@
         </tbody>
       </table>
     </div>
-  </div>
 </template>
 
 <script>
@@ -516,7 +514,7 @@
 
   export default {
     name: 'IssueSheetsIndex',
-    props: ['facility', 'from', 'contract'],
+    props: ['facility', 'from', 'contract', 'vehicle'],
     components: {
       IssueForm,
       IssueSheets
@@ -526,17 +524,6 @@
         listOptions: ['active','all', 'completed'],
         loading: true,
         newIssue: false,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },
         viewList: 'active',
         currentIssue: null,
         now: new Date().toISOString(),
@@ -585,26 +572,22 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-      //TODO: change the method name of isAllowed
-      // _isallowed(salut) {
-      //   var programId = this.$route.params.programId;
-      //   var projectId = this.$route.params.projectId
-      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return  fPrivilege.issues.includes(s); 
-      // },
-       _isallowed(salut) {
-        let programId = this.$route.params.programId;
-        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.issues.includes(s); 
-        }         
-      },
+    _isallowed(salut) {
+      return this.checkPrivileges("issue_sheets_index", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     // return this.defaultPrivileges
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.issues.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.issues.includes(s); 
+      //   }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -712,6 +695,10 @@
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues/new`
         );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/issues/new`
+        );
         } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/new`
@@ -774,9 +761,14 @@
     contractRoute(){
       return this.$route.params.contractId
     },
+    vehicleRoute(){
+      return this.$route.params.vehicleId
+    },
      object(){
       if (this.$route.params.contractId) {
         return this.contract
+      } else if (this.$route.params.vehicleId) {
+        return this.vehicle
       } else return this.facility
      },
       filteredIssues() {
@@ -1232,7 +1224,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
@@ -1249,7 +1241,7 @@ i, .icons {
     width: 65% !important;
   } 
 }
-/deep/.el-collapse   {
+::v-deep.el-collapse   {
   border-bottom: none !important;
   }
   

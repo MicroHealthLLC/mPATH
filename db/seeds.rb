@@ -1,13 +1,13 @@
 
 puts "Seed the application..."
 
-user = User.find_or_initialize_by(email: 'admin@example.com') do |user|  
-  user.password = 'adminPa$$w0rd'
-  user.password_confirmation = 'adminPa$$w0rd'
-  user.title = 'Mr.'
-  user.first_name =  'Super'
-  user.role = "superadmin"
-  user.last_name =  'Admin'
+user = User.find_or_initialize_by(email: 'admin@example.com') do |user1|  
+  user1.password = 'adminPa$$w0rd'
+  user1.password_confirmation = 'adminPa$$w0rd'
+  user1.title = 'Mr.'
+  user1.first_name =  'Super'
+  user1.role = "superadmin"
+  user1.last_name =  'Admin'
 end
 
 if user.privilege.nil?
@@ -135,5 +135,82 @@ contract_classification.each do |name|
   end
 end
 
+puts "Adding Contract categories"
+contract_categories = ["Commercial", "Fedaral"]
+contract_categories.each do |name|
+  ContractCategory.find_or_create_by(name: name) do |s|
+    s.name = name
+  end
+end
+
+puts "Adding Contract client type"
+contract_client_types = ["Government","Client"]
+contract_client_types.each do |name|
+  ContractClientType.find_or_create_by(name: name) do |s|
+    s.name = name
+  end
+end
+
+puts "Adding default system roles"
+
+roles = [
+  {
+    role_type: "update-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "update-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "program-admin",
+    type_of: 'admin',
+    role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-users",
+    type_of: 'admin',
+    role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-contract",
+    type_of: 'admin',
+    role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+]
+
+roles.each do |role_hash|
+  Role.find_or_create_by(name: role_hash[:role_type]) do |s|
+    s.name = role_hash[:role_type]
+    s.is_portfolio = true
+    s.is_default = true
+    s.type_of = role_hash[:type_of]
+    s.role_privileges_attributes = role_hash[:role_privileges]
+  end
+end
 
 puts "Seeds completed.."

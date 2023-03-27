@@ -3,7 +3,6 @@
     <IssueSheetsIndex :facility="facility" :contract="contract" />
   </div>
 </template>
-
 <script>
 import IssueSheetsIndex from "../../../dashboard/issues/issue_sheets_index.vue";
 

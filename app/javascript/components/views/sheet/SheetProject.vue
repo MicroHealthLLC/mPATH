@@ -37,12 +37,13 @@
                    <div class="col pt-2 text-right">     
                   <button
                     v-if="_isallowed('write')"
+                    v-tooltip="`Save`"
                     class="btn btn-primary text-light mt-1 btn-sm apply-btn"
                     :class="{'disabledBtn': !DV_updated }"
                     @click="updateFacility"  
                     :disabled="!DV_updated"             
-                  >
-                    Apply
+                  >     
+                    <i class="far fa-save"></i>
                   </button>
                  </div>
                 </div>
@@ -136,12 +137,13 @@
         <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
           <div class="col pt-0 text-right">
           <button 
-            :disabled="!project.pointOfContact"
+            v-if="_isallowed('write')"           
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
             <button 
             :class="{'d-none': !edit}"
+              v-if="_isallowed('write')"
               class="btn btn-info text-light mt-1 btn-sm apply-btn"                  
             @click.prevent="editBtn">Update
             </button>
@@ -162,12 +164,13 @@
                 placeholder="Enter Point of Contact name"
                 name="Poc"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
 
         </div>
-       <div class="row" v-if="project && project.address">
+      <div class="row" v-if="project && project.address">
         <div class="col-1 pb-0 font-sm">
           <p>
             <span class="fbody-icon"
@@ -178,7 +181,7 @@
         </div>
          <div class="col-11 pb-0 font-sm">
           <p>
-          <span>{{ project.address || "N/A" }}</span>
+            <span>{{ project.address || "N/A" }}</span>
           </p>
         </div>
        </div>
@@ -199,6 +202,7 @@
                 placeholder="Enter Point of Contact phone number"
                 name="phoneNo"
                :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -219,6 +223,7 @@
                 placeholder="Enter Point of Contact email"
                 name="email"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -229,7 +234,7 @@
         </div>
         </div>     
       </div>
-             <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
+               <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
               <div class="row row-1 mt-3">    
               <div :class="[isMapView ? 'col-10' : 'col-5']">
                    <div class="row">
@@ -243,11 +248,14 @@
                 </div>  
          
              </div>
+            
+
               </div>
+      
                      
           </div>
-          <div v-else class="text-danger mx-2 my-4">
-            You don't have permission to read!
+          <div v-else class="text-danger mx-2 mt-5">
+            <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
           </div>
         </div>
       </div>
@@ -292,7 +300,7 @@ export default {
           label: "Contracts",
           key: "tab3",
           closable: false,
-        },
+          },
       ],
       edit: true,
       today:  new Date().toISOString().slice(0, 10),
@@ -320,43 +328,46 @@ export default {
     },
     updateContactInfo() {
       let formData = new FormData();
-          formData.append("facility[point_of_contact]", this.project.pointOfContact);  
-          formData.append("facility[phone_number]", this.project.phoneNumber);
-          formData.append("facility[email]",this.project.email);
-    
-      // formData.append("commit", "Update Project");
-      // let url = `/admin/facilities/${this.$route.params.projectId}`;
+
+          if(this.project.pointOfContact){
+            formData.append("facility[point_of_contact]", this.project.pointOfContact);  
+          } else formData.append("facility[point_of_contact]", '');  
+          if(this.project.email){
+            formData.append("facility[email]",this.project.email);
+          } else formData.append("facility[email]", '');
+          if(this.project.phoneNumber){
+            formData.append("facility[phone_number]", this.project.phoneNumber)
+          } else  formData.append("facility[phone_number]", '') 
+
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}`; 
       let method = "PUT";
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      }).then((response) => {
-        if (response.status === 200) {
-          this.$message({
-            message: `Edits has been saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-          this.fetchCurrentProject(this.$route.params.programId)
-          this.edit = true
-        }
-      });
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        }).then((response) => {
+          if (response.status === 200) {
+            this.$message({
+              message: `Edits has been saved successfully.`,
+              type: "success",
+              showClose: true,
+            });
+            this.fetchCurrentProject(this.$route.params.programId)
+            this.edit = true
+          }
+        });
     },
     updateFacility(e) {
       if (e.target) e.target.blur();
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
+        statusId: this.statusId,
+        dueDate: this.dueDate,
       };
       // Used to update state
       let updatedFacility = Object.assign(this.facility, {
@@ -386,13 +397,9 @@ export default {
         });
     },
      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.overview.includes(s);      
-    },
+      //  console.log(this.$route)
+        return this.checkPrivileges("SheetProject", salut, this.$route)
+    }, 
     isBlockedStatus(status) {
       return (
         status &&
@@ -404,6 +411,14 @@ export default {
       this.$nextTick(() => {
         this.DV_updated = true;
       });
+    },
+    disableSave(name, email, phone) {
+      if(!name)
+        if(phone || email)
+          return true;
+        else if(!phone && !email)
+          return false;
+      return false;
     },
   },
   computed: {
@@ -568,11 +583,11 @@ export default {
 .my-el-card {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -632,20 +647,20 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
     padding-bottom: 0 !important;
 }
-/deep/.el-progress-circle {
+::v-deep.el-progress-circle {
   height: 100px !important;
   width: 100px !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
   }
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {
@@ -684,7 +699,7 @@ export default {
   overflow-y: auto;
 }
 .nonEditMode {
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
   border: none;
   background-color: #fafafa;  
   pointer-events:none;

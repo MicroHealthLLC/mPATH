@@ -16,7 +16,7 @@ class Api::V1::ProjectsController < AuthenticatedController
     @project = current_user.authorized_programs.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
-      render json: {project: @project.build_json_response(current_user)}, status: 200
+      render json: {project: @project.build_json_response(current_user, response_for: 'client_panel')}, status: 200
      else
       render json: {error: "Project not found"}, status: :not_found
     end

@@ -228,7 +228,7 @@
       </button>
        </div>
       <div v-if="filteredTasks.filtered.tasks.length > 0">
-        <div  style="margin-bottom:50px" data-cy="tasks_table" class="mt-2">
+        <div  style="margin-bottom:30px" data-cy="tasks_table" class="mt-2">
           <table data-cy="tasks_table" class="table table-sm table-bordered table-striped stickyTableHeader">
             <colgroup>
               <col class="oneSix" />
@@ -381,7 +381,7 @@
               :task="task"
               :from-view="from"
             />
-          <div class="float-right mb-4 mt-2 font-sm">
+          <div class="text-right mb-4 mt-2 font-sm">
            <div class="simple-select d-inline-block text-right font-sm">
            <span class="mr-1">Displaying </span>
             <el-select
@@ -409,7 +409,9 @@
       <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No Tasks found...</h6>
     </div>
       </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+      <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
 
     <table
@@ -510,27 +512,16 @@
     components: {
       TaskSheets
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         tasks: Object,
         today: new Date().toISOString().slice(0, 10),
         now: new Date().toISOString(),
         tasksQuery: '',
-        // currentPage:1,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },        
         showFilters: false,
         contractRoute: this.$route.params.contractId,
+        vehicleRoute: this.$route.params.vehicleId,
         id: this.$route.params.projectId,
         datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
@@ -570,30 +561,22 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
+      _isallowed(salut) {
+        return this.checkPrivileges("task_sheets_index", salut, this.$route)
 
-      // _isallowed(salut) {
-      //   let programId = this.$route.params.programId;
-      //   if (this.$route.params.contractId) {
-      //   this.id = this.$route.params.contractId            
-      //   }      
-      //   let fPrivilege = this.$projectPrivileges[programId][this.id]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.tasks.includes(s); 
-        
-      // },
-      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-       _isallowed(salut) {
-        let programId = this.$route.params.programId;
-        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.tasks.includes(s); 
-        }         
-      },
+      //  if (this.$route.params.contractId) {
+      //     // return this.defaultPrivileges
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.tasks.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.tasks.includes(s); 
+      //   }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -664,6 +647,10 @@
         if(this.contractRoute) {
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/new`
+        );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/tasks/new`
         );
         } else
         this.$router.push(
@@ -943,6 +930,8 @@
     object(){
       if (this.$route.params.contractId) {
         return this.contract
+      } else if (this.$route.params.vehicleId) {
+        return this.vehicle
       } else return this.facility
      },
       C_sheetsTaskFilter: {
@@ -1214,7 +1203,7 @@ i, .icons {
   border-radius: 4px; 
   border: .5px solid lightgray;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

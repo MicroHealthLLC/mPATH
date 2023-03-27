@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openLesson(lesson.id)">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -39,6 +39,7 @@ export default {
       defaultPrivileges:{
         admin: ['R', 'W', 'D'],
         contracts: ['R', 'W', 'D'],
+        vehicles: ['R', 'W', 'D'],
         facility_id: this.$route.params.contractId,
         issues: ['R', 'W', 'D'],
         lessons: ['R', 'W', 'D'],
@@ -59,7 +60,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["deleteLesson", "deleteContractLesson"]),
+    ...mapActions(["deleteLesson", "deleteContractLesson", "deleteVehicleLesson"]),
     close() {
       this.show = false;
       this.left = 0;
@@ -95,6 +96,15 @@ export default {
         params: {
           programId: this.$route.params.programId,
           contractId: this.$route.params.contractId,
+          lessonId: id,
+        },
+      });
+      } else if (this.$route.params.vehicleId){
+        this.$router.push({
+        name: this.routeName,
+        params: {
+          programId: this.$route.params.programId,
+          vehicleId: this.$route.params.vehicleId,
           lessonId: id,
         },
       });
@@ -135,6 +145,38 @@ export default {
       )
         .then(() => {
           this.deleteContractLesson({ id: this.lesson.id, ...this.$route.params });
+          // Move this message to store
+          this.$message({
+            message: `${this.lesson.title} is successfully deleted.`,
+            type: "success",
+            showClose: true,
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Delete canceled",
+            showClose: true,
+          });
+        });        
+      } else if (this.$route.params.vehicleId){
+            this.$confirm(
+        `Are you sure you want to delete ${this.lesson.title}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteVehicleLesson({ id: this.lesson.id, ...this.$route.params });
+          // Move this message to store
+          this.$message({
+            message: `${this.lesson.title} is successfully deleted.`,
+            type: "success",
+            showClose: true,
+          });
         })
         .catch(() => {
           this.$message({
@@ -146,14 +188,16 @@ export default {
       }   
     },
      _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.lessons.includes(s); 
-        }         
+        return this.checkPrivileges("LessonContextMenu", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     return this.defaultPrivileges      
+      //   } else {
+      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.lessons.includes(s); 
+      //   }         
       },
    // Temporary _isallowed method until contract projectPrivileges is fixed
     //  _isallowed(salut) {
@@ -176,6 +220,9 @@ export default {
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
+}
+.context-menu-inner{
+  width: 10vw;
 }
 hr {
   margin: 0;

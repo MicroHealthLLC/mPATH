@@ -3,7 +3,7 @@ ActiveAdmin.register Facility do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path(is_portfolio: true))]
     if %(show edit).include?(params['action'])
       links << link_to(facility.facility_name, edit_admin_facility_path)
     end
@@ -12,6 +12,8 @@ ActiveAdmin.register Facility do
 
   permit_params do
     permitted = [
+      :project_id,
+      :is_portfolio,
       :facility_name,
       :address,
       :point_of_contact,
@@ -45,7 +47,7 @@ ActiveAdmin.register Facility do
     column :point_of_contact
     column :email
     column :phone_number
-    column "Project Group", :facility_group, nil, sortable: 'facility_groups.name' do |facility|
+    column "Group", :facility_group, nil, sortable: 'facility_groups.name' do |facility|
       if current_user.admin_write?
         link_to "#{facility.facility_group.name}", "#{edit_admin_facility_group_path(facility.facility_group)}" if facility.facility_group.present?
       else
@@ -53,13 +55,14 @@ ActiveAdmin.register Facility do
       end
     end
     tag_column "State", :status
-    column "Programs" , :projects do |facility|
+    column "Associated Programs" , :projects do |facility|
       if current_user.admin_write?
         facility.projects.active
       else
         "<span>#{facility.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
+    # column :is_portfolio
     actions defaults: false do |facility|
       item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -67,13 +70,13 @@ ActiveAdmin.register Facility do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
 
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
-          f.input :facility_group, include_blank: false, include_hidden: false, label: "Project Group"
+          f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
@@ -88,15 +91,16 @@ ActiveAdmin.register Facility do
         end
       end
 
-      tab 'Advanced' do
-        f.inputs 'Assign Programs' do
-          # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
-          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+      if false
+        tab 'Advanced' do
+          f.inputs 'Assign Programs' do
+            # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+            input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
 
+          end
+          div id: 'facility_projects-tab', "data-key": "#{resource.id}"
         end
-        div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
-
       tab 'Comments' do
         f.inputs 'Comments' do
           f.has_many :comments, heading: false do |c|
@@ -112,18 +116,11 @@ ActiveAdmin.register Facility do
     f.actions
   end
 
-  batch_action :"Assign/Unassign Project Group", if: proc {current_user.admin_write?}, form: -> {{
-    assign: :checkbox,
-    "Project Group": FacilityGroup.pluck(:name, :id)
+  batch_action :"Assign Group", if: proc {current_user.admin_write?}, form: -> {{
+    "Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Project Group is updated"
-    if inputs['assign'] === 'assign'
-      Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-      notice = "Project Group is assigned"
-    elsif inputs['assign'] === 'unassign'
-      Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
-      notice = "Project Group is unassigned"
-    end
+    notice = "Group is updated"
+    Facility.where(id: ids).update_all(facility_group_id: inputs["Group"])
     redirect_to collection_path, notice: "#{notice}"
   end
 
@@ -133,69 +130,70 @@ ActiveAdmin.register Facility do
     Facility.where(id: ids).update_all(status: inputs['state'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
-
-  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
-    assign: :checkbox,
-    "Program": Project.pluck(:name, :id)
-  }} do |ids, inputs|
-    notice = "Program is assigned"
-    project = Project.find_by_id(inputs["Project"])
-    if inputs['assign'] === 'assign'
-      Facility.where(id: ids).each do |facility|
-        facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
-      end
+  if false
+    batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
+      assign: :checkbox,
+      "Program": Project.pluck(:name, :id)
+    }} do |ids, inputs|
       notice = "Program is assigned"
-    elsif inputs['assign'] === 'unassign'
-      FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
-      notice = "Program is unassigned"
-    end
-    redirect_to collection_path, notice: "#{notice}"
-  end
-
-  batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
-    "Name": :text,
-    "Description": :textarea,
-    "Program": Project.pluck(:name, :id),
-    "Category": TaskType.pluck(:name, :id),
-    "Stage": TaskStage.pluck(:name, :id),
-    "Start Date": :datepicker,
-    "Due Date": :datepicker,
-    "Assign Users": :text,
-    "Progress": :number,
-    "AutoCalculate": :checkbox,
-    "Checklists": :text,
-    "Task Files": :text
-  }} do |ids, inputs|
-    user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
-    file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
-    checklists = JSON.parse(inputs["Checklists"]) rescue []
-    Facility.where(id: ids).each do |facility|
-      facility.facility_projects.where(project_id: inputs['Program']).each do |facility_project|
-        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
-        task.task_files.create(file_blobs) if file_blobs.present?
+      project = Project.find_by_id(inputs["Project"])
+      if inputs['assign'] === 'assign'
+        Facility.where(id: ids).each do |facility|
+          facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
+        end
+        notice = "Program is assigned"
+      elsif inputs['assign'] === 'unassign'
+        FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
+        notice = "Program is unassigned"
       end
+      redirect_to collection_path, notice: "#{notice}"
     end
-    redirect_to collection_path, notice: "Task added"
-  rescue => e
-    redirect_to collection_path, flash: {error: e.message}
-  end
 
-  batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
-    "Program": Project.pluck(:name, :id),
-    "Status": Status.pluck(:name, :id),
-    "Due Date": :datepicker
-  }} do |ids, inputs|
-    Facility.where(id: ids).each do |facility|
-      facility_project = facility.facility_projects.find_or_initialize_by(project_id: inputs['Project'])
-      facility_project.status_id = inputs['Status']
-      facility_project.due_date = inputs['Due Date']
-      facility_project.save
+    batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
+      "Name": :text,
+      "Description": :textarea,
+      "Program": Project.pluck(:name, :id),
+      "Category": TaskType.pluck(:name, :id),
+      "Stage": TaskStage.pluck(:name, :id),
+      "Start Date": :datepicker,
+      "Due Date": :datepicker,
+      "Assign Users": :text,
+      "Progress": :number,
+      "AutoCalculate": :checkbox,
+      "Checklists": :text,
+      "Task Files": :text
+    }} do |ids, inputs|
+      user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
+      file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
+      checklists = JSON.parse(inputs["Checklists"]) rescue []
+      Facility.where(id: ids).each do |facility|
+        facility.facility_projects.where(project_id: inputs['Program']).each do |facility_project|
+          task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+          task.task_files.create(file_blobs) if file_blobs.present?
+        end
+      end
+      redirect_to collection_path, notice: "Task added"
+    rescue => e
+      redirect_to collection_path, flash: {error: e.message}
     end
-    redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
-  rescue => e
-    redirect_to collection_path, flash: {error: e.message}
-  end
 
+    batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
+      "Program": Project.pluck(:name, :id),
+      "Status": Status.pluck(:name, :id),
+      "Due Date": :datepicker
+    }} do |ids, inputs|
+      Facility.where(id: ids).each do |facility|
+        facility_project = facility.facility_projects.find_or_initialize_by(project_id: inputs['Project'])
+        facility_project.status_id = inputs['Status']
+        facility_project.due_date = inputs['Due Date']
+        facility_project.save
+      end
+      redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
+    rescue => e
+      redirect_to collection_path, flash: {error: e.message}
+    end
+  end
+  
   batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects" do |ids|
     deleted = Facility.where(id: ids).destroy_all
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"
@@ -223,12 +221,14 @@ ActiveAdmin.register Facility do
 
     def create
       params[:facility][:creator_id] = current_user.id
+      params[:facility][:is_portfolio] = true
       normalize_comment_params
       super
     end
 
     def update(options={}, &block)
       normalize_comment_params
+
       resource.delete_nested_projects(params[:facility][:project_ids]) if params[:facility][:project_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
@@ -254,12 +254,12 @@ ActiveAdmin.register Facility do
     end
 
     def scoped_collection
-      super.includes(:facility_group)
+      super.includes(:facility_group).where(is_portfolio: true)
     end
   end
 
   filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
-  filter :facility_group, label: "Project Group"
+  filter :facility_group, label: "Group"
   filter :facility_name, label: "Project Name"
   filter :address
   filter :point_of_contact

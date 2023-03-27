@@ -12,13 +12,7 @@ export default {
   },
   methods:{
     ...mapActions([
-      'fetchPortfolioIssue', 
-      'fetchPortfolioIssues', 
-      'fetchPortfolioUsers', 
-      'fetchPortfolioIssueStages', 
-      'fetchPortfolioIssueTypes', 
-      'fetchPortfolioIssueSeverities',
-      'fetchPortfolioCategories',
+      'fetchPortfolioIssue',      
       ]),
     redirectBack() {
       this.$router.push(
@@ -27,15 +21,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['portfolioIssue', 'portfolioTab'])
+    ...mapGetters(['portfolioIssue'])
   },
-  beforeMount(){
+  mounted(){
     this.fetchPortfolioIssue(this.$route.params)
-    this.fetchPortfolioIssueStages()
-    this.fetchPortfolioUsers()
-    this.fetchPortfolioIssueTypes()
-    this.fetchPortfolioIssueSeverities()
-    this.fetchPortfolioCategories()
   },
 };
 </script>

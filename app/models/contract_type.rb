@@ -1,5 +1,7 @@
 class ContractType < SortableRecord
   has_many :contracts
+  belongs_to :user
+  validates_presence_of :name
   
   def self.prime
     find_by(name: "Prime Contract")

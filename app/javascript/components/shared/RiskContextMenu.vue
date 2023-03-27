@@ -7,23 +7,22 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openRisk">Open</el-menu-item>
       <hr />
       <el-menu-item
+        v-if="$route.params.projectId"
         @click="createDuplicate"
         :disabled="!isAllowed('write', 'risks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'risks')">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
-        </template>
+      <el-submenu index="1" v-if="$route.params.projectId">
+        <template slot="title">Duplicate to... </template>
         <div>
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -57,15 +56,13 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'risks')">
-        <template slot="title">
-          <span slot="title">Move to...</span>
-        </template>
+      <el-submenu index="2" :disabled="!isAllowed('delete', 'risks')"  v-if="$route.params.projectId">
+        <template slot="title"> Move to...</template>
         <div>
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -106,17 +103,6 @@ export default {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-      }, 
       defaultProps: {
         children: "children",
         label: "label",
@@ -127,7 +113,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "filteredFacilityGroups"]),
     // get position of context menu
     style() {
       return {
@@ -135,17 +121,24 @@ export default {
         left: this.left + "px",
       };
     },
+   placeholder(){
+      if(this.$route.params.contractId){
+        return "Filter Contracts"
+      } else if(this.$route.params.vehicleId){
+        return "Filter Vehicles"
+      } else return "Filter Projects"
+    },
     treeFormattedData() {
-      var data = [];
-
-      this.facilityGroups.forEach((group, index) => {
+    if(this.$route.params.projectId){
+      let data = [];
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
           children: [
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.risk.facilityId
+                (facility) => this.isAllowedFacility("write", 'risk_project_context_menu', {facility_project_id: facility.id}) && facility.facility.id !== this.risk.facilityId
               )
               .map((facility) => {
                 return {
@@ -156,8 +149,58 @@ export default {
           ],
         });
       });
-
       return [...data];
+    }
+    if(this.$route.params.contractId){
+      let data = [];
+        let contractGroups = this.currentProject.contracts
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...contractGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (contract) => this.isAllowedFacility("write", 'risk_contract_context_menu', {project_contract_id: contract.projectContractId}) && contract.projectContractId !== this.risk.projectContractId
+                  )
+                  .map((contract) => {
+                    return {
+                      id: contract.projectContractId,
+                      label: contract.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+
+     if(this.$route.params.vehicleId){
+      let data = [];
+        let vehicleGroups = this.currentProject.vehicles
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (vehicle) => this.isAllowedFacility("write", 'risk_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId}) && vehicle.projectContractVehicleId !== this.risk.projectContractVehicleId
+                  )
+                  .map((vehicle) => {
+                    return {
+                      id: vehicle.projectContractVehicleId,
+                      label: vehicle.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+   
     },
     submitDisabled() {
       if (this.$refs.duplicatetree) {
@@ -172,26 +215,13 @@ export default {
   },
   methods: {
     ...mapActions(["riskDeleted"]),
-    ...mapMutations(["updateRisksHash"]),
-   isAllowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.risks.includes(s); 
-        }         
+    ...mapMutations(["updateRisksHash", "updateContractRisks", "updateVehicleRisks"]),
+    isAllowed(salut) {
+      return this.checkPrivileges("task_form", salut, this.$route)
     },
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-    // closes context menu
+    isAllowedFacility(salut, module, extraData) {
+      return this.checkPrivileges(module, salut, this.$route, extraData)  
+    },
     close() {
       this.show = false;
       this.left = 0;
@@ -219,20 +249,34 @@ export default {
       this.close();
     },
     moveRisk(risk, facilityProjectId) {
-      if (!this.isAllowed("write", 'risks')) return;
+      // if (!this.isAllowed("write", 'risks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
           return;
         }
-
         this.loading = true;
         let formData = new FormData();
-
-        formData.append("risk[facility_project_id]", facilityProjectId);
-
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
-        let method = "PUT";
+        if (this.$route.params.contractId) {
+             formData.append("risk[contract_id]", facilityProjectId);
+         } else if (this.$route.params.vehicleId) {
+             formData.append("risk[contract_vehicle_id]", facilityProjectId);
+         } else {
+             formData.append("risk[facility_project_id]", facilityProjectId);
+         }
+        
+         let url;
+         let method;    
+        if (this.$route.params.contractId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${risk.id}.json`;
+         } else if (this.$route.params.vehicleId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${risk.id}.json`;
+         } else {
+             method = "PUT";
+             url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
+         }         
         let callback = "risk-updated";
 
         axios({
@@ -245,11 +289,19 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.risk));
-            this.updateFacilities(
+            let responseRisk = humps.camelizeKeys(response.data.risk);
+            this.$emit(callback, responseRisk);
+
+          if (this.$route.params.contractId){
+               this.updateContractRisks({ risk: responseRisk });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleRisks({ risk: responseRisk });
+            } else {
+               this.updateFacilities(
               humps.camelizeKeys(response.data.risk),
               facilityProjectId
-            );
+             );
+            }           
             if (response.status === 200) {
               this.$message({
                 message: `${risk.title} was moved successfully.`,
@@ -270,6 +322,8 @@ export default {
           .finally(() => {
             this.loading = false;
             this.updateRisksHash({ risk: risk, action: "delete" });
+            this.updateContractRisks({ risk: risk, action: "delete" });
+            this.updateVehicleRisks({ risk: risk, action: "delete" });
           });
       });
     },
@@ -292,7 +346,14 @@ export default {
       facilities[facilityIndex].risks.push(risk);
     },
     createDuplicate() {
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_duplicate.json`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}/create_duplicate.json`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
+      }
       let method = "POST";
       let callback = "risk-created";
 
@@ -309,14 +370,27 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.risk));
-          this.updateFacilityRisk(
-            humps.camelizeKeys(response.data.risk),
+          let responseRisk =  humps.camelizeKeys(response.data.risk);
+          this.$emit(callback, responseRisk);
+
+
+          if (this.$route.params.contractId){
+              this.updateContractRisks({
+               risk: responseRisk
+              });
+            } else if (this.$route.params.vehicleId){
+              this.updateVehicleRisks({
+               risk: responseRisk
+              });
+            } else {
+            this.updateFacilityRisk(
+            responseRisk,
             this.risk.facilityProjectId
           );
-          if (response.status === 200) {
+            }     
+            if (response.status === 200) {
             this.$message({
-              message: `${this.risk.text} was duplicated successfully.`,
+              message: `${responseRisk.text} was duplicated successfully.`,
               type: "success",
               showClose: true,
             });
@@ -324,7 +398,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.risk.text}. Please try again.`,
+            message: `Unable to duplicate ${responseRisk.text}. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -355,21 +429,47 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
-      let method = "POST";
+      let url;
+      let method;
+      if (this.$route.params.contractId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      } else if (this.$route.params.vehicleId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      } else {
+          method = "POST";
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      }
+
+     
       let callback = "risk-created";
 
       ids.forEach((id, index) => {
-        if (index === 0) {
+        if (index === 0 && this.$route.params.projectId) {
           url += `facility_project_ids[]=${id}`;
-        } else {
+        } else if (index !== 0 && this.$route.params.projectId)  {
           url += `&facility_project_ids[]=${id}`;
-        }
+        } if (index === 0 && this.$route.params.contractId) {
+          url += `contract_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.contractId)  {
+          url += `&contract_ids[]=${id}`;
+        } if (index === 0 && this.$route.params.vehicleId) {
+          url += `contract_vehicle_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.vehicleId)  {
+          url += `&contract_vehicle_ids[]=${id}`;
+        } 
       });
+     let formData = new FormData();
+          formData.append("id", this.risk.id);
 
-      let formData = new FormData();
-      formData.append("id", this.risk.id);
-      formData.append("facility_project_ids", ids);
+      if ( this.$route.params.contractId){
+         formData.append("contract_ids", ids);
+      } else if ( this.$route.params.vehicleId){
+         formData.append("contract_vehicle_ids", ids);
+      } else {
+          formData.append("facility_project_ids", ids);
+      } 
 
       axios({
         method: method,
@@ -383,13 +483,28 @@ export default {
         .then((response) => {
           this.$emit(callback, humps.camelizeKeys(response.data.risk));
 
-          response.data.risks.forEach((risk) => {
+                            
+         if (this.$route.params.contractId){
+             response.data.risks.forEach((risk) => {
+              this.updateContractRisks({
+                risk: humps.camelizeKeys(risk)
+               });
+              });
+         } else if (this.$route.params.vehicleId){
+             response.data.risks.forEach((risk) => {
+              this.updateVehicleRisks({
+                risk: humps.camelizeKeys(risk)
+               });
+              });
+         } else {                 
+           response.data.risks.forEach((risk) => {
             this.updateFacilityRisk(
               humps.camelizeKeys(risk),
               risk.facilityProjectId
             );
           });
-          if (response.status === 200) {
+         }
+         if (response.status === 200) {
             this.$message({
               message: `${this.risk.text} was duplicated successfully to selected projects.`,
               type: "success",
@@ -415,15 +530,17 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteRisk() {
-      this.$confirm(`Are you sure you want to delete ${this.risk.text}?`, 'Confirm Delete', {
+      let risk = this.risk
+      let programId = this.$route.params.programId
+      this.$confirm(`Are you sure you want to delete ${risk.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.riskDeleted(this.risk).then((value) => {
+          this.riskDeleted({ risk, programId }).then((value) => {
             if (value === 'Success') {
               this.$message({
-                message: `${this.risk.text} was deleted successfully.`,
+                message: `${risk.text} was deleted successfully.`,
                 type: "success",
                 showClose: true,
               });
@@ -459,6 +576,10 @@ export default {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
 }
+.context-menu-inner {
+  width: 10vw;
+}
+
 hr {
   margin: 0;
 }

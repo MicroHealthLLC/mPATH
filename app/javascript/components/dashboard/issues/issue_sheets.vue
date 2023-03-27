@@ -58,6 +58,7 @@
           v-if="Object.entries(DV_edit_issue).length"
           :facility="facility"
           :contract="contract"
+          :vehicle="vehicle"
           :issue="DV_edit_issue"
           @on-close-form="onCloseForm"
           @issue-updated="updateRelatedTaskIssue"
@@ -125,6 +126,8 @@
           this.DV_edit_issue = this.DV_issue
           if (this.$route.params.contractId)  {
             this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues/${this.DV_edit_issue.id}`)
+          } else if (this.$route.params.vehicleId)  {
+            this.$router.push(`/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/issues/${this.DV_edit_issue.id}`)
           } else  this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`)
       },
       deleteIssue() {
@@ -264,7 +267,7 @@
     color: #fff;
     border-radius: 3px;
   }
-  .issue_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .issue_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

@@ -3,7 +3,7 @@ require 'uri'
 module Tasker
   extend ActiveSupport::Concern
 
-  included do
+  included do |base|
     default_scope {order(due_date: :asc)}
 
     scope :complete, -> {where("progress = ?", 100)}
@@ -11,12 +11,19 @@ module Tasker
 
     belongs_to :facility_project, optional: true #since now we can create task under contract
     belongs_to :contract, optional: true
+    # New contract functionality
+    belongs_to :project_contract, optional: true
+    has_one :contract_project_data, through: :project_contract
+
+    belongs_to :project_contract_vehicle, optional: true
+    has_one :contract_vehicle, through: :project_contract_vehicle
 
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
-    has_one :facility_group, through: :facility
-    has_one :contract_project, class_name: "Project", through: :contract
-    has_one :contract_facility_group, class_name: "FacilityGroup", through: :contract
+    has_one :facility_group, through: :facility_project
+    has_one :contract_project, class_name: "Project", through: :project_contract
+    has_one :contract_vehicle_project, class_name: "Project", through: :project_contract_vehicle
+    has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
 
     has_many :checklists, as: :listable, dependent: :destroy
 
@@ -36,6 +43,8 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
+   
+    base.const_set :URL_FILENAME_LENGTH, 252
 
     def valid_url?(url)
       uri = URI.parse(url)
@@ -43,9 +52,14 @@ module Tasker
     rescue URI::InvalidURIError
       false
     end
+    
+    def is_contract_resource?
+      self.project_contract_id.present?
+    end
 
     def setup_facility_project
       return unless facility_project.present?
+      return if self.is_contract_resource?
       if facility_project.facility_id_changed? || facility_project.project_id_changed?
         self.facility_project = FacilityProject.find_or_initialize_by(project: self.project, facility: self.facility)
       end
@@ -65,10 +79,30 @@ module Tasker
 
     def remove_on_watch
       if self.progress == 100 && self.watched == true
-        self.update_attributes(watched: false)
+        self.update(watched: false)
       end
     end
 
+    def update_owner_record
+      if self.previous_changes.keys.include?("progress")
+        _owner = nil
+        if facility_project.present?
+          _owner = facility_project
+        elsif project_contract_id.present?
+          _owner = project_contract
+        elsif project_contract_vehicle_id.present?
+          _owner = project_contract_vehicle
+        end
+  
+        return if !_owner
+  
+        p = _owner.project
+        _owner.update_progress
+        p.update_progress
+        FacilityGroup.where(project_id: p.id).map(&:update_progress)
+      end
+    end
+    
     def handle_related_taskers
       subclass = "sub_#{self.class.name.downcase.pluralize}"
       sub_tasks.each{|t| t.send(subclass) << self unless t.send(subclass).include? self}

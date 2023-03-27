@@ -49,12 +49,13 @@
               "
               class="container-fluid"
             >
-              <h3
-                class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light"
+              <h5
+                class="pl-2 mt-3 d-inline-block mh-blue px-3 text-light"
                 style="cursor:pointer; position:absolute; left:0; top:0"
               >
+                <i class="fal fa-clipboard-list text-light py-2 mr-1"></i>
                 {{ action }}
-              </h3>
+              </h5>
               <div v-for="number in [currentTaskSlide]" :key="number">
                 <div class="row justify-content-center">
                   <div class="col-3 pb-0">
@@ -176,16 +177,17 @@
                     ></span>
 
                     <span v-if="dynamicObj[currentTaskSlide].text">
-                      <h2 class="mt-2 d-inline text-truncate breakWord">
+                      <h2 class="mt-2 d-inline text-truncate">
                         {{ dynamicObj[currentTaskSlide].text }}
                       </h2>
                     </span>
                     <span v-if="dynamicObj[currentTaskSlide].title">
-                      <h2 class="mt-2 d-inline text-truncate breakWord">
+                      <h2 class="mt-2 d-inline text-truncate">
                         {{ dynamicObj[currentTaskSlide].title }}
                       </h2>
                     </span>
                   </div>
+
                   <div class="col-3 mt-3">
                     <img
                       style="width: 145px"
@@ -212,7 +214,7 @@
 
                     <div class="col truncate-line-two">
                       <h6 class="leftColLabel text-light mh-orange">
-                        PROJECT GROUP
+                        GROUP
                       </h6>
                       <h4
                         v-if="
@@ -999,6 +1001,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -1006,6 +1009,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -1015,6 +1019,7 @@
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="tasksObj.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -1028,7 +1033,7 @@
               </div>
 
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 style="postion:relative"
                 v-if="
                   tasksObj.filtered.tasks !== null &&
@@ -1430,7 +1435,7 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(task, index) in sortedTasks"
+                        v-for="(task, index) in sortedTasks.reverse()"
                         :key="index"
                         class="portTable taskHover"
                         @click="openTask(task)"
@@ -1439,7 +1444,6 @@
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.text }}</td>
                         <td
-                          class="text-left"
                           v-if="task.notes_updated_at.length > 0"
                         >
                           <span
@@ -1461,9 +1465,9 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="
                               (task.ongoing &&
@@ -1488,7 +1492,7 @@
                             moment(task.start_date).format("DD MMM YYYY")
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="task.ongoing && !task.closed"
                             v-tooltip="`Ongoing`"
@@ -1511,7 +1515,7 @@
                           }}</span>
                         </td>
                         <td>{{ task.users }}</td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="task.ongoing && !task.closed"
                             v-tooltip="`Ongoing`"
@@ -1735,7 +1739,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="task.notes_updated_at.length > 0"
                         >
                           <span
@@ -1756,7 +1759,7 @@
                             {{ task.notes[task.notes.length - 1].body }}
                           </span>
                         </td>
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
@@ -2063,6 +2066,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
                       class="btn btn-md presentBtn mr-1 text-light mh-blue"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -2070,6 +2074,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportIssuesToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -2079,6 +2084,7 @@
                         exportIssuesToExcel('table', 'Portfolio Issues')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="issuesObj.filtered.issues.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -2093,7 +2099,7 @@
             </div>
 
             <div
-              class="row text-center mt-1 pr-3"
+              class="row mt-1 pr-3"
               v-if="
                 issuesObj.filtered.issues !== null &&
                   issuesObj.filtered.issues.length > 0
@@ -2585,7 +2591,6 @@
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
                       <td
-                        class="text-left"
                         v-if="issue.notes_updated_at.length > 0"
                       >
                         <span
@@ -2607,13 +2612,13 @@
                         </span>
                       </td>
                       <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                      <td class="text-left" v-else>No Update</td>
+                      <td v-else>No Update</td>
                       <td>{{ issue.issue_type }}</td>
                       <td>{{ issue.issue_severity }}</td>
-                      <td>
+                      <td class="text-center">
                         {{ moment(issue.start_date).format("DD MMM YYYY") }}
                       </td>
-                      <td>
+                      <td class="text-center">
                         <span
                           v-if="issue.on_hold && issue.due_date == null"
                           v-tooltip="`On Hold (w/no Due Date)`"
@@ -2631,7 +2636,7 @@
                         </span>
                       </td>
                       <td>{{ issue.users }}</td>
-                      <td>{{ issue.progress + "%" }}</td>
+                      <td class="text-center">{{ issue.progress + "%" }}</td>
                       <td class="text-center">
                         <span v-if="issue.is_overdue" v-tooltip="`Overdue`">
                           <i class="fas fa-calendar mr-1 text-danger"></i>
@@ -2771,7 +2776,6 @@
                       </td>
                       <td>
                         <span
-                          class="text-left"
                           v-if="issue.notes_updated_at.length > 0"
                         >
                           <span
@@ -3148,6 +3152,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openRpresentation"
                       class="btn btn-md mr-1 text-light mh-blue presentBtn"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -3155,6 +3160,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportRisksToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -3164,6 +3170,7 @@
                         exportRisksToExcel('table', 'Portfolio Risks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="risksObj.filtered.risks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -3176,7 +3183,7 @@
                 </div>
               </div>
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 v-if="
                   risksObj.filtered.risks !== null &&
                     risksObj.filtered.risks.length > 0
@@ -3675,7 +3682,6 @@
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
                         <td
-                          class="text-left"
                           v-if="risk.notes_updated_at.length > 0"
                         >
                           <span
@@ -3697,7 +3703,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
                         <td>
                           {{
@@ -3732,7 +3738,7 @@
                             >Extreme</span
                           >
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="
                               (risk.ongoing &&
@@ -3757,7 +3763,7 @@
                             moment(risk.start_date).format("DD MMM YYYY")
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="risk.ongoing && !risk.closed"
                             v-tooltip="`Ongoing`"
@@ -3780,7 +3786,7 @@
                           }}</span>
                         </td>
                         <td>{{ risk.users }}</td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="risk.ongoing && !risk.closed"
                             v-tooltip="`Ongoing`"
@@ -4021,6 +4027,12 @@
                           >
                             In Progress
                           </span>
+                          <span v-if="risk.important" v-tooltip="`Important`">
+                            Important
+                          </span>
+                          <span v-if="risk.watched" v-tooltip="`Watched`">
+                            Watched
+                          </span>
                           <span
                             v-if="risk.reportable"
                             v-tooltip="`Briefings`"
@@ -4029,7 +4041,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="risk.notes_updated_at.length > 0"
                         >
                           <span
@@ -4051,7 +4062,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
@@ -4248,6 +4259,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openLpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="fas fa-presentation text-light"></i>
                     </button>
@@ -4255,6 +4267,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportLessonsToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -4264,6 +4277,7 @@
                         exportLessonsToExcel('table', 'Portfolio Lessons')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="lessonsObj.filtered.lessons.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -4277,7 +4291,7 @@
               </div>
 
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 v-if="
                   lessonsObj.filtered.lessons !== null &&
                     lessonsObj.filtered.lessons.length > 0
@@ -4679,7 +4693,6 @@
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
                         <td
-                          class="text-left"
                           v-if="lesson.notes_updated_at.length > 0"
                         >
                           <span
@@ -4702,14 +4715,14 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                         <td>
                           <span class="truncate-line-five">{{
                             lesson.description
                           }}</span>
                         </td>
                         <td>{{ lesson.added_by }}</td>
-                        <td>
+                        <td class="text-center">
                           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
                         </td>
                         <td class="text-center">
@@ -4806,7 +4819,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="lesson.notes_updated_at.length > 0"
                         >
                           <span
@@ -4829,7 +4841,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
@@ -4924,6 +4936,7 @@ export default {
       activeName: "tasks",
       dialogVisible: false,
       taskRow: {},
+      dynamicArray: [],
       taskArray: [],
       taskCount: null,
       issueArray: [],
@@ -4976,12 +4989,9 @@ export default {
   },
   mounted() {
     this.fetchPortfolioPrograms();
+    this.fetchPortfolioCategories();
     this.$nextTick(function() {
-      //  console.warning("mounted,  ", this.portfolioTasks.tasks.length )
-      // Code that will run only after the
-      // entire view has been rendered
-      $(this.currTab).trigger("click");
-
+     $(this.currTab).trigger("click");
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds();
     });
@@ -6556,7 +6566,7 @@ export default {
     //   return this.portfolioPrograms;
     // },
     C_categories() {
-      let category = this.taskArray;
+      let category = this.dynamicArray;
       return [
         ...new Set(
           category
@@ -6817,6 +6827,15 @@ export default {
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
+      "fetchPortfolioCategories",
+      'fetchPortfolioAssignees', 
+      'fetchPortfolioIssueStages', 
+      'fetchPortfolioLessonStages',
+      'fetchPortfolioRiskStages',
+      'fetchPortfolioIssueTypes', 
+      'fetchPortfolioIssueSeverities',
+      
+
     ]),
     log(e) {
       console.log(e);
@@ -7259,6 +7278,7 @@ export default {
           this.tasksObj.filtered.tasks.length < 1
         ) {
           this.fetchPortfolioTasks({page});
+          this.fetchPortfolioAssignees()
         }
       } else if (tab_id == "tab-issues" || tab.name == "issues") {
         this.currentTab = "issues";
@@ -7267,6 +7287,9 @@ export default {
           this.issuesObj.filtered.issues.length < 1
         ) {
           this.fetchPortfolioIssues({page});
+          this.fetchPortfolioIssueStages()
+          this.fetchPortfolioIssueTypes()
+          this.fetchPortfolioIssueSeverities()
         }
       } else if (tab_id == "tab-risks" || tab.name == "risks") {
         this.currentTab = "risks";
@@ -7274,8 +7297,10 @@ export default {
           this.risksObj.filtered.risks &&
           this.risksObj.filtered.risks.length < 1
         ) {
-          this.fetchPortfolioRisks({page});
-        }
+          this.fetchPortfolioRisks({page});     
+          this.fetchPortfolioRiskStages()
+
+         }
       } else if (tab_id == "tab-lessons" || tab.name == "lessons") {
         this.currentTab = "lessons";
         if (
@@ -7283,6 +7308,7 @@ export default {
           this.lessonsObj.filtered.lessons.length < 1
         ) {
           this.fetchPortfolioLessons({page});
+          this.fetchPortfolioLessonStages();
         }
       }
     },
@@ -7295,14 +7321,15 @@ export default {
       handler() {
         if (this.portfolioTasksLoaded) {
           this.taskArray = this.portfolioTasks.tasks;
+          this.dynamicArray = this.portfolioTasks.tasks;
           this.taskLastPage = this.portfolioTasks.last_page;
           this.taskCount = this.portfolioTasks.total_count;
           let currCount = this.portfolioTasks.tasks.length;
           let total = this.portfolioTasks.total_count;
-          if(this.portfolioTasks.next_page && this.portfolioTasks.current_page != this.portfolioTasks.next_page){
-            let page = this.portfolioTasks.next_page
-            this.fetchPortfolioTasks({page});
-          }
+          // if(this.portfolioTasks.next_page){
+          //   let page = this.portfolioTasks.current_page 
+          //   this.fetchPortfolioTasks({page});
+          // }
           // if (currCount < total) {
           //   let size = (this.loadMoreItems += 250);
           //   this.fetchPortfolioTasks({ size });
@@ -7316,6 +7343,7 @@ export default {
       handler() {
         if (this.portfolioIssuesLoaded) {
           this.issueArray = this.portfolioIssues.issues;
+          this.dynamicArray = this.portfolioIssues.issues;
           this.issueLastPage = this.portfolioIssues.last_page;
           this.issueCount = this.portfolioIssues.total_count;
           let currCount = this.portfolioIssues.issues.length;
@@ -7340,6 +7368,7 @@ export default {
       handler() {
         if (this.portfolioRisksLoaded) {
           this.riskArray = this.portfolioRisks.risks;
+          this.dynamicArray = this.portfolioRisks.risks;
           this.riskLastPage = this.portfolioRisks.last_page;
           this.riskCount = this.portfolioRisks.total_count;
           let currCount = this.portfolioRisks.risks.length;
@@ -7362,6 +7391,7 @@ export default {
       handler() {
         if (this.portfolioLessonsLoaded) {
           this.lessonArray = this.portfolioLessons.lessons;
+          this.dynamicArray = this.portfolioLessons.lessons;
           this.lessonLastPage = this.portfolioLessons.last_page;
           this.lessonCount = this.portfolioLessons.total_count;
           let currCount = this.portfolioLessons.lessons.length;

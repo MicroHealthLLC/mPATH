@@ -420,16 +420,9 @@
         'issueUpdated',
         'updateWatchedIssues'
       ]), 
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.issues.includes(s); 
-      },
-
+    _isallowed(salut) {
+        return this.checkPrivileges("issue_calendar", salut, this.$route)
+    },
     reRenderCalendar() {
       this.componentKey += 1;
     },
@@ -1029,17 +1022,17 @@
 
 <style scoped lang="scss">
 
- /deep/.v-toolbar__content {
+ ::v-deep.v-toolbar__content {
   padding-left: 0;
   padding-right: 0;
 }
-/deep/.v-event {
+::v-deep.v-event {
   color: #383838 !important;
 }
-/deep/.v-event:hover {
+::v-deep.v-event:hover {
   background-color: rgba(214, 219, 223, .45) !important;
 }
-/deep/.v-event-start {
+::v-deep.v-event-start {
   border-left-color: #41b883 !important;
   border-left-width: thick;
   border-left-style: double;
@@ -1047,7 +1040,7 @@
   border-bottom-left-radius: 0;
   padding-left: 3px;
 }
-/deep/.v-event-end {
+::v-deep.v-event-end {
   border-right-color: #d9534f !important;
   border-right-width: thick;
   border-right-style: double;
@@ -1064,29 +1057,29 @@
   float: right;
   margin-top: -83.5px;
 }
-/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+::v-deep.v-event.v-event-start, ::v-deep.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
 }
-/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+::v-deep.v-event.v-event-start, ::v-deep.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
 }
-/deep/.v-menu__content {
+::v-deep.v-menu__content {
   position: absolute !important;
   z-index: 100;
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   .v-label {
     margin-top: 0.5rem
   }
 }
-/deep/.v-list-item {
+::v-deep.v-list-item {
   min-height: 30px;
 }
 .monthTitle {

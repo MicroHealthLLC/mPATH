@@ -1,3 +1,62 @@
+desc 'Move existing POC records to multiple as feature is changed'
+task :move_existing_poc_to_multiple => :environment do
+  ContractProjectDatum.all.each do |contract_project_data|
+    pm_contract_poc_id = [contract_project_data.pm_contract_poc_id]
+    gov_contract_poc_id = [contract_project_data.gov_contract_poc_id]
+    co_contract_poc_id = [contract_project_data.co_contract_poc_id]
+    contract_project_data.add_contract_pocs(pm_contract_poc_id, ContractProjectPoc::PROGRAM_MANAGER_POC_TYPE )
+    contract_project_data.add_contract_pocs(gov_contract_poc_id, ContractProjectPoc::GOVERNMENT_POC_TYPE)
+    contract_project_data.add_contract_pocs(co_contract_poc_id, ContractProjectPoc::CONTRACT_OFFICE_POC_TYPE) 
+  end
+
+end
+
+desc "Remove duplicate project users"
+task :remove_duplicate_project_users => :environment do
+  
+  uniq_project_users = ProjectUser.all.group_by{|p| p.project_id}.transform_values{|pu| pu.map(&:user_id)}
+
+  duplicate_records = []
+  
+  uniq_project_users.each do |project_id, user_ids|
+    #t_values = user_ids.tally
+    t_values = user_ids.group_by(&:itself).transform_values(&:count)
+    t_values.each do |user_id,count|
+      if count > 1
+        duplicate_records << [project_id, user_id]
+      end
+    end
+  end
+  
+  puts "**** Total duplicate records: #{duplicate_records.size} ****"
+  
+  duplicate_records.each do |project_id, user_id|
+    if ProjectUser.where(project_id: project_id, user_id: user_id).count > 1
+      pu = ProjectUser.where(project_id: project_id, user_id: user_id).last
+      role_users = pu.user.role_users.where(project_id: project_id).map(&:dup)
+      
+      pu.destroy
+      role_users.each do |role_user|
+        role_user.dup.save
+      end
+    end
+  end
+
+end
+
+
+desc "Update Facility Group"
+task :update_facility_group_data => :environment do
+
+  puts "Associating Facility Group to program"
+  project_facility_group_hash = FacilityGroup.all.group_by{|fg| fg.project_id}
+  project_facility_group_hash.each do |project_id, groups|
+    next if project_id.nil?
+    project = Project.find(project_id)
+    project.project_group_ids = (project.project_group_ids + groups.map(&:id)).compact.uniq
+  end
+end
+
 desc "Update Progress"
 task :update_progress => :environment do
 
@@ -73,7 +132,7 @@ task :create_program_privileges => :environment do
     user_project_privileges = user.project_privileges
     project_to_create_privileges = []
     user.project_ids.each do |pid|
-      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      p = user_project_privileges.detect{|p1| p1.project_ids.map(&:to_i).include?(pid) }
       if !p
         project_to_create_privileges << pid
       end

@@ -17,6 +17,7 @@ ActiveAdmin.register Lesson do
       :date, 
       :task_type_id,  
       :facility_project_id,
+      :project_contract_id,
       :user_id, 
       :lesson_stage_id,
       file_links: [],
@@ -24,7 +25,7 @@ ActiveAdmin.register Lesson do
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
-      sub_risk_ids: [],
+      sub_risk_ids: []
       # facility_project: [
       #   :id,
       #   :project_id,
@@ -44,6 +45,9 @@ ActiveAdmin.register Lesson do
       else
         "<span>#{lesson.task_type&.name}</span>".html_safe
       end
+    end
+    column "Contract",  sortable: 'contract_project_data.name' do |lesson|
+      "<span>#{lesson.contract_project_data&.name}</span>".html_safe
     end
     column "Stage", :lesson_stage, nil, sortable: 'lesson_stages.name' do |lesson|
       if current_user.admin_write?
@@ -111,7 +115,7 @@ ActiveAdmin.register Lesson do
 
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
 
     tabs do
@@ -121,18 +125,40 @@ ActiveAdmin.register Lesson do
           f.input :title, label: 'Name'
           f.input :description
           f.input :date, label: 'Date', as: :datepicker
-          facility_project_options = []
-          
-          Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
-            projects.each do |project|
-              facility_project_options << [project.name, project.id, {disabled: true}]
-              project.facility_projects.each do |fp|
-                facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+          if f.object.is_contract_resource?
+            project_contract_options = []
+            Project.includes([{project_contracts: :contract_project_datum }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                project_contract_options << [project.name, project.id, {disabled: true}]
+                project.project_contracts.each do |pc|
+                  project_contract_options << ["&nbsp;&nbsp;&nbsp;#{pc.contract_project_datum.name}".html_safe, pc.id]
+                end
               end
             end
-          end
+            
+            f.input :project_contract_id, label: 'Conract', as: :select, collection: project_contract_options, input_html: {class: "select2"}
+          else
+            # div id: 'facility_projects' do
+            #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+            #                           include_blank: false
+            #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+            #                           include_blank: false
+            #   end
+            # end
+            facility_project_options = []
           
-          f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
+            Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                facility_project_options << [project.name, project.id, {disabled: true}]
+                project.facility_projects.each do |fp|
+                  facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+                end
+              end
+            end
+            
+            f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
+          end
 
           # div id: 'facility_projects' do
           #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -202,7 +228,7 @@ ActiveAdmin.register Lesson do
     end
 
     def scoped_collection
-      super.includes(:task_type, :lesson_stage, :project, :facility, :user, :lesson_details)
+      super.includes(:task_type, :lesson_stage, :user, :lesson_details, :contract_project_data, facility_project: [:project, :facility])
     end
   end
 

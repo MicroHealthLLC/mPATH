@@ -21,6 +21,9 @@ const portfolioModule = {
     portfolio_programs: [],
     portfolio_programs_loaded: true,
 
+    authorized_portfolio_programs: [],
+    authorized_portfolio_programs_loaded: true,
+
     portfolioCategoriesFilter: null,
 
     portfolio_categories: [],
@@ -92,6 +95,7 @@ const portfolioModule = {
 
     portfolio_programs_filter: [],
     portfolio_loaded: true,
+  
 
     portfolio_lesson_loaded: true,
 
@@ -176,6 +180,27 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_PROGRAMS_LOADED", true);
         });
     },
+    fetchAuthorizedPortfolioPrograms({commit}) {
+      commit("TOGGLE_AUTHORIZED_PORTFOLIO_PROGRAMS_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/program_admin_programs`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+         commit("SET_AUTHORIZED_PORTFOLIO_PROGRAMS", res.data.portfolio_filters);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_AUTHORIZED_PORTFOLIO_PROGRAMS_LOADED", true);
+        });
+    },
     fetchPortfolioCategories({commit}) {
       commit("TOGGLE_PORTFOLIO_CATEGORIES_LOADED", false);
       // Send GET request for all lessons contained within a project
@@ -199,7 +224,7 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_CATEGORIES_LOADED", true);
         });
     },
-    fetchPortfolioUsers({commit}) {
+    fetchPortfolioAssignees({commit}) {
       commit("TOGGLE_PORTFOLIO_USERS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({
@@ -405,7 +430,7 @@ const portfolioModule = {
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=600`,
+          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=3000`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -450,7 +475,7 @@ const portfolioModule = {
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/issues?pagination=true&page=${page}&per_page=600`,
+          url: `/api/v1/portfolio/issues?pagination=true&page=${page}&per_page=3000`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -495,7 +520,7 @@ const portfolioModule = {
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/risks?pagination=true&page=${page}&per_page=600`,
+          url: `/api/v1/portfolio/risks?pagination=true&page=${page}&per_page=3000`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -540,7 +565,7 @@ const portfolioModule = {
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/lessons?pagination=true&page=${page}&per_page=600`,
+          url: `/api/v1/portfolio/lessons?pagination=true&page=${page}&per_page=2000`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -617,6 +642,10 @@ const portfolioModule = {
 
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
     TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,
+
+    
+    SET_AUTHORIZED_PORTFOLIO_PROGRAMS: (state, authorized_portfolio_programs) => state.authorized_portfolio_programs = authorized_portfolio_programs,
+    TOGGLE_AUTHORIZED_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.authorized_portfolio_programs_loaded = loaded,
 
     setCurrentPage: (state, value) => state.current_page = value,
     setCurrentIssuePage: (state, value) => state.current_issue_page = value,
@@ -804,6 +833,11 @@ const portfolioModule = {
 
     portfolioProgramsFilter: state => state.portfolio_programs_filter, 
     portfolioProgramsFilterLoaded: state => state.portfolio_programs_filter_loaded,
+
+    
+    authorizedPortfolioPrograms: state => state.authorized_portfolio_programs, 
+    authorizedPortfolioProgramsLoaded: state => state.authorized_portfolio_programs_loaded,
+
 
     portfolioTasks: state => state.portfolio_tasks,
     portfolioTask: state => state.portfolio_task,

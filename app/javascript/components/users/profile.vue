@@ -129,7 +129,7 @@
 
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Project Group</label>
+        <label class="col-sm-2 col-form-label">Group</label>
         <div class="col-sm-10">
             <el-select
               v-model="selectedProjectGroup"
@@ -138,7 +138,7 @@
               value-key="id"
               clearable
               filterable                 
-              placeholder="Search and select Project Group"
+              placeholder="Search and select Group"
               :disabled="!this.selectedProgram"
             >
             <el-option
@@ -296,7 +296,7 @@
           this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id], h => ["tasks", "issues", "risks"].includes(h.id))
         }else if(value.id == "map" || value.id == "sheet"){
           this.subNavigationOptions = allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id]
-        }else if(['gantt_chart', 'members'].includes(value.id) ){
+        }else if(['gantt_chart', 'members', 'settings'].includes(value.id) ){
           this.subNavigationOptions = []
         }
       },
@@ -328,7 +328,7 @@
                 this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId );
               }
             }
-            if(program_id && program_id){
+            if(program_id && project_id){
               this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             }
 
@@ -352,12 +352,12 @@
                 // this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[program_id][project_id], h => !["overview", "notes"].includes(h.id))
               }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
-                if(program_id && program_id && allowed_sub_navigation_tabs[program_id][project_id]){
+                if(program_id && project_id && allowed_sub_navigation_tabs[program_id][project_id]){
                   this.subNavigationOptions = allowed_sub_navigation_tabs[program_id][project_id]
                 }else{
                   this.subNavigationOptions = []
                 }                
-              }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
+              }else if(['gantt_chart', 'members', 'settings'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }
             }

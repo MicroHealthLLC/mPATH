@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3" data-cy="task_list">
+  <div id="tasks-index" class="mt-3" data-cy="task_list" :load="log(object)">
     <div v-if="_isallowed('read')">
 
        <div class="d-flex align-item-center justify-content-between w-100 mb-3">        
@@ -164,7 +164,9 @@
         <h6 class="text-danger mt-2 ml-1">No tasks found..</h6>
       </div>
     </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+       <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
     <table style="display:none" class="table table-sm table-bordered" ref="table" id="taskList1">
       <thead>
         <tr>
@@ -226,7 +228,7 @@ export default {
   components: {
     TaskShow
   },
-  props: ['facility', 'from', "contract"],
+  props: ['facility', 'from', "contract", "vehicle"],
   data() {
     return {
       viewList: 'active',
@@ -263,14 +265,8 @@ export default {
       'setHideImportant',
       'setHideBriefed',
     ]),
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
+        return this.checkPrivileges("task_index", salut, this.$route)
     },
     toggleAdvancedFilter() {
         this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
@@ -282,9 +278,9 @@ export default {
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/new`
       );
     },
-    // log(e){
-    //   console.log("task " + e)
-    // },
+    log(e){
+      console.log("task " + e)
+    },
     editTask(task) {
       this.$emit('show-hide', task)
     },
@@ -593,9 +589,13 @@ computed: {
         },      
       };
     },
-   object(){
+ object(){
       if (this.$route.params.contractId) {
+        console.log(this.contract)
         return this.contract
+      } else if (this.$route.params.vehicleId) {
+        console.log(this.vehicle)
+        return this.vehicle
       } else return this.facility
      },
   C_facilityManagerTaskFilter: {
@@ -757,7 +757,7 @@ i, .icons {
 
 }
 
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
@@ -765,13 +765,13 @@ i, .icons {
    color: #007bff !important;
   }
 }
-/deep/.v-input__control {
+::v-deep.v-input__control {
   display: block !important;
 }
 .hideLabels {
   font-weight: 600;
 }
-/deep/.v-input--checkbox{
+::v-deep.v-input--checkbox{
   margin-top: 0;
 }
 

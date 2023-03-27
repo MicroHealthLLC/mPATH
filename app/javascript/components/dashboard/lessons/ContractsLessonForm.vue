@@ -19,7 +19,11 @@
             ><i class="far fa-file-contract mh-orange-text"></i></span>
            <router-link :to="backToContract">
               <span v-if="contract">{{
-                  contract.nickname || contract.name
+                   contract.name
+                  }}
+              </span>
+             <span v-else>{{
+                   contractLesson.contract_nickname
                   }}
               </span>
             </router-link>     
@@ -37,7 +41,8 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span>{{ contractLesson.title || "(Lesson Name)" }}</span>
+          <span v-if="contractLesson.title">{{ contractLesson.title }}</span>
+          <span v-else style="color: gray">(Lesson Name)</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -284,7 +289,7 @@
       </div>
     </div>
     <!-- Related Tab -->
-    <div v-show="currentTab == 'tab2'">
+    <!-- <div v-show="currentTab == 'tab2'">
       <div class="row mt-1">
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
@@ -425,7 +430,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
       <span>Successes</span>
@@ -804,17 +809,6 @@ export default {
       formLoaded: false,
       currentTab: "tab1",
       paginate: ["successes", "failures", "bestPractices", "updates"],
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       tabs: [
         {
           label: "Lesson Info",
@@ -829,17 +823,17 @@ export default {
             "Stage",
           ],
         },
-        {
-          label: "Related",
-          key: "tab2",
-          closable: false,
-          form_fields: [
-            "Projects",
-            "Related Task",
-            "Related Issue",
-            "Related Risk",
-          ],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab2",
+        //   closable: false,
+        //   form_fields: [
+        //     "Projects",
+        //     "Related Task",
+        //     "Related Issue",
+        //     "Related Risk",
+        //   ],
+        // },
         {
           label: "Successes",
           key: "tab3",
@@ -962,29 +956,17 @@ export default {
       }
       return [...sFBP];
     },
-    // _isallowed(salut) {
-    //     var programId = this.$route.params.programId;
-    //     var projectId = this.$route.params.projectId
-    //     let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //     return  fPrivilege.lessons.includes(s);      
-    // },
-      // Temporary _isallowed method until contract projectPrivileges is fixed
-     _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.lessons.includes(s); 
-        }         
-      },
-    close() {  
-          this.$router.push(
-            `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
-          ); 
+    _isallowed(salut) {
+      return this.checkPrivileges("ContractLessonForm", salut, this.$route)
+     },
+    close() {
+    if (this.$route.params.contractId && this.contract) {
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
+      );
+    } else this.$router.push(
+        `/programs/${this.$route.params.programId}/dataviewer`
+      ); 
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -1242,25 +1224,29 @@ export default {
   return this.$route.name.includes("ProgramTaskForm") ||
           this.$route.name.includes("ProgramRiskForm") ||
           this.$route.name.includes("ProgramIssueForm") ||
+          this.$route.name.includes("ProgramContractLessonForm") ||
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-    if  (this.$route.params.contractId) {
+    if (this.$route.params.contractId && !this.isProgramView) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
    backToContract(){
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+    if (this.isProgramView){
+      return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/` 
+    } else return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
     isMapView() {
       return this.$route.name === "MapLessonForm";
     },
   },
   mounted() {
-     if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.contract) {
-      this.fetchContractLesson({
+     if (this.$route.params.lessonId && this.$route.params.lessonId != "new" ) {
+    // console.log(this.$route.params)
+    this.fetchContractLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
@@ -1349,19 +1335,24 @@ export default {
             showClose: true,
           });
           this.SET_CONTRACT_LESSON_STATUS(0);
-          //Route to newly created task form page
-        //   if (this.$route.path.includes("sheet")) {
-        //     this.$router.push(
-        //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-        //     );
-        //   } else if (this.$route.path.includes("map")) {
-        //     this.$router.push(
-        //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-        //     );
-        //   } else 
-        //   this.$router.push(
-        //       `/programs/${this.$route.params.programId}/dataviewer`
-        //     );
+          if (this.$route.path.includes("sheet")) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/lessons/${this.contractLesson.id}`
+              );
+            //Once other views are supported, we can use these commented routes
+            // } else if (this.$route.path.includes("map")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/map/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );                   
+            // } else if (this.$route.path.includes("calendar")) {
+            //   this.$router.push(
+            //     `/programs/${this.$route.params.programId}/calendar/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            //   );
+            // } else if (this.$route.path.includes("kanban"))  {
+            // this.$router.push(
+            //   `/programs/${this.$route.params.programId}/kanban/vehicles/${this.$route.params.projectId}/lessons/${this.vehicleLesson.id}`
+            // );
+            } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/lesson/${this.contractLesson.id}`)
         }
         this.successes = this.contractLesson.successes;
         this.failures = this.contractLesson.failures;
@@ -1371,6 +1362,7 @@ export default {
     },
   },
 };
+//test1
 </script>
 
 <style lang="scss" scoped>
@@ -1448,7 +1440,7 @@ a:hover {
   font-size: 13px;
 }
 .over-six-steps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

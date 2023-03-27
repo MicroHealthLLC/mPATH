@@ -12,17 +12,20 @@
           <span v-if="permitted('delete') && this.facility" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
-           <span class="mr-2 delete-action" v-if="this.contract" @click.prevent="delete_contract_note" data-cy="note_delete_icon">
+           <span class="mr-2 delete-action" v-if="this.contract && _isallowed('delete')" @click.prevent="delete_contract_note" data-cy="note_delete_icon">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+          <span class="mr-2 delete-action" v-if="this.vehicle && _isallowed('delete')" @click.prevent="delete_vehicle_note" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
           
         </div>
         <div class="note_by my-2" >
           <!-- <span class="badge badge-secondary">Note by</span> -->
-          <span class="text-muted font-sm" v-if="this.contract">{{  note_by }}</span>
-           <span class="text-muted font-sm" v-if="!this.contract && this.facility" >{{  noteBy }}</span>
+          <span class="text-muted font-sm" v-if="this.contract || this.vehicle">{{  note_by }}</span>
+           <span class="text-muted font-sm" v-if="!this.contract && !this.vehicle && this.facility" >{{  noteBy }}</span>
         </div>
-        <div v-if="facility && !this.contract">
+        <div v-if="facility && !this.vehicle && !this.contract">
         <div v-if="note.attachFiles.length > 0" class="note_files">
           <span class="badge badge-secondary mr-3" >Note Files</span>
           <span v-for="(file, i) in note.attachFiles" :key="i">
@@ -33,6 +36,16 @@
         </div>
         </div>
         <div v-if="contract">
+          <div v-if="note.attach_files.length > 0" class="note_files">
+            <span class="badge badge-secondary mr-3" >Note Files</span>
+            <span v-for="(file, i) in note.attach_files" :key="i">
+              <span class="file-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
+                <i class="fas fa-file-alt"></i>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div v-if="vehicle">
           <div v-if="note.attach_files.length > 0" class="note_files">
             <span class="badge badge-secondary mr-3" >Note Files</span>
             <span v-for="(file, i) in note.attach_files" :key="i">
@@ -69,34 +82,23 @@
   import {mapActions, mapGetters, mapMutations} from 'vuex'
   import NotesForm from './notes_form'
   import ContractNotesForm from './contract_notes_form'
+  import VehicleNotesForm from './vehicle_notes_form'
   import {SweetModal} from 'sweet-modal-vue'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {
-    props: ['facility', 'note', 'from', "contract", "contractNote"],
+    props: ['facility', 'note', 'from', "contract", "contractNote", 'vehicle', 'vehicleNote'],
     components: {
       NotesForm,
-      ContractNotesForm, 
+      ContractNotesForm,
+      VehicleNotesForm, 
       SweetModal
     },
     data() {
       return {
-        // show: true,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        }, 
         loading: true,
         DV_note: null,  
-        // has_note: false        
-      }
+     }
     },
     mounted() {
       // this.fetchContractNote({
@@ -109,6 +111,9 @@
       } else if (!_.isEmpty(this.contractNote) && this.$route.params.contractId) {
         this.loading = false
         this.DV_note = this.contractNote
+      } else if (!_.isEmpty(this.vehicleNote) && this.$route.params.vehicleId) {
+        this.loading = false
+        this.DV_note = this.vehicleNote
       }
     },
     methods: {
@@ -117,32 +122,32 @@
       ]),
           ...mapActions([
         'fetchContractNote',
-        'deleteContractNote'
+        'deleteContractNote',
+        'fetchVehicleNote',
+        'deleteVehicleNote'
       ]),
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.notes.includes(s); 
-    // },
-          // Temporary _isallowed method until contract projectPrivileges is fixed
      _isallowed(salut) {
-       if (this.contract && !this.facility) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+        return this.checkPrivileges("notes_sheets", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s); 
+      //   }
+     },
      editNoteMode() {
         if (this.contract) {      
            this.show = false          
            this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/notes/${this.note.id}`)
+        } else if (this.vehicle) {      
+           this.show = false          
+           this.$router.push(`/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/notes/${this.note.id}`)
         } else {
           this.show = false
           // this.DV_note = this.note
@@ -202,6 +207,32 @@
           });
         });      
     },
+    delete_vehicle_note() {
+         this.$confirm(
+        `Are you sure you want to delete this note?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteVehicleNote({ id: this.vehicleNote.id, vehicleId: this.$route.params.vehicleId });
+          this.$message({
+            type: "success",
+            message: "Note successfully deleted",
+            showClose: true,
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Delete canceled",
+            showClose: true,
+          });
+        });      
+    },
       downloadFile(file) {
         if (this._isallowed('write')) {
           let url = window.location.origin + file.uri
@@ -220,7 +251,7 @@
         return `${this.DV_note.user.fullName} at ${new Date(this.DV_note.createdAt).toLocaleString()}`
       },
       note_by() {
-        if (this.contract) 
+        if (this.contract || this.vehicle) 
         return `${this.note.user.full_name} at ${new Date(this.note.created_at).toLocaleString()}`
       },
       permitted() {
@@ -263,7 +294,7 @@
    .notes_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .notes_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .notes_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 80vw;
     max-height: 80vh;
     .sweet-content {

@@ -537,12 +537,14 @@
       ]),
       //TODO: change the method name of isAllowed
       _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.tasks.includes(s); 
+        return this.checkPrivileges("facility_show", salut, this.$route)
+
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return  fPrivilege.tasks.includes(s); 
       },
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'overview'
@@ -917,12 +919,12 @@
   .my-el-card {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
 
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
@@ -993,11 +995,11 @@
     background: #fff;
     padding: 5px;
   }
-  .vue2-datepicker /deep/ .mx-input:disabled {
+  .vue2-datepicker ::v-deep .mx-input:disabled {
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+  .simple-select ::v-deep .multiselect {
     .multiselect__placeholder {
       color: #dc3545;
       text-overflow: ellipsis;

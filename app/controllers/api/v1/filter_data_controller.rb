@@ -6,19 +6,20 @@ class Api::V1::FilterDataController < AuthenticatedController
 
     programs = current_user.authorized_programs.distinct.includes({facility_projects: :facility}).select(:id, :name).where("projects.id": program_ids )
 
-    facility_group_ids = Facility.joins(:facility_projects).where("facility_projects.project_id" => programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
+    facility_group_ids = FacilityProject.where(project_id: programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
     facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
 
     programs.in_batches(of: 1000) do |pp|
       pp.find_each do |p|
 
         projects_group_by_facility_group = p.facility_projects.group_by do |f|
-          f.facility.facility_group_id
+          f.facility_group_id
         end.transform_values{|v| v.map{|vv| {id: SecureRandom.uuid, project_id: vv.facility.id, label: vv.facility.facility_name, facility_project_id: vv.id } } }
         project_children = []
         
         projects_group_by_facility_group.each do |fg_id, facilities|
           fg = facility_groups.detect{|g| g.id == fg_id} 
+          next if !fg
           fp_ids = facilities.map{|h| h[:facility_project_id]}.compact.uniq
           project_children << {id: SecureRandom.uuid, project_group_id: fg.id, label: fg.name, all_facility_project_ids: fp_ids, children: facilities }
         end
@@ -27,7 +28,45 @@ class Api::V1::FilterDataController < AuthenticatedController
           id: SecureRandom.uuid,
           program_id: p.id,
           label: p.name,
-          all_facility_project_ids: project_children.map{|h| h[:all_facility_project_ids]}.flatten.compact.uniq,
+          all_facility_project_ids: project_children.map{|h1| h1[:all_facility_project_ids]}.flatten.compact.uniq,
+          children: project_children
+        }
+        response_json << h
+      end
+    end
+    render json: {portfolio_filters: response_json }
+  end
+
+
+  def program_admin_programs
+    response_json = []
+    program_ids = current_user.programs_with_program_admin_role.pluck(&:id).uniq
+
+    programs = current_user.programs_with_program_admin_role.includes({facility_projects: :facility}).select(:id, :name)
+
+    facility_group_ids = FacilityProject.where(project_id: programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
+    facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
+
+    programs.in_batches(of: 1000) do |pp|
+      pp.find_each do |p|
+
+        projects_group_by_facility_group = p.facility_projects.group_by do |f|
+          f.facility_group_id
+        end.transform_values{|v| v.map{|vv| {id: SecureRandom.uuid, project_id: vv.facility.id, label: vv.facility.facility_name, facility_project_id: vv.id } } }
+        project_children = []
+        
+        projects_group_by_facility_group.each do |fg_id, facilities|
+          fg = facility_groups.detect{|g| g.id == fg_id} 
+          next if !fg
+          fp_ids = facilities.map{|h| h[:facility_project_id]}.compact.uniq
+          project_children << {id: SecureRandom.uuid, project_group_id: fg.id, label: fg.name, all_facility_project_ids: fp_ids, children: facilities }
+        end
+
+        h = {
+          id: SecureRandom.uuid,
+          program_id: p.id,
+          label: p.name,
+          all_facility_project_ids: project_children.map{|h1| h1[:all_facility_project_ids]}.flatten.compact.uniq,
           children: project_children
         }
         response_json << h
@@ -68,7 +107,6 @@ class Api::V1::FilterDataController < AuthenticatedController
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     if resource_name == "task"
       all_stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
-      # binding.pry
       program_stages = ProjectTaskStage.includes(:task_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:task_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
 
     elsif resource_name == "issue"
@@ -109,7 +147,7 @@ class Api::V1::FilterDataController < AuthenticatedController
       {id: 'accept', name: 'Accept', value: 'accept'},
       {id: 'avoid', name: 'Avoid', value: 'avoid'},
       {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
-      {id: 'transfer', name: 'Transfer', value: "transfer"},
+      {id: 'transfer', name: 'Transfer', value: "transfer"}
     ]
     render json: {risk_approaches: risk_approaches}
   end

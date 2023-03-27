@@ -23,6 +23,7 @@ ActiveAdmin.register Issue do
       :start_date,
       :facility_project_id,
       :auto_calculate,
+      :project_contract_id,
       issue_files: [],
       file_links: [],
       user_ids: [],
@@ -80,6 +81,9 @@ ActiveAdmin.register Issue do
     column :progress
     column :start_date
     column "Estimated Completion Date", :due_date
+    column "Contract", :contract_project_data, sortable: 'contract_project_data.name' do |issue|
+      "<span>#{issue.contract_project_data&.name}</span>".html_safe
+    end
     column "Program", :project, nil, sortable: 'projects.name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.project.name}", "#{edit_admin_project_path(issue.project)}" if issue.project.present?
@@ -123,7 +127,7 @@ ActiveAdmin.register Issue do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
 
     tabs do
@@ -133,13 +137,39 @@ ActiveAdmin.register Issue do
           f.input :title
           f.input :task_type, include_blank: true
           f.input :description
-          div id: 'facility_projects' do
-            f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-              fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
-                                    include_blank: false
-              fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
-                                     include_blank: false
+          if f.object.is_contract_resource?
+            project_contract_options = []
+            Project.includes([{project_contracts: :contract_project_datum }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                project_contract_options << [project.name, project.id, {disabled: true}]
+                project.project_contracts.each do |pc|
+                  project_contract_options << ["&nbsp;&nbsp;&nbsp;#{pc.contract_project_datum.name}".html_safe, pc.id]
+                end
+              end
             end
+            
+            f.input :project_contract_id, label: 'Conract', as: :select, collection: project_contract_options, input_html: {class: "select2"}
+          else
+            # div id: 'facility_projects' do
+            #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+            #                           include_blank: false
+            #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+            #                           include_blank: false
+            #   end
+            # end
+            facility_project_options = []
+          
+            Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                facility_project_options << [project.name, project.id, {disabled: true}]
+                project.facility_projects.each do |fp|
+                  facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+                end
+              end
+            end
+            
+            f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
           end
           f.input :issue_type, include_blank: false
           f.input :issue_severity, include_blank: false
@@ -238,11 +268,20 @@ ActiveAdmin.register Issue do
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true}
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}
+  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', true]], label: ''
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do
+    before_action :exclude_inactive_items, only: [:index]
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def exclude_inactive_items
+      return unless params.keys == ["controller", "action"]
+      extra_params = { "q" => { "exclude_inactive_in" => ["true"] }}
+      params.merge! extra_params
+      request.query_parameters.merge! extra_params
+    end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -284,7 +323,7 @@ ActiveAdmin.register Issue do
     end
 
     def scoped_collection
-      super.includes(:task_type, :issue_type, :issue_severity, :issue_stage, facility_project: [:project, :facility])
+      super.includes(:contract_project_data, :task_type, :issue_type, :issue_severity, :issue_stage, facility_project: [:project, :facility])
     end
   end
 

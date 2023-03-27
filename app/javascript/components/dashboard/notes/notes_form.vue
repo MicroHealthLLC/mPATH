@@ -31,7 +31,7 @@
         </button>
       </div>
 
-   <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
+   <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}" :load="log($route.params.projectId)">
       <div class="form-group">
        <label class="font-sm"><h5>Note</h5></label>
         <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="Write note here..." data-cy="note_details"></textarea>
@@ -140,15 +140,25 @@
           noteFiles: []
         }
       },
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.notes.includes(s); 
-    },
+      log(e){
+        console.log(e)
+
+      },
+     _isallowed(salut) {
+        return this.checkPrivileges("notes_form", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s); 
+      //   }
+     },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}     
         this.DV_note.facilityProjectId = this.facility.id       
@@ -185,7 +195,9 @@
           }
         });
       },
-      saveNote() {
+      saveNote(){
+        console.log(this.$route.params.projectId)
+        console.log(this.facility.id)        
         this.$validator.validate().then((success) =>
         {
           if (!success || this.loading) {
@@ -209,7 +221,7 @@
           var callback = "note-created"
 
           if (this.note && this.note.id) {
-            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`
+            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/notes/${this.note.id}.json`
             method = "PUT"
             callback = "note-updated"
           }
@@ -223,21 +235,22 @@
             }
           })
           .then((response) => {
-            // this.$emit(callback, humps.camelizeKeys(response.data))
-             var responseNote = humps.camelizeKeys(response.data)
+            // this.$emit(callback, humps.camelizeKeys(response.data))             
+            let note = response.data.note 
+            var responseNote = humps.camelizeKeys(note)
             this.loadNote(responseNote)   
-            this.updateNotesHash({ note: responseNote, facilityId: this.facility.id})
+            this.updateNotesHash({ note: responseNote, facilityId: this.$route.params.projectId})
             if (response.status === 200) {
               this.$message({
-                message: `${response.data.body} was saved successfully.`,
+                message: `${note.body} was saved successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
             if (this.$route.path.includes("sheet")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${response.data.id}`);
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${note.id}`);
             } else if (this.$route.path.includes("map")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${response.data.id}`);           
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${note.id}`);           
             }
           })
           .catch((err) => {
@@ -254,7 +267,8 @@
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+          // TODO: this is sending facilityProjectId in facilityId parameter. So now we will process with note id
+          this.noteDeleted({note: this.DV_note, facilityId: this.$route.params.projectId, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
         });
       },
       cancelNoteSave() {

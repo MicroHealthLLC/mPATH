@@ -19,10 +19,15 @@ class Task < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
+  # after_save :update_owner_record
+  # after_destroy :update_owner_record
 
   attr_accessor :file_links
+
+  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
+  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
+  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do
     include_association :task_type
@@ -40,6 +45,10 @@ class Task < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_closed_in, :exclude_inactive_in]
   end
 
   def self.params_to_permit
@@ -61,7 +70,9 @@ class Task < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :contract_id,
+      :project_contract_id,
+      :project_contract_vehicle_id,
+      :nickname, 
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -96,17 +107,6 @@ class Task < ApplicationRecord
     ]
   end
 
-  def update_facility_project
-    if self.previous_changes.keys.include?("progress")
-      fp = facility_project
-      p = fp.project
-
-      fp.update_progress
-      p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
-    end
-  end
-
   def lesson_json
     {
       id: id,
@@ -136,7 +136,7 @@ class Task < ApplicationRecord
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+      is_overdue = ( progress < 100 && due_date && (due_date < Date.today) )
     end
 
     in_progress = false
@@ -219,7 +219,7 @@ class Task < ApplicationRecord
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
-      sub_risk_ids: sub_risks.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     }
 
     self.attributes.merge!(merge_h)
@@ -270,9 +270,9 @@ class Task < ApplicationRecord
     p_users = []
 
     if all_users.any?
-      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }.uniq
     else
-      p_users = users.select(&:active?)
+      p_users = users.select(&:active?).uniq
     end
 
     users_hash = {}
@@ -292,7 +292,7 @@ class Task < ApplicationRecord
     progress_status = "completed" if progress >= 100
 
     is_overdue = false
-    is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
+    is_overdue = progress < 100 && due_date && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
     closed = false
    
@@ -324,8 +324,13 @@ class Task < ApplicationRecord
     sorted_notes = notes.sort_by(&:created_at).reverse
     fp = self.facility_project
 
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -334,15 +339,15 @@ class Task < ApplicationRecord
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       task_stage_id: self.task_stage_id,
-      user_ids: p_users.map(&:id).compact.uniq,
+      user_ids: p_users.map(&:id),
       due_date_duplicate: due_date.as_json,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: sorted_notes.as_json,
       completed: completed,
-      program_name: project.name, 
-      project_group: facility_group.name,
+      program_name: project&.name, 
+      project_group: facility_group&.name,
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       important: important,
@@ -375,6 +380,8 @@ class Task < ApplicationRecord
 
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
+      contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -390,7 +397,6 @@ class Task < ApplicationRecord
 
     task_params = params.require(:task).permit(Task.params_to_permit)
 
-
     task = self
     t_params = task_params.dup
     user_ids = t_params.delete(:user_ids)
@@ -401,8 +407,11 @@ class Task < ApplicationRecord
     notes_attributes = t_params.delete(:notes_attributes)
 
     task.attributes = t_params 
-    if params[:contract_id]
-      task.contract_id = params[:contract_id]
+    if params[:project_contract_id]
+      task.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      task.project_contract_vehicle_id = params[:project_contract_vehicle_id]
+
     elsif !task.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
@@ -413,8 +422,6 @@ class Task < ApplicationRecord
 
     task.transaction do
       task.save
-
-      task.add_link_attachment(params)
 
       if user_ids && user_ids.present?
         task_users_obj = []
@@ -497,6 +504,11 @@ class Task < ApplicationRecord
 
     end
 
+    # NOTE: This is not working inside the Transaction block.
+    # Reproduce: Create new task with file and link both and it is giving an error
+    # Error performing ActiveStorage::AnalyzeJob ActiveStorage::FileNotFoundError (ActiveStorage::FileNotFoundError):
+    task.add_link_attachment(params)
+
     task.reload
   end
 
@@ -505,7 +517,11 @@ class Task < ApplicationRecord
     if link_files && link_files.any?
       link_files.each do |f|
         next if !f.present? || f.nil? || !valid_url?(f)
-        self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+        filename = f
+        if f.length > URL_FILENAME_LENGTH
+          filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+        end        
+        self.task_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
       end
     end
   end

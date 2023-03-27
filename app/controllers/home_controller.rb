@@ -1,15 +1,22 @@
 class HomeController < AuthenticatedController
   layout "application"
-  layout "portfolio_viewer", only: [:portfolio]
+  layout "portfolio_viewer", only: [:portfolio, :contracts]
   
-  def contract
+  def contracts
+    if !current_user.can_read_contract_data?
+      raise CanCan::AccessDenied
+    end
     respond_to do |format|
       format.json {}
-      format.html {render action: :index}
+      format.html {render action: :portfolio}
     end
   end
 
   def settings
+    @program_id = params[:all].split("/")[1]
+    if !current_user.is_program_admin?(@program_id.to_i)
+      raise CanCan::AccessDenied      
+    end
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
@@ -17,8 +24,8 @@ class HomeController < AuthenticatedController
   end
 
   def dataviewer
-    program_id = params[:all].split("/")[1]
-    if !current_user.authorized_programs.pluck(:id).include?(program_id.to_i)
+    @program_id = params[:all].split("/")[1]
+    if !current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
       raise CanCan::AccessDenied      
     end
     
@@ -34,7 +41,7 @@ class HomeController < AuthenticatedController
   def landing
     # there is no need of eager loading here..
     @preferences = current_user.get_preferences
-    @active_projects = current_user.authorized_programs.includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ])
+    @active_projects = current_user.authorized_programs.includes([:facilities, :users, :tasks, :issues, :risks, :lessons, :facility_projects ])
   end
 
   def index
@@ -44,7 +51,7 @@ class HomeController < AuthenticatedController
     # Findnig tab from params
     params_split = params[:path].split("/")
     tab = params_split[2] || "map"
-    program_id = params_split[1]
+    @program_id = params_split[1]
 
     view = "map_view"
     if tab == "map"
@@ -66,13 +73,13 @@ class HomeController < AuthenticatedController
     ##  elsif params[:tab] == "facility_manager"
     ##    view = "facility_manager_view" 
     else
-      redirect_to current_user.allowed_redirect_url(program_id)
+      redirect_to current_user.allowed_redirect_url(@program_id)
       return
     end
-    if current_user.authorized_programs.pluck(:id).include?(program_id.to_i)
+    if current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
       if !current_user.allowed?(view)
         # raise CanCan::AccessDenied
-        redirect_to current_user.allowed_redirect_url(program_id)
+        redirect_to current_user.allowed_redirect_url(@program_id)
         return
       end
     else

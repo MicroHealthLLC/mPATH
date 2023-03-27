@@ -165,12 +165,14 @@
       ]),
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
+        return this.checkPrivileges("risk_show", salut, this.$route)
+
+      // var programId = this.$route.params.programId;
+      // var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return  fPrivilege.risks.includes(s); 
     },
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
@@ -280,7 +282,7 @@
   .risk_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .risk_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .risk_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 80vw;
     max-height: 80vh;
     .sweet-content {

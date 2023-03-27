@@ -1,843 +1,147 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
   <div id="contract-sheets" data-cy="contract_sheets">
-    <div v-if="contentLoaded" class="position-sticky">
-      <div>
-        <div>
-          <div class="container-fluid px-0 mx-1">
+    <div class="position-sticky">
+      <div :load="log(contract)">
+        <!-- <div 
+          v-loading="!contractLoaded"
+          element-loading-text="Fetching Portfolio data. Please wait..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
+          > -->
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
-            <form
-              v-loading="!contractLoaded || saving"
-              accept-charset="UTF-8"
-              element-loading-text="Fetching Contract data. Please wait..."
-              element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.8)"
-            >
-              <hr class="mb-6 mt-4" />
-              <div class="mt-2  d-flex align-items-center">
-                <div class="d-flex pt-1 mb-1 justify-content-start">
-                  <FormTabs
-                    :current-tab="currentTab"
-                    :tabs="tabs"
-                    :allErrors="errors"
-                    @on-change-tab="onChangeTab"
-                  />
-                </div>
-                <!-- Breadcrumbs and form buttons -->
-              </div>
-          <div class="container-fluid px-5">
-          <div class="row">
-            <div class="col pl-0">
-              <h6 class=" mt-4 mb-0" style="color: gray; font-size: 13px">
-                <span style="color: #dc3545; font-size: 15px">*</span> Indicates
-                required fields
-              </h6>
-            </div>
-               <div class="col text-right">
-                    <button
-                      @click.prevent="saveEdits"
-                      class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
-                    >
-                      Save Edits
-                    </button>
-                    <!-- Add Read only button and v-if to Save button for privileges -->
-                  </div>
+           <div  class="row mt-3">
+           <div class="col-4">
+            <!-- {{ c }}  -->
+            <el-card
+              v-if="c"
+              class="box-card mb-2 pb-3"
+              style="background-color:#fff"
+             >   
+            <h4 v-if="c.name">{{ c.name }}</h4>
+            <hr>
+             <div class="row">
+             <div class="col">
+              <b>GROUP NAME:</b>
+              </div>  
+              <div class="col">
+               <h5 v-if="c.facilityGroup">{{ c.facilityGroup.name }} </h5>
+               </div>  
+           </div>  
+           <div class="row">
+             <div class="col">
+              <b>CUSTOMER:</b>
+              </div>  
+              <div class="col">
+               <h5 v-if="c.contractCustomer">{{ c.contractCustomer.name }} </h5>
+              </div>  
+           </div>  
+          
+            <div class="row">
+             <div class="col">
+              <b>CONTRACT NUMBER:</b>
+              </div>  
+              <div class="col">
+               <h5 v-if="c.contractNumber">{{ c.contractNumber.name }}</h5>
+              </div>  
+           </div>  
+
+             <div class="row">
+             <div class="col">
+              <b>AWARD/TO NUMBER:</b>
+              </div>  
+              <div class="col">
+               <h5 v-if="c.contractAwardTo">{{ c.contractAwardTo.name }}</h5>
+              </div>  
+             </div>  
+           </el-card>  
+           </div>
+           </div>
+
+           
           </div>
+           <div v-else class="text-danger mx-2 mt-5">
+            <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
           </div>
-              <div class="pt-1">
-                <div v-if="errors.items.length > 0" class="text-danger ">
-                  Please fill the required fields before submitting
-                  <ul class="error-list mx-4">
-                    <li
-                      v-for="(error, index) in errors.all()"
-                      :key="index"
-                      v-tooltip="{
-                        content: 'Field is located on Lesson Info',
-                        placement: 'left',
-                      }"
-                    >
-                      {{ error }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <!-- Lesson Info Tab -->
-              <div v-show="currentTab == 'tab1'" class="container-fluid mt-2 mx-0 px-5">
-                <div class="row row_1">
-                  <div class="col-5 pl-0 d-flex">
-                    <label class="font-sm my-auto mr-2 d-inline-block"
-                      >Project Group Name:
-                    </label>
-                    <el-select
-                      v-model="contract.contract_type_id"
-                      class="w-50 d-inline"
-                      track-by="id"
-                      value-key="id"
-                      placeholder="Select Contract Group Type"
-                    >
-                      <el-option
-                        v-for="item in getContractGroupOptions"
-                        :value="item.id"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                 
-                </div>
-                <div class="row row_1">
-                  <div class="col-2 pl-0">
-                    <label class="font-md">Project Code </label>
-                    <el-input
-                      name="Project Code"
-                      v-model="contract.project_code"
-                      type="text"
-                      placeholder="Enter Project Code"
-                    />
-                  </div>
-                  <div class="col-7 px-2">
-                    <label class="font-md">Contract Nickname </label>
-
-                    <el-input
-                      name="Contract Nickname"
-                      v-model="contract.nickname"
-                      type="text"
-                      placeholder="Contract Nickname"
-                    />
-                    <!-- Need to add additional div here for error handling -->
-                  </div>
-                  <div class="col-3 pr-0">
-                    <label class="font-md">Type </label>
-                    <el-select
-                      v-model="contract.contract_classification_id"
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      placeholder="Select Type"
-                    >
-                      <el-option
-                        v-for="item in cClassificationOptions"
-                        :value="item.id"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                </div>
-                <div class="row row_2">
-                  <div class="col-6 pl-0 pr-3">
-                    <label class="font-md">Customer (Agency) </label>
-
-                    <el-select
-                      v-model="contract.contract_customer_id"
-                      filterable
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select or enter Customer (Agency)"
-                    >
-                      <el-option
-                        v-for="item in cCustomerAgenciesOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-
-                  <div class="col-6 pl-3 pr-0">
-                    <label class="font-md">Status </label>
-                    <el-select
-                      v-model="contract.contract_status_id"
-                      filterable
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select or enter status"
-                    >
-                      <el-option
-                        v-for="item in cStatusOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                </div>
-                <div class="row row_2"></div>
-                <div class="row row_3">
-                  <div class="col-6 pl-0 pr-3">
-                    <label class="font-md">Vehicle </label>
-                    <el-select
-                      v-model="contract.contract_vehicle_id"
-                      filterable
-                      :key="componentKey"
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select Vehicle"
-                    >
-                      <el-option
-                        v-for="item in cVehicleOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="col-6 pl-3 pr-0">
-                    <label class="font-md"
-                      >Prime IDIQ/Vehicle Contract Number
-                    </label>
-                    <el-select
-                      v-model="contract.contract_vehicle_number_id"
-                      filterable
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
-                    >
-                      <el-option
-                        v-for="item in cPrimeIdiqOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                </div>
-                <div class="row row_4">
-                  <div class="col-6 pl-0 pr-3">
-                    <label class="font-md"
-                      >Prime Contract Number / Task Order / PO Number
-                    </label>
-                    <el-select
-                      v-model="contract.contract_number_id"
-                      filterable
-                      ref="primeContractNumber"
-                      name="primeContractNumber"
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
-                    >
-                      <el-option
-                        v-for="item in cContractNoOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="col-6 pl-3 pr-0">
-                    <label class="font-md"
-                      >Subcontract Number / PO Number
-                    </label>
-                    <el-select
-                      v-model="contract.subcontract_number_id"
-                      filterable
-                      class="w-100"
-                      name="subContractNumber"
-                      ref="subContractNumber"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select Subcontract Number / PO Number"
-                    >
-                      <el-option
-                        v-for="item in cSubcontractNoOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                </div>
-                <div class="row row_5">
-                  <div
-                    class="col-4 pl-0 pr-1"
-                    v-if="
-                      contract.contract_type_id === 1 ||
-                        contract.contract_type_id === 2
-                    "
-                  >
-                    <label class="font-md"
-                      >Prime 
-                    </label>
-                    <el-select
-                      v-model="contract.contract_prime_id"
-                      filterable
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      allow-create
-                      default-first-option
-                      placeholder="Select Prime"
-                    >
-                      <el-option
-                        v-for="item in cPrimeOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                </div>
-              </div>
-
-              <!-- TAB 2: DATES -->
-              <div v-show="currentTab == 'tab2'" class="container-fluid mt-2 mx-0 px-5">
-                <div class="row">
-                  <div class="col-6 pl-0 pr-1">
-                    <label class="font-md"
-                      >Contract Start Date
-                     </label
-                    >
-                    <div>
-                      <v2-date-picker
-                        name="Date"
-                        v-model="contract.end_date"
-                        value-type="YYYY-MM-DD"
-                        format="M/DD/YYYY"
-                        placeholder="M/DD/YYYY"
-                        class="w-100"
-                      />
-                    </div>
-                    <!-- <div v-show="errors.has('Date')" class="text-danger">
-          {{ errors.first("Date") }}
-        </div> -->
-                  </div>
-                  <div class="col-6 pl-1 pr-0">
-                    <label class="font-md"
-                      >Contract End Date
-                     </label
-                    >
-                    <div>
-                      <v2-date-picker
-                        name="Date"
-                        v-model="contract.start_date"
-                        value-type="YYYY-MM-DD"
-                        format="M/DD/YYYY"
-                        placeholder="M/DD/YYYY"
-                        class="w-100"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <!-- <div class="row"  v-if="contract.contract_type_id === 0 || contract.contract_type_id === 1">
-    
-  </div> -->
-                <div
-                  class="row"
-                  v-if="
-                    contract.contract_type_id === 1 ||
-                      contract.contract_type_id === 2
-                  "
-                >
-                  <div class="col-2 pl-0 pr-2">
-                    <label class="font-md"
-                      >Current PoP
-                    </label>
-                    <el-select
-                      v-model="contract.contract_current_pop_id"
-                      class="w-100"
-                      track-by="id"
-                      value-key="id"
-                      placeholder="Select Current Pop"
-                    >
-                      <el-option
-                        v-for="item in getCurrentPop"
-                        :value="item.id"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="col-5 pr-1">
-                    <label class="font-md"
-                      >Current PoP Start
-                    </label
-                    >
-                    <div>
-                      <v2-date-picker
-                        name="Date"
-                        v-model="contract.current_pop_start_time"
-                        value-type="YYYY-MM-DD"
-                        format="M/DD/YYYY"
-                        placeholder="M/DD/YYYY"
-                        class="w-100"
-                      />
-                    </div>
-                    <!-- <div v-show="errors.has('Date')" class="text-danger">
-          {{ errors.first("Date") }}
-        </div> -->
-                  </div>
-                  <div class="col-5 pr-0">
-                    <label class="font-md"
-                      >Current PoP End
-                      <span style="color: #dc3545">*</span></label
-                    >
-                    <div>
-                      <v2-date-picker
-                        name="Date"
-                        v-model="contract.current_pop_end_time"  
-                        value-type="YYYY-MM-DD"                     
-                        format="M/DD/YYYY"
-                        placeholder="M/DD/YYYY"
-                        class="w-100"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-4 pl-1 pr-0">
-                    <label class="font-md"
-                      >Days Remaining
-                    </label>
-                    <el-input
-                      v-model="daysRemaining"
-                     :disabled="!contract.current_pop_end_time"
-                      name="Days Remaining"
-                      type="text"
-                      placeholder="Days Remaining"
-                    />
-                    <!-- Need to add additional div here for error handling -->
-                  </div>
-                </div>
-              </div>
-              <div v-show="currentTab == 'tab3'" class="container-fluid px-5 mt-2 mx-0">
-                <div class="row t3 row_1">
-                  <div class="col-6 pl-0 pr-1">
-                    <label class="font-md"
-                      >Total Contract Value
-                    </label>
-                    <el-input
-                      name="Total Contract Value"
-                      v-model="contract.total_contract_value"
-                      type="text"
-                      placeholder="Total Contract Value"
-                    />
-                  </div>
-                  <div
-                    class="col-6 pl-1 pr-0"
-                    v-if="
-                      contract.contract_type_id === 1 ||
-                        contract.contract_type_id === 2
-                    "
-                  >
-                    <label class="font-md"
-                      >Current PoP Value 
-                    </label>
-                    <el-input
-                      name="Pop Value"
-                      v-model="contract.current_pop_value"
-                      type="text"
-                      placeholder="Enter Current PoP Value"
-                    />
-                    <!-- Need to add additional div here for error handling -->
-                  </div>
-                </div>
-                <div
-                  class="row row_2"
-                  v-if="
-                    contract.contract_type_id === 1 ||
-                      contract.contract_type_id === 2
-                  "
-                >
-                  <div class="col-6 pl-0 pr-1">
-                    <label class="font-md"
-                      >Current PoP Funded
-                    </label>
-                    <el-input
-                      name="Contract Type"
-                      v-model="contract.current_pop_funded"
-                      type="text"
-                      placeholder="Enter Current PoP Funded"
-                    />
-                  </div>
-                  <div class="col-6 pl-1 pr-0">
-                    <label class="font-md"
-                      >Total Funded To Date
-                    </label>
-                    <el-input
-                      v-model="contract.total_contract_funded"
-                      name="Contract Status"
-                      type="text"
-                      placeholder="Enter Total Funded To Date"
-                    />
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- <div v-else class="text-danger mx-2 my-4">
-            You don't have permission to read!
-          </div> -->
-        </div>
+        <!-- </div> -->
       </div>
     </div>
-    <div v-else></div>
+   
   </div>
 </template>
 
 <script>
-// import http from "../../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../../shared/loader";
 import FormTabs from "../../../shared/FormTabs.vue";
-import moment from 'moment';
 export default {
   name: "SheetContract",
   components: {
     Loader,
     FormTabs,
   },
-  props: ["contractClass"],
+  props: ["contractClass", 'currentContract', "contract"], 
   data() {
     return {
       loading: true,
+      isInputActive: false,
       da: "",
       statusId: null,
       componentKey: 0,
       saving: false, 
-      // contractNickname: '',
-      // projectCode: null,
+      showErrors: false,
+      loading: true,
       inputText: "",
       value: "",
       currentTab: "tab1",
       options: [],
-      tabs: [
-        {
-          label: "Info",
-          key: "tab1",
-          closable: false,
-        },
-        {
-          label: "Dates",
-          key: "tab2",
-          closable: false,
-        },
-        {
-          label: "$$",
-          key: "tab3",
-          closable: false,
-        },
-      ],
+  
     };
   },
   mounted() {
-    if (this.$route.params.contractId) {
-      this.getCAgency()
-      this.getStatus()
-      this.getVehicle()
-      this.getPrimeIdIqNumber()
-      this.getCnData()
-      this.getScData()
-      this.getPrimeData()
-      this.fetchClassificationTypes();
-      this.fetchContract({
-        id: this.$route.params.contractId,
-        ...this.$route.params,
-      });
-    }
+    this.loading = false;
+  //  if (this.$route.params.contractId) {
+  //     this.fetchContract({
+  //       id: this.$route.params.contractId,
+  //       programId: this.$route.params.programId,
+  //     });
+  //   }
   },
   methods: {
     ...mapActions([
       "fetchContract",
-      "updateContract",
-      "fetchContracts",
-      "fetchCurrentPop",
-      "fetchContractGroupTypes",
-      "fetchCustomerAgencies",
-
-      "fetchContractStatuses",
-      "fetchVehicles",
-      "fetchPrime",
-      "fetchVehicleNumbers",
-      "fetchClassificationTypes",
-      "fetchContractNumber",
-      "fetchSubcontractNumbers",
-    ]),
+      ]),
     ...mapMutations([
-      "SET_CONTRACT",
-      "SET_CONTRACT_STATUS",
-      "SET_CONTRACTS",
-      "SET_CONTRACT_GROUP_TYPES",
-      "SET_CONTRACT_LOADED",
-      "SET_CONTRACT_CLASSIFICATIONS",
-      "SET_CONTRACTS_LOADED",
-      "SET_CURRENT_POP",
-      "SET_PRIME",
-      "SET_VEHICLES",
-      "SET_VEHICLE_NUMBERS",
-      "SET_SUBCONTRACT_NUMBER",
-      "SET_CONTRACT_NUMBER",
-      "SET_CUSTOMER_AGENCIES_FILTER",
-      "setContractTypeFilter",
+
     ]),
     reRenderDropdowns() {
       this.componentKey += 1;
-      this.getCAgency()
-      this.getStatus()
-      this.getVehicle()
-      this.getPrimeIdIqNumber()
-      this.getCnData()
-      this.getScData()
-      this.getPrimeData()
-      this.fetchClassificationTypes();
-    },
-    saveEdits() {
-      let id = this.contract.id;
-      let contractData = {
-        contract: {
-          id: this.contract.id,
-          project_id: this.contract.project_id,
-          facility_group_id: this.contract.facility_group_id,
-          nickname: this.contract.nickname,
-          project_code: this.contract.project_code,
-          contract_type_id: this.contract.contract_type_id,
-          contract_status_id: this.contract.contract_status_id,
-          contract_customer_id: this.contract.contract_customer_id,
-          contract_vehicle_id: this.contract.contract_vehicle_id,
-          contract_vehicle_number_id: this.contract.contract_vehicle_number_id,
-          contract_number_id: this.contract.contract_number_id,
-          contract_classification_id: this.contract.contract_classification_id,
-          subcontract_number_id: this.contract.subcontract_number_id,
-          contract_prime_id: this.contract.contract_prime_id,
-          contract_current_pop_id: this.contract.contract_current_pop_id,
-          name: this.contract.name,
-          current_pop_start_time: this.contract.current_pop_start_time,
-          current_pop_end_time: this.contract.current_pop_end_time,
-          days_remaining: this.contract.days_remaining,
-          total_contract_value: this.contract.total_contract_value,
-          current_pop_value: this.contract.current_pop_value,
-          current_pop_funded: this.contract.current_pop_funded,
-          total_contract_funded: this.contract.total_contract_funded,
-          start_date: this.contract.start_date,
-          end_date: this.contract.end_date,
-        },
-      };
-      this.updateContract({
-        ...contractData,
-        id,
-      });
-      this.reRenderDropdowns();
-      this.saving = true
-      // console.log(this.contract.contract_vehicle_id.id)
-    },
-    vehicleText(e) {
-      this.SET_VEHICLES(e);
-    },
-    getCAgency(e) {
-      this.fetchCustomerAgencies();
-    },
-    getStatus(e) {
-      this.fetchContractStatuses();
-    },
-    getVehicle(e) {
-        this.fetchVehicles();
 
+    },    
+    _isallowed(salut) {
+      console.log(salut)
+        console.log(this.$route)
+      return this.checkPrivileges("SheetContract", salut, this.$route)
     },
-    getPrimeIdIqNumber(e) {
-        this.fetchVehicleNumbers();
-
+    log(e){
+      console.log(e)
     },
-    getCnData(e) {
-        this.fetchContractNumber();
-
-    },
-    getScData(e) {
-        this.fetchSubcontractNumbers();
-
-    },
-    getPrimeData(e) {
-        this.fetchPrime();
-
-    },
-    onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";
-      if (tab.key == "tab2") {
-        this.fetchContractGroupTypes();
-        this.fetchCurrentPop();
-        this.fetchClassificationTypes();
-      }
-    },
-    //    _isallowed(salut) {
-    //       var programId = this.$route.params.programId;
-    //       var contractId = this.$route.params.contractId
-    //       let fPrivilege = this.$projectPrivileges[programId][contractId]
-    //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //       let s = permissionHash[salut]
-    //       return  fPrivilege.overview.includes(s);
-    //   },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "contractLoaded",
       "contractStatus",
-      "getAllFilterNames",
-      "getContractTypeFilter",
-      "getCustomerAgenciesFilter",
-      "getContractGroupTypes",
-      "getCurrentPop",
-      "getContractClassifications",
-      "getContractGroupOptions",
-      "getContractStatusesFilter",
-      "getFilterValue",
-      "getPrime",
-      "getVehicles",
-      "getVehicleNumbers",
-      "getSubcontractNumbers",
-      "getContractNumbers",
-      "contract",
-      "contracts",
+       "contracts",
     ]),
-    daysRemaining(){    
-      let popEnd =  this.contract.current_pop_end_time
-      if(popEnd !== null ){      
-        let a =  moment();
-        let b =  moment(popEnd);
-        let diff =  b - a;
-        const diffDuration =  diff / (1000 * 3600 * 24);  
-      return Math.trunc(diffDuration)
-      }      
-    },
-   cVehicleOptions: {
-      get() {
-        return this.getVehicles;
-      },
-      set(value) {
-        // console.log(value)
-        this.SET_VEHICLES(value);
-      },
-    },
-    cContractNoOptions: {
-      get() {
-        return this.getContractNumbers;
-      },
-      set(value) {
-        this.SET_CONTRACT_NUMBER(value);
-      },
-    },
-    cPrimeIdiqOptions: {
-      get() {
-        return this.getVehicleNumbers;
-      },
-      set(value) {
-        this.SET_VEHICLE_NUMBERS(value);
-      },
-    },
-    cSubcontractNoOptions: {
-      get() {
-        return this.getSubcontractNumbers;
-      },
-      set(value) {
-        this.SET_SUBCONTRACT_NUMBER(value);
-      },
-    },
-    //
-    cPrimeOptions: {
-      get() {
-        return this.getPrime;
-      },
-      set(value) {
-        this.SET_PRIME(value);
-      },
-    },
-    cStatusOptions: {
-      get() {
-        return this.getContractStatusesFilter;
-      },
-      set(value) {
-        this.SET_CONTRACT_STATUSES_FILTER(value);
-      },
-    },
-    cCustomerAgenciesOptions: {
-      get() {
-        return this.getCustomerAgenciesFilter;
-      },
-      set(value) {
-        this.SET_CUSTOMER_AGENCIES_FILTER(value);
-      },
-    },
-    cClassificationOptions: {
-      get() {
-        return this.getContractClassifications;
-      },
-      set(value) {
-        this.SET_CONTRACT_CLASSIFICATIONS(value);
-      },
-    },
-    cGroupTypeOptions: {
-      get() {
-        return this.getContractGroupTypes;
-      },
-      set(value) {
-        this.SET_CONTRACT_GROUP_TYPES(value);
-      },
-    },
+    c(){
+      if(this.contract){
+          return this.contract
+      }
+    },  
   },
-  watch: {
-    contract: {
-      handler(newValue, oldValue) {
-        if (
-          this.contractLoaded &&
-          Object.keys(oldValue).length === 0 &&
-          this.$route.params.contractId != "new"
-        ) {
-          this.statusId = this.contract_status_id;
-          // this.nickname = this.contract.contract_nickname;
-          // this.projectCode = this.contract.project_code;
-        }
-      },
-    },
-    contractLoaded: {
-      handler() {
-        if (this.contract) {
-          this.statusId = this.contract_status_id;
-        }
-      },
-    },
-    contractStatus: {
-      handler() {
-        if (this.contractStatus == 200) {
-          this.reRenderDropdowns();
-          this.$message({
-            message: `${this.contract.nickname} was saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-          this.contractLoaded
-          this.SET_CONTRACT_STATUS(0);
-          setTimeout(() => this.saving = false, 2000);
-        
-        }
-      },
-    },
-  },
-};
+ };
 </script>
 
 <style lang="scss" scoped>
@@ -894,6 +198,13 @@ export default {
 .displayNone {
   display: none !important;
 }
+.fa-usd-square {
+  font-size: 1.3rem;
+}
+
+::v-deep.el-button.usd-icon {
+  cursor:text;
+}
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
@@ -911,11 +222,11 @@ export default {
 .my-el-card {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -974,24 +285,24 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header,
-/deep/.el-collapse-item__wrap {
+::v-deep.el-collapse-item__header,
+::v-deep.el-collapse-item__wrap {
   border-bottom: none !important;
 }
 
-/deep/.el-card__body {
+::v-deep.el-card__body {
   padding-bottom: 0 !important;
 }
-/deep/.el-progress-circle {
+::v-deep.el-progress-circle {
   height: 100px !important;
   width: 100px !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
 }
 
-/deep/.el-collapse-item__arrow,
-/deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow,
+::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {

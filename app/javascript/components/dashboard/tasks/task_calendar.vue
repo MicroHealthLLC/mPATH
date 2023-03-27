@@ -608,14 +608,22 @@
            this.reRenderCalendar()
         }
       },
-      _isallowed(salut) {
-         var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.tasks.includes(s); 
-      },
+    _isallowed(salut) {
+        return this.checkPrivileges("task_calendar", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     // return this.defaultPrivileges
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.tasks.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.tasks.includes(s); 
+      //   }
+     },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
       if (this.filteredCalendar.filtered.tasks !== undefined && this.filteredCalendar.filtered.tasks.length > 0) {
@@ -1072,17 +1080,17 @@
 </script>
 
 <style lang="scss" scoped>
-/deep/.v-toolbar__content {
+::v-deep.v-toolbar__content {
   padding-left: 0;
   padding-right: 0;
 }
-/deep/.v-event {
+::v-deep.v-event {
   color: #383838 !important;
 }
-/deep/.v-event:hover {
+::v-deep.v-event:hover {
   background-color: rgba(214, 219, 223, .45) !important;
 }
-/deep/.v-event-start {
+::v-deep.v-event-start {
   border-left-color: #41b883 !important;
   border-left-width: thick;
   border-left-style: double;
@@ -1092,7 +1100,7 @@
   
 
 }
-/deep/.v-event-end {
+::v-deep.v-event-end {
   border-right-color: #d9534f !important;
   border-right-width: thick;
   border-right-style: double;
@@ -1109,22 +1117,22 @@
   float: right;
   margin-top: -83.5px;
 }
-/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+::v-deep.v-event.v-event-start, ::v-deep.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
 }
-/deep/.v-list-item {
+::v-deep.v-list-item {
   min-height: 30px;
 }
-/deep/.v-menu__content {
+::v-deep.v-menu__content {
   position: absolute !important;
   z-index: 100;
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   .v-label {
     margin-top: 0.5rem
   }

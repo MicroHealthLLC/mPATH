@@ -16,23 +16,31 @@
         <div class="mt-2 mx-4 d-flex align-items-center">
           <div>
             <h5 class="mb-0">
-            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="!this.facility && this.contract && !this.vehicle" style="font-size: 16px; margin-right: 2.5px"
             >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="!this.facility && this.vehicle && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+            >  <i class="far fa-car mb-1 text-info"></i>
+            </span>
+            <span v-if="this.facility && !this.contract && !this.vehicle" style="font-size: 16px; margin-right: 2.5px"
             > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && !contract">
+               <span v-if="!isProgramView && !contract && !vehicle">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ risk.facilityName }}
+               <span v-if="isProgramView && risk">
+                    {{ risk.facilityName || risk.contractNickname || risk.vehicleNickname }}
                </span>
              </router-link>
              <router-link :to="backToContract">
-              <span v-if="contract">               
-                {{ contract.nickname || contract.name }}
+              <span v-if="contract && !isProgramView">               
+                {{ contract.name }}
+              </span>
+             </router-link>
+             <router-link :to="backToVehicle">
+              <span v-if="vehicle && !isProgramView">               
+                {{ vehicle.name }}
               </span>
              </router-link>          
               <el-icon
@@ -2058,7 +2066,7 @@ import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "facilities", "fixedStage", "contract"],
+  props: ["facility", "risk", "facilities", "fixedStage", "contract", "vehicle"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -2079,17 +2087,6 @@ export default {
       informedRiskUsers: [],
       probability: [],
       facilityProjectId: this.$route.params.programId,   
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
       selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
@@ -2185,6 +2182,7 @@ export default {
       'setRiskDispositionStatus',
       'setRiskDispositionDuration',
       'updateContractRisks',
+      'updateVehicleRisks',
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -2235,29 +2233,22 @@ export default {
         notes: [],
       };
     },
-      //  log(e){
-      //     console.log(e)
-      // },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.risks.includes(s); 
-    // },
-    // Temporary _isallowed method until contract projectPrivileges is fixed
     _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.risks.includes(s); 
-        }         
-      },
+        return this.checkPrivileges("risk_form", salut, this.$route)
+
+      // if (this.$route.params.contractId) {
+      //   // return this.defaultPrivileges
+      //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.risks.includes(s);
+      // } else {
+      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.risks.includes(s); 
+      // }
+     },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2509,8 +2500,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2718,22 +2709,28 @@ export default {
 
        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
         if (this.contract) {
-            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks.json`
+            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks.json`
          }
-     
+         if (this.vehicle) {
+            url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks.json`
+         }
         let method = "POST";
         let callback = "risk-created";
        
-       if (this.risk && this.risk.id) {        
-          method = "PUT";
+        if (this.risk && this.risk.id) {         
           callback = "risk-updated";
         }
-
-        if (this.risk && this.risk.id && this.facility) {
+        if (this.risk && this.risk.id && this.risk.facilityId) {
+          method = "PUT";
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
         }
-        if (this.risk && this.risk.id && this.contract) {
-          url = `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
+        if (this.risk && this.risk.id && this.risk.projectContractId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
+        }
+        if (this.risk && this.risk.id && this.risk.projectContractVehicleId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}.json`;
         }
         // var beforeRisk = this.risk
         axios({
@@ -2751,6 +2748,8 @@ export default {
             //this.$emit(callback, responseRisk);
             if (this.$route.params.contractId){
                this.updateContractRisks({ risk: responseRisk });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleRisks({ risk: responseRisk });
             } else {
               this.updateRisksHash({ risk: responseRisk });
             }  
@@ -2779,8 +2778,14 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-             } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/risk/${response.data.risk.id}`
+             } else if (this.isProgramView && this.risk.projectContractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/risk/${response.data.risk.id}`
+              );
+              } else if (this.isProgramView && this.risk.projectContractVehicleId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/risk/${response.data.risk.id}`
+              );
+              } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
           })
           .catch((err) => {
@@ -2968,7 +2973,7 @@ export default {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedIssues(issues) {
@@ -2983,7 +2988,7 @@ export default {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedRisks(risks) {
@@ -2998,8 +3003,8 @@ export default {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
             1
-          );
-        });
+          ).then(this.validateThenSave());
+        })
     },
     author(id) {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
@@ -3057,16 +3062,22 @@ export default {
     object(){
       if(this.$route.params.contractId){
       return 'contracts'
+      } if(this.$route.params.vehicleId){
+      return 'vehicles'
       } else return 'projects'
     },
     route(){
      if(this.$route.params.contractId){
         return this.$route.params.contractId
+      } else if(this.$route.params.vehicleId){
+        return this.$route.params.vehicleId
       } else return this.$route.params.projectId
     },
     isProgramView() {
       return this.$route.name.includes("ProgramTaskForm") ||
              this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramContractRiskForm") ||
+             this.$route.name.includes("ProgramVehicleRiskForm") ||
              this.$route.name.includes("ProgramIssueForm") ||
              this.$route.name.includes("ProgramLessonForm") ;
     },
@@ -3323,15 +3334,17 @@ export default {
       }
     },
   backToRisks() {
-     if (this.contract && !this.facility) {
+     if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
+      } else if (this.$route.params.vehicleId && !this.isProgramView) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/risks`
       }
       if (
           this.$route.path.includes("map") || 
           this.$route.path.includes("sheet") ||  
           this.$route.path.includes("kanban") || 
           this.$route.path.includes("calendar") && 
-          !this.contract
+          !this.contract && !this.vehicle
           ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
       } else {
@@ -3341,11 +3354,18 @@ export default {
     backToContract(){
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
     },
+    backToVehicle(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/`;
+    },
     projectNameLink() {     
-      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+      if (!this.contract && !this.vehicle && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else if (this.$route.params.vehicleId) {
+        return `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/analytics`;
       } else {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
@@ -3798,7 +3818,7 @@ ul {
   border: solid 0.5px red;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -32px;
@@ -3808,26 +3828,26 @@ ul {
   }
 }
 .risk_matrix {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     border-bottom: none !important;
     background-color: #fff !important;
   }
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   text-transform: capitalize;
 }
 .inner-name-lowercase{
-  /deep/.el-input__inner{
+  ::v-deep.el-input__inner{
     text-transform: none !important;
   }
 }
@@ -3903,7 +3923,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

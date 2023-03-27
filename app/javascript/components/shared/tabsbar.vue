@@ -10,7 +10,7 @@
       :to="routeKanbanSwap"
       tag="div"
     >
-      <div v-show="!isContractView" class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
+      <div v-show="!isContractView && !isVehicleView" class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
         Kanban
       </div>
     </router-link>
@@ -19,12 +19,12 @@
       :to="routeCalendarSwap"
       tag="div"
     >
-      <div class="badge" v-show="!isContractView" :class="{ active: isCalendarView }" data-cy="calendar_tab">
+      <div class="badge" v-show="!isContractView && !isVehicleView" :class="{ active: isCalendarView }" data-cy="calendar_tab">
         Calendar
       </div>
     </router-link>
      <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
-      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab" v-show="!isContractView">
+      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab" v-show="!isContractView && !isVehicleView">
         Map
       </div>
     </router-link>
@@ -66,10 +66,21 @@ export default {
   name: "Tabsbar",
   computed: {
     isSheetsView() {
-      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract");
+      return this.$route.name.includes("Sheet") ||
+      this.$route.name.includes("Contract") &&  !this.$route.name.includes("SettingsContracts")
+      || this.$route.name.includes("Vehicle") &&  !this.$route.name.includes("SettingsVehicles")
     },
     isContractView() {
-      return this.$route.name.includes("Contract");
+      return this.$route.name.includes("Contract") && 
+      !this.$route.name.includes("SettingsContracts") &&
+      !this.$route.name.includes("Program") 
+      ;
+    },
+    isVehicleView() {
+      return this.$route.name.includes("Vehicle") && 
+      !this.$route.name.includes("SettingsVehicles") &&
+      !this.$route.name.includes("Program") 
+      ;
     },
     isMapView() {
       return this.$route.name.includes("Map");
@@ -84,7 +95,10 @@ export default {
     return this.$route.name.includes("SettingsView") ||
             this.$route.name.includes("SettingsProjects") ||
             this.$route.name.includes("SettingsContracts") ||
-            this.$route.name.includes("SettingsGroups")
+            this.$route.name.includes("SettingsVehicles") ||
+            this.$route.name.includes("SettingsGroups") ||
+            this.$route.name.includes("SettingsRolesIndex")  ||
+            this.$route.name.includes("SettingsUsers")
     },
     isCalendarView() {
       return this.$route.name.includes("Calendar");

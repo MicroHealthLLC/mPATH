@@ -392,7 +392,7 @@ jQuery(function($) {
           }, deep: true
         }
       },
-      template: `<li class='string input required stringish' id='facility_address_input_gmap'><label for='facility_address_input_gmap' class='label'>Address<abbr title="required">*</abbr></label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_address_input_gmap'><label for='facility_address_input_gmap' class='label'>Address</label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -577,7 +577,7 @@ jQuery(function($) {
           return this.phoneData.phoneNumber ? this.phoneData.countryCode : this.countryCode;
         }
       },
-      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number</label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -1517,12 +1517,13 @@ jQuery(function($) {
     $('#logout').click(function () {
       localStorage.removeItem('vuex');
     });
-
+    $("#titlebar_right .action_items").show();
     if ($("#__privileges").is(":visible") || $("#__privileges_id").length) {
       $.__privileges_element = $("#__privileges").is(":visible") ? $("#__privileges").data('privilege') : $("#__privileges_id").val();
       $("#q_id_input").length && $("#q_id_input").remove();
       let p_write = $.__privileges_element.includes("W");
       let p_delete = $.__privileges_element.includes("D");
+      
       if (p_write) {
         $("#titlebar_right .action_items").show();
       } else {
@@ -2700,33 +2701,34 @@ jQuery(function($) {
       methods: {
         generatePassword() {
           this.editPass = true;
-          let chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+          let mRandom = window.crypto.getRandomValues(new Uint32Array(1))[0];
+          let chars = [...Array(Number(this.range))].map(i=>(~~(mRandom*36)).toString(36)).join('');
           let pass = "";
           let i = 0;
           if (this.uppercase || this.lowercase || this.numbers || this.special_chars) {
             chars = "";
             if (this.uppercase) {
-              pass = pass + this.UPPERCASE.charAt(Math.floor(Math.random() * this.UPPERCASE.length));
+              pass = pass + this.UPPERCASE.charAt(Math.floor(mRandom * this.UPPERCASE.length));
               chars = chars + this.UPPERCASE;
               i++;
             }
             if (this.numbers) {
-              pass = pass + this.NUMBERS.charAt(Math.floor(Math.random() * this.NUMBERS.length));
+              pass = pass + this.NUMBERS.charAt(Math.floor(mRandom * this.NUMBERS.length));
               chars = chars + this.NUMBERS;
               i++;
             }
             if (this.special_chars) {
-              pass = pass + this.SPECIALCASE.charAt(Math.floor(Math.random() * this.SPECIALCASE.length));
+              pass = pass + this.SPECIALCASE.charAt(Math.floor(mRandom * this.SPECIALCASE.length));
               chars = chars + this.SPECIALCASE;
               i++;
             }
             if (this.lowercase) {
-              pass = pass + this.LOWERCASE.charAt(Math.floor(Math.random() * this.LOWERCASE.length));
+              pass = pass + this.LOWERCASE.charAt(Math.floor(mRandom * this.LOWERCASE.length));
               chars = chars + this.LOWERCASE;
               i++;
             }
             while (i<Number(this.range)) {
-              pass += chars.charAt(Math.floor(Math.random() * chars.length));
+              pass += chars.charAt(Math.floor(mRandom * chars.length));
               i++;
             }
           }

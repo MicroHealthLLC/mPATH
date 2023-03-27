@@ -1,9 +1,9 @@
-const issueStore = {
-    state: () => ({}),
-    actions: {},
-    mutations: {},
-    getters: {},
-  };
+// const issueStore = {
+//     state: () => ({}),
+//     actions: {},
+//     mutations: {},
+//     getters: {},
+//   };
   
-  export default issueStore;
+//   export default issueStore;
   

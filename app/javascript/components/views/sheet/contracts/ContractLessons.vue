@@ -1,5 +1,6 @@
 <template>
   <div v-if="contentLoaded" class="mt-1 ml-1">
+    <div v-if="_isallowed('read')">
        <div class="d-flex align-item-center w-60 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
@@ -122,140 +123,140 @@
         </button>
       </div>
       <!-- Lessons Learned Table -->
-      <div style="margin-bottom:50px" data-cy="lessons_table">
-        <table
-          v-if="filteredLessons.filtered.lessons.length > 0"
-          class="table table-sm table-bordered stickyTableHeader mb-3"
-          id="lessonsPdf"
-          ref="table"
-        >
-          <colgroup>
-          <col class="lessCol" />
-          <col class="dateCol" />
-          <col class="addedByCol" />
-          <col class="descriptionCol" />
-          <col class="flagsCol" />
-          <col class="lastUpdateCol" />             
-          </colgroup>      
-          <tr class="thead" style="background-color:#ededed;">
-            <th class="sort-th" @click="sort('title')" >Lesson
-              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
-                <i class="fas fa-sort"></i></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
-                <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
-                <i class="fas fa-sort-down"></i></span>
-            </th>
-            <th class="sort-th" @click="sort('date')" >Date Added
-              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'date'">
-                <i class="fas fa-sort"></i></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'date'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'date'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'date'">
-                <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'date'">
-                <i class="fas fa-sort-down"></i></span>
-            </th>
-            <th class="sort-th" @click="sort('added_by')" >Added By
-              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'added_by'">
-                <i class="fas fa-sort"></i></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'added_by'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'added_by'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'added_by'">
-                <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'added_by'">
-                <i class="fas fa-sort-down"></i></span>
-            </th>
-              <th class="sort-th" @click="sort('description')" >Description
-              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'description'">
-                <i class="fas fa-sort"></i></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'description'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'description'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'description'">
-                <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'description'">
-                <i class="fas fa-sort-down"></i></span>
-            </th>
-              <th class="sort-th">Flags
-              
-            </th>
-              <th class="sort-th" @click="sort('notes_updated_at')" >Last Update
-              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
-                <i class="fas fa-sort"></i></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
-                <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
-                <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
-                <i class="fas fa-sort-down"></i></span>
-            </th>
-          </tr>
-          <tbody>
-          <tr
-            v-for="lesson in  sortedLessonTable"
-            :key="lesson.id"
-            @click="openLesson(lesson.id)"
-            @mouseup.right="openContextMenu($event, lesson)"
-            @contextmenu.prevent=""
+        <div style="margin-bottom:30px" data-cy="lessons_table">
+          <table
+            v-if="filteredLessons.filtered.lessons.length > 0"
+            class="table table-sm table-bordered stickyTableHeader mb-3"
+            id="lessonsPdf"
+            ref="table"
           >
-            <td>{{ lesson.title }}</td>
-            <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
-            <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td><span class="truncate-line-five">{{ lesson.description }}</span></td>
-            <td class="text-center">
-              <span v-if="lesson.important == true" v-tooltip="`Important`">
-                <i class="fas fa-star text-warning mr-1"></i
-              ></span>
-              <span v-if="lesson.reportable" v-tooltip="`Briefings`"
-                ><i class="fas fa-presentation mr-1 text-primary"></i>
-              </span>
-              <span v-if="lesson.draft == true" v-tooltip="`Draft`"
-                > <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-               <span v-if="!lesson.draft" v-tooltip="`Complete`"
-                > <i class="fas fa-clipboard-check text-success"></i>
-              </span>
-              <span
-                v-if="
-                  lesson.important == false &&
-                    lesson.reportable == false &&
-                    lesson.draft == false
-                "
-              >
-               
-              </span>
-            </td>
-             <td v-if="lesson.notes.length > 0">       
-              <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
-              {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
-              </span> 
-              <span class="truncate-line-five">
-                {{lesson.last_update.body}}
-              </span>         
-            </td>  
-            <td v-else >No Updates</td>      
-          </tr>
-            </tbody>
-        </table>
+            <colgroup>
+            <col class="lessCol" />
+            <col class="dateCol" />
+            <col class="addedByCol" />
+            <col class="descriptionCol" />
+            <col class="flagsCol" />
+            <col class="lastUpdateCol" />             
+            </colgroup>      
+            <tr class="thead" style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('title')" >Lesson
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
+                  <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
+                  <i class="fas fa-sort-down"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
+                  <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th" @click="sort('date')" >Date Added
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'date'">
+                  <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'date'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'date'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'date'">
+                  <i class="fas fa-sort-down"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'date'">
+                  <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th" @click="sort('added_by')" >Added By
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'added_by'">
+                  <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'added_by'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'added_by'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'added_by'">
+                  <i class="fas fa-sort-down"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'added_by'">
+                  <i class="fas fa-sort-down"></i></span>
+              </th>
+                <th class="sort-th" @click="sort('description')" >Description
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'description'">
+                  <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'description'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'description'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'description'">
+                  <i class="fas fa-sort-down"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'description'">
+                  <i class="fas fa-sort-down"></i></span>
+              </th>
+                <th class="sort-th">Flags
+                
+              </th>
+                <th class="sort-th" @click="sort('notes_updated_at')" >Last Update
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                  <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                  <i class="fas fa-sort-up"></i></span>
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                  <i class="fas fa-sort-down"></i></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                  <i class="fas fa-sort-down"></i></span>
+              </th>
+            </tr>
+            <tbody>
+            <tr
+              v-for="lesson in  sortedLessonTable"
+              :key="lesson.id"
+              @click="openLesson(lesson.id)"
+              @mouseup.right="openContextMenu($event, lesson)"
+              @contextmenu.prevent=""
+            >
+              <td>{{ lesson.title }}</td>
+              <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
+              <td class="text-center">{{ lesson.created_by.full_name }}</td>
+              <td><span class="truncate-line-five">{{ lesson.description }}</span></td>
+              <td class="text-center">
+                <span v-if="lesson.important == true" v-tooltip="`Important`">
+                  <i class="fas fa-star text-warning mr-1"></i
+                ></span>
+                <span v-if="lesson.reportable" v-tooltip="`Briefings`"
+                  ><i class="fas fa-presentation mr-1 text-primary"></i>
+                </span>
+                <span v-if="lesson.draft == true" v-tooltip="`Draft`"
+                  > <i class="fas fa-pencil-alt text-warning"></i>
+                </span>
+                <span v-if="!lesson.draft" v-tooltip="`Complete`"
+                  > <i class="fas fa-clipboard-check text-success"></i>
+                </span>
+                <span
+                  v-if="
+                    lesson.important == false &&
+                      lesson.reportable == false &&
+                      lesson.draft == false
+                  "
+                >
+                
+                </span>
+              </td>
+              <td v-if="lesson.notes.length > 0">       
+                <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
+                {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
+                </span> 
+                <span class="truncate-line-five">
+                  {{lesson.last_update.body}}
+                </span>         
+              </td>  
+              <td v-else >No Updates</td>      
+            </tr>
+              </tbody>
+          </table>
 
-        <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
-
+          <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
+        </div>
         <!-- Lessons Per Page Toggle -->
         <div
           v-if="filteredLessons.filtered.lessons.length > 0"
-          class="float-right mb-4 mt-2 font-sm"
+          class="text-right mb-4 mt-2 font-sm"
         >
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>
@@ -290,6 +291,9 @@
         </div>
       </div>
     </div>
+    <div v-else class="text-danger mx-2 mt-2">
+      <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+    </div>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu
       :lesson="clickedLesson"
@@ -321,17 +325,6 @@ export default {
       sortAsc: false,
       currentSort:'text',
       currentSortDir:'asc',
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       showContextMenu: false,
       clickedLesson: {},
       search: "",
@@ -419,25 +412,21 @@ export default {
       e.preventDefault();
       this.$refs.menu.open(e);
     },
-  //  _isallowed(salut) {
-  //       var programId = this.$route.params.programId;
-  //       var projectId = this.$route.params.projectId
-  //       let fPrivilege = this.$projectPrivileges[programId][projectId]
-  //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-  //       let s = permissionHash[salut]
-  //       return  fPrivilege.lessons.includes(s);      
-  //   },
-    // Temporary _isallowed method until contract projectPrivileges is fixed
-     _isallowed() {
-      //  if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        // } else {
-        // let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // return fPrivilege.lessons.includes(s); 
-        // }         
-      },
+    _isallowed(salut) {
+        return this.checkPrivileges("ContractLessons", salut, this.$route)
+
+      // if (this.$route.params.contractId) {
+      //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.lessons.includes(s);
+      // } else {
+      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.lessons.includes(s); 
+      // }
+     },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    
     },
@@ -779,7 +768,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

@@ -1253,6 +1253,7 @@
 </template>
 
 <script>
+import AuthorizationService from "../../../services/authorization_service"
 import axios from "axios";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs";
@@ -1270,6 +1271,7 @@ export default {
   props: ["facility", "task", "title", "fixedStage"],
   components: {
     AttachmentInput,
+    AuthorizationService,
     Draggable,
     FormTabs,
     RelatedTaskMenu,
@@ -1352,7 +1354,10 @@ export default {
     }
   },
   mounted() {
-    
+   AuthorizationService.getRolePrivileges();
+   this.fetchPortfolioTaskStages();
+   this.fetchPortfolioCategories();
+   this.fetchPortfolioAssignees();
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1360,10 +1365,19 @@ export default {
     }    
     this.loading = false;
     this._ismounted = true;
+    console.log(this.$route)
   },
   methods: {
     ...mapMutations(["setTaskForManager", "updateTasksHash", 'setPortfolioCategoriesFilter']),
-    ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks", 'fetchPortfolioTask']),
+    ...mapActions([
+      "taskDeleted", 
+      "taskUpdated", 
+      "updateWatchedTasks", 
+      'fetchPortfolioTask', 
+      'fetchPortfolioTaskStages', 
+      'fetchPortfolioCategories',
+      'fetchPortfolioAssignees'
+    ]),
     INITIAL_TASK_STATE() {
       return {
         text: "",
@@ -1394,17 +1408,8 @@ export default {
         notes: [],
       };
     },
-    // log(e){
-    //   console.log("taskSorted: " + e)
-    // },
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
+      return this.checkPrivileges("portfolio_task_form", salut, this.$route)
     },
     selectedStage(item) {     
       if (this._isallowed("write")) {
@@ -1482,26 +1487,18 @@ export default {
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      if (this.responsibleUsers) {
-          this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
+      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
       )[0];
-      }
-     if ( this.accountableTaskUsers){
       this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
       )[0];
-     }
-      if (this.consultedTaskUsers){
        this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.consulted_user_ids.includes(u.id)
-      );
-       }    
-       if ( this.informedTaskUsers){
+      );  
        this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.informed_user_ids.includes(u.id)
-       );
-       }     
+       );    
       this.relatedIssues = _.filter(this.filteredIssues, (u) =>
         this.DV_task.sub_issue_ids.includes(u.id)
       );

@@ -6,7 +6,6 @@
 import { mapGetters } from "vuex";
 import TaskForm from "../../dashboard/tasks/task_form";
 export default {
-  props: ["facility"],
   components: {
     TaskForm,
   },
@@ -23,23 +22,24 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", "currentProject", 'filteredAllTasks']),
+    ...mapGetters([
+      "contentLoaded", 
+      "currentProject", 
+      'filteredAllTasks',
+      'getShowProjectStats'
+      ]),
   },
-  mounted() {
-    if (this.contentLoaded && this.$route.params.taskId !== "new") {
-      this.task = this.filteredAllTasks.find(
+mounted() {
+    this.task = this.filteredAllTasks.find(
         (task) => task.id == this.$route.params.taskId
-      );
-    }
+      );      
   },
   watch: {
     contentLoaded: {
-      handler() {
-        if (this.$route.params.taskId !== "new") {
+      handler() {       
           this.task = this.filteredAllTasks.find(
             (task) => task.id == this.$route.params.taskId
           );
-        }
       },
     },
   },

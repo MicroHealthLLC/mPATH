@@ -3,7 +3,15 @@
     <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
         <template slot="title">
         <div v-if="dynamicObj.length > 0 && dynamicObj[currentRiskSlide] !== undefined" class="container-fluid">
-          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">RISK</h3>
+           <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+          <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractId">
+            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
+            <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractVehicleId">
+            <i class="far fa-car text-light py-2 mr-1"></i> </span>
+            <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectId">
+            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          RISK
+          </h5>
             <div v-for="number in [currentRiskSlide]" :key="number" >
             <div class="row justify-content-center">
               <div class="col-3 pb-0">
@@ -65,10 +73,8 @@
                   />
               </div>
           </div>
-
                 <div class="row pt-3 justify-content-center">
-
-                  <div class="col-3 text-center slideCol leftProgramCol">                                          
+                  <div class="col-3 text-center slideCol leftProgramCol">                                        
                   
               
                     <div class="col py-2">  
@@ -78,14 +84,25 @@
                   </div>    
               
                   <div class="col truncate-line-two">    
-                        <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
-                    <h4> {{dynamicObj[currentRiskSlide].projectGroup}}  </h4>
+                        <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
+                    <h4 v-if="dynamicObj[currentRiskSlide].projectGroup"> {{dynamicObj[currentRiskSlide].projectGroup}}  </h4>
+                    <h4 v-else>Unassigned </h4>
                                                   
                   </div>  
           
                     <div class="col py-2">    
+                     <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractId">                                      
+                      <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
+                      <h4  v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].contractNickname">{{ dynamicObj[currentRiskSlide].contractNickname}}  </h4>  
+                    </span> 
+                    <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractVehicleId">                                      
+                      <h6 class="leftColLabel text-light mh-orange">VEHICLE</h6>
+                      <h4  v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].vehicleNickname">{{ dynamicObj[currentRiskSlide].vehicleNickname}}  </h4>  
+                    </span> 
+                    <span v-else>
                         <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
-                    <h4>{{ dynamicObj[currentRiskSlide].facilityName}}  </h4>                                                                 
+                        <h4  v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].facilityName">{{ dynamicObj[currentRiskSlide].facilityName}}  </h4>      
+                    </span>                                                        
                   </div>  
 
                       <div class="col">    
@@ -124,8 +141,7 @@
                     </span>
                 </div>  
                 </div> 
-                     
-
+              
                 <div class="issueTypes mt-3">
 
                   <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
@@ -133,14 +149,9 @@
                       <h4 class="px-3">{{ dynamicObj[currentRiskSlide].riskDescription }}</h4>
                   </div>
                 </div>
-
                 </div>
-
-
                     <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentRiskSlide] !== undefined">                                          
-                  
-              
-                    <div class="col pt-2">  
+                     <div class="col pt-2">  
                       <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
                     <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentRiskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
                     <span v-else> -- </span>
@@ -189,12 +200,12 @@
                           v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Extreme'"
                           class="red1 riskLabels px-1"
                           >Extreme</h4
-                        >                                                                  
+                        >                                                             
           
                   </div>    
                 </div>   
 
-                </div>   
+                </div>  
                 
             </div>
         
@@ -500,6 +511,7 @@
         v-tooltip="`Presentation Mode`"
         @click.prevent="openRiskPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="fas fa-presentation"></i>
     </button>
@@ -507,6 +519,7 @@
         v-tooltip="`Export to PDF`"
         @click.prevent="exportRisksToPdf"
         class="btn btn-md exportBtns text-light"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="far fa-file-pdf"></i>
     </button>
@@ -516,6 +529,7 @@
         exportRisksToExcel('table', 'Program Risks')
         "
         class="btn btn-md mx-1 exportBtns text-light"
+        :disabled="filteredRisks.filtered.risks.length == 0"
     >
         <i class="far fa-file-excel"></i>
     </button>
@@ -527,12 +541,13 @@
     >
 </div>
 </div>
-
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredRisks.filtered.risks.length > 0"
 >
+
 <div class="px-3 tableFixHead" >
     <table
     class="table table-sm table-bordered"
@@ -541,7 +556,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
     >
     <thead style="background-color: #ededed">    
         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
-        Project Group
+        Group
         <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol1 !== 'projectGroup'"
@@ -581,47 +596,129 @@ v-if="filteredRisks.filtered.risks.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
-        Project Name 
-        <span
+        <th v-if="getShowProjectStats == 0" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+          Project Name 
+          <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol2 !== 'facilityName'"
-        >
+          >
             <i class="fas fa-sort"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'asc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 === 'asc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'asc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'desc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 === 'desc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        </th>                 
+          ></span>
+        </th>  
+        <th v-if="getShowProjectStats == 1" class="pl-1 sort-th twenty" @click="sortCol2('contractNickname')">
+          Contract Name 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'contractNickname'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>   
+        <th v-if="getShowProjectStats == 2" class="pl-1 sort-th twenty" @click="sortCol2('name')">
+          Nickname 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'name'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>              
         <th class="pl-1 sort-th twenty" @click="sort('text')">
         Risk
         <span
@@ -998,10 +1095,11 @@ v-if="filteredRisks.filtered.risks.length > 0"
     </thead>
     <tbody>
         <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
-        <td>{{ risk.projectGroup }}</td>
-        <td>{{ risk.facilityName }}</td>
+        <td v-if="risk.projectGroup">{{ risk.projectGroup }}</td>
+        <td v-else>Unassigned</td>
+        <td>{{ risk.facilityName || risk.contractNickname || risk.vehicleNickname }}</td>
         <td>{{ risk.text }}</td>        
-        <td class="text-left">       
+        <td>       
           <span  v-if="risk.notes.length > 0">
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -1045,7 +1143,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
               >Extreme</span
             >
           </td>
-        <td>
+        <td class="text-center">
             <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
             <i class="fas fa-retweet text-success"></i>
             </span>
@@ -1056,7 +1154,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             moment(risk.startDate).format("DD MMM YYYY") 
             }}</span>
         </td>
-        <td>
+        <td class="text-center">
             <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>
@@ -1070,8 +1168,8 @@ v-if="filteredRisks.filtered.risks.length > 0"
             moment(risk.dueDate).format("DD MMM YYYY")
             }}</span>
         </td>
-        <td>{{ risk.users.fullName }}</td>
-        <td>                          
+        <td>{{ risk.userNames }}</td>
+        <td class="text-center">                          
             <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>
@@ -1276,6 +1374,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
                 >
                   In Progress
                   </span>
+                  <span v-if="risk.important" v-tooltip="`Important`">
+                    Important
+                  </span>
+                  <span v-if="risk.watched" v-tooltip="`Watched`">
+                    Watched
+                  </span>
                 </td>
              <td v-if="risk.notes.length > 0">       
               <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
@@ -1342,10 +1446,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+// import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
   name: "ProgramRisks",
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -1394,6 +1500,8 @@ export default {
     "filterDataForAdvancedFilter",
     "filteredAllIssues",
     "filteredAllRisks",
+    "filteredAllContractRisks",
+    "filteredAllVehicleRisks",
     "filteredAllTasks",
     "filteredFacilities",
     "filteredFacilityGroups",
@@ -1420,6 +1528,7 @@ export default {
     "taskUserFilter",
     'getShowAdvancedFilter',
     'getShowCount',
+    'getShowProjectStats',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -1433,6 +1542,11 @@ export default {
     'getHideImportant',
     'getHideBriefed',
     ]),
+    stateRisks(){
+      if(this.getShowProjectStats == false){
+        return this.filteredAllRisks
+      } else return this.filteredAllContractRisks
+    },
     projectObj() {
     return this.currentProject.facilities
     },
@@ -1559,9 +1673,15 @@ export default {
       return issues;
     },
     filteredRisks() {
-     let risks = this.filteredAllRisks
-      .filter(r => {
-      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
+    let allRisks = this.filteredAllRisks
+     if (this.getShowProjectStats == 1){
+       allRisks = this.filteredAllContractRisks
+     }
+     if (this.getShowProjectStats == 2){
+       allRisks = this.filteredAllVehicleRisks
+     }
+     let risks = allRisks.filter(r => {
+     if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
          this.facility_project_ids = [];
          let val = this.projectGroupsFilter
          for(let k = 0; k < val.length; k++){
@@ -1576,7 +1696,7 @@ export default {
        return this.facility_project_ids.includes(r.facilityProjectId)
       } else return true
        }).filter((r) => {
-          if (this.searchRisks !== "") {
+          if (this.searchRisks !== "" && r && r.text) {
             // console.log(issue)
             return (
               r.text.toLowerCase().match(this.searchRisks.toLowerCase()) ||
@@ -1586,21 +1706,24 @@ export default {
               r.projectGroup
                 .toLowerCase()
                 .match(this.searchRisks.toLowerCase()) ||
-              r.programName
-                .toLowerCase()
-                .match(this.searchRisks.toLowerCase()) ||
-              r.facilityName
-                .toLowerCase()
-                .match(this.searchRisks.toLowerCase()) ||
+              // r.programName
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
+              // r.facilityName
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
+              // r.contractNickname
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
               r.userNames.toLowerCase().match(this.searchRisks.toLowerCase())
             );
           } else return true;
           // Filtering 7 Task States
         })
         .filter((r) => {
-          if (this.programCategoriesFilter.length > 0) {
-            let category = this.programCategoriesFilter.map((t) => t);
-            return category.includes(r.category);
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t.id);
+            return category.includes(r.taskTypeId);
           } else return true;
         })
      
@@ -1965,7 +2088,8 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openRisk(risk) {       
+  openRisk(risk) {    
+    if(this.getShowProjectStats == 0) {
       this.$router.push({
       name: "ProgramRiskForm",
       params: {
@@ -1973,8 +2097,28 @@ export default {
         projectId: risk.facilityId,
         riskId: risk.id,
       },
-    });
-    // console.log(this.$route.params)
+      })
+     }
+    if(this.getShowProjectStats == 1) {
+      this.$router.push({
+      name: "ProgramContractRiskForm",
+      params: {
+        programId: this.$route.params.programId,
+        contractId: risk.projectContractId,
+        riskId: risk.id,
+      },
+      })
+      }
+      if(this.getShowProjectStats == 2) {
+      this.$router.push({
+      name: "ProgramVehicleRiskForm",
+      params: {
+        programId: this.$route.params.programId,
+        vehicleId: risk.projectContractVehicleId,
+        riskId: risk.id,
+      },
+      })
+      }    
     },
   exportRisksToPdf() {
       const doc = new jsPDF("l");

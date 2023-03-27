@@ -13,7 +13,7 @@ export default {
     portfolioLessonForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioLesson', 'portfolioLessonLoaded', 'fetchPortfolioLessons', 'fetchPortfolioUsers', 'fetchPortfolioCategories', 'fetchPortfolioLessonStages']),
+    ...mapActions(['fetchPortfolioLesson', 'fetchPortfolioCategories', 'fetchPortfolioLessonStages', 'fetchPortfolioAssignees']),
     redirectBack() {
       // this.fetchPortfolioLessons()
       this.$router.push(
@@ -24,11 +24,11 @@ export default {
   computed: {
     ...mapGetters(['portfolioLesson'])
   },
-  beforeMount(){
-    this.fetchPortfolioLesson(this.$route.params)
-    this.fetchPortfolioLessonStages()
+ mounted(){
     this.fetchPortfolioCategories()
-    this.fetchPortfolioUsers()
+    this.fetchPortfolioLessonStages()
+    this.fetchPortfolioAssignees()
+    this.fetchPortfolioLesson(this.$route.params)    
   },
 };
 </script>

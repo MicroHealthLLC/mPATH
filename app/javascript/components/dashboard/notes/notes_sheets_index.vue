@@ -5,6 +5,7 @@
         title="Add Note"
         :facility="DV_facility"
         :contract="contract"
+        :vehicle="vehicle"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
         class="notes_form_modal"
@@ -58,8 +59,10 @@
             :key="note.id" 
             :facility="DV_facility"
             :contract="contract"
+            :vehicle="vehicle"
             :note="note"
             :contractNote="note"
+            :vehicleNote="note"
             id="notesHover"
             :from="from"
             @note-updated="noteUpdated"
@@ -69,7 +72,9 @@
         </div>      
         <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
         </div>
-      <div v-else class="text-danger mx-2 my-4">You don't have permissions to read!</div>
+      <div v-else class="text-danger mx-2 mt-2">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
     </div>
   </div>
   </div>
@@ -80,6 +85,7 @@
   import {mapMutations, mapGetters, mapActions} from "vuex"
   import NotesForm from './notes_form'
   import ContractNotesForm from './contract_notes_form'
+  import VehicleNotesForm from './vehicle_notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
 
@@ -87,11 +93,12 @@
     name: 'NotesSheetsIndex',
     components: {
       NotesForm,
-      ContractNotesForm, 
+      ContractNotesForm,
+      VehicleNotesForm, 
       NotesSheets,
       SweetModal
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         loading: true,
@@ -99,17 +106,7 @@
         myNotesCheckbox: false,
         notesQuery: '',    
         DV_facility: Object.assign({}, this.facility),
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },    
+     
       }
     },
     methods: {
@@ -119,35 +116,34 @@
         'updateFacilityHash'
       ]),
        ...mapActions([
-        'fetchContractNotes',       
+        'fetchContractNotes',
+        'fetchVehicleNotes'       
       ]),
-      //TODO: change the method name of isAllowed
-      // _isallowed(salut) {
-      //   var programId = this.$route.params.programId;
-      //   var projectId = this.$route.params.projectId
-      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return  fPrivilege.notes.includes(s); 
-      // },
-      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-       _isallowed(salut) {
-        let programId = this.$route.params.programId;
-        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+      _isallowed(salut) {
+        return this.checkPrivileges("notes_sheets_index", salut, this.$route)
+
+        // if (this.$route.params.contractId) {
+        //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+        //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        //   let s = permissionHash[salut]
+        //   return fPrivilege.notes.includes(s);
+        // } else {
+        //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        //   let s = permissionHash[salut]
+        //   return fPrivilege.notes.includes(s); 
+        // }
+     },
      addNewNote() {
         this.setTaskForManager({key: 'note', value: {}})
         // Route to new task form page
         if(this.$route.params.contractId){
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/notes/new`
+        );
+        } else if(this.$route.params.vehicleId){
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/notes/new`
         );
         } else
         this.$router.push(
@@ -169,10 +165,6 @@
           this.updateFacilityHash(this.facility)
         }
       },
-      // noteUpdated(note) {
-      //   let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
-      //   if (index > -1) Vue.set(this.DV_facility.notes, index, note)
-      // },
       noteDeleted(note) {
         this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }
@@ -180,20 +172,25 @@
     mounted() {
     // GET request action to retrieve all lessons for project
     //  console.log(this.filteredLessons.filtered.lessons)
-    if (this.$route.params.contractId && !this.facility){
+    if (this.$route.params.contractId && !this.vehicle && !this.facility){
         this.fetchContractNotes(this.$route.params);
+     } else if (this.$route.params.vehicleId && !this.contract &&!this.facility){
+        this.fetchVehicleNotes(this.$route.params);
      }   
     },
     computed: {
       ...mapGetters([
         'myActionsFilter',
-        'contractNotes'
+        'contractNotes',
+        'vehicleNotes'
       ]),
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         let notes = this.DV_facility.notes;
         if (this.$route.params.contractId){
           notes = this.contractNotes
+        } else if (this.$route.params.vehicleId){
+          notes = this.vehicleNotes
         }    
          return _.filter(notes, n => {
           //  console.log(notes)

@@ -2,7 +2,7 @@
   <div class="notes-form" :class="{'fixed-form-mapView':isMapView}">
       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
         <span class="fbody-icon"> <i class="far fa-file-contract mh-orange-text"></i></span>
-        <h4 class="f-head mb-0">{{ contract.name || contract.nickname}}</h4>
+        <h4 class="f-head mb-0">{{ contract.name }}</h4>
       </div>
        <div class="d-flex form-group sticky mb-2">
         <button
@@ -24,6 +24,7 @@
           @click.prevent="deleteNote"
           class="btn btn-sm btn-danger sticky-btn ml-auto"
           data-cy="note_delete_btn"
+          v-if="_isallowed('delete')"
           >
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
@@ -92,20 +93,7 @@
     },
     data() {
       return {
-        // loading: true,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },    
-        // files: [],
-        destroyFileIds: []
+       destroyFileIds: []
       }
     },
     mounted() {
@@ -131,26 +119,14 @@
         'fetchContractNote',
         'updateContractNote'
       ]),
-     //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.notes.includes(s); 
-    // },
-   //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-      _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+     _isallowed(salut) {
+        return this.checkPrivileges("contract_notes_form", salut, this.$route)
+
+        // let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return fPrivilege.notes.includes(s);
+     },
       addFile(files) {
       files.forEach((file) => {
         file.guid = this.guid();

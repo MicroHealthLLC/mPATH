@@ -431,8 +431,9 @@
     <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
   </div>
   </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
+   <div v-else class="text-danger mx-2 mt-2">
+    <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+  </div>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
 
     <table
@@ -550,24 +551,13 @@
     components: {
       RiskSheets
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         risks: Object,
         now: new Date().toISOString(),
         risksQuery: '',
         comma: 'test',
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -609,27 +599,22 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
+       _isallowed(salut) {
+          return this.checkPrivileges("risk_sheets_index", salut, this.$route)
 
-      //TODO: change the method name of isAllowed
-      // _isallowed(salut) {
-      //   var programId = this.$route.params.programId;
-      //   var projectId = this.$route.params.projectId
-      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return  fPrivilege.risks.includes(s); 
-      // },
-      _isallowed(salut) {
-        let programId = this.$route.params.programId;
-        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.risks.includes(s); 
-        }         
-      },
+      //  if (this.$route.params.contractId) {
+      //     // return this.defaultPrivileges
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.risks.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.risks.includes(s); 
+      //   }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -661,13 +646,17 @@
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/new`
         );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/risks/new`
+        );
         } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
         );
       },
       showAllToggle() {
-         this.setToggleRACI(!this.getToggleRACI)  ;
+         this.setToggleRACI(!this.getToggleRACI);
       },
       editRisk(risk) {
         this.$emit('show-hide', risk)
@@ -783,9 +772,14 @@
       contractRoute(){
          return this.$route.params.contractId
       },
+      vehicleRoute(){
+         return this.$route.params.vehicleId
+      },
       object(){
       if (this.$route.params.contractId) {
         return this.contract
+       } else if (this.$route.params.vehicleId) {
+        return this.vehicle
        } else return this.facility
       },
       filteredRisks() {
@@ -1254,7 +1248,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

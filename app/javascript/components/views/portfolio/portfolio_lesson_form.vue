@@ -250,8 +250,8 @@
         </div>
       </div>
 
-      <div class="col-12 p-0">
-        <div class="d-flex justify-content-between my-3">
+      <div class="col-12 p-0"  v-if="this.$route.params.programId && lessonStages && validStages.length > 0 &&  lessonStages[this.$route.params.programId] &&  lessonStages[this.$route.params.programId].length >= 0">
+        <div class="d-flex justify-content-between my-3"  :load="log(lessonStages)">
           <label class="font-md">Select Stage</label
           ><button
             v-show="lesson.lesson_stage_id"
@@ -262,11 +262,9 @@
             Clear Stages
           </button>
         </div>
-
-        <el-steps
-          v-if="validStages.length > 0 && lessonStages[this.programId].length >= 0"
+         <el-steps         
           :active="
-            lessonStages[this.programId].findIndex(
+            lessonStages[this.$route.params.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -274,10 +272,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': lessonStages[this.programId].length >= 6 }"
+          :class="{ 'over-six-steps': lessonStages[this.$route.params.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in lessonStages[this.programId]"
+            v-for="stage in lessonStages[this.$route.params.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -285,7 +283,8 @@
             class="clickable"
           >
           </el-step>
-        </el-steps>
+        </el-steps> 
+        
       </div>
     </div>
     <!-- Related Tab -->
@@ -788,10 +787,11 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex";
-import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
+import { mapActions, mapMutations, mapGetters } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input.vue";
+import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
+import AuthorizationService from "../../../services/authorization_service"
 
 export default {
   name: "portfolioLessonForm",
@@ -800,6 +800,7 @@ export default {
     FormTabs,
     RelatedLessonMenu,
     AttachmentInput,
+    AuthorizationService
   },
   data() {
     return {
@@ -885,7 +886,15 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers", "fetchPortfolioLessons"]),
+    ...mapActions([
+      "addLesson", 
+      "fetchLesson", 
+      "updateLesson",
+      "fetchPortfolioAssignees", 
+      "fetchPortfolioLessons",  
+      'fetchPortfolioCategories', 
+      'fetchPortfolioLessonStages'
+    ]),
     ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
@@ -947,9 +956,12 @@ export default {
         }
       });
     },
-    // log(e){
-    //   console.log("lesson" + e)
-    // },
+    log(e){
+      console.log(e)
+      if(this.$route.params.programId){
+        console.log(this.$route.params.programId)
+      } else console.log(this.$route)
+    },
     removeEmptyUpdates(){
       var returnUpdates = [];
       for (let i in this.updates) {
@@ -967,12 +979,14 @@ export default {
       return [...sFBP];
     },
     _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
+        return this.checkPrivileges("portfolio_lesson_form", salut, this.$route)
+
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return  fPrivilege.lessons.includes(s);      
     },
     close() {
       
@@ -1239,12 +1253,16 @@ export default {
   },
   },
   mounted() {
+   this.fetchPortfolioLessonStages();
+   this.fetchPortfolioCategories();
+   this.fetchPortfolioAssignees();
+    AuthorizationService.getRolePrivileges();
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
       if(this.portfolioUsers && this.portfolioUsers.length < 1){
-        this.fetchPortfolioUsers()
+        this.fetchPortfolioAssignees()
       }    
       this.loading = false;
   },
@@ -1400,7 +1418,7 @@ a:hover {
   font-size: 13px;
 }
 .over-six-steps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

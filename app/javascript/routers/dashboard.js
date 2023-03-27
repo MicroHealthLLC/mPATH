@@ -7,11 +7,28 @@ import SettingsProjects from "./../components/views/settings/SettingsProjects";
 import TestCloudData from "./../components/views/settings/TestCloudData";
 import SettingsContracts from "./../components/views/settings/SettingsContracts";
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
+import SettingsUsers from "./../components/views/settings/SettingsUsers";
+import SettingsVehicles from "./../components/views/settings/SettingsVehicles";
+import SettingsRolesIndex from "./../components/views/settings/roles/SettingsRolesIndex";
+
+// import SettingsRolesProjects from "./../components/views/settings/roles/SettingsRolesProjects"
+// import SettingsRolesContracts from "./../components/views/settings/roles/SettingsRolesContracts"
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
 import ProgramRiskForm from "./../components/views/program/ProgramRiskForm";
 import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
+
+import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm";
+import ProgramContractIssueForm from "./../components/views/program/ProgramContractIssueForm";
+import ProgramContractRiskForm from "./../components/views/program/ProgramContractRiskForm";
+import ProgramContractLessonForm from "./../components/views/program/ProgramContractLessonForm";
+
+import ProgramVehicleTaskForm from "./../components/views/program/ProgramVehicleTaskForm";
+import ProgramVehicleIssueForm from "./../components/views/program/ProgramVehicleIssueForm";
+import ProgramVehicleRiskForm from "./../components/views/program/ProgramVehicleRiskForm";
+import ProgramVehicleLessonForm from "./../components/views/program/ProgramVehicleLessonForm";
+
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -45,6 +62,19 @@ import ContractLessons from "./../components/views/sheet/contracts/ContractLesso
 import ContractLessonForm from "./../components/views/sheet/contracts/ContractLessonForm";
 import ContractNotes from "./../components/views/sheet/contracts/ContractNotes";
 import ContractNoteForm from "./../components/views/sheet/contracts/ContractNoteForm";
+
+import SheetVehicle from "./../components/views/sheet/vehicles/SheetVehicle";
+import VehicleTaskForm from "./../components/views/sheet/vehicles/VehicleTaskForm";
+import VehicleTasks from "./../components/views/sheet/vehicles/VehicleTasks";
+import VehicleAnalytics from "./../components/views/sheet/vehicles/VehicleAnalytics";
+import VehicleIssues from "./../components/views/sheet/vehicles/VehicleIssues";
+import VehicleIssueForm from "./../components/views/sheet/vehicles/VehicleIssueForm";
+import VehicleRisks from "./../components/views/sheet/vehicles/VehicleRisks";
+import VehicleRiskForm from "./../components/views/sheet/vehicles/VehicleRiskForm";
+import VehicleLessons from "./../components/views/sheet/vehicles/VehicleLessons";
+import VehicleLessonForm from "./../components/views/sheet/vehicles/VehicleLessonForm";
+import VehicleNotes from "./../components/views/sheet/vehicles/VehicleNotes";
+import VehicleNoteForm from "./../components/views/sheet/vehicles/VehicleNoteForm";
 
 import SheetProject from "./../components/views/sheet/SheetProject";
 import SheetAnalytics from "./../components/views/sheet/SheetAnalytics";
@@ -80,7 +110,6 @@ import CalendarRisks from "./../components/views/calendar/CalendarRisks";
 import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
 
 import PageNotFound from "./../components/views/PageNotFound"
-import { FormSelectPlugin } from "bootstrap-vue";
 
 export default new VueRouter({
   routes: [
@@ -187,6 +216,31 @@ export default new VueRouter({
       component: SettingsGroups,
     },
     {
+      name: "SettingsUsers",
+      path: "/programs/:programId/settings/users",
+      component: SettingsUsers,
+    },
+    {
+      name: "SettingsVehicles",
+      path: "/programs/:programId/settings/vehicles",
+      component: SettingsVehicles,
+    },
+    // {
+    //   name: "SettingsRolesContracts",
+    //   path: "/programs/:programId/settings/roles",
+    //   component: SettingsRolesContracts,
+    // },
+    // {
+    //   name: "SettingsRolesProjects",
+    //   path: "/programs/:programId/settings/roles",
+    //   component: SettingsRolesProjects,
+    // },
+    {
+      name: "SettingsRolesIndex",
+      path: "/programs/:programId/settings/roles",
+      component: SettingsRolesIndex,
+    },
+    {
       name: "SettingsView",
       path: "/programs/:programId/settings",
       component: SettingsView,
@@ -203,7 +257,7 @@ export default new VueRouter({
     },
     {
       name: "ProgramTaskForm",
-      path: "/programs/:programId/dataviewer/:projectId/task/:taskId",
+      path: "/programs/:programId/dataviewer/project/:projectId/task/:taskId",
       component: ProgramTaskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -219,8 +273,42 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractTaskForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/task/:taskId",
+      component: ProgramContractTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramVehicleTaskForm",
+      path: "/programs/:programId/dataviewer/vehicle/:vehicleId/task/:taskId",
+      component: ProgramVehicleTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var vehicleId = to.params.vehicleId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractVehiclePrivileges,
+          (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramRiskForm",
-      path: "/programs/:programId/dataviewer/:projectId/risk/:riskId",
+      path: "/programs/:programId/dataviewer/project/:projectId/risk/:riskId",
       component: ProgramRiskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -236,8 +324,42 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractRiskForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/risk/:riskId",
+      component: ProgramContractRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramVehicleRiskForm",
+      path: "/programs/:programId/dataviewer/vehicle/:vehicleId/risk/:riskId",
+      component: ProgramVehicleRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var vehicleId = to.params.vehicleId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractVehiclePrivileges,
+          (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramIssueForm",
-      path: "/programs/:programId/dataviewer/:projectId/issue/:issueId",
+      path: "/programs/:programId/dataviewer/project/:projectId/issue/:issueId",
       component: ProgramIssueForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -253,8 +375,42 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractIssueForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/issue/:issueId",
+      component: ProgramContractIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramVehicleIssueForm",
+      path: "/programs/:programId/dataviewer/vehicle/:vehicleId/issue/:issueId",
+      component: ProgramVehicleIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var vehicleId = to.params.vehicleId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractVehiclePrivileges,
+          (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramLessonForm",
-      path: "/programs/:programId/dataviewer/:projectId/lesson/:lessonId",
+      path: "/programs/:programId/dataviewer/project/:projectId/lesson/:lessonId",
       component: ProgramLessonForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -262,6 +418,40 @@ export default new VueRouter({
         var fPrivilege = _.filter(
           Vue.prototype.$projectPrivileges,
           (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramContractLessonForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/lesson/:lessonId",
+      component: ProgramContractLessonForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramVehicleLessonForm",
+      path: "/programs/:programId/dataviewer/vehicle/:vehicleId/lesson/:lessonId",
+      component: ProgramVehicleLessonForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var vehicleId = to.params.vehicleId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractVehiclePrivileges,
+          (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
         )[0];
         if (!fPrivilege) {
           next();
@@ -344,6 +534,65 @@ export default new VueRouter({
           },
         },
         {
+          name: "SheetVehicle",
+          path: "vehicles/:vehicleId/",
+          component: SheetVehicle,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var tab = 'vehicle'
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["vehicles"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId, tab: tab },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
           name: "ContractAnalytics",
           path: "contracts/:contractId/analytics",
           component: ContractAnalytics,
@@ -351,7 +600,7 @@ export default new VueRouter({
             var programId = to.params.programId;
             var contractId = to.params.contractId;
             var fPrivilege = _.filter(
-              Vue.prototype.$projectPrivileges,
+              Vue.prototype.$contractPrivileges,
               (f) => f.program_id == programId && f.contract_id == contractId
             )[0];
             if (!fPrivilege) {
@@ -397,6 +646,64 @@ export default new VueRouter({
               next({
                 name: "ContractNotes",
                 params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleAnalytics",
+          path: "vehicles/:vehicleId/analytics",
+          component: VehicleAnalytics,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$contractVehiclePrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["vehicle"].hide &&
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["overview"].hide) {
+              next();
+            } else if (!fPrivilege["vehicle"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
               });
             }
           },
@@ -464,6 +771,64 @@ export default new VueRouter({
           },
         },
         {
+          name: "VehicleTasks",
+          path: "vehicles/:vehicleId/tasks",
+          component: VehicleTasks,
+          beforeEnter: (to, from, next) => {
+            console.log(to)
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            }
+          },
+        },
+        {
           name: "ContractTaskForm",
           path: "contracts/:contractId/tasks/:taskId",
           component: ContractTaskForm,
@@ -516,6 +881,63 @@ export default new VueRouter({
               next({
                 name: "ContractNotes",
                 params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleTaskForm",
+          path: "vehicles/:vehicleId/tasks/:taskId",
+          component: VehicleTaskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
               });
             }
           },
@@ -635,6 +1057,120 @@ export default new VueRouter({
           },
         },
         {
+          name: "VehicleIssues",
+          path: "vehicles/:vehicleId/issues",
+          component: VehicleIssues,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleIssueForm",
+          path: "vehicles/:vehicleId/issues/:issueId",
+          component: VehicleIssueForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
           name: "ContractRisks",
           path: "contracts/:contractId/risks",
           component: ContractRisks,
@@ -749,6 +1285,120 @@ export default new VueRouter({
           },
         },
         {
+          name: "VehicleRisks",
+          path: "vehicles/:vehicleId/risks",
+          component: VehicleRisks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleRiskForm",
+          path: "vehicles/:vehicleId/risks/:riskId",
+          component: VehicleRiskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId,  vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "VehicleNotes",
+                params: { programId: programId,  vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
           name: "ContractLessons",
           path: "contracts/:contractId/lessons",
           component: ContractLessons,
@@ -759,6 +1409,16 @@ export default new VueRouter({
           component: ContractLessonForm,
         },
         {
+          name: "VehicleLessons",
+          path: "vehicles/:vehicleId/lessons",
+          component: VehicleLessons,
+        },
+        {
+          name: "VehicleLessonForm",
+          path: "vehicles/:vehicleId/lessons/:lessonId",
+          component: VehicleLessonForm,
+        },
+        {
           name: "ContractNotes",
           path: "contracts/:contractId/notes",
           component: ContractNotes,
@@ -767,7 +1427,7 @@ export default new VueRouter({
             var contractId = to.params.contractId;
             var fPrivilege = _.filter(
               Vue.prototype.$projectPrivileges,
-              (f) => f.program_id == programId && f.contact_id == contractId
+              (f) => f.program_id == programId && f.contract_id == contractId
             )[0];
             if (!fPrivilege) {
               next();
@@ -868,6 +1528,120 @@ export default new VueRouter({
               next({
                 name: "ContractRisks",
                 params: { programId: programId, contractId: contractId  },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleNotes",
+          path: "vehicles/:vehicleId/notes",
+          component: VehicleNotes,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            }
+          },
+        },
+        {
+          name: "VehicleNoteForm",
+          path: "vehicles/:vehicleId/notes/:noteId",
+          component: VehicleNoteForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var vehicleId = to.params.vehicleId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["vehicles"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "VehicleAnalytics",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["vehicles"].hide) {
+              next({
+                name: "SheetVehicle",
+                params: { programId: programId, vehicleId: vehicleId  },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "VehicleTasks",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "VehicleIssues",
+                params: { programId: programId, vehicleId: vehicleId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "VehicleRisks",
+                params: { programId: programId, vehicleId: vehicleId  },
               });
             }
           },

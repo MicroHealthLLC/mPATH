@@ -83,7 +83,7 @@
         "
         class="d-flex align-items-center my-2"
       >
-        <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
+        <i class="fal fa-clipboard-list mh-green-text pr-2"></i>
         <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
       </div>
       <ProjectTabs
@@ -101,8 +101,9 @@
   </div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
-<script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>-->
+<script> 
+  
 import Accordion from "../../shared/accordion";
 import { mapGetters, mapMutations } from "vuex";
 import * as Moment from "moment";
@@ -154,6 +155,7 @@ export default {
       "currentProject",
       "filterFacilitiesWithActiveFacilityGroups",
       "filteredFacilities",
+      "getShowProjectStats",
       "getMapZoomFilter",
       "getUnfilteredFacilities",
       "getNewSession",
@@ -184,6 +186,7 @@ export default {
       "setCurrentFacility",
       "setMapZoomFilter",
       "setFacilities",
+      'setShowProjectStats',
       "setPreviousRoute",
       "setNewSession",
     ]),
@@ -306,6 +309,10 @@ export default {
   },
   mounted() {
     // Display notification if the Map Boundary Filter is still on
+    if(this.getShowProjectStats){
+     this.setShowProjectStats(!this.getShowProjectStats)
+    }
+
     if (this.facilities.length !== this.getUnfilteredFacilities.length) {
       this.$notify.info({
         title: "Filter Set",
@@ -412,7 +419,7 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-.vue-map-container /deep/ button.gm-ui-hover-effect {
+.vue-map-container ::v-deep button.gm-ui-hover-effect {
   display: none;
   visibility: hidden;
 }

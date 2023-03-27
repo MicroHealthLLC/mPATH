@@ -222,10 +222,8 @@ export default {
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
+        statusId: this.statusId,
+        dueDate: this.dueDate,
       };
       // Used to update state
       let updatedFacility = Object.assign(this.facility, {
@@ -301,12 +299,14 @@ export default {
       });
     },
    _isallowed(salut) {
-    var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId
-    let fPrivilege = this.$projectPrivileges[programId][projectId]
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    return  fPrivilege.overview.includes(s);      
+      return this.checkPrivileges("MapProject", salut, this.$route)
+
+    // var programId = this.$route.params.programId;
+    // var projectId = this.$route.params.projectId
+    // let fPrivilege = this.$projectPrivileges[programId][projectId]
+    // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    // let s = permissionHash[salut]
+    // return  fPrivilege.overview.includes(s);      
     },
   },
   computed: {
@@ -438,11 +438,11 @@ export default {
   font-size: 14px;
   font-weight: bold;
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -487,18 +487,18 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
 
-/deep/.el-card__body {
+::v-deep.el-card__body {
     padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
   }
 
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {
@@ -506,7 +506,7 @@ export default {
 }
 
 .lessonsCard {
-  /deep/.el-card__body{
+  ::v-deep.el-card__body{
     min-height: 161px;
   }
 }

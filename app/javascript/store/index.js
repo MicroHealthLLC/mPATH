@@ -7,9 +7,10 @@ import * as Cookies from "js-cookie";
 import exampleModule from "./modules/example-module-store";
 import settingsStore from "./modules/settings-store";
 import programStore from "./modules/program-store";
+import contractStore from "./modules/contract-store";
 import projectStore from "./modules/project-store";
-import taskStore from "./modules/task-store";
-import issueStore from "./modules/issue-store";
+// import taskStore from "./modules/task-store";
+// import issueStore from "./modules/issue-store";
 import riskStore from "./modules/risk-store";
 import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
@@ -31,10 +32,11 @@ export default new Vuex.Store({
   modules: {
     exampleModule,
     programStore,
+    contractStore,
     projectStore,
-    taskStore,
+    // taskStore,
     settingsStore,
-    issueStore,
+    // issueStore,
     riskStore,
     lessonStore,
     notesStore,
@@ -45,8 +47,11 @@ export default new Vuex.Store({
     myAssignmentsFilter: [],
     contentLoaded: false,
     projectsLoaded: false,
-    showProjectStats: true,
+    showProjectStats: 0,
+    showContractStats: false,
+    showVehicleStats: false,
     toggleRACI: true,
+    expandedGroup: "", 
     showAllEventsToggle: false,
     showAdvancedFilter: false,
     currentProject: null,
@@ -57,6 +62,7 @@ export default new Vuex.Store({
     tableData: new Array(),
     facilities: new Array(),
     contracts: new Array(),
+    vehicles: new Array(),
     facilityGroups: new Array(),
     statuses: new Array(),
     advancedFilterOptions: new Array(),
@@ -211,12 +217,17 @@ export default new Vuex.Store({
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => (state.contentLoaded = loading),
+    SET_EXPANDED_GROUP: (state, value) => (state.expandedGroup = value),
     setProjectsLoaded: (state, loading) => (state.projectsLoaded = loading),
     setToggleRACI: (state, raci) => (state.toggleRACI = raci),
     setShowAllEventsToggle: (state, showAll) =>
       (state.showAllEventsToggle = showAll),
     setShowProjectStats: (state, showStats) =>
     (state.showProjectStats = showStats),
+    setShowContractStats: (state, showStats) =>
+    (state.showContractStats = showStats),
+    setShowVehicleStats: (state, showStats) =>
+    (state.showVehicleStats = showStats),
     setLastFocusFilter: (state, lastFocus) =>
       (state.lastCalendarFocus = lastFocus),
     setMapLoading: (state, loading) => (state.mapLoading = loading),
@@ -224,6 +235,7 @@ export default new Vuex.Store({
     setProjects: (state, projects) => (state.projects = projects),
     setFacilities: (state, facilities) => (state.facilities = facilities),
     setContracts: (state, contracts) => (state.contracts = contracts),
+    setVehicles: (state, vehicles) => (state.vehicles = vehicles),
     setTableData: (state, tableData) => (state.tableData = tableData),
     setUnfilteredFacilities: (state, facilities) =>
       (state.unfilteredFacilities = facilities),
@@ -335,7 +347,7 @@ export default new Vuex.Store({
     },
     updateContractTasks: (state, { task, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == task.contractId
+        (f) => f.projectContractId == task.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -353,9 +365,29 @@ export default new Vuex.Store({
         Vue.set(state.contracts, contract_i, contract);
       }
     },
+    updateVehicleTasks: (state, { task, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectContractVehicleId == task.projectContractVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let task_i = vehicle.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(vehicle.tasks, task_i, task);
+        } else if (task_i == -1) {
+          vehicle.tasks.push(task);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
+      }
+    },
     updateContractIssues: (state, { issue, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == issue.contractId
+        (f) => f.projectContractId == issue.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -371,6 +403,26 @@ export default new Vuex.Store({
           contract.issues.push(issue);
         }
         Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateVehicleIssues: (state, { issue, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectContractVehicleId == issue.projectContractVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let issue_i = vehicle.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(vehicle.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          vehicle.issues.push(issue);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
       }
     },
     updateIssuesHash: (state, { issue, action }) => {
@@ -416,7 +468,7 @@ export default new Vuex.Store({
     },
     updateContractRisks: (state, { risk, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == risk.contractId
+        (f) => f.projectContractId == risk.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -432,6 +484,26 @@ export default new Vuex.Store({
           contract.risks.push(risk);
         }
         Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateVehicleRisks: (state, { risk, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectContractVehicleId == risk.projectContractVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let risk_i = vehicle.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(vehicle.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          vehicle.risks.push(risk);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
       }
     },
     updateNotesHash: (state, { note, facilityId, action }) => {
@@ -514,6 +586,7 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getExpandedGroup: (state) => state.expandedGroup,
     getFacilityProjectOptions: (state, getters) => {
       var options = [];
       for (let f of getters.facilities) {
@@ -1116,6 +1189,8 @@ export default new Vuex.Store({
     projectsLoaded: (state) => state.projectsLoaded,
     getToggleRACI: (state) => state.toggleRACI,
     getShowProjectStats: (state) => state.showProjectStats,
+    getShowContractStats: (state) => state.showContractStats,
+    getShowVehicleStats: (state) => state.showVehicleStats,
     getShowAllEventsToggle: (state) => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: (state) => state.lastCalendarFocus,
@@ -1124,7 +1199,8 @@ export default new Vuex.Store({
     sideLoading: (state) => state.sideLoading,
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
-    getContracts: (state) => state.contracts,
+    projectContracts: (state) => state.contracts,
+    projectVehicles: (state) => state.vehicles,
     tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
@@ -1842,9 +1918,8 @@ export default new Vuex.Store({
       });
     },
     filteredContracts: (state, getters) => {
-
-      return _.filter(getters.getContracts, (contract) => {
-        let valid = contract.id || null;
+      return _.filter(getters.projectContracts, (contract) => {
+        let valid = contract.projectContractId || null;
         // valid = valid && facility.facilityGroupStatus == "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;
@@ -2194,7 +2269,7 @@ export default new Vuex.Store({
             case "ids": {
               valid =
                 valid &&
-                f[k].includes(contract.id) &&
+                f[k].includes(contract.project_contract_id) &&
                 getters.filterDataForAdvancedFilter(
                   resources1,
                   "filteredContracts",
@@ -2215,6 +2290,386 @@ export default new Vuex.Store({
             }
             default: {
               valid = valid && contract[k] == f[k];
+              break;
+            }
+          }
+        });
+        return valid;
+      });
+    },
+    filteredVehicles: (state, getters) => {
+      return _.filter(getters.projectVehicles, (vehicle) => {
+        let valid = vehicle.projectContractVehicleId || null;
+        // valid = valid && facility.facilityGroupStatus == "active";
+        if (!valid) return valid;
+        if (state.mapFilters.length < 1) return valid;
+
+        var resources1 = [];
+        resources1.push(...vehicle.tasks);
+        resources1.push(...vehicle.issues);
+        resources1.push(...vehicle.risks);
+  
+        _.each(state.mapFilters, (f) => {
+          let k = Object.keys(f)[0];
+          switch (k) {
+            case "advancedFilter": {
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "dueDate": {
+              let range = moment.range(f[k][0], f[k][1]);
+              valid =
+                valid &&
+                vehicle[k] &&
+                range.contains(new Date(vehicle[k].replace(/-/g, "/")));
+              break;
+            }
+            case "noteDate": {
+              let taksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _notes = _.flatten(_.map(resources, "notes"));
+              var is_valid = false;
+              for (var n of _notes) {
+                var nDate = moment(n.createdAt, "YYYY-MM-DD");
+                is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                if (is_valid) break;
+              }
+
+              valid = valid && is_valid;
+              break;
+            }
+            case "taskIssueDueDate": {
+              let taksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _dueDates = _.flatten(_.map(resources, "dueDate"));
+              var is_valid = false;
+
+              if (_dueDates.length < 1) {
+                valid = valid && is_valid;
+                break;
+              } else {
+                for (var dueDate of _dueDates) {
+                  var nDate = moment(dueDate, "YYYY-MM-DD");
+                  is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                  if (is_valid) break;
+                }
+                valid = valid && is_valid;
+                break;
+              }
+            }
+            // This is for facility progress
+            case "progress": {
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                is_valid =
+                  range[1] !== undefined
+                    ? range[0] <= vehicle[k] && range[1] >= vehicle[k]
+                    : vehicle[k] == range[0];
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            // TODO: Improve this function
+            case "taskIssueProgress": {
+              let progressFor = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of progressFor) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              let progress = _.uniq(_.map(resources, "progress"));
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                let size = range[1] ? range[1] - range[0] + 1 : 1;
+                is_valid =
+                  _.intersection(
+                    progress,
+                    Array.from(Array(size), (_, i) => i + range[0])
+                  ).length > 0;
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            case "issueTypeIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "issueSeverityIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueSeverityId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "issueStageIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "taskTypeIds": {
+              var tasksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              var resources = _.filter(tasksIssues, (ti) =>
+                f[k].includes(ti.taskTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "taskStageIds": {
+              var tasks = vehicle.tasks;
+              var resources = _.filter(tasks, (ti) =>
+                f[k].includes(ti.taskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskStageIds": {
+              var risks = vehicle.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskPriorityLevelIds": {
+              var risks = vehicle.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskPriorityLevelId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskApproachFilter": {
+              var risks = vehicle.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproach)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskApproachFilterIds": {
+              var risks = vehicle.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproachId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskPriorityLevelFilter": {
+              var risks = vehicle.risks;
+              var fPriorityLevels = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fPriorityLevels.includes(ti.priorityLevelName.toLowerCase())
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "taskIssueUsers": {
+              var taskIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              var resources = _.filter(
+                taskIssues,
+                (ti) => _.intersection(ti.userIds, f[k]).length > 0
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "facilityGroupIds": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.vehicleGroupId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "ids": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.project_contract_vehicle_id) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "statusIds": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.statusId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            default: {
+              valid = valid && vehicle[k] == f[k];
               break;
             }
           }
@@ -2298,10 +2753,15 @@ export default new Vuex.Store({
       contracts: { 
           b: getters.filteredContracts
           .filter(f => 
-              f.facilityGroupId == group.id &&
-              f.projectId == getters.currentProject.id
-              ).sort((a, b) => a.nickname.localeCompare(b.nickname)),
-         }      
+              f.facilityGroup.id == group.id 
+              ).sort((a, b) => a.name.localeCompare(b.name)),
+         },
+      vehicles: { 
+          c: getters.filteredVehicles
+          .filter(f => 
+              f.facilityGroup.id == group.id 
+              ).sort((a, b) => a.name.localeCompare(b.name)),
+      }      
       }
     },
     // for gantt chart view
@@ -2584,6 +3044,112 @@ export default new Vuex.Store({
         }
       );
     },
+    filteredAllContractTasks: (state, getters) => {
+      let ids =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let stages =
+        getters.taskStageFilter && getters.taskStageFilter.length
+          ? _.map(getters.taskStageFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "tasks")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.taskStageId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].name == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          return valid;
+        }
+      );
+    },
+    filteredAllVehicleTasks: (state, getters) => {
+      let ids =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let stages =
+        getters.taskStageFilter && getters.taskStageFilter.length
+          ? _.map(getters.taskStageFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredVehicles, "tasks")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.taskStageId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].name == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          return valid;
+        }
+      );
+    },
     filteredAllIssues: (state, getters) => {
       let taskTypeIds =
         getters.taskTypeFilter && getters.taskTypeFilter.length
@@ -2658,6 +3224,145 @@ export default new Vuex.Store({
         }
       );
     },
+    filteredAllContractIssues: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let ids =
+        getters.issueTypeFilter && getters.issueTypeFilter.length
+          ? _.map(getters.issueTypeFilter, "id")
+          : [];
+      let stages =
+        getters.issueStageFilter && getters.issueStageFilter.length
+          ? _.map(getters.issueStageFilter, "id")
+          : [];
+      let severities =
+        getters.issueSeverityFilter && getters.issueSeverityFilter.length
+          ? _.map(getters.issueSeverityFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "issues")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.issueStageId);
+          if (severities.length > 0)
+            valid = valid && severities.includes(t.issueSeverityId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
+          //   valid = (t.draft == true)
+          // }
+
+          // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
+          //   valid = (t.onHold == true)
+          // }
+
+          return valid;
+        }
+      );
+    },
+    filteredAllVehicleIssues: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let ids =
+        getters.issueTypeFilter && getters.issueTypeFilter.length
+          ? _.map(getters.issueTypeFilter, "id")
+          : [];
+      let stages =
+        getters.issueStageFilter && getters.issueStageFilter.length
+          ? _.map(getters.issueStageFilter, "id")
+          : [];
+      let severities =
+        getters.issueSeverityFilter && getters.issueSeverityFilter.length
+          ? _.map(getters.issueSeverityFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredVehicles, "issues")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.issueStageId);
+          if (severities.length > 0)
+            valid = valid && severities.includes(t.issueSeverityId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+          return valid;
+        }
+      );
+    },    
     filteredAllRisks: (state, getters) => {
       let taskTypeIds =
         getters.taskTypeFilter && getters.taskTypeFilter.length
@@ -2731,6 +3436,142 @@ export default new Vuex.Store({
           //   valid = (t.onHold == true)
           // }
 
+          return valid;
+        }
+      );
+    },
+    filteredAllContractRisks: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let approaches =
+        getters.riskApproachFilter && getters.riskApproachFilter.length
+          ? _.map(getters.riskApproachFilter, "id")
+          : [];
+      let stages =
+        getters.riskStageFilter && getters.riskStageFilter.length
+          ? _.map(getters.riskStageFilter, "id")
+          : [];
+      let riskPriorityLevels =
+        getters.riskPriorityLevelFilter &&
+        getters.riskPriorityLevelFilter.length
+          ? _.map(getters.riskPriorityLevelFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "risks")),
+        (t) => {
+          let valid = true;
+          if (approaches.length > 0)
+            valid = valid && approaches.includes(t.riskApproachFilterIds);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.riskStageId);
+          if (riskPriorityLevels.length > 0)
+            valid =
+              valid && riskPriorityLevels.includes(t.riskPriorityLevelIds);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+          return valid;
+        }
+      );
+    },
+    filteredAllVehicleRisks: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let approaches =
+        getters.riskApproachFilter && getters.riskApproachFilter.length
+          ? _.map(getters.riskApproachFilter, "id")
+          : [];
+      let stages =
+        getters.riskStageFilter && getters.riskStageFilter.length
+          ? _.map(getters.riskStageFilter, "id")
+          : [];
+      let riskPriorityLevels =
+        getters.riskPriorityLevelFilter &&
+        getters.riskPriorityLevelFilter.length
+          ? _.map(getters.riskPriorityLevelFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredVehicles, "risks")),
+        (t) => {
+          let valid = true;
+          if (approaches.length > 0)
+            valid = valid && approaches.includes(t.riskApproachFilterIds);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.riskStageId);
+          if (riskPriorityLevels.length > 0)
+            valid =
+              valid && riskPriorityLevels.includes(t.riskPriorityLevelIds);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
           return valid;
         }
       );
@@ -2817,10 +3658,54 @@ export default new Vuex.Store({
           });
       });
     },
-    fetchCurrentProject({ commit, dispatch }, id) {
+    fetchProjectContracts({ commit, dispatch }, id) {
       return new Promise((resolve, reject) => {
         http
-          .get(`${API_BASE_PATH}/programs/${id}.json`)
+          .get(`${API_BASE_PATH}/program_settings/contracts?project_id=${id}`)
+          .then((res) => {
+            let contracts = [];
+            for (let c of res.data.contracts) {
+              contracts.push({ ...c, ...c });
+            }           
+            commit("setContracts", contracts);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          });
+      });
+    },
+    fetchProjectVehicles({ commit, dispatch }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .get(`${API_BASE_PATH}/program_settings/contract_vehicles?project_id=${id}`)
+          .then((res) => {
+            console.log(res)
+            let vehicles = [];
+            for (let v of res.data.contract_vehicles) {
+              vehicles.push({ ...v, ...v });
+            }           
+            commit("setVehicles", vehicles);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          });
+      });
+    },
+    fetchCurrentProject({ commit, dispatch }, id) {
+      let spaths = window.location.pathname.split("/")
+      let url = `${API_BASE_PATH}/programs/${id}.json`
+      if(spaths.length > 0){
+        if(spaths.indexOf("settings") > 0){
+          url = `${API_BASE_PATH}/program_settings/programs/${id}.json`
+        }
+      }
+      return new Promise((resolve, reject) => {
+        http
+          .get(url)
           .then((res) => {
             let facilities = [];
             for (let facility of res.data.project.facilities) {
@@ -2830,8 +3715,13 @@ export default new Vuex.Store({
             for (let c of res.data.project.contracts) {
               contracts.push({ ...c, ...c });
             }
+            let vehicles = [];
+            for (let v of res.data.project.contractVehicles) {
+              vehicles.push({ ...v, ...v });
+            }
             commit("setFacilities", facilities);
             commit("setContracts", contracts);
+            commit("setVehicles", vehicles);
             commit("setCurrentProject", res.data.project);
             commit("setFacilityGroups", res.data.project.facilityGroups);
             commit("setProjectUsers", res.data.project.users);
@@ -3050,15 +3940,50 @@ export default new Vuex.Store({
           });
       });
     },
+    // contractTaskDeleted({ commit }, { task}) {
+    //    let pCid = task.projectContractId
+      
+    //   return new Promise((resolve, reject) => {
+    //     http
+    //       .delete(
+    //         `${API_BASE_PATH}/project_contracts/${pCid}/tasks/${task.id}.json`
+    //       )
+    //       .then((res) => {          
+    //         commit("updateContractTasks", { task: task, action: "delete" });                   
+    //         resolve("Success");
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //         reject();
+    //       });
+    //   });
+    // },
 
-    taskDeleted({ commit }, task) {
+  taskDeleted({ commit }, { task, programId }) {
+      let deleteUrl = `programs/${programId}/projects/${task.facilityId}/tasks/${task.id}.json`   
+      if(task.projectContractId){
+         let pcid = task.projectContractId
+         deleteUrl = `/project_contracts/${pcid}/tasks/${task.id}.json`
+      } 
+      if(task.projectContractVehicleId){
+        let pcid = task.projectContractVehicleId
+        deleteUrl = `/project_contract_vehicles/${pcid}/tasks/${task.id}.json`
+      } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${task.projectId}/projects/${task.facilityId}/tasks/${task.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
-            commit("updateTasksHash", { task: task, action: "delete" });
+            if (task.facilityId){
+              commit("updateTasksHash", { task: task, action: "delete" });
+            } 
+            if (task.projectContractVehicleId){
+              commit("updateVehicleTasks", { task: task, action: "delete" });
+            } 
+            if (task.projectContractId)  {
+              commit("updateContractTasks", { task: task, action: "delete" });
+            }            
             resolve("Success");
           })
           .catch((err) => {
@@ -3068,17 +3993,26 @@ export default new Vuex.Store({
       });
     },
     noteDeleted({ commit }, { note, projectId, facilityId, cb }) {
+      let deleteUrl = `programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`   
+        if(note.projectContractId){
+          let pcid = note.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/notes/${note.id}.json`
+        } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
-            commit("updateNotesHash", {
-              note: note,
-              facilityId,
-              action: "delete",
-            });
+            if (note.facilityProjectId){
+              commit("updateNotesHash", {
+                note: note,
+                facilityId,
+                action: "delete",
+              });
+            } else   {
+              commit("updateContractNotes", { note: note, action: "delete" });
+            }            
             if (cb) cb();
             resolve();
           })
@@ -3088,14 +4022,31 @@ export default new Vuex.Store({
           });
       });
     },
-    issueDeleted({ commit }, issue) {
+    issueDeleted({ commit }, { issue, programId }) {
+      let deleteUrl = `programs/${programId}/projects/${issue.facilityId}/issues/${issue.id}.json`   
+        if(issue.projectContractId){
+          let pcid = issue.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/issues/${issue.id}.json`
+        } 
+        if(issue.projectContractVehicleId){
+          let pcid = issue.projectContractVehicleId
+          deleteUrl = `/project_contract_vehicles/${pcid}/issues/${issue.id}.json`
+       } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${issue.projectId}/projects/${issue.facilityId}/issues/${issue.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
-            commit("updateIssuesHash", { issue: issue, action: "delete" });
+            if (issue.facilityId){
+              commit("updateIssuesHash", { issue: issue, action: "delete" });
+            } 
+            if(issue.projectContractId)   {
+              commit("updateContractIssues", { issue: issue, action: "delete" });
+            }    
+            if (issue.projectContractVehicleId)  {
+              commit("updateVehicleIssues", {issue: issue, action: "delete" });
+            }              
             resolve("Success");
           })
           .catch((err) => {
@@ -3104,14 +4055,31 @@ export default new Vuex.Store({
           });
       });
     },
-    riskDeleted({ commit }, risk) {
-      return new Promise((resolve, reject) => {
+    riskDeleted({ commit }, { risk, programId }) {
+        let deleteUrl = `programs/${programId}/projects/${risk.facilityId}/risks/${risk.id}.json`   
+        if(risk.projectContractId){
+          let pcid = risk.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/risks/${risk.id}.json`
+        } 
+        if(risk.projectContractVehicleId){
+          let pcid = risk.projectContractVehicleId
+          deleteUrl = `/project_contract_vehicles/${pcid}/risks/${risk.id}.json`
+        } 
+       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
-            commit("updateRisksHash", { risk: risk, action: "delete" });
+            if (risk.facilityId){
+              commit("updateRisksHash", { risk: risk, action: "delete" });
+            } 
+            if (risk.projectContractVehicleId){
+              commit("updateVehicleRisks", { risk: risk, action: "delete" });
+            } 
+            if (risk.projectContractId)  {
+              commit("updateContractRisks", { risk: risk, action: "delete" });
+            }          
             resolve("Success");
           })
           .catch((err) => {

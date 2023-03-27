@@ -149,15 +149,6 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]),
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
       deleteTask() {
         this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
@@ -264,7 +255,7 @@
   .task_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
       min-width: 80vw;
       max-height: 80vh;
     .sweet-content {

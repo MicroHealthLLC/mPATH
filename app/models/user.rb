@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users
   has_many :facilities
+  has_many :facility_projects, through: :projects
   has_many :risks
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
@@ -15,10 +16,13 @@ class User < ApplicationRecord
   has_many :facility_privileges, dependent: :destroy
   has_many :project_privileges, dependent: :destroy
   has_many :contracts
-
+  has_many :role_users, dependent: :destroy
+  has_many :roles, through: :role_users
+  has_many :role_privileges, through: :roles
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create
+  after_create :provide_view_privileges
 
   enum role: [:client, :superadmin].freeze
   enum status: [:inactive, :active].freeze
@@ -42,10 +46,47 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def can_contract_data?(permission = 'read')
+    privilege = self.privilege || Privilege.new
+    if permission == 'read'
+      privilege.contract_data && privilege.contract_data.chars.include?("R")
+    elsif permission == 'write'
+      privilege.contract_data && privilege.contract_data.chars.include?("W")
+    elsif permission == 'delete'
+      privilege.contract_data && privilege.contract_data.chars.include?("D")
+    else
+      false
+    end
+  end
+
+  def can_read_contract_data?
+    can_contract_data?('read')
+  end
+
+  def can_write_contract_data?
+    can_contract_data?('write')
+  end
+
+  def can_delete_contract_data?
+    can_contract_data?('delete')
+  end
+
+  def can_access_contract_data?
+    can_read_contract_data? || can_write_contract_data? || can_delete_contract_data?
+  end
+
+  def provide_view_privileges
+    user = self
+    privilege = user.privilege || user.create_privilege
+    if !privilege.map_view.present? && !privilege.gantt_view.present? && !privilege.members.present? && !privilege.sheets_view.present? && !privilege.kanban_view.present? && !privilege.calendar_view.present?
+      privilege.update( {"map_view": ["R"], "gantt_view": ["R"],  "members": ["R"], "sheets_view": ["R"], "kanban_view": ["R"], "calendar_view": ["R"]})
+    end    
+  end
+
   def provide_program_privileges
     user = self
     return if !user.project_ids.any?
-    privilege = user.privilege
+    privilege = user.privilege || Privilege.new
     privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "settings_view", "sheets_view", "kanban_view", "calendar_view", "admin" ).clone
     privilege_attr.each do |k,v|
       privilege_attr[k] = ["R"]
@@ -53,7 +94,7 @@ class User < ApplicationRecord
     user_project_privileges = user.project_privileges
     project_to_create_privileges = []
     user.project_ids.each do |pid|
-      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      p = user_project_privileges.detect{|p1| p1.project_ids.map(&:to_i).include?(pid) }
       if !p
         project_to_create_privileges << pid
       end
@@ -77,7 +118,7 @@ class User < ApplicationRecord
       tasks: [], 
       risks: [],
       lessons: [],
-      issues: [],
+      issues: []
     }
     fph = self.facility_privileges_hash
     program_ids = fph.keys
@@ -123,9 +164,16 @@ class User < ApplicationRecord
     h
   end
   
+  def authorized_program_ids
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    self.projects.active.pluck(:id)
+  end
+
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
-    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    self.projects.active
   end
 
   def full_name
@@ -209,15 +257,16 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["sheets_view", "map_view", "settings_view", "gantt_view", "kanban_view", "calendar_view", "members"]
-    nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
+    nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
+    self.privilege ? nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys : []
   end
 
   def build_navigation_tabs_for_profile
     n = []
     allowed_navigation_tabs.each do |t|
       name = "sheet" if t == "sheets_view"
-      name = "settings" if t == "settings_view"
+      # name = "settings" if t == "settings_view"
+      next if t == "settings_view"
       name = "map" if t == "map_view"
       name = "gantt_chart" if t == "gantt_view"      
       name = "kanban" if t == "kanban_view"
@@ -232,13 +281,33 @@ class User < ApplicationRecord
   def allowed_sub_navigation_tabs(right = 'R')
     # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
     # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
-    self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (k != "facility_id") && (v.present? || v.any?) }.compact } }
-    
+    self.facility_privileges_hash.transform_values do |v| 
+      v.transform_values do |v1| 
+        v1.map do |k,v2| 
+          if (!["facility_id", "contracts"].include?(k)) && (v2.present? || v2.any?) && FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym]
+            {id: k.downcase, name: FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym].humanize, value: k.downcase}
+          end
+        end.compact
+      end
+    end
   end
 
   def build_sub_navigation_tabs_for_profile
     # allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
     allowed_sub_navigation_tabs
+  end
+
+  def build_sub_navigation_for_program_settings_tabs(right="R")
+    h = Hash.new{|h1,(k,v)| h1[k] = [] }
+    program_settings_privileges_hash.map do |k,v|
+      v.each do |k1,v1|
+        if v1.include?(right)
+          puts k1
+          h[k] << {id: k1.downcase, name: ProjectPrivilege::PRIVILEGE_MODULE[k1.to_sym], value: k1 } 
+        end
+      end
+    end
+    h
   end
 
   def top_navigation_hash
@@ -267,16 +336,20 @@ class User < ApplicationRecord
     top_navigations = allowed_navigation_tabs
     current_top_navigation_menu = nil
     url = "/"
+    navigation_menu = p.navigation_menu
+    sub_navigation_menu = p.sub_navigation_menu
+    sub_navigation_menu = FacilityPrivilege::PRIVILEGE_MODULE[sub_navigation_menu.to_sym] if sub_navigation_menu
+
     if p.program_id.present?
       url = "/programs/#{p.program_id}/sheet" # map must be
-      if p.navigation_menu.present?
+      if navigation_menu.present?
         navigtaion_present = false
-        if top_navigations.include?( top_navigation_hash.invert[p.navigation_menu] )
-          url = "/programs/#{p.program_id}/#{p.navigation_menu}"
-          current_top_navigation_menu = p.navigation_menu
+        if top_navigations.include?( top_navigation_hash.invert[navigation_menu] )
+          url = "/programs/#{p.program_id}/#{navigation_menu}"
+          current_top_navigation_menu = navigation_menu
           navigtaion_present = true
           
-          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
+          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[navigation_menu])
 
         elsif top_navigations.size > 0
           url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
@@ -288,20 +361,21 @@ class User < ApplicationRecord
         end
         
         if navigtaion_present && p.project_id.present?
-          if p.sub_navigation_menu.present?
+          if sub_navigation_menu.present?
             sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
-            sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
+            sub_navigation_privileges["analytics"] = sub_navigation_privileges["overview"] || []
+            sub_navigation_allowed = sub_navigation_privileges[sub_navigation_menu].present?
             allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
 
             if sub_navigation_allowed
 
               # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
               if current_top_navigation_menu == 'calendar_view'
-                if  ["tasks", "issues", "risks"].include?(p.sub_navigation_menu)
-                  url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+                if  ["tasks", "issues", "risks"].include?(sub_navigation_menu)
+                  url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
                 end
               else
-                url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+                url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
               end
             
             elsif allowed_sub_navigation_values.size > 0
@@ -314,7 +388,8 @@ class User < ApplicationRecord
                 url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
               end
             end
-          
+          else
+            url = "#{url}/projects/#{p.project_id}"
           end
         end
       end
@@ -421,8 +496,34 @@ class User < ApplicationRecord
     Ability.new(self).permissions
   end
 
-  def admin?
-    superadmin? || privilege.admin.include?("R")
+  def admin?(params = {})
+    if superadmin? || (privilege.admin && privilege.admin.include?("R") )
+      return true
+    elsif params[:project_id]
+      return is_program_admin?(params[:project_id])
+    else
+      return false
+    end
+  end
+
+  def is_program_admin?(program_id)
+    
+    program = self.projects.where(id: program_id).active.first
+    if program
+      # return self.role_users.includes(:role_privileges).where("role_privileges.role_type" => RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES, "role_users.project_id" => program_id).count > 0
+      program.get_program_admin_ids.include?(self.id)
+    else
+      return false
+    end
+  end
+
+  def has_program_admin_role?
+    self.roles.distinct.where(id: Role.program_admin_user_role.id).any?
+  end
+
+  def programs_with_program_admin_role
+    project_ids = self.role_users.where(role_id: Role.program_admin_user_role.id).pluck(:project_id).uniq
+    self.projects.where(id: project_ids)
   end
 
   def initialize(*args)
@@ -463,38 +564,48 @@ class User < ApplicationRecord
   def privilege_hash
     p = self.privilege
     h = {
-      map_view: p.map_view,
-      gantt_view: p.gantt_view,
-      members: p.members,
-      settings_view: p.settings_view, 
-      sheets_view: p.sheets_view,
-      kanban_view: p.kanban_view,
-      calendar_view: p.calendar_view,
+      map_view: p.map_view || "",
+      gantt_view: p.gantt_view || "",
+      members: p.members || "",
+      settings_view: p.settings_view || "", 
+      sheets_view: p.sheets_view || "",
+      kanban_view: p.kanban_view || "",
+      calendar_view: p.calendar_view || "",
+      contract_data: p.contract_data || ""
       #NOTE: hard coding because lesson will go under project level. 
       # Once front end is working with project, do remove this permission.
       # This is used in topLevelNavigation for now 
     }
   end
 
+  # NOTE: We are not using this method.
   #This will build has like this
   # {<project_id> : { <contract_id>: { <all_perissions> } }
   def contract_privileges_hash
+
+    # return {}
+
     user = self
     cp = user.contract_privileges
     
     cids = user.contract_ids #fp.pluck(:project_id)    
     
-    fph = Hash.new{|h, (k,v)| h[k] = {} }
+    fph = Hash.new{|h, (k,v)| h[k] = {authorized_contract_ids: []} }
     fph2 = Hash.new{|h, (k,v)| h[k] = [] }
 
     cp.each do |c|
       contract_ids = c.contract_ids
-      f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
+      f_permissions = c.attributes.slice("overview", "tasks", "notes", "issues", "risks", "lessons").clone.transform_values{|v| v.delete(""); v }
+      # f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
       f_permissions = f_permissions.transform_values{|v| v.delete(""); v}
 
       contract_ids.each do |fid|
         fph2[c.project_id.to_s] << fid.to_s 
         fph[c.project_id.to_s][fid] = f_permissions.merge!({"contract_id" => fid})
+        
+        if f_permissions["overview"].include?("R") || f_permissions["tasks"].include?("R") || f_permissions["notes"].include?("R") || f_permissions["issues"].include?("R") || f_permissions["risks"].include?("R") || f_permissions["lessons"].include?("R")
+          fph[c.project_id.to_s][:authorized_contract_ids] << fid
+        end
       end
     end
 
@@ -504,16 +615,26 @@ class User < ApplicationRecord
 
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
-      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+      # p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+
+      p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
       fids2.each do |ff|
-        fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+        fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], notes: p_privilege["cn_notes"], contract_id: ff }
+        # fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+        if p_privilege.present? && (p_privilege["cn_overview"].include?("R") || p_privilege["cn_tasks"].include?("R") || p_privilege["cn_notes"].include?("R") || p_privilege["cn_issues"].include?("R") || p_privilege["cn_risks"].include?("R") || p_privilege["cn_lessons"].include?("R") )
+          fph[pid][:authorized_contract_ids] << ff
+        end
       end       
     end
-    fph
+    fph.with_indifferent_access
   end
 
+  #NOTE: This method is used in convert_privilege_roles rake task.
   def project_privileges_hash
-    user = self
+
+    # return {}
+
+    user = self     
     pv = user.project_privileges
     ph = {}
     project_ids_with_privileges = []
@@ -542,12 +663,17 @@ class User < ApplicationRecord
     #   end
     # end
 
-    ph
+    ph.with_indifferent_access
+
   end
 
+  #NOTE: This method is used in convert_privilege_roles rake task.
   #This will build has like this
   # {<project_id> : { <facility_id>: { <all_perissions> } }
   def facility_privileges_hash
+
+    # return {}
+
     user = self
     fp = user.facility_privileges
     
@@ -569,7 +695,7 @@ class User < ApplicationRecord
 
     pp_hash = user.project_privileges_hash
 
-    facility_project_hash = FacilityProject.where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
+    facility_project_hash = FacilityProject.where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp1| fp1.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
 
     facility_project_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
@@ -578,19 +704,209 @@ class User < ApplicationRecord
         fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
       end       
     end
-    fph
+    fph.with_indifferent_access
   end
 
-  def authorized_contract_ids(project_ids: [])
-    if project_ids.any?
-      self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact
-    else
-      self.contract_privileges.pluck(:contract_ids).flatten.compact
+  #This will build has like this
+  # {<project_id> : { <facility_id>: { <all_perissions> } }
+  def program_settings_privileges_hash
+
+    return {}
+
+    user = self
+    pv = user.project_privileges
+    ph = {}
+    project_ids_with_privileges = []
+    pv.each do |p|
+      pids = p.project_ids.map(&:to_s)
+      project_ids_with_privileges = project_ids_with_privileges + pids
+      module_permissions = p.attributes.clone.slice("admin_groups", "admin_contracts", "admin_facilities")
+      module_permissions.transform_values{|v| v.delete(""); v}
+
+      pids.each do |pid|
+        ph[pid.to_s] = module_permissions
+      end
     end
+
+    project_ids_with_privileges = project_ids_with_privileges.compact.uniq
+    user_project_ids = user.project_ids.map(&:to_s)
+    remaining_project_ids = user_project_ids - project_ids_with_privileges
+
+    ph.with_indifferent_access
+  end
+
+  # This will generate array of hash like this
+  # e.g [{1441=>{:project_id=>9, :facility_id=>1438, "project_analytics"=>["R", "W"], "project_notes"=>["R", "W"]}}]
+  # {<facility_project_id>=>{<role types>=><privileges array>}} e.g. {1441=>{"project_notes"=>["R", "W"]}}
+  def facility_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    project_hash = {}
+    role_users = user.role_users.where.not(facility_project_id: nil)
+    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id).uniq ).group_by(&:role_id)
+    all_facility_projects = FacilityProject.where(id: role_users.map(&:facility_project_id).compact.uniq ) 
+    facility_project_hash = all_facility_projects.group_by{|fp| fp.id}.transform_values{|values| values.map{|v| [v.project_id, v.facility_id] }.flatten.compact }
+
+    role_users.each do |role_user|
+      
+      fp_id = role_user.facility_project_id
+      if  fp_id && (role_privilegs = project_role_privileges[role_user.role_id])
+        h2 = {}
+        role_privilegs.each do |rp|          
+          h2[rp.role_type] = rp.privilege&.chars
+        end
+        project_hash[fp_id] = h2
+      end
+    end
+
+    # If user has program admin role and do not have project privilege role
+    # then we will provide full privilege for project associated with that program
+    # but if user has defined project privilege role and assigned to user then 
+    # it will overwrite those privileges
+    # program_ids.each do |pid|
+    #   if has_program_setting_role?(pid)
+    #     pph = project_privileges_hash_by_role(program_ids: [pid])
+    #     all_facility_project_ids = FacilityProject.where(project_id: pid).pluck(:id)
+    #     all_facility_project_ids.each do |fp_id2|
+    #       if !project_hash[fp_id2]
+    #         h2 = {}
+    #         RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_type|          
+    #           h2[role_type] = ["R", "W", "D"]
+    #         end
+    #         project_hash[fp_id2] = h2
+    #       end
+    #     end
+    #   end
+    # end
+
+    project_hash.with_indifferent_access
+  end
+  
+  # This will generate array of hash like this
+  # {<project_contract id>=>{<role types>=><privileges array>}} e.g. {1441=>{"contract_notes"=>["R", "W"]}}
+  def privileges_hash_by_role(program_ids: [], resource_type: 'contract')
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    resource_hash = {}
+    role_users = []
+    if resource_type == 'contract'
+      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
+
+    elsif resource_type == 'contract_vehicle'
+      # We will be using Contract privileges to assign for contract vehicle. i.e. we will use same privileges values for contract vehicle as well.
+      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_vehicle_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
+    end
+
+    contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    
+    if resource_type == 'contract'
+      role_users.each do |role_user|
+        role_privilegs = contract_role_privileges[role_user.role_id]      
+        if role_user.project_contract_id && role_privilegs
+          h2 = {}
+          role_privilegs.each do |rp|          
+            h2[rp.role_type] = rp.privilege&.chars
+          end
+          resource_hash[role_user.project_contract_id] = h2
+        end
+      end
+
+    elsif resource_type == 'contract_vehicle'
+      role_users.each do |role_user|
+        role_privilegs = contract_role_privileges[role_user.role_id]      
+        if role_user.project_contract_vehicle_id && role_privilegs
+          h2 = {}
+          role_privilegs.each do |rp|          
+            h2[rp.role_type] = rp.privilege&.chars
+          end
+          resource_hash[role_user.project_contract_vehicle_id] = h2
+        end
+      end
+
+    end
+    resource_hash.with_indifferent_access
+  end
+
+  def project_privileges_hash_by_role(program_ids: [])    
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
+    role_privileges.as_json(only: [:name, :privilege, :role_type])
+  end
+
+  def has_program_setting_role?(program_id, action, role_type)
+    user = self
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_id).distinct.pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: role_type)
+    # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
+    # role_privileges.as_json(only: [:name, :privilege, :role_type])
+    has_access = false
+    role_privileges.each do |rp|
+      has_access = (rp.privilege.chars.include?(action))
+      break if has_access
+    end
+    has_access
+  end
+
+  def authorized_facility_project_ids(project_ids: [])
+    fids = self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+    if project_ids.any?
+      fids = FacilityProject.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
+  end
+
+  def program_settings_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
+    # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
+    # role_privileges.as_json(only: [:name, :privilege, :role_type])
+    hash = {}
+    role_privileges.each do |rp|
+      hash[rp.role_type] = rp.privilege.chars
+    end
+    hash.with_indifferent_access
+  end 
+
+  def authorized_contract_ids(project_ids: []) 
+    user = self
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
+    # if project_ids.any?
+    #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+    # end
+    # project_contract_ids
+
+    fids = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_id is not null").select("distinct(project_contract_id)").map(&:project_contract_id)
+    if project_ids.any?
+      fids = ProjectContract.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
+
+  end
+
+  def authorized_contract_vehicle_ids(project_ids: []) 
+    user = self
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
+    # if project_ids.any?
+    #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+    # end
+    # project_contract_ids
+
+    fids = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id is not null").select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
+    if project_ids.any?
+      fids = ProjectContractVehicle.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
+
   end
 
   def authorized_contracts(project_ids: [])
-    Contract.where(id: authorized_contract_ids(project_ids: project_ids) )
+    ProjectContract.where(id: authorized_contract_ids(project_ids: project_ids) )
   end
 
   # def has_contract_permission?(action: "read", resource: , program: nil, contract: nil, project_privileges_hash: {}, contract_privileges_hash: {} )
@@ -617,52 +933,111 @@ class User < ApplicationRecord
   # end
 
   def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
+
+    return has_permission_by_role?({action: "read", resource: resource, program: program, project: project})
+
+    # begin
+    #   program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+    #   project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+    #   action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+    #   pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+    #   result = false
+    #   short_action_code = action_code_hash[action]
+    #   if pph[program_id]
+    #     fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
+    #     if fph[program_id][project_id]
+    #       result = fph[program_id][project_id][resource].include?(short_action_code)
+    #     else
+    #       result = pph[program_id][resource].include?(short_action_code)
+    #     end        
+    #   end
+    # rescue Exception => e
+    #   puts "Exception in  User#has_permission? #{e.message}"
+    #   result = false
+    # end
+    # return result
+  end
+
+  # TODO: refactor logic to make it working for any object instead of adding new each time
+  def has_permission_by_role?(args)
+
+    program = args[:program]
+    project = args[:project]
+    action = args[:action]
+    project_contract = args[:project_contract]
+    project_contract_vehicle = args[:project_contract_vehicle]
+    resource = args[:resource]
+
     begin
-      program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
-      project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+      user = self
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+
+      if project_contract
+        project_contract = project_contract.is_a?(ProjectContract) ? project_contract : ProjectContract.find( project_contract.to_s)
+
+        program_id = project_contract.project_id.to_s
+
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_id == project_contract.id }.map(&:role_id).compact.uniq
+        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      elsif project_contract_vehicle
+        project_contract_vehicle = project_contract_vehicle.is_a?(ProjectContractVehicle) ? project_contract_vehicle : ProjectContractVehicle.find( project_contract_vehicle.to_s)
+
+        program_id = project_contract_vehicle.project_id.to_s
+
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_vehicle_id == project_contract_vehicle.id }.map(&:role_id).compact.uniq
+        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      else
+        program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+        project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+        facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}.id
+        
+        role_ids = user.role_users.select{|ru| ru.facility_project_id == facility_project_id}.map(&:role_id).compact.uniq
+        role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      end      
+      role_privileges = user.role_privileges.select{|rp| role_ids.include?(rp.role_id) && rp.role_type == role_type}.map(&:privilege).compact.flatten.join.chars.uniq
+
       result = false
       short_action_code = action_code_hash[action]
-      if pph[program_id]
-        fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
-        if fph[program_id][project_id]
-          result = fph[program_id][project_id][resource].include?(short_action_code)
-        else
-          result = pph[program_id][resource].include?(short_action_code)
-        end        
+      if short_action_code == "R"
+        result = role_privileges.include?("R") || role_privileges.include?("W") || role_privileges.include?("D")
+      else
+        result = role_privileges.include?(short_action_code)
       end
+
     rescue Exception => e
-      puts "Exception in  User#has_permission? #{e.message}"
+      puts "Exception in  User#has_permission_by_role? #{e.message}"
       result = false
     end
     return result
   end
 
-  def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
-    begin
-      contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
-      contract_id = contract.id.to_s
-      program_id = contract.project_id.to_s
-      
-      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
-      result = false
-      short_action_code = action_code_hash[action]
+  def has_contract_permission?(action: "read", resource: , project_contract_vehicle: nil, project_contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
 
-      if pph[program_id]
-        fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash[program_id]
-        if fph[contract_id]
-          result = fph[contract_id][resource].include?(short_action_code)
-        else
-          result = pph[resource].include?(short_action_code)
-        end       
-      end
-    rescue Exception => e
-      puts "Exception in  User#has_permission? #{e.message}"
-      result = false
-    end
-    return result
+    return has_permission_by_role?({action: "read", resource: resource , project_contract_vehicle: project_contract_vehicle, project_contract: project_contract})
+
+    # begin
+    #   contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
+    #   contract_id = contract.id.to_s
+    #   program_id = contract.project_id.to_s
+      
+    #   action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+    #   pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+    #   result = false
+    #   short_action_code = action_code_hash[action]
+
+    #   if pph[program_id]
+    #     fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash[program_id]
+    #     if fph[contract_id]
+    #       result = fph[contract_id][resource].include?(short_action_code)
+    #     else
+    #       result = pph[resource].include?(short_action_code)
+    #     end       
+    #   end
+    # rescue Exception => e
+    #   puts "Exception in  User#has_contract_permission? #{e.message}"
+    #   result = false
+    # end
+    # return result
   end
 
   def allowed?(view)

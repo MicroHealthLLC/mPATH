@@ -5,13 +5,14 @@
 
 import portfolioRiskForm from "./portfolio_risk_form.vue"
 import{ mapActions, mapGetters }  from 'vuex';
+
 export default {
   name: "PortfolioRiskForm",
   components: {
     portfolioRiskForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioRisk', 'portfolioRisksLoaded', 'fetchPortfolioRisks', 'fetchPortfolioUsers','fetchPortfolioCategories', 'fetchPortfolioRiskStages']),
+    ...mapActions(['fetchPortfolioRisk']),
     redirectBack() {
       this.$router.push(
         `/portfolio`
@@ -19,13 +20,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['portfolioRisk', 'portfolioRisks'])
+    ...mapGetters(['portfolioRisk'])
   },
-  beforeMount(){
+  mounted(){
     this.fetchPortfolioRisk(this.$route.params)
-    this.fetchPortfolioUsers()
-    this.fetchPortfolioCategories()
-    this.fetchPortfolioRiskStages()
   },
 };
 </script>
