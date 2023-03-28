@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:5017",
+  "baseUrl": "http://localhost:3000",
   "defaultCommandTimeout": 10000,
   "pageLoadTimeout": 90000,
   "projectId": "jrbzy4",

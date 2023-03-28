@@ -97,10 +97,11 @@ client.save(validate: false)
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 
 project_type = ProjectType.find_or_create_by(name: 'Test Project Type')
-project = Project.find_or_create_by(
+project = Project.new(
   name: 'Test Project',
   description: 'Test project description',
-  project_type_id: project_type.id
+  project_type_id: project_type.id,
+  admin_program_admins: [admin.id]
 )
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
