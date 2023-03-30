@@ -1,6 +1,6 @@
 describe('Admin Panel Risk Stages', function() {
   before(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')

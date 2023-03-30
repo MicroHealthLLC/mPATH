@@ -14,7 +14,7 @@ describe('Sheets Risks View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
   it('Open Sheets Risks in a facility', function() {
     cy.get('[data-cy=risk_sheet_index]').within(() => {

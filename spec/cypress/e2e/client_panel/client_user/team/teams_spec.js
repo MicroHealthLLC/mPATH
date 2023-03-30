@@ -10,7 +10,7 @@ describe('Teams List', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
   it('Display list of team of a project', function() {
     cy.get('[data-cy=members_view]').within(() => {

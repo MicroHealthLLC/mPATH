@@ -12,7 +12,7 @@ describe('Sheets Tasks View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
   it('Open Sheets tasks in a facility', function() {
     cy.get('[data-cy=task_sheet_index]').within(() => {

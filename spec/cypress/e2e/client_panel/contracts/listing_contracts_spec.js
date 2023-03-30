@@ -14,7 +14,7 @@ describe('Contracts View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open Contracts in a program settings', function() {

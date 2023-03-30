@@ -12,7 +12,7 @@ describe('Sheets Notes View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open Sheets notes in a facility', function() {

@@ -10,7 +10,7 @@ describe('Projects List', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Display list of projects', function() {

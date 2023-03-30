@@ -10,7 +10,7 @@ describe('Sheet Overview Page', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
   it('Open Sheet overview to display the summary of a facility', function() {
     // cy.get('[data-cy=facility_sheets]').within(() => {

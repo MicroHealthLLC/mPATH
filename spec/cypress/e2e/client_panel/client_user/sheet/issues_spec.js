@@ -12,7 +12,7 @@ describe('Sheets Issues View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open Sheets issues in a facility', function() {

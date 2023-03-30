@@ -11,7 +11,7 @@ describe('Kanban Tasks View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open kanban tasks in a facility', function() {

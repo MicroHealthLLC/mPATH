@@ -10,7 +10,7 @@ describe('Kanban Risks View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
   it('Open kanban risks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {

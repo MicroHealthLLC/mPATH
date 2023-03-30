@@ -10,7 +10,7 @@ describe('Kanban View', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open kanban view without selecting any project', function() {
@@ -42,7 +42,7 @@ describe('Client do not have permission of kanban view', function() {
   })
   
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('kanban tab not display in tab panel', function() {

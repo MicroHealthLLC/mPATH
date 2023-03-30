@@ -12,7 +12,7 @@ describe('Kanban Issues View', function() {
   })
 
   after(() => {
-    cy.clearCookies()
+    // cy.clearCookies()
   })
 
   it('Open kanban issues in a facility', function() {
