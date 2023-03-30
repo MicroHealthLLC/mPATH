@@ -99,6 +99,6 @@
   ],
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
-    "cypress": "^7.0.0"
+    "cypress": "^12.9.0"
   }
 }
