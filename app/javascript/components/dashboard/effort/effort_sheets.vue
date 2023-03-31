@@ -589,7 +589,7 @@
           // let start = this.fridayDayOfWeek;     
 
           let start = new Date("01/06/2023");     
-          let end = latestTaskDate;  
+          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);  
    
           let loop = new Date(start);
           // if (this.weekOfString !== "") {
