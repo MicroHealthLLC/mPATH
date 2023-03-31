@@ -10,8 +10,8 @@ class Checklist < ApplicationRecord
   
   after_save :calculate_planned_effort
 
-  def calculate_planned_effort
-    listable.calculate_planned_effort
+  def calculate_planned_effort 
+    listable.calculate_planned_effort if listable_type == "Task"
   end
 
   def as_json(options=nil)

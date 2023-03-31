@@ -9,7 +9,7 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :timesheets, as: :resource, dependent: :destroy
+  has_many :efforts, as: :resource, dependent: :destroy
   
   validates :text, presence: true
   validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
@@ -99,7 +99,7 @@ class Task < ApplicationRecord
   end
 
   def calculate_actual_effort
-    timesheets.sum(:hours).to_f
+    efforts.sum(:hours).to_f
   end
 
   def update_actual_effort
@@ -242,17 +242,17 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
-  def timesheet_json(options = {})
-    _timesheets = options[:timesheets] || timesheets
+  def effort_json(options = {})
+    _efforts = options[:efforts] || efforts
     _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
-    as_json.merge({ timesheet_actual_effort: strip_trailing_zero(_timesheets.sum(&:hours) ), last_update: _last_update, timesheets: _timesheets })
+    as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
   end
 
   def as_json(options= {})
     self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
       actual_effort: strip_trailing_zero(self.actual_effort) })
   end
-
+  
   def to_json(options = {})
     attach_files = []
     tf = self.task_files
