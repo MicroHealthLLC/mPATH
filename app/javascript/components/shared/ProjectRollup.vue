@@ -128,7 +128,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{ each.timesheet_actual_effort }} <br>    
+            {{ each.effort_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -151,7 +151,7 @@
         <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>        
       </td>
@@ -188,7 +188,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -243,7 +243,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{  each.timesheet_actual_effort }} <br>    
+            {{  each.effort_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -266,7 +266,7 @@
         <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -303,7 +303,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td>     
@@ -444,13 +444,13 @@
         </td>
         <!-- Col 2 -->
         <td class="updates">
-          <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
           {{ each.text }}<br>
         </span>
         </td>
          <!-- Col 3 -->
         <td class="updates">
-        <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
+        <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
          <span v-if="each.last_update && each.last_update.body"> {{ each.last_update.body }}</span>  <br>
         </span>       
         </td>
@@ -465,8 +465,8 @@
         <!-- Col 5 -->
       
        <td class="text-center">
-          <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
-          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
         </span>
          
         </td> 
@@ -495,7 +495,7 @@
       <!-- Col 5 -->  
       <td class="text-center">   
         <span class="bold">
-            {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
+            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </span>   
       </td> 
        <!-- Col 6 -->  
@@ -516,7 +516,7 @@
           <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Actual Effort Total: </th>
           <th style="width:12%; font-size: .80rem; text-align: center">  
           {{ user.facilities
-         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
+         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
          .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
           }}
           </th>
@@ -548,12 +548,12 @@
        <tr class="mb-1" v-if="task" style="line-height: 3">
         <td>{{ task.facility_name }}</td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
           <li >{{ each.text }}<br></li>       
           </ul> 
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
            <li v-if="each.last_update && each.last_update.body" >{{each.last_update.body }}<br></li>       
           </ul>
         </td>
@@ -565,14 +565,14 @@
           </ul> 
         </td>   
         <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
           <li>        
-           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
+           {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
           </li>         
           </ul> 
         </td>   
          <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
+          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
           <li>        
            {{ each.progress }} <br>
           </li>         
@@ -594,7 +594,7 @@
       </td>   
       <td> 
         <em class="bold">
-            {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
+            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
         </em>     
       </td> 
          <td>
@@ -615,7 +615,7 @@
       <!-- Col 5 -->
       <td>
         {{ user.facilities
-         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
+         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
          .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
        }}
       </td>
@@ -1629,7 +1629,7 @@ export default {
   computed: {
     ...mapGetters([
       "activeProjectUsers",
-      "programTimesheets",
+      "programEfforts",
       "contentLoaded",
       "currentProject",
       "lessonsLoaded",
@@ -1675,10 +1675,10 @@ export default {
       'programTaskEffort'
 
     ]),
-    //BEGIN TIMESHEET / EFFORT RELATED CODE
+    //BEGIN EFFORT / EFFORT RELATED CODE
     tableData() {
-      if (this.programTimesheets && this.programTimesheets.length > 0){            
-        let tasks = this.programTimesheets.filter(t => t.facilities && t.facilities.length > 0)
+      if (this.programEfforts && this.programEfforts.length > 0){            
+        let tasks = this.programEfforts.filter(t => t.facilities && t.facilities.length > 0)
         .filter((task) => {
         if (this.filteredUsers && this.filteredUsers.length > 0 ) {       
           let status = this.filteredUsers.map((t) => t.id);
@@ -1696,8 +1696,8 @@ export default {
         return moment(resultDate).format("DD MMM YY");
       },
      effortUsers(){
-      if(this.programTimesheets && this.activeProjectUsers){
-          return this.programTimesheets.filter( t => t && t.facilities.length > 0)    
+      if(this.programEfforts && this.activeProjectUsers){
+          return this.programEfforts.filter( t => t && t.facilities.length > 0)    
       }
      },
      weekOfArr(){      
@@ -1718,7 +1718,7 @@ export default {
           }     
           
       },
-    // END TIMESHEET /EFFORT RELATED CODE
+    // END EFFORT /EFFORT RELATED CODE
     toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
@@ -2357,7 +2357,7 @@ export default {
   methods: {
       ...mapActions([
         'fetchProgramLessonCounts',
-        'fetchProgramTimesheets',
+        'fetchProgramEfforts',
         'fetchDateOfWeekQuery',
         "fetchProgramEffortReport"
      ]), 
@@ -2383,7 +2383,7 @@ export default {
       // this.userTasksDialog = true;
       this.dateOfWeekFilter = this.fridayDayOfWeek
       this.reportCenterModal = true
-      this.fetchProgramTimesheets({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
+      this.fetchProgramEfforts({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
     },
     showLessToggle() {
       this.showLess = "Show Less";
@@ -2685,9 +2685,9 @@ export default {
             programId: this.$route.params.programId,
             date: this.dateOfWeekFilter.replace(/\s+/g, '-')
           }
-          this.fetchProgramTimesheets(dateObj)
+          this.fetchProgramEfforts(dateObj)
         } else  {
-          this.fetchProgramTimesheets({programId: this.$route.params.programId})
+          this.fetchProgramEfforts({programId: this.$route.params.programId})
           this.dateOfWeekFilter = "ALL WEEKS"
         }
       }, 

@@ -1,5 +1,6 @@
-class Timesheet < ApplicationRecord
+class Effort < ApplicationRecord
   include CommonUtilities
+
   belongs_to :resource, polymorphic: true
   belongs_to :user
   belongs_to :facility_project
@@ -22,6 +23,7 @@ class Timesheet < ApplicationRecord
       :resource_type
     ]
   end
+
   def as_json(options = {})
     self.to_json
   end
@@ -34,39 +36,40 @@ class Timesheet < ApplicationRecord
     resource.update_actual_effort
   end
 
-  def create_or_update_timesheet(params, user)
+  def create_or_update_effort(params, user)
 
-    timesheet_params = params.require(:timesheet).permit(Timesheet.params_to_permit)
+    effort_params = params.require(:effort).permit(Effort.params_to_permit)
 
-    timesheet = self
-    t_params = timesheet_params.dup
+    effort = self
+    t_params = effort_params.dup
 
     if t_params.has_key?(:facility_project_id)
-      timesheet.facility_project_id = FacilityProject.find(t_params[:facility_project_id]).id
+      effort.facility_project_id = FacilityProject.find(params[:facility_project_id]).id
     else
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
-      timesheet.facility_project_id = facility_project.id
+      effort.facility_project_id = facility_project.id
     end
     
     if !t_params.has_key?(:task_id)
-      timesheet.errors.add(:base, "Task must be provided to enter time.")
-      return timesheet
-    elsif !timesheet.facility_project.task_ids.include?(t_params[:task_id].to_i)
-      timesheet.errors.add(:base, "Task must be part of project.")
-      return timesheet
+      effort.errors.add(:base, "Task must be provided to enter time.")
+      return effort
+    elsif !effort.facility_project.task_ids.include?(t_params[:task_id].to_i)
+      effort.errors.add(:base, "Task must be part of project.")
+      return effort
     else
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
     end
-    timesheet.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
-    timesheet.attributes = t_params
+    effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
 
-    timesheet.transaction do
-      timesheet.save
+    effort.attributes = t_params
+
+    effort.transaction do
+      effort.save
     end
-    timesheet
-    # timesheet.reload
+    effort
+    # effort.reload
   end
 
 end
