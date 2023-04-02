@@ -1,15 +1,15 @@
 describe('Admin Panel Statuses', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openStatusAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#statuses').contains('Statuses').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openStatusAP()
   })
 
   // it('Sort Status according to Name', function() {

@@ -1,12 +1,12 @@
 describe('Projects List', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
   })
   
   after(() => {
@@ -47,7 +47,7 @@ describe('Projects List', function() {
 
 describe('No Project for client', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_client_from_project')
     cy.login('client@test.com', 'T3$tClient')

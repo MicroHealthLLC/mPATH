@@ -1,16 +1,16 @@
 describe('Admin Panel Issue Stages', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openIssueStageAP()
   })
   
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#issue_stages').contains('Issue Stages').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openIssueStageAP()
   })
 
   it('Click on Issue Stages on tabs open Issue Stage information page', function() {

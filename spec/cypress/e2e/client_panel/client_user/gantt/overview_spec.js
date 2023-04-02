@@ -1,6 +1,6 @@
 describe('Client do not have permission of Gantt view', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_gantt_view_permission')
     cy.login('client@test.com', 'T3$tClient')

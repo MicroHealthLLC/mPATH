@@ -1,16 +1,16 @@
 describe('Contracts View', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('provide_all_privileges')
+
+  })
+
+  beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('[data-cy=program_setting]').click()
     cy.get('[data-cy=contract_card]').click()
-  })
-
-  beforeEach(() => {
-    cy.preserveAllCookiesOnce()
   })
   
   after(() => {

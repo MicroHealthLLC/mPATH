@@ -1,15 +1,15 @@
 describe('Admin Panel Risk', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openRiskAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#risks').contains('Risks').click()
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openRiskAP()
   })
   it('Click on Risks on tabs open Risk information page', function() {
     cy.get('#page_title').contains('Risks').should('be.visible')

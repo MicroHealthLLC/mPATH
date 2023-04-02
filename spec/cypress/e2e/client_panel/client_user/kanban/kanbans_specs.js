@@ -1,12 +1,12 @@
 describe('Kanban View', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
   })
   
   after(() => {
@@ -31,14 +31,14 @@ describe('Kanban View', function() {
 
 describe('Client do not have permission of kanban view', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_kanban_view_permission')
-    cy.login('client@test.com', 'T3$tClient')
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
   })
   
   after(() => {

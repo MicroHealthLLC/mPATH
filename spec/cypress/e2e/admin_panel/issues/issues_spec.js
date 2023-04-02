@@ -1,15 +1,15 @@
 describe('Admin Panel Issue', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openIssueAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#issues').contains('Issues').click()
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openIssueAP()
   })
   it('Click on Issues on tabs open Issue information page', function() {
     cy.get('#page_title').contains('Issues').should('be.visible')

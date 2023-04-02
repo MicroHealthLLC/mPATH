@@ -1,15 +1,14 @@
 describe('Admin Panel Project', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProjectAP()
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#facilities').contains('Projects').click()
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProjectAP()
   })
   it('Click on Projects on tabs open Project information page', function() {
     cy.get('#page_title').contains('Project').should('be.visible')

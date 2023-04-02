@@ -1,14 +1,13 @@
 describe('Admin Panel Categories', function() {
   before(() => {
-    // // cy.clearCookies()
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openCategoryAP()
   })
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')    
+    cy.openCategoryAP()
   })
+
   it('Click on Categories on tabs open Category information page', function() {
     cy.get('#page_title').contains('Process Areas').should('be.visible')
     cy.get('#index_table_task_types').should('be.visible')

@@ -1,15 +1,14 @@
 describe('Admin Panel Issue Types', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openIssueTypeAP()
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#issue_types').contains('Issue Types').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openIssueTypeAP()
   })
   it('Click on Issue Types on tabs open Issue Type information page', function() {
     cy.get('#page_title').contains('Issue Types').should('be.visible')

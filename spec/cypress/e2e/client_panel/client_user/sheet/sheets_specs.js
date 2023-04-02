@@ -1,6 +1,6 @@
 describe('Sheet View', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openSheet()
@@ -14,7 +14,7 @@ describe('Sheet View', function() {
 
 describe('Client do not have permission of sheets view', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_sheets_view_permission')
     cy.login('client@test.com', 'T3$tClient')

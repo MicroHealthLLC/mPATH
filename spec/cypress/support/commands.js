@@ -1,5 +1,9 @@
 import '@4tw/cypress-drag-drop'
 
+Cypress.Commands.add("cleanData", () => {
+  cy.app('clean')
+  Cypress.session.clearAllSavedSessions()
+} )
 // Open first Project
 Cypress.Commands.add("openPortoflioViewer", () => {
   cy.visit('/')
@@ -15,23 +19,24 @@ Cypress.Commands.add("openProgramViewer", () => {
 
 // commands.js
 Cypress.Commands.add('preserveAllCookiesOnce', () => {
-  cy.login('admin@test.com', 'T3$tAdmin')
-
-  // cy.getCookies().then(cookies => {
-  //   const namesOfCookies = cookies.map(c => c.name)
-  //   Cypress.Cookies.preserveOnce(...namesOfCookies)
-  // })
+  cy.getCookies().then(cookies => {
+    const namesOfCookies = cookies.map(c => c.name)
+    Cypress.Cookies.preserveOnce(...namesOfCookies)
+  })
 })
 
 // Login command
 Cypress.Commands.add("login", (email, password) => {
+  console.log("Outside of session")
   cy.session([email,password], () =>{
+    console.log("Inside of session")
     cy.visit('/')
     cy.get('[data-cy=user_email]').type(email, {force: true}).should('have.value', email)
     cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
     cy.get('[data-cy=user_remember_me]').click({force: true})
     cy.get('[data-cy=submit]').click({force: true})
   })
+  cy.visit("/")
 })
 
 // Logout Command

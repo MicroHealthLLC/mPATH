@@ -1,16 +1,16 @@
 describe('Sheets Risks View', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
 
     cy.appScenario('provide_risk_privileges')
 
+
+  })
+  beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
-  })
-  beforeEach(() => {
-    cy.preserveAllCookiesOnce()
   })
   
   after(() => {

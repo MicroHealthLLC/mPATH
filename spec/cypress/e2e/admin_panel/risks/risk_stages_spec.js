@@ -1,16 +1,16 @@
 describe('Admin Panel Risk Stages', function() {
   before(() => {
     // cy.clearCookies()
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openRiskStageAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#risk_stages').contains('Risk Stages').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openRiskStageAP()
   })
 
   it('Click on Risk Stages on tabs open Risk Stage information page', function() {

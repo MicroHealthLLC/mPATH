@@ -1,13 +1,13 @@
 describe('Program Viewer ', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('provide_all_privileges')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openProgramViewer()
+
   })
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openProgramViewer()
   })
   it('Open Program viewer', function() {
     

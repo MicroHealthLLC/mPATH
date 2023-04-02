@@ -1,6 +1,6 @@
 describe('Admin Panel Setting Office 365', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openSettingAP()

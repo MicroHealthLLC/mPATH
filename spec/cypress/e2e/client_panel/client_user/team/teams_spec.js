@@ -1,12 +1,12 @@
 describe('Teams List', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openTeam()
+
   })
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openTeam()
   })
   
   after(() => {
@@ -100,7 +100,7 @@ describe('Teams List', function() {
 
 describe('Client do not have permission of members view', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_members_view_permission')
     cy.login('client@test.com', 'T3$tClient')

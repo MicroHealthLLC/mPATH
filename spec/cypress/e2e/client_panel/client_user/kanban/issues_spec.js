@@ -1,14 +1,14 @@
 describe('Kanban Issues View', function() {
 
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openKanbanIssue()
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openKanbanIssue()
   })
 
   after(() => {

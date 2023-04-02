@@ -1,15 +1,15 @@
 describe('Admin Panel Users', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openUserAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#users').contains('Users').click()
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openUserAP()
   })
 
   it('Validate program privileges', function() {

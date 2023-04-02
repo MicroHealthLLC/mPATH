@@ -1,15 +1,15 @@
 describe('Admin Panel Task', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openTaskAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#tasks').contains('Tasks').click()
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openTaskAP()
   })
   it('Click on Tasks on tabs open Task information page', function() {
     cy.get('#page_title').contains('Tasks').should('be.visible')

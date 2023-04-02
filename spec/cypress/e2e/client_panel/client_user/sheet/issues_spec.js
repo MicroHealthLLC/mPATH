@@ -1,14 +1,14 @@
 describe('Sheets Issues View', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openFacilitySheet()
-    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openFacilitySheet()
+    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
   })
   
   after(() => {

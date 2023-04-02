@@ -1,6 +1,6 @@
 describe('Map Page', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openMap()
@@ -14,7 +14,7 @@ describe('Map Page', function() {
 
 describe('Client do not have permission of map view', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
     cy.appScenario('remove_map_view_permission')
     cy.login('client@test.com', 'T3$tClient')

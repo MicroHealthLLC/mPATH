@@ -1,6 +1,6 @@
 describe('Logout', function() {
   beforeEach(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
   })
 

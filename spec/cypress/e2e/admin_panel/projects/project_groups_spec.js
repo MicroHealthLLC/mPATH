@@ -1,15 +1,15 @@
 describe('Admin Panel Project Group', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProjectGroupAP()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#facility_groups').contains('Project Groups').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProjectGroupAP()
   })
 
   // it('Sort Project Groups according to Name', function() {

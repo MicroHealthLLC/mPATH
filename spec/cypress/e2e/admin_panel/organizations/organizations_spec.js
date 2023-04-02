@@ -1,15 +1,15 @@
 describe('Admin Panel Organization', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openOrganization()
+
   })
   beforeEach(() => {
     cy.get('#tabs').within(() => {
       cy.get('#organizations').contains('Organizations').click({force: true})
     })
-    cy.preserveAllCookiesOnce()
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openOrganization()
   })
   it('Click on Organizations on tabs open Organization information page', function() {
     cy.get('#page_title').contains('Organizations').should('be.visible')

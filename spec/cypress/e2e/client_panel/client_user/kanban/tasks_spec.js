@@ -1,13 +1,13 @@
 describe('Kanban Tasks View', function() {
   before(() => {
-    cy.app('clean')
+    cy.cleanData()
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openKanbanTask()
+
   })
 
   beforeEach(() => {
-    cy.preserveAllCookiesOnce()
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openKanbanTask()
   })
   
   after(() => {
