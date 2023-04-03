@@ -4,11 +4,11 @@ describe('Admin Panel Issue Types', function() {
     cy.appScenario('basic')
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openIssueTypeAP()
     cy.get('#tabs').within(() => {
       cy.get('#issue_types').contains('Issue Types').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openIssueTypeAP()
   })
   it('Click on Issue Types on tabs open Issue Type information page', function() {
     cy.get('#page_title').contains('Issue Types').should('be.visible')

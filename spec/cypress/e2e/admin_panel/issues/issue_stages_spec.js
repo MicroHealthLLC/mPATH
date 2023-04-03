@@ -5,12 +5,11 @@ describe('Admin Panel Issue Stages', function() {
   })
   
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openIssueStageAP()
     cy.get('#tabs').within(() => {
       cy.get('#issue_stages').contains('Issue Stages').click({force: true})
     })
-
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openIssueStageAP()
   })
 
   it('Click on Issue Stages on tabs open Issue Stage information page', function() {

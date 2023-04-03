@@ -6,11 +6,11 @@ describe('Admin Panel Risk Stages', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openRiskStageAP()
     cy.get('#tabs').within(() => {
       cy.get('#risk_stages').contains('Risk Stages').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openRiskStageAP()
   })
 
   it('Click on Risk Stages on tabs open Risk Stage information page', function() {

@@ -4,11 +4,11 @@ describe('Admin Panel Project', function() {
     cy.appScenario('basic')
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProjectAP()
     cy.get('#tabs').within(() => {
       cy.get('#facilities').contains('Projects').click()
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProjectAP()
   })
   it('Click on Projects on tabs open Project information page', function() {
     cy.get('#page_title').contains('Project').should('be.visible')

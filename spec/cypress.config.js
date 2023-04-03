@@ -9,7 +9,10 @@ module.exports = defineConfig({
   video: false,
   screenshotOnRunFailure: false,
   watchForFileChanges: false,
+
   e2e: {
+    experimentalRunAllSpecs: true,
+    experimentalMemoryManagement: true,
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {

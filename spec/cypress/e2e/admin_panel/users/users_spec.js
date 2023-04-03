@@ -5,11 +5,11 @@ describe('Admin Panel Users', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openUserAP()
     cy.get('#tabs').within(() => {
       cy.get('#users').contains('Users').click()
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openUserAP()
   })
 
   it('Validate program privileges', function() {

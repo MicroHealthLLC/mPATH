@@ -6,11 +6,11 @@ describe('Admin Panel Program Types', function() {
   })
 
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProgramTypeAP()
     cy.get('#tabs').within(() => {
       cy.get('#project_types').contains('Program Types').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProgramTypeAP()
   })
 
   it('Click on Program Types on tabs open Program Type information page', function() {

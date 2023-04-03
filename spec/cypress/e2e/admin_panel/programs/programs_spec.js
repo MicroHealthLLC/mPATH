@@ -5,11 +5,11 @@ describe('Admin Panel Program', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProgramAP()
     cy.get('#tabs').within(() => {
       cy.get('#projects').contains('Programs').click()
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProgramAP()
   })
   it('Click on Programs on tabs open Program information page', function() {
     cy.get('#page_title').contains('Programs').should('be.visible')

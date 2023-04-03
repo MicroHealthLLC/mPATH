@@ -5,11 +5,11 @@ describe('Admin Panel Task', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openTaskAP()
     cy.get('#tabs').within(() => {
       cy.get('#tasks').contains('Tasks').click()
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openTaskAP()
   })
   it('Click on Tasks on tabs open Task information page', function() {
     cy.get('#page_title').contains('Tasks').should('be.visible')

@@ -428,7 +428,7 @@ DEPENDENCIES
   byebug
   cancancan
   coffee-rails (~> 4.2)
-  cypress-on-rails (~> 1.0)
+  cypress-on-rails (~> 1.13, >= 1.13.1)
   database_cleaner-active_record
   devise (= 4.8.1)
   dotenv-rails

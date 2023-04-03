@@ -5,11 +5,11 @@ describe('Admin Panel Task Stages', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openTaskStageAP()
     cy.get('#tabs').within(() => {
       cy.get('#task_stages').contains('Task Stages').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openTaskStageAP()
   })
   it('Click on Task Stages on tabs open Task Stage information page', function() {
     cy.get('#page_title').contains('Task Stages').should('be.visible')

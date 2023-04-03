@@ -5,11 +5,11 @@ describe('Admin Panel Statuses', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openStatusAP()
     cy.get('#tabs').within(() => {
       cy.get('#statuses').contains('Statuses').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openStatusAP()
   })
 
   // it('Sort Status according to Name', function() {

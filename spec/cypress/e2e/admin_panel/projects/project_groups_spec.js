@@ -5,11 +5,11 @@ describe('Admin Panel Project Group', function() {
 
   })
   beforeEach(() => {
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openProjectGroupAP()
     cy.get('#tabs').within(() => {
       cy.get('#facility_groups').contains('Project Groups').click({force: true})
     })
-    cy.login('admin@test.com', 'T3$tAdmin')
-    cy.openProjectGroupAP()
   })
 
   // it('Sort Project Groups according to Name', function() {
