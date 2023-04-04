@@ -60,6 +60,6 @@ Rails.application.configure do
   # config.action_view.annotate_rendered_view_with_filenames = true
   config.active_record.legacy_connection_handling = false
   config.active_record.verbose_query_logs = true
-  config.logger = Logger.new(STDOUT)
-  # config.log_level = :DEBUG
+  # config.logger = Logger.new(STDOUT)
+  # config.log_level = :error
 end
