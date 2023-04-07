@@ -221,29 +221,31 @@ describe('Admin Panel Issue', function() {
 
   it('Search Issue by Project', function() {
     cy.get('#index_table_issues').should('be.visible')
-    cy.get('#q_facility_project_project_id').select('Test Project')
+    // cy.get('[placeholder="Search and select Program"]').type('Test Project').should('have.value', 'Test Project')
+    cy.get('#q_facility_project_project_id').select('Test Project', {force: true})
+    
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#q_facility_project_project_id').select('Any')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 1', {force: true})
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
     // cy.get('#logout').click()
   })
 
   it('Search Issue contains Facility', function() {
-    cy.get('#q_facility_project_facility_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 1', {force: true})
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 2').should('have.value', 'Test Facility 2')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 2', {force: true})
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 3').should('have.value', 'Test Facility 3')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 3', {force: true})
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 4').should('have.value', 'Test Facility 4')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 4', {force: true})
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 

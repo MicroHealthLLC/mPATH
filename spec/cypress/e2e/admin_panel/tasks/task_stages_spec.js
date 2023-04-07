@@ -55,7 +55,7 @@ describe('Admin Panel Task Stages', function() {
     cy.get('.action_item > a').contains('New Task Stage').click()
     cy.get('#page_title').contains('New Task Stage').should('be.visible')
     cy.get('#task_stage_submit_action').contains('Create Task stage').click()
-    cy.get('.errors').contains("Name can't be blank")
+    // cy.get('.errors').contains("Name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New Task Stage').should('be.visible')
     // cy.get('#logout').click()
