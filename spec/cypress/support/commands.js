@@ -182,7 +182,7 @@ Cypress.Commands.add("openProgramTypeAP", () => {
 Cypress.Commands.add("openProjectGroupAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facility_groups').contains('Project Groups').click({force: true})
+    cy.get('#facility_groups').contains('Groups').click({force: true})
   })
 })
 

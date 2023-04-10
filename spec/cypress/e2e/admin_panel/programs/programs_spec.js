@@ -41,6 +41,9 @@ describe('Admin Panel Program', function() {
     cy.get('#project_name').type('1 New Test Project').should('have.value', '1 New Test Project')
     cy.get('#project_description').type('Test project description').should('have.value', 'Test project description')
     
+    cy.get('#project_admin_program_admins').select('admin@test.com', {force: true})
+    // cy.get("#select2-project_admin_program_admins-results > li").first().click()
+
     cy.get('#project_submit_action').contains('Create Program').click()
     cy.get('.flashes').contains('Program created Successfully')
     cy.get('#index_table_projects > tbody > tr').its('length').should('be.eq', 1)

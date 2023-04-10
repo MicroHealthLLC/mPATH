@@ -31,6 +31,66 @@ sorts.each do |sort|
   end
 end
 
+roles = [
+  {
+    role_type: "update-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "update-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "program-admin",
+    type_of: 'admin',
+    role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-users",
+    type_of: 'admin',
+    role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-contract",
+    type_of: 'admin',
+    role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+]
+
+roles.each do |role_hash|
+  Role.find_or_create_by(name: role_hash[:role_type]) do |s|
+    s.name = role_hash[:role_type]
+    s.is_portfolio = true
+    s.is_default = true
+    s.type_of = role_hash[:type_of]
+    s.role_privileges_attributes = role_hash[:role_privileges]
+  end
+end
+
 organization = Organization.find_or_create_by(title: 'Test Organization')
 admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
@@ -104,6 +164,9 @@ project = Project.new(
   admin_program_admins: [admin.id.to_s]
 )
 project.save
+
+RoleUser.new(project_id: project.id, user_id: admin.id, role_id: Role.program_admin_user_role.id ).save
+
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
 

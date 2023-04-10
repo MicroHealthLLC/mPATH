@@ -31,7 +31,7 @@ Cypress.Commands.add("facilityRollup", () => {
     // Display Facility group summary
     cy.get('[data-cy=projet_group_summary]').scrollIntoView()
     cy.get('[data-cy=projet_group_summary]').within(() => {
-      cy.contains('PROJECT GROUPS').should('be.visible')
+      cy.contains('GROUPS').should('be.visible')
       cy.contains('Test Facility Group 1').should('be.visible')
       cy.contains('Test Facility Group 2').should('be.visible')
     })

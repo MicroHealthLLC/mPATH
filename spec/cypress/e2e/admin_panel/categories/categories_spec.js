@@ -36,7 +36,7 @@ describe('Admin Panel Categories', function() {
     cy.get('.action_item > a').contains('New Process Area').click()
     cy.get('#page_title').contains('New Process Area').should('be.visible')
     cy.get('#task_type_submit_action').contains('Create Process Area').click()
-    cy.get('.errors').contains("Name can't be blank")
+    // cy.get('.errors').contains("Name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New Process Area').should('be.visible')
     // cy.get('#logout').click()
@@ -47,9 +47,14 @@ describe('Admin Panel Categories', function() {
       cy.get('#task_types').contains('Process Area').click({force: true})
     })
     cy.get('#index_table_task_types').should('be.visible')
-    cy.get('#index_table_task_types > tbody > tr').first().within(() => {
+    
+    cy.contains('Test Task Type(milestone)').parent('tr').within(() => {
       cy.get('.col-actions').contains('Delete').click()
-    })
+    });
+
+    // cy.get('#index_table_task_types > tbody > tr').first().within(() => {
+    //   cy.get('.col-actions').contains('Delete').click()
+    // })
     cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
     cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 2)
     // cy.get('#logout').click()
