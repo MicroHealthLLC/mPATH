@@ -12,6 +12,10 @@ class Effort < ApplicationRecord
   after_create :update_acutal_effort_to_task
   after_update :update_acutal_effort_to_task
 
+  scope :not_projected_hours, lambda {where(projected: false)}
+  scope :projected_hours, lambda {where(projected: true)}
+
+
   def self.params_to_permit
     [
       :hours,
@@ -64,6 +68,8 @@ class Effort < ApplicationRecord
     effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
 
     effort.attributes = t_params
+    
+    effort.projected = effort.date_of_week > Date.today
 
     effort.transaction do
       effort.save
