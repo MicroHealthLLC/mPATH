@@ -128,7 +128,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{ each.effort_actual_effort }} <br>    
+            {{ each.efforts_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -151,7 +151,7 @@
         <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
       </td> 
       <td>        
       </td>
@@ -188,7 +188,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</b>  
       
       </td> 
@@ -243,7 +243,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{  each.effort_actual_effort }} <br>    
+            {{  each.efforts_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -266,7 +266,7 @@
         <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -303,7 +303,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.effort_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
         }}</em>        
       </td> 
       <td>     
@@ -1702,20 +1702,34 @@ export default {
      },
      weekOfArr(){      
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
-         let taskDueDates = this.facilities.filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => new Date(t.dueDate))
+        if(this.facilities ){
+            let taskDueDates = this.facilities.filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => new Date(t.dueDate))
         
-          // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
-          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+        // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
+        let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+       
+        if(taskDueDates.length == 1 ){
+          console.log(taskDueDates[0])   
+          latestTaskDate = new Date(taskDueDates[0])
+        }
 
-          var start = new Date("01/06/2023");  
-          //Change this datre or Change the DTG Format on backend        
-          var end = latestTaskDate;  
-          var loop = new Date(start);
-          while(loop <= end){  
-            this.matrixDates.push(moment(loop).format("DD MMM YY"))        
-            var newDate = loop.setDate(loop.getDate() + 7);
-            loop = new Date(newDate);
-          }     
+        console.log( this.facilities )
+
+        let start = new Date("01/06/2023");  
+
+        if (latestTaskDate){
+          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);             
+        //Change this datre or Change the DTG Format on backend        
+        // let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);  
+ 
+        let loop = new Date(start);
+        while(loop <= end){  
+          this.matrixDates.push(moment(loop).format("DD MMM YY"))        
+          let newDate = loop.setDate(loop.getDate() + 7);
+          loop = new Date(newDate);
+         } 
+        }
+       }     
           
       },
     // END EFFORT /EFFORT RELATED CODE
