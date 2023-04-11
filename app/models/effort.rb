@@ -40,6 +40,10 @@ class Effort < ApplicationRecord
     resource.update_actual_effort
   end
 
+  def self.update_projected
+    Effort.where("date_of_week < ? and projected = ?", Date.today, true ).update_all(projected: false)
+  end
+
   def create_or_update_effort(params, user)
 
     effort_params = params.require(:effort).permit(Effort.params_to_permit)
