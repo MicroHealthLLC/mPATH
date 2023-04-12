@@ -15,7 +15,6 @@ class Effort < ApplicationRecord
   scope :not_projected_hours, lambda {where(projected: false)}
   scope :projected_hours, lambda {where(projected: true)}
 
-
   def self.params_to_permit
     [
       :hours,
