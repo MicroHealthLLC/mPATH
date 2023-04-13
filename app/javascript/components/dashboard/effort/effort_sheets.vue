@@ -4,7 +4,7 @@
       <div class="form-group w-100 mr-1 row">
               <!-- <label class="font-md mb-0"><i class="fa-solid fa-user-plus text-light"> </i> </label> -->
               
-              <div class="col-3">
+              <div class="col-3" >
                 <label class="font-sm mb-0">Project Task Users</label>
                 <el-select
                 v-model="addedUser"
@@ -49,31 +49,50 @@
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>      
               </div>  
-              <!-- <div class="col-3">
-                <label class="font-sm mb-0">Week Of:</label>
+              <div class="col-2 mt-1">
+                <label class="font-sm mb-0 d-flex">Week Of Begin:</label>
                 <el-select
-                v-model="weekOfString"
-                class="w-75 mr-2"
+                v-model="weekBegin"
+                class="mr-1 d-flex"
                 track-by="id"
                 value-key="id"             
                 clearable
-                placeholder="Search and select a User" 
+                placeholder="Select Week of Begin" 
                 filterable
                 >
                 <el-option
-                  v-for="item, i in weekOfFilter"
+                  v-for="item, i in weekOfBegin"
                   :value="item"
                   :key="i"
                   :label="item"
                 >
                 </el-option> 
               </el-select>
-              </div>   -->
-                 
+            </div>     
       
-
-
-              <div class="col-3 mt-4">
+            <div class="col-2 mt-1">
+     
+              <label class="font-sm mb-0 d-flex">Week Of End:</label>
+                <el-select
+                v-model="weekEnd"
+                class="mr-2 d-flex"
+                track-by="id"
+                value-key="id"             
+                clearable
+                placeholder="Select Week of End" 
+                filterable
+                >
+                <el-option
+                  v-for="item, i in weekOfEnd"
+                  :value="item"
+                  :key="i"
+                  :label="item"
+                >
+                </el-option> 
+              </el-select>           
+              </div>     
+      
+              <div class="col-2 mt-4 text-right">
                <el-switch
                 v-model="taskProgressFilter"
                 active-text="Active Tasks"
@@ -105,7 +124,6 @@
       :header-row-style="{textAlign: 'center'}"
     >
     <el-table-column
-      fixed
       prop="plannedEffort"
       label="Planned Effort"
       width="80"
@@ -113,7 +131,6 @@
     >
     </el-table-column>
     <el-table-column
-      fixed
       prop="actualEffort"
       label="Actual Effort"
       width="80"
@@ -121,7 +138,6 @@
     >
     </el-table-column>
     <el-table-column
-      fixed
       prop="text"
       label="Tasks"
       width="250"
@@ -129,12 +145,12 @@
     >
    
     </el-table-column>
-    <el-table-column label="Week of" header-align="center">
+    <el-table-column label="Week of" header-align="center"  v-if="matrixDates && matrixDates.length > 0">
       <el-table-column 
       v-for="weekof, i in matrixDates" 
       :key="i" 
       :label='weekof'
-      width="90"
+      width="120"
       >
      <template slot-scope="scope">  
       <span v-if="userTime && userTime.length > 0 &&  userTime
@@ -156,6 +172,7 @@
       </el-table-column>
     </el-table-column>
       </el-table>
+  
       <div v-else>
         You currently have no Tasks in this Project or the Task due date has passed. Please add a task or ensure the due date is a future date.
       </div>
@@ -170,11 +187,12 @@
       v-if="tableData && matrixDates && matrixDates.length > 0"
       :data="tableData"
       height="450"
+      id="crudRow"
       class="crudRow mt-4"
       :header-row-style="{textAlign: 'center'}"
     >
     <el-table-column
-      fixed
+     
       prop="plannedEffort"
       label="Planned Effort"
       width="80"
@@ -182,7 +200,7 @@
     >
     </el-table-column>
     <el-table-column
-      fixed    
+    
       prop="actualEffort"  
       label="Actual Effort"
       width="80"
@@ -207,8 +225,7 @@
     
        </template>   
     </el-table-column>
-    <el-table-column
-      fixed
+    <el-table-column    
       prop="text"
       label="Tasks"
       width="250"
@@ -222,7 +239,7 @@
         v-for="weekof, weekofIndex in matrixDates" 
         :key="weekofIndex" 
         :label='weekof'  
-        width="90">
+        width="120">
      <template slot-scope="scope">  
       <span v-if="rowId == scope.row.id">
         <span v-if="item.tasks && item.tasks.length > 0 && item.tasks.filter(t => t.id == scope.row.id )
@@ -312,7 +329,7 @@
       <el-table-column
         label="Actions"
         width="110"     
-        fixed="right"
+      
         align="center"
         >
           <template slot-scope="scope">
@@ -369,9 +386,11 @@
       return {       
         tabIndex: this.editableTabsValue,
         userTasksDialog : false, 
-        loading: true,
+        loading: false,
         tasksQuery: '',
-        weekOfString: '',
+        weekBegin: '',
+        weekEnd: '',
+        // lastDueDate: '',
         rowIndex: null, 
         updatedEffort: null, 
         taskProgressFilter: true, 
@@ -573,62 +592,131 @@
         let resultDate = new Date(date.getTime());
         resultDate.setDate(date.getDate() + (7 + friday - date.getDay()) % 7);
         return resultDate;
-      },
+      },     
       weekOfArr(){
         if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-          let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))         
+          let taskDueDates = this.facility.tasks.filter(t => t && t.dueDate !== null).map(t => new Date(t.dueDate))         
           let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]       
                         
           if(taskDueDates.length == 1 ){
-            console.log(taskDueDates[0])   
             latestTaskDate = new Date(taskDueDates[0])
           }
+          let start = this.fridayDayOfWeek       
+          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);
+          // console.log(this.facility.tasks.filter(t => t && t.dueDate !== null))   
+          // console.log(latestTaskDate)   
+          // console.log(  this.lastDueDate )   
+          let loop = new Date(start);     
+          if(this.weekBegin){        
+            start = this.weekBegin  
+            loop = new Date(start)      
+            this.matrixDates = []    
+                   
+          }
 
-      
-         
-          // let start = this.fridayDayOfWeek;     
-
-          let start = new Date("01/06/2023");     
-          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);  
-   
-          let loop = new Date(start);
-          // if (this.weekOfString !== "") {
-          //  start = new Date(this.weekOfString)
-          // }  
-          while(loop <= end){  
-            this.matrixDates.push(moment(loop).format("DD MMM YY"))
-            let newDate = loop.setDate(loop.getDate() + 7);
-            loop = new Date(newDate);
-          }            
+          if(this.weekEnd ){     
+            end = new Date(this.weekEnd)                   
+          }
+       
+          while(loop <= end){
+          this.matrixDates.push(moment(loop).format("DD MMM YY"))         
+          let newDate = loop.setDate(loop.getDate() + 7);
+          loop = new Date(newDate);
+          }        
+               
        }  
       },
+      lastDueDate(){
+        if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+          let taskDueDates = this.facility.tasks.filter(t => t && t.dueDate !== null).map(t => new Date(t.dueDate))         
+          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]       
+                        
+          if(taskDueDates.length == 1 ){
+            latestTaskDate = new Date(taskDueDates[0])
+          }
+          let start = this.fridayDayOfWeek       
+          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);
+          let loop = new Date(start);         
+          while(loop <= end){
+          this.matrixDates.push(moment(loop).format("DD MMM YY"))         
+          let newDate = loop.setDate(loop.getDate() + 7);     
+          loop = new Date(newDate);        
+          }           
+          return  this.matrixDates[this.matrixDates.length - 1] 
+       }  
+      }, 
+      // weekOfArr(){
+      //   if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+      //     let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))         
+      //     let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]       
+                        
+      //     if(taskDueDates.length == 1 ){
+      //       console.log(taskDueDates[0])   
+      //       latestTaskDate = new Date(taskDueDates[0])
+      //     }
+      //     // let start = this.fridayDayOfWeek;     
+
+      //     let start = new Date("01/06/2023");  
+      //     // let start = this.fridayDayOfWeek 
+      //     // let start = f.setDate(f.getDate() - 7);    
+      
+      //     let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);  
+      //     // let end = this.fridayDayOfWeek;  
+   
+      //     let loop = new Date(start);
+      //     // if (this.weekOfString !== "") {
+      //     //  start = new Date(this.weekOfString)
+      //     // }  
+      //     while(loop <= end){  
+      //       this.matrixDates.push(moment(loop).format("DD MMM YY"))
+      //       let newDate = loop.setDate(loop.getDate() + 7);
+      //       loop = new Date(newDate);
+      //     }            
+      //  }  
+      // },
       // WIP WeekOf filter to choose what date to focus table on 
-    //   weekOfFilter(){
-    //     if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-    //       let arr = []
-    //       let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
-    //       let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
-    //       let pastBeginDate =  new Date("11/04/2022")
-    //       let end1 = latestTaskDate;  
-    //       let loop1 = new Date(pastBeginDate);
-         
-    //       while(loop1 <= end1){        
-    //         arr.push(moment(loop1).format("DD MMM YY"))   
-    //         // console.log(arr)        
-    //         let newDate1 = loop1.setDate(loop1.getDate() + 7);
-    //         loop1 = new Date(newDate1);
-    //       }      
-    //       return arr   
-    //      } 
-       
-    //   },
+      weekOfBegin(){
+        if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+          let arr = []        
+          let pastBeginDate =  new Date("01/06/2023")
+          let end1 = this.fridayDayOfWeek;  
+          let loop1 = new Date(pastBeginDate);         
+          while(loop1 <= end1){        
+            arr.push(moment(loop1).format("DD MMM YY"))   
+            // console.log(arr)        
+            let newDate1 = loop1.setDate(loop1.getDate() + 7);
+            loop1 = new Date(newDate1);
+          }      
+          return arr   
+         }        
+      },
+      weekOfEnd(){
+        if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+          let arr = []
+          let taskDueDates = this.facility.tasks.map(t => new Date(t.dueDate))  
+          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+          let pastBeginDate =  this.fridayDayOfWeek.setDate(this.fridayDayOfWeek.getDate() + 7)
+          let end1 = latestTaskDate.setDate(latestTaskDate.getDate() + 42);  
+          let loop1 = new Date(pastBeginDate);         
+          while(loop1 <= end1){        
+            arr.push(moment(loop1).format("DD MMM YY"))   
+            // console.log(arr)        
+            let newDate1 = loop1.setDate(loop1.getDate() + 7);
+            loop1 = new Date(newDate1);
+          }      
+          return arr   
+         }        
+      },    
     
     },
     mounted() {
      this.fetchEfforts(this.$route.params)   
-     this.fetchCurrentProject(this.$route.params.programId)    
+     this.fetchCurrentProject(this.$route.params.programId) 
+     this.weekBegin = moment(this.fridayDayOfWeek).format("DD MMM YY")
+     this.weekEnd = this.lastDueDate
+    //  this.weekEnd = moment(this.lastDueDate).format("DD MMM YY")    
     },
-    watch: {
+    watch: { 
      effortStatus: {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
       
@@ -651,12 +739,12 @@
           this.fetchEfforts(this.$route.params)       
         }
       },      
-    },  
-    // matrixDates(){
-    //     if(this.weekOfFilter !== ''){
-    //         this.matrixDates = this.weekOfFilter
-    //     }        
-    //   },
+     },  
+     weekEnd(){
+      if(his.weekEnd == ''){
+        this.weekEnd = this.lastDueDate
+      }
+     },
      input(){
         if(this.input && this.input.length > 0){
           console.log('input array:')
