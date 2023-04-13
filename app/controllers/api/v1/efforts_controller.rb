@@ -24,7 +24,7 @@ class Api::V1::EffortsController < AuthenticatedController
 
   def index
 
-    all_efforts = Effort.includes([ :user, {facility_project: :facility} ]).where("efforts.facility_project_id = ? and efforts.hours > 0", @owner.id).not_projected_hours#.paginate(:page => params[:page], :per_page => 15)
+    all_efforts = Effort.includes([ :user, {facility_project: :facility} ]).where("efforts.facility_project_id = ? and efforts.hours > 0", @owner.id)#.paginate(:page => params[:page], :per_page => 15)
 
     all_users = User.where(id: all_efforts.map(&:user_id))
     all_tasks = Task.where(facility_project_id: @owner.id)
