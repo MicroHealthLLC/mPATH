@@ -99,7 +99,7 @@ class Task < ApplicationRecord
   end
 
   def calculate_actual_effort
-    efforts.sum(:hours).to_f
+    efforts.not_projected_hours.sum(:hours).to_f
   end
 
   def update_actual_effort
@@ -243,7 +243,7 @@ class Task < ApplicationRecord
   end
 
   def effort_json(options = {})
-    _efforts = options[:efforts] || efforts
+    _efforts = options[:efforts] || efforts.not_projected_hours
     _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
     as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
   end

@@ -5,13 +5,13 @@ class Api::V1::ProjectsController < AuthenticatedController
 
   def project_efforts
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
-    
+
     all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]
-      all_efforts = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and date_of_week between ? and ? and efforts.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day )
+      all_efforts = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and date_of_week between ? and ? and efforts.hours > 0", facility_project_ids, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).beginning_of_day, Date.parse(params[:date_of_week]).in_time_zone(Time.zone).end_of_day ).not_projected_hours
     else
-      all_efforts = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and efforts.hours > 0", facility_project_ids)
+      all_efforts = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and efforts.hours > 0", facility_project_ids).not_projected_hours
     end
 
     preloader = ActiveRecord::Associations::Preloader.new
