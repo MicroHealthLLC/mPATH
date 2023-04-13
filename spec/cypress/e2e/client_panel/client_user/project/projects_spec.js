@@ -2,7 +2,6 @@ describe('Projects List', function() {
   before(() => {
     cy.cleanData()
     cy.appScenario('basic')
-
   })
 
   beforeEach(() => {

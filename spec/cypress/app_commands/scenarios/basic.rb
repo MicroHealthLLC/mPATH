@@ -352,7 +352,8 @@ facility_project_1 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_1.id,
   status_id: active_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_1.facility_group.id
 )
 
 Note.find_or_create_by(
@@ -493,7 +494,8 @@ facility_project_2 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_2.id,
   status_id: inactive_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_2.facility_group.id
 )
 
 Note.find_or_create_by(
@@ -639,7 +641,8 @@ facility_project_3 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_3.id,
   status_id: active_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_3.facility_group.id
 )
 
 Note.find_or_create_by(
@@ -780,7 +783,8 @@ facility_project_4 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_4.id,
   status_id: inactive_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_4.facility_group.id
 )
 
 Note.find_or_create_by(

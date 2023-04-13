@@ -43,6 +43,7 @@ Cypress.Commands.add("login", (email, password) => {
 Cypress.Commands.add("logout", () => {
   cy.get('[data-cy=logout]').click()
   cy.contains('You need to sign in before continuing.')
+  Cypress.session.clearAllSavedSessions()
 })
 
 // Open first Project
