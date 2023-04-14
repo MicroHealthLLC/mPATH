@@ -3,6 +3,7 @@
     <div class="stick">
       <div
         @click="deselectProject"
+        data-cy="program_name"
         id="program_name"
         class="programNameDiv smallCaps pl-2 pr-3"
       >

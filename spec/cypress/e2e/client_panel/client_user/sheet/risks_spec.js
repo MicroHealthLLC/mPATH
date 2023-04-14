@@ -10,7 +10,9 @@ describe('Sheets Risks View', function() {
   beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
-    cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
+    // cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
+    cy.get('[data-cy=risks]').contains('Risks').should('be.visible').click()
+
   })
   
   after(() => {

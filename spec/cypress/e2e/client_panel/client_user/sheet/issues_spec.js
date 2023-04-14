@@ -8,7 +8,9 @@ describe('Sheets Issues View', function() {
   beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
-    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
+    // cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
+    cy.get('[data-cy=issues]').contains('Issues').should('be.visible').click()
+
   })
   
   after(() => {
