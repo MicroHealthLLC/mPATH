@@ -40,9 +40,16 @@ class Effort < ApplicationRecord
   end
 
   def self.update_projected
-    Effort.where("date_of_week < ? and projected = ?", Date.today, true ).update_all(projected: false)
+    effort_records = Effort.where("DATE(date_of_week) <= ? and projected = ?", Date.today, true )
+    resource_ids =  effort_records.pluck(:resource_id).uniq
+    effort_records.update_all(projected: false)
+    Task.where(id: resource_ids).map(&:update_actual_effort)
   end
-
+  
+  def this_week_date_range
+    (Date.today.beginning_of_week..(Date.today.beginning_of_week + 4.days) )
+  end
+  
   def create_or_update_effort(params, user)
 
     effort_params = params.require(:effort).permit(Effort.params_to_permit)
@@ -72,7 +79,7 @@ class Effort < ApplicationRecord
 
     effort.attributes = t_params
     
-    effort.projected = effort.date_of_week > Date.today
+    effort.projected = effort.date_of_week > this_week_date_range.last 
 
     effort.transaction do
       effort.save
