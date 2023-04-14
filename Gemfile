@@ -104,3 +104,5 @@ gem 'will_paginate', '3.3.1'
 gem 'jwt', '~> 1.5' #, '2.7.0'
 
 gem 'addressable', '>= 2.8.0'
+
+gem 'nokogiri', '1.14.3'
