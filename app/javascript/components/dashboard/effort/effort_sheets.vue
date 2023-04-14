@@ -4,7 +4,7 @@
       <div class="form-group w-100 mr-1 row">
               <!-- <label class="font-md mb-0"><i class="fa-solid fa-user-plus text-light"> </i> </label> -->
               
-              <div class="col-3">
+              <div class="col-3" >
                 <label class="font-sm mb-0">Project Task Users</label>
                 <el-select
                 v-model="addedUser"
@@ -49,7 +49,9 @@
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>      
               </div>  
+
               <div class="col-2 mt-1 pr-0">
+
                 <label class="font-sm mb-0 d-flex">Week Of Begin:</label>
                 <el-select
                 v-model="weekBegin"
@@ -68,9 +70,9 @@
                 >
                 </el-option> 
               </el-select>
-            </div>     
-      
+            </div>          
             <div class="col-2 mt-1 pl-0">
+
      
               <label class="font-sm mb-0 d-flex">Week Of End:</label>
                 <el-select
@@ -96,8 +98,7 @@
             
              <div class="col-1 mt-4 pl-0" >       
                 <i  v-show="!weekEnd && !weekBegin"  class="fa-sharp fa-circle-xmark" style="color:#d3d3d3" v-tooltip="`Clear Week Of filter(s)`"></i>                 
-                <i v-show="weekEnd || weekBegin" class="fa-sharp fa-light fa-circle-xmark cursor" v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i>   
-                    
+                <i v-show="weekEnd || weekBegin" class="fa-sharp fa-light fa-circle-xmark cursor" v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i>                       
               </div>     
          
               <div class="col-1 mt-4 px-0">
@@ -637,11 +638,13 @@
           // console.log(latestTaskDate)   
           // console.log(  this.lastDueDate )   
           let loop = new Date(start);     
+
           if(this.weekBegin){    
             console.log("YES")    
             start = this.weekBegin  
             loop = new Date(start)      
-            this.matrixDates = []                    
+            this.matrixDates = []                  
+
           }
 
           if(this.weekEnd ){     
@@ -742,7 +745,6 @@
     mounted() {
      this.fetchEfforts(this.$route.params)   
      this.fetchCurrentProject(this.$route.params.programId) 
-     console.log(this.fridayDayOfWeek)
     },
     watch: { 
      effortStatus: {
@@ -768,7 +770,6 @@
         }
       },      
      },  
-
      input(){
         if(this.input && this.input.length > 0){
           console.log('input array:')
