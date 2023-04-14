@@ -61,7 +61,7 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 // Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
-  cy.contains('Test Facility')
+  cy.contains('Test Facility 1')
 })
 
 // Open Teams page of a project

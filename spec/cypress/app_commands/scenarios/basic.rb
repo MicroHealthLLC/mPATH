@@ -91,6 +91,9 @@ roles.each do |role_hash|
   end
 end
 
+program_admin_role = Role.program_admin_user_role
+project_update_role = Role.where(name: "update-project").first
+
 organization = Organization.find_or_create_by(title: 'Test Organization')
 admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
@@ -165,7 +168,7 @@ project = Project.new(
 )
 project.save
 
-RoleUser.new(project_id: project.id, user_id: admin.id, role_id: Role.program_admin_user_role.id ).save
+RoleUser.new(project_id: project.id, user_id: admin.id, role_id: program_admin_role.id ).save
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
@@ -221,8 +224,6 @@ facility_1 = Facility.find_or_create_by(
   creator_id: admin.id,
   facility_group_id: facility_group_1.id
 )
-
-
 
 puts "Adding Contract types"
 contract_types = [ "Prime Contract", "Non Prime contract", "Prime vehicles and ID IQs"]
@@ -324,10 +325,6 @@ contract_client_types.each do |name|
   end
 end
 
-
-
-
-
 contract_1 = Contract.find_or_create_by(
   name: "Contarct 1",
   contract_type_id: ContractType.first.id,
@@ -355,6 +352,9 @@ facility_project_1 = FacilityProject.find_or_create_by(
   due_date: Date.today + 10.days,
   facility_group_id: facility_1.facility_group.id
 )
+
+RoleUser.new(project_id: project.id, facility_project_id: facility_project_1.id, user_id: client.id, role_id: project_update_role.id ).save
+
 
 Note.find_or_create_by(
   noteable_type: 'FacilityProject',
