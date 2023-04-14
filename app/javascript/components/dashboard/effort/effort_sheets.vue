@@ -49,7 +49,9 @@
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>      
               </div>  
-              <div class="col-2 mt-1">
+
+              <div class="col-2 mt-1 pr-0">
+
                 <label class="font-sm mb-0 d-flex">Week Of Begin:</label>
                 <el-select
                 v-model="weekBegin"
@@ -68,14 +70,14 @@
                 >
                 </el-option> 
               </el-select>
-            </div>     
-      
-            <div class="col-2 mt-1">
+            </div>          
+            <div class="col-2 mt-1 pl-0">
+
      
               <label class="font-sm mb-0 d-flex">Week Of End:</label>
                 <el-select
                 v-model="weekEnd"
-                class="mr-2 d-flex"
+                class="d-flex"
                 track-by="id"
                 value-key="id"             
                 clearable
@@ -89,10 +91,17 @@
                   :label="item"
                 >
                 </el-option> 
-              </el-select>           
+              </el-select>    
+              
+ 
+            </div>    
+            
+             <div class="col-1 mt-4 pl-0" >       
+                <i  v-show="!weekEnd && !weekBegin"  class="fa-sharp fa-circle-xmark" style="color:#d3d3d3" v-tooltip="`Clear Week Of filter(s)`"></i>                 
+                <i v-show="weekEnd || weekBegin" class="fa-sharp fa-light fa-circle-xmark cursor" v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i>                       
               </div>     
-      
-              <div class="col-2 mt-4 text-right">
+         
+              <div class="col-1 mt-4 px-0">
                <el-switch
                 v-model="taskProgressFilter"
                 active-text="Active Tasks"
@@ -431,6 +440,28 @@
       console.log("Dates ")
       console.log(this.weekOfFilter)
     },
+    clearWeekFilters(){   
+      this.matrixDates = [];
+      let taskDueDates = this.facility.tasks.filter(t => t && t.dueDate !== null).map(t => new Date(t.dueDate))         
+      let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]       
+                    
+      if(taskDueDates.length == 1 ){
+        latestTaskDate = new Date(taskDueDates[0])
+      }
+      let start = this.fridayDayOfWeek       
+      let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);
+
+      let loop = new Date(start);    
+      loop = loop.setDate(loop.getDate() - 7); 
+      this.weekBegin  = "";
+      this.weekEnd = "";   
+      
+      while(loop <= end){
+      this.matrixDates.push(moment(loop).format("DD MMM YY"))         
+      let newDate = loop.setDate(loop.getDate() + 7);
+      loop = new Date(newDate);
+      }             
+    },
     openUserTasksReport() {
       this.userTasksDialog = true;
     },
@@ -607,11 +638,13 @@
           // console.log(latestTaskDate)   
           // console.log(  this.lastDueDate )   
           let loop = new Date(start);     
-          if(this.weekBegin){        
+
+          if(this.weekBegin){    
+            console.log("YES")    
             start = this.weekBegin  
             loop = new Date(start)      
-            this.matrixDates = []    
-                   
+            this.matrixDates = []                  
+
           }
 
           if(this.weekEnd ){     
@@ -712,9 +745,6 @@
     mounted() {
      this.fetchEfforts(this.$route.params)   
      this.fetchCurrentProject(this.$route.params.programId) 
-     this.weekBegin = moment(this.fridayDayOfWeek).format("DD MMM YY")
-     this.weekEnd = this.lastDueDate
-    //  this.weekEnd = moment(this.lastDueDate).format("DD MMM YY")    
     },
     watch: { 
      effortStatus: {
@@ -740,11 +770,6 @@
         }
       },      
      },  
-     weekEnd(){
-      if(his.weekEnd == ''){
-        this.weekEnd = this.lastDueDate
-      }
-     },
      input(){
         if(this.input && this.input.length > 0){
           console.log('input array:')
@@ -786,7 +811,9 @@ input[type=number] {
   -webkit-appearance: none;
   margin: 0;
 }
-
+.cursor{
+  cursor: pointer;
+}
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
