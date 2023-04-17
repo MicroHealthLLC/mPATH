@@ -416,7 +416,8 @@
         @click="printTaskReport(userIndex,
          dateOfWeekFilter, 
          user.full_name, 
-         user.title       
+         user.title, 
+         dateOfWeekFilter  
          )"               
         class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i>  
       </button>   
@@ -552,7 +553,7 @@
       </thead>
      
     </table> 
-    <span v-if="dateOfWeekFilter == 'ALL WEEKS'">( ) Values in parenthesis represent Projected effort</span>
+    <span v-if="dateOfWeekFilter == 'ALL WEEKS'">( ) Values in parenthesis represent Projected Effort</span>
    <!-- BEGIN USER EFFORT PRINT OUT TABLE -->    
     <table class="table table-sm mt-3" 
       :id="`taskSheetsList1${userIndex}`"
@@ -565,7 +566,14 @@
           <th>Task</th>
           <th>Last Update</th> 
           <th>Planned Effort <br>for Entire Task</th>
-          <th>Actual Effort <br>for User This Week</th>
+          <th>
+            <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
+              Actual (Projected) <br> Effort for User
+            </span>              
+            <span v-else>
+            Actual Effort for<br> User This Week
+            </span>              
+          </th>
           <th>%Completion <br>(if applicable)</th>
         </tr>
   
@@ -573,37 +581,39 @@
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
 
        <tr class="mb-1" v-if="task" style="line-height: 3">
-        <td>{{ task.facility_name }}</td>
+        <td>{{ task.facility_name }}</td>       
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
-          <li >{{ each.text }}<br></li>       
-          </ul> 
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          {{ each.text }}<br>
+        </span>
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">           
-           <li v-if="each.last_update && each.last_update.body" >{{each.last_update.body }}<br></li>       
-          </ul>
+        <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+         <span v-if="each.last_update && each.last_update.body"> {{ each.last_update.body }}</span>  <br>
+        </span>  
         </td>
          <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks" :key="i">          
-          <li>        
-           {{ each.planned_effort }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.planned_effort }}<br>
+        </span>
         </td>   
+
         <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
-          <li>        
-           {{ each.efforts.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          <span>
+            {{ each.efforts.filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+          </span>
+          <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
+            ({{ each.efforts.filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})
+          </span> 
+           <br>
+          </span>    
         </td>   
+
          <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">          
-          <li>        
-           {{ each.progress }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.progress }}<br>
+        </span>
         </td>   
       </tr>  
      
@@ -616,13 +626,16 @@
        
       </td> 
       <td >
-        <em class="bold">Project's Actual Effort Total:  
+        <em class="bold">Project's Effort Total:  
         </em>
       </td>   
       <td> 
-        <em class="bold">
-            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
-        </em>     
+        <span class="bold">
+            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => !t.projected).map(t => t.hours ).map(Number).reduce((a,b) => a + (b || 0), 0) }} 
+        </span>   
+        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">          
+            ({{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})                   
+        </span>   
       </td> 
          <td>
 
@@ -636,19 +649,26 @@
       <td></td>
       <!-- Col 4 -->
       <td >
-        <em class="text-dark">Program's Actual Effort Total:
+        <em class="text-dark">Program's Effort Total:
         </em>
       </td>
       <!-- Col 5 -->
       <td>
-        {{ user.facilities
-         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
-         .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-       }}
+          {{ user.facilities
+          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
+          .flat().filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+            }}
+          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">                  
+            ({{ user.facilities
+            .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
+            .flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+            }})
+          </span>
       </td>
       <!-- Col 6 -->
       <td></td>           
-      </tr>
+      </tr>     
+ 
     </table>
    <!-- END USER EFFORT PRINT OUT TABLE -->
    
@@ -2438,7 +2458,7 @@ export default {
         link.setAttribute('download', 'Team_Members_list.xls');
         link.click();
       },
-    printTaskReport(index, week, username, title) {
+    printTaskReport(index, week, username, title, weekFilter) {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
       const html =  this.$refs.table.innerHTML       
@@ -2457,8 +2477,7 @@ export default {
           3: {cellWidth: 50, halign: 'center'},
           4: {cellWidth: 50, halign: 'center'},
           5: {cellWidth: 32.5, halign: 'center'}     
-        },
-        
+        },        
       //didDrawPage function is for standard content you want on all pages (eg, header, footer)
         didDrawPage: function (data) {
           
@@ -2474,8 +2493,10 @@ export default {
         doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
         doc.text(5, 20, `Name of Staff:  ${username} `); 
         doc.text(5, 25, `Position:  ${title} `); 
-      
-
+        console.log("TEST TEST")
+        if(weekFilter == 'ALL WEEKS'){
+          doc.text(5, 205, `( ) Values in parenthesis represent Projected Effort`); 
+        }  
         // Footer
         doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
 
