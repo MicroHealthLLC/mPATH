@@ -2,6 +2,7 @@ describe('Kanban Tasks View', function() {
   before(() => {
     cy.cleanData()
     cy.appScenario('basic')
+    cy.appScenario('provide_all_privileges')
 
   })
 
@@ -23,20 +24,6 @@ describe('Kanban Tasks View', function() {
     // cy.logout()
   })
 
-  it('Cannot open new Task form and edit/delete existing task', function() {
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_add_btn]').should('not.exist')
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=tasks]').first().click()
-      })
-    })
-    cy.get('[data-cy=task_read_only_btn]').should('be.disabled')
-    cy.get('[data-cy=task_save_btn]').should('not.exist')
-    cy.get('[data-cy=task_delete_btn]').should('not.exist')
-    cy.get('[data-cy=task_close_btn]').click({force: true})
-    // cy.logout()
-  })
-
   it('Search task by typing title', function() {
     cy.get('[data-cy=search_tasks]').clear({force: true}).type('task is not in the list').should('have.value', 'task is not in the list')
     cy.get('[data-cy=kanban]').within(() => {
@@ -54,4 +41,38 @@ describe('Kanban Tasks View', function() {
     })
     // cy.logout()
   })
+})
+
+describe('Kanban Tasks View', function() {
+  before(() => {
+    cy.cleanData()
+    cy.appScenario('basic')
+    cy.appScenario('provide_client_read_privileges')
+
+  })
+
+  beforeEach(() => {
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openKanbanTask()
+  })
+  
+  after(() => {
+    // cy.clearCookies()
+  })
+
+  it('Cannot open new Task form and edit/delete existing task', function() {
+    cy.get('[data-cy=kanban]').within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('not.exist')
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+        cy.get('[data-cy=tasks]').first().click()
+      })
+    })
+    cy.get('[data-cy=task_read_only_btn]').should('be.visible')
+    cy.get('[data-cy=task_save_btn]').should('not.exist')
+    cy.get('[data-cy=task_delete_btn]').should('not.exist')
+    cy.get('[data-cy=task_close_btn]').click({force: true})
+    // cy.logout()
+  })
+
+
 })

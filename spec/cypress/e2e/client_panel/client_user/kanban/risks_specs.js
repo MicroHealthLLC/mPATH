@@ -2,6 +2,7 @@ describe('Kanban Risks View', function() {
   before(() => {
     cy.cleanData()
     cy.appScenario('basic')
+    cy.appScenario('provide_all_privileges')
 
   })
   beforeEach(() => {
@@ -27,21 +28,7 @@ describe('Kanban Risks View', function() {
         cy.get('[data-cy=risks]').first().click()
       })
     })
-    cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
-    cy.get('[data-cy=risk_close_btn]').click({force: true})
-    // cy.logout()
-  })
-
-  it('Cannot open new Risk form and edit/delete existing risk', function() {
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_add_btn]').should('not.exist')
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=risks]').first().click()
-      })
-    })
-    cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
-    cy.get('[data-cy=risk_save_btn]').should('not.exist')
-    cy.get('[data-cy=risk_delete_btn]').should('not.exist')
+    cy.get('[data-cy=risk_read_only_btn]').should('not.exist')
     cy.get('[data-cy=risk_close_btn]').click({force: true})
     // cy.logout()
   })
@@ -63,4 +50,31 @@ describe('Kanban Risks View', function() {
     })
     // cy.logout()
   })
+})
+
+describe('Kanban Risks View with read privileges', function() {
+  before(() => {
+    cy.cleanData()
+    cy.appScenario('basic')
+    cy.appScenario('provide_client_read_privileges')
+
+  })
+  beforeEach(() => {
+    cy.login('client@test.com', 'T3$tClient')
+    cy.openKanbanRisk()
+  })
+  it('Cannot open new Risk form and edit/delete existing risk', function() {
+    cy.get('[data-cy=kanban]').within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('not.exist')
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+        cy.get('[data-cy=risks]').first().click()
+      })
+    })
+    cy.get('[data-cy=risk_read_only_btn]').should('be.visible')
+    cy.get('[data-cy=risk_save_btn]').should('not.exist')
+    cy.get('[data-cy=risk_delete_btn]').should('not.exist')
+    cy.get('[data-cy=risk_close_btn]').click({force: true})
+    // cy.logout()
+  })
+
 })

@@ -209,7 +209,8 @@ project_issue_type = ProjectIssueType.create(project_id: project.id, issue_type_
 facility_group_1 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 1',
   code: 'TFG1',
-  status: 'active'
+  status: 'active',
+  is_portfolio: true
 )
 facility_1 = Facility.find_or_create_by(
   facility_name: 'Test Facility 1',
@@ -621,7 +622,8 @@ new_lesson_2 = Lesson.find_or_create_by({
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
   code: 'TFG2',
-  status: 'active'
+  status: 'active',
+  is_portfolio: true
 )
 facility_3 = Facility.find_or_create_by(
   facility_name: 'Test Facility 3',

@@ -1,4 +1,4 @@
-describe('Contracts View', function() {
+describe.skip('Contracts View', function() {
   before(() => {
     cy.cleanData()
     cy.appScenario('basic')

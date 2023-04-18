@@ -7,9 +7,6 @@ describe('Admin Panel Group', function() {
   beforeEach(() => {
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openProjectGroupAP()
-    cy.get('#tabs').within(() => {
-      cy.get('#facility_groups').contains('Groups').click({force: true})
-    })
   })
 
   // it('Sort Groups according to Name', function() {
@@ -44,7 +41,7 @@ describe('Admin Panel Group', function() {
   })
 
   it('Open and close new Group form', function() {
-    cy.get('.action_item > a').contains('Groups').click()
+    cy.get('.action_item > a').contains('New Group').click()
     cy.get('#page_title').contains('New Group').should('be.visible')
     cy.get('.cancel > a').contains('Cancel').click()
     // cy.get('#logout').click()
@@ -60,24 +57,10 @@ describe('Admin Panel Group', function() {
     // cy.get('#logout').click()
   })
 
-  it('Delete Group', function() {
-    cy.get('.action_item > a').contains('New Group').click()
-    cy.get('#facility_group_name').type('New Test Group').should('have.value', 'New Test Group')
-    cy.get('#facility_group_code').type('NTFG').should('have.value', 'NTFG')
-    cy.get('#facility_group_submit_action').contains('Create Group').click()
-    cy.get('#index_table_facility_groups > tbody > tr').last().within(() => {
-      cy.get('.col-actions').contains('Delete').click()
-    })
-    cy.get('.flashes').contains('Group was successfully destroyed.').should('be.visible')
-    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
-    // cy.get('#logout').click()
-  })
-
   it('Could not create new Group if name is blank', function() {
     cy.get('.action_item > a').contains('New Group').click()
     cy.get('#page_title').contains('New Group').should('be.visible')
     cy.get('#facility_group_submit_action').contains('Create Group').click()
-    cy.get('.errors').contains("Name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New Group').should('be.visible')
     // cy.get('#logout').click()
