@@ -250,6 +250,23 @@
         :label='weekof'  
         width="120">
      <template slot-scope="scope">  
+
+
+        <!-- DEFAULT VIEW MODE  -->
+        <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">       
+        {{ 
+          item.tasks.filter(t => t.id == scope.row.id )
+          .map(t => t.efforts)
+          .flat()
+          .filter(t => t.date_of_week == weekof)    
+          .map(t => t.hours)[0]          
+          }}   
+      </span>   
+      <span v-if="!item.tasks && rowId !== scope.row.id">         
+      </span>  
+
+
+      <!-- IF ENTER/EDIT BUTTON IS CLICKED, THIS IS THE EDIT MODE -->
       <span v-if="rowId == scope.row.id">
         <span v-if="item.tasks && item.tasks.length > 0 && item.tasks.filter(t => t.id == scope.row.id )
           .map(t => t.efforts)
@@ -257,23 +274,8 @@
           .filter(t => t.date_of_week == weekof)    
           .map(t => t.hours)[0] ">     
           
-          <!-- IF edit dateOfWeek, display input field with v-model that will capture the  -->
-       
-          <!-- <el-input 
-            v-if="editMode"
-            type="text" 
-            :name="weekof"           
-            v-model="item.tasks.filter(t => t.id == scope.row.id )
-             .map(t => t.efforts)
-             .flat()
-             .filter(t => t.date_of_week == weekof)    
-             .map(t => t.hours)[0]          
-            "
-            :id="weekof"
-            >
-           </el-input>    -->
-
-           <i class="fa-light fa-calendar-pen text-primary "  
+    
+             <!-- <i class="fa-light fa-calendar-pen text-primary "  
            v-tooltip="`Edit Effort`" 
            @click="timeEdit(
             scope.$index, 
@@ -285,29 +287,28 @@
             .map(t => t.efforts)
             .flat()
             .filter(t => t.date_of_week == weekof)           
-            )"></i>
-           <!-- <i class="fas fa-ban" v-tooltip="`Cancel`"  v-if="columnIndex == weekofIndex" @click="cancelTimeEdit"></i> -->
-
-          <el-input 
-            v-if="editMode && weekofIndex == columnIndex"
+            )"></i>  -->
+           <el-input                 
             type="text" 
-            class="editCol"       
-            :name="weekof"           
-             v-model="editColValue"
-            :id="weekof"
+            class="editCol" 
+            v-model="item.tasks.filter(t => t.id == scope.row.id )
+             .map(t => t.efforts)
+             .flat()
+             .filter(t => t.date_of_week == weekof)    
+             .map(t => t.hours)[0]        
+            "        
             >
            </el-input>    
-
-           
-          <span v-else>
-          {{ 
-          item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.efforts)
-          .flat()
-          .filter(t => t.date_of_week == weekof)    
-          .map(t => t.hours)[0] 
-          }} 
-          </span> 
+           <!-- <el-input                 
+            type="text" 
+            :name="weekof"    
+            class="editCol" 
+            v-model="editedValues.filter(t => t.date_of_week == weekof)[0].hours     
+            "        
+            >
+           </el-input>    -->
+                   
+   <!-- CREATE MODE IF ENTER/EDIT BUTTON IS CLICKED -->
 
       </span>   
           <el-input 
@@ -319,19 +320,10 @@
             >
            </el-input>
       </span>
-      <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">       
-        {{ 
-          item.tasks.filter(t => t.id == scope.row.id )
-          .map(t => t.efforts)
-          .flat()
-          .filter(t => t.date_of_week == weekof)    
-          .map(t => t.hours)[0]          
-          }}   
-      </span>   
-      <span v-if="!item.tasks && rowId !== scope.row.id">         
-      </span>  
-      <span>
-      </span>
+
+      
+    
+    
        </template>              
       </el-table-column>
        </el-table-column>            
@@ -357,7 +349,7 @@
               v-tooltip="`Add Effort`" 
               class="bg-light px-2"    
               v-if="scope.$index !== rowIndex"       
-              @click.prevent="editToggle(scope.$index, scope.row)"> <i class="fa-light fa-calendar-pen text-primary"></i>
+              @click.prevent="editToggle(scope.$index, scope.row, rowIndex, item)"> <i class="fa-light fa-calendar-pen text-primary"></i>
               </el-button>            
               <el-button
               type="default"
@@ -410,8 +402,9 @@
         hover: false,
         rowId: null, 
         matrixDates: [],
-        // weekOfFilter: [],
+        editedValues: [],
         input: [],
+        gFunk:'',
         editMode: false, 
         newNote: false,
         myNotesCheckbox: false,
@@ -439,6 +432,10 @@
     log(e){
       console.log("Dates ")
       console.log(this.weekOfFilter)
+    },
+    handleChange(e){
+      console.log("hadnleChange:")
+      console.log(e)
     },
     clearWeekFilters(){   
       this.matrixDates = [];
@@ -471,7 +468,8 @@
       this.rowId = null;
       
       // IF EDITING, UPDATE EFFORT
-      if(this.updatedEffort && this.updatedEffort !== null){
+      if(this.editColValue){
+        //Line 502 is not the original condition
         let t = this.updatedEffort
         let effortData = {
           effortData: {
@@ -537,11 +535,18 @@
         console.log(tab)
         console.log(event)
       },
-      editToggle(index, row ){
+      editToggle(index, row, weekIndex, item ){
         this.editMode = true;
         this.editColValue = null;
         this.rowIndex = index
-        console.log(row);   
+        console.log(row);  
+        console.log(this.rowIndex); 
+        let hoursArr = item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat()
+        console.log(hoursArr.map(t => t.hours));
+        this.editedValues = hoursArr.filter(t => t.id).filter(t => this.matrixDates.includes(t.date_of_week))
+        console.log(this.editedValues);
+        console.log(item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat())
+        console.log(item.tasks.filter(t => t.id == row.id)[0].id); ;  
         this.rowId = row.id
       },
      timeEdit(index, row, weekof, weekofIndex, effort ){
@@ -574,6 +579,7 @@
         "effortsLoaded",  
         "activeProjectUsers"  
       ]),
+   
       C_taskIssueDueDateFilter: {
       get() {
         if (!this.taskIssueDueDateFilter) return this.taskIssueDueDateFilter
@@ -770,6 +776,12 @@
         }
       },      
      },  
+     editedValues(){
+      if(this.editedValues && this.editedValues.length > 0){
+        console.log('Edited Values:')
+          console.log(this.editedValues)
+      }
+     },
      input(){
         if(this.input && this.input.length > 0){
           console.log('input array:')
