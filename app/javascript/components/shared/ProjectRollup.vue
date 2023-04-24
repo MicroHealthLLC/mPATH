@@ -9,7 +9,7 @@
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
     <div class="row pt-1 pb-2">
       <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded">
+        <span v-if="contentLoaded"  :load="log(showProjectedHours)">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
@@ -84,7 +84,9 @@
         >
         </el-option> 
       </el-select>
+     
         </div>
+     
       </div> 
       <button 
         @click="printProgramEffortReport(currentProject.name, programDateOfWeekFilter)"   
@@ -374,6 +376,21 @@
       </el-select> 
 
         </div>
+        <div class="col-2 px-0 mt4">
+        <el-switch
+        v-model="showProjectedHours"
+        active-text="Show Projected Effort"
+       >
+      </el-switch>
+
+      <!-- 
+       WHERE PROJECTED HOURS TOGGLE NEEDS TO BE APPLIED 
+      Values asterisk in bottom left, 
+      Columnd header
+      Print Out
+      Watch property
+      In row logic -->
+      </div>
 
       </div> 
      
@@ -417,7 +434,8 @@
          dateOfWeekFilter, 
          user.full_name, 
          user.title, 
-         dateOfWeekFilter  
+         dateOfWeekFilter, 
+         showProjectedHours
          )"               
         class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i>  
       </button>   
@@ -437,7 +455,7 @@
           <th style="width:22%; font-size: 1rem">Last Update</th>
           <th style="width:14%; font-size: 1rem">Planned Effort <br>for Entire Task</th>
           <th  style="width:12%; font-size: 1rem"> 
-            <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
+            <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
               Actual (Projected) <br> Effort for User
             </span>              
             <span v-else>
@@ -478,10 +496,11 @@
        <td class="text-center">
           <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
           <span>
-            {{ each.efforts.filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+            {{ each.efforts.filter(t => !t.projected || fridayDayOfWeek == t.date_of_week ).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
           </span>
-          <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
-            ({{ each.efforts.filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})
+
+          <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+            ({{ each.efforts.filter(t => t.projected && fridayDayOfWeek !== t.date_of_week).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})
           </span>     
           <br>
         </span>
@@ -513,10 +532,25 @@
       <!-- Col 5 -->  
       <td class="text-center">   
         <span class="bold">
-            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => !t.projected).map(t => t.hours ).map(Number).reduce((a,b) => a + (b || 0), 0) }} 
+            {{ task.tasks
+              .filter(t => t.efforts.length > 0)
+              .map(t => t.efforts)
+              .flat()
+              .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+              .map(t => t.hours )
+              .map(Number)
+              .reduce((a,b) => a + (b || 0), 0) 
+              }} 
         </span>   
-        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">          
-            ({{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})                   
+        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">          
+            ({{ task.tasks
+              .filter(t => t.efforts.length > 0)
+              .map(t => t.efforts).flat()
+              .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+              .map(t => t.hours)
+              .map(Number)
+              .reduce((a,b) => a + (b || 0), 0) 
+              }})                   
         </span>   
       </td> 
        <!-- Col 6 -->  
@@ -537,13 +571,23 @@
           <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Effort Total: </th>
           <th style="width:12%; font-size: .80rem; text-align: center">          
             {{ user.facilities
-          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
-          .flat().filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts)
+            .flat().filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
             }}
-          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">                  
+          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">                  
             ({{ user.facilities
-            .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
-            .flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
             }})
           </span>
           </th>
@@ -553,7 +597,7 @@
       </thead>
      
     </table> 
-    <span v-if="dateOfWeekFilter == 'ALL WEEKS'">( ) Values in parenthesis represent Projected Effort</span>
+    <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">( ) Values in parenthesis represent Projected Effort</span>
    <!-- BEGIN USER EFFORT PRINT OUT TABLE -->    
     <table class="table table-sm mt-3" 
       :id="`taskSheetsList1${userIndex}`"
@@ -567,7 +611,7 @@
           <th>Last Update</th> 
           <th>Planned Effort <br>for Entire Task</th>
           <th>
-            <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
+            <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
               Actual (Projected) <br> Effort for User
             </span>              
             <span v-else>
@@ -601,10 +645,20 @@
         <td class="text-center">
           <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
           <span>
-            {{ each.efforts.filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+            {{ each.efforts
+            .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }}
           </span>
-          <span v-if="dateOfWeekFilter == 'ALL WEEKS'">
-            ({{ each.efforts.filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})
+          <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+            ({{ each.efforts
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }})
           </span> 
            <br>
           </span>    
@@ -631,10 +685,24 @@
       </td>   
       <td> 
         <span class="bold">
-            {{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => !t.projected).map(t => t.hours ).map(Number).reduce((a,b) => a + (b || 0), 0) }} 
+            {{ task.tasks
+            .filter(t => t.efforts.length > 0)
+            .map(t => t.efforts).flat()
+            .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours )
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }} 
         </span>   
-        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">          
-            ({{ task.tasks.filter(t => t.efforts.length > 0).map(t => t.efforts).flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})                   
+        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">          
+            ({{ task.tasks
+            .filter(t => t.efforts.length > 0)
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)            
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }})                   
         </span>   
       </td> 
          <td>
@@ -655,13 +723,23 @@
       <!-- Col 5 -->
       <td>
           {{ user.facilities
-          .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
-          .flat().filter(t => !t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-            }}
-          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS'">                  
+          .filter(t => t.tasks && t.tasks.length > 0)
+          .map(t => t.tasks).flat()
+          .map(t => t.efforts).flat()
+          .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+          .map(t => t.hours)
+          .map(Number)
+          .reduce((a,b) => a + (b || 0), 0)            
+          }}
+          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">                  
             ({{ user.facilities
-            .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.efforts)
-            .flat().filter(t => t.projected).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
             }})
           </span>
       </td>
@@ -1665,6 +1743,7 @@ export default {
       reportCenterModal: false, 
       dialog2Visible: false,  
       // d: new Printd(),
+      showProjectedHours: true, 
       projectedHoursDisplay: false,
       userTasksDialog: false,    
       matrixDates: [],
@@ -2458,7 +2537,7 @@ export default {
         link.setAttribute('download', 'Team_Members_list.xls');
         link.click();
       },
-    printTaskReport(index, week, username, title, weekFilter) {
+    printTaskReport(index, week, username, title, weekFilter, showProjEffort) {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
       const html =  this.$refs.table.innerHTML       
@@ -2494,7 +2573,7 @@ export default {
         doc.text(5, 20, `Name of Staff:  ${username} `); 
         doc.text(5, 25, `Position:  ${title} `); 
         console.log("TEST TEST")
-        if(weekFilter == 'ALL WEEKS'){
+        if(weekFilter == 'ALL WEEKS' && showProjEffort){
           doc.text(5, 205, `( ) Values in parenthesis represent Projected Effort`); 
         }  
         // Footer
