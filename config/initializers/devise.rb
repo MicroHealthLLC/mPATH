@@ -281,13 +281,13 @@ Devise.setup do |config|
     scope: 'openid profile email',
     fields: ['profile', 'email'],
     client_options: {
-      site:          'https://dev-90706919.okta.com',
-      authorize_url: 'https://dev-90706919.okta.com/oauth2/default/v1/authorize',
-      token_url:     'https://dev-90706919.okta.com/oauth2/default/v1/token',
-      user_info_url: 'https://dev-90706919.okta.com/oauth2/default/v1/userinfo',
+      site:          ENV['OKTA_SITE'],
+      authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authoriz",
+      token_url:     "#{ENV['OKTA_SITE']}/oauth2/default/v1/token",
+      user_info_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/userinfo",
       :audience => ENV['OKTA_CLIENT_ID']
     },
-    :issuer => 'https://dev-90706919.okta.com/oauth2/default',
+    :issuer => "#{ENV['OKTA_SITE']}/oauth2/default",
     :strategy_class => OmniAuth::Strategies::Okta
   )
 
