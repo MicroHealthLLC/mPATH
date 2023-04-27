@@ -8,13 +8,13 @@
           =image_tag "microhealthllc.png"
 
       .social-box.pb-5.p-4
-        / .row.mg-btm
-        /   .col-md-12
-        /     = button_to("Continue with Google", omniauth_authorize_path(resource_name, :google_oauth2), method: :post, class: "btn btn-danger btn-block")
+        .row.mg-btm
+          .col-md-12
+            = button_to("Continue with Google", omniauth_authorize_path(resource_name, :google_oauth2), method: :post, class: "btn btn-danger btn-block")
 
-        / .row
-        /   .col-md-12
-        /     = button_to("Continue with Office 365", omniauth_authorize_path(resource_name, :microsoft_office365), method: :post, class: "btn btn-info btn-block")
+        .row
+          .col-md-12
+            = button_to("Continue with Office 365", omniauth_authorize_path(resource_name, :microsoft_office365), method: :post, class: "btn btn-info btn-block")
 
         .row
           .col-md-12

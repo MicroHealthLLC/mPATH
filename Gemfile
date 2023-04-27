@@ -42,7 +42,8 @@ gem 'activeadmin_addons'
 gem 'cancancan'
 gem 'geocoder'
 # gem "omniauth-office365", github: 'jcarbo/omniauth-office365'
-# gem 'omniauth-google-oauth2'
+gem 'omniauth-microsoft-office365', '~> 0.0.8', path: "lib/omniauth-microsoft-office365"
+gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
 gem 'omniauth-okta', '~> 2.0'
 gem 'dotenv-rails'
 gem 'strip_attributes'
@@ -97,6 +98,6 @@ gem 'oj'
 
 gem 'will_paginate', '~> 3.1.0'
 
-gem 'jwt'
+gem 'jwt', '~> 2.7'
 
 gem "addressable", ">= 2.8.0"
