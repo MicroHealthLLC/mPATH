@@ -1,6 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  def microsoft_office365
+  def office365
     check_omniauth_auth
   end
 

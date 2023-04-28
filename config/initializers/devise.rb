@@ -272,7 +272,6 @@ Devise.setup do |config|
     },
     provider_ignores_state: true, prompt: :select_account)
 
-
   config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
   # config.omniauth(:oktaoauth, ENV['OKTA_CLIENT_ID'], ENV['OKTA_CLIENT_SECRET'], :scope => 'openid profile email', :fields => ['profile', 'email'], :client_options => {site: ENV['OKTA_ISSUER'], authorize_url: ENV['OKTA_ISSUER'] + "/v1/authorize", token_url: ENV['OKTA_ISSUER'] + "/v1/token"}, :redirect_uri => ENV["OKTA_REDIRECT_URI"], :auth_server_id => ENV['OKTA_AUTH_SERVER_ID'], :issuer => ENV['OKTA_ISSUER'], :strategy_class => OmniAuth::Strategies::Oktaoauth)

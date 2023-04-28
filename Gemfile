@@ -43,7 +43,6 @@ gem 'geocoder'
 gem 'jquery-rails'
 gem 'slim-rails'
 gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
-# gem 'omniauth-microsoft-office365', '~> 0.0.8', path: "lib/omniauth-microsoft-office365"
 # gem 'omniauth-oktaoauth'
 
 gem 'dotenv-rails'
@@ -104,3 +103,5 @@ gem 'will_paginate', '3.3.1'
 gem 'jwt', '~> 2.7'
 
 gem 'addressable', '>= 2.8.0'
+
+gem 'nokogiri', '1.14.3'
