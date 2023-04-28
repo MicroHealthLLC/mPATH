@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require Rails.root.join("lib", "omniauth", "strategies","microsoft_office365.rb")
+require 'omniauth-okta'
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
@@ -273,21 +274,19 @@ Devise.setup do |config|
 
   config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
     
-  require 'omniauth-okta'
-
   config.omniauth(:okta,
     ENV['OKTA_CLIENT_ID'],
     ENV['OKTA_CLIENT_SECRET'],
     scope: 'openid profile email',
     fields: ['profile', 'email'],
     client_options: {
-      site:          "https://dev-90706919.okta.com",
-      authorize_url: "https://dev-90706919.okta.com/oauth2/default/v1/authoriz",
-      token_url:     "https://dev-90706919.okta.com/oauth2/default/v1/token",
-      user_info_url: "https://dev-90706919.okta.com/oauth2/default/v1/userinfo",
+      site:          ENV['OKTA_SITE'],
+      authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authoriz",
+      token_url:     "#{ENV['OKTA_SITE']}/oauth2/default/v1/token",
+      user_info_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/userinfo",
       :audience => ENV['OKTA_CLIENT_ID']
     },
-    :issuer => "https://dev-90706919.okta.com/oauth2/default",
+    :issuer => "#{ENV['OKTA_SITE']}/oauth2/default",
     :strategy_class => OmniAuth::Strategies::Okta
   )
 
