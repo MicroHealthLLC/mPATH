@@ -1,5 +1,5 @@
 # require 'omniauth-oktaoauth'
-
+require Rails.root.join("lib", "omniauth", "strategies","microsoft_office365.rb")
 # frozen_string_literal: true
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
