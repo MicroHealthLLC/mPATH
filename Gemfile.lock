@@ -13,6 +13,13 @@ GIT
       railties (>= 6.1, < 7.1)
       ransack (>= 2.1.1, < 4)
 
+PATH
+  remote: lib/omniauth-microsoft-office365
+  specs:
+    omniauth-microsoft-office365 (0.0.8)
+      omniauth
+      omniauth-oauth2
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -238,9 +245,6 @@ GEM
       oauth2 (~> 2.0.6)
       omniauth (~> 2.0)
       omniauth-oauth2 (~> 1.8.0)
-    omniauth-microsoft-office365 (0.0.8)
-      omniauth
-      omniauth-oauth2
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
@@ -427,7 +431,7 @@ DEPENDENCIES
   geocoder
   jbuilder (~> 2.5)
   jquery-rails
-  jwt (= 2.7.0)
+  jwt (~> 2.7)
   ledermann-rails-settings
   letter_opener
   listen
@@ -436,8 +440,8 @@ DEPENDENCIES
   mysql2
   oj
   omniauth-google-oauth2 (~> 1.1, >= 1.1.1)
-  omniauth-microsoft-office365 (~> 0.0.8)
-  omniauth-rails_csrf_protection (~> 1.0, >= 1.0.1)
+  omniauth-microsoft-office365 (~> 0.0.8)!
+  omniauth-rails_csrf_protection (~> 1.0)
   pry (~> 0.13.1)
   pry-byebug
   pry-rails
