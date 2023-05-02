@@ -284,10 +284,10 @@ Devise.setup do |config|
       authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authoriz",
       token_url:     "#{ENV['OKTA_SITE']}/oauth2/default/v1/token",
       user_info_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/userinfo",
-      :audience => ENV['OKTA_CLIENT_ID']
+      audience: ENV['OKTA_CLIENT_ID']
     },
-    :issuer => "#{ENV['OKTA_SITE']}/oauth2/default",
-    :strategy_class => OmniAuth::Strategies::Okta
+    issuer: "#{ENV['OKTA_SITE']}/oauth2/default",
+    strategy_class: OmniAuth::Strategies::Okta
   )
 
   # ==> Warden configuration

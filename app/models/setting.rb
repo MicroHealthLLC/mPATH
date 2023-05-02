@@ -39,6 +39,22 @@ class Setting < ApplicationRecord
         },
         provider_ignores_state: true)
 
+      config.omniauth(:okta,
+        ENV['OKTA_CLIENT_ID'],
+        ENV['OKTA_CLIENT_SECRET'],
+        scope: 'openid profile email',
+        fields: ['profile', 'email'],
+        client_options: {
+          site:          ENV['OKTA_SITE'],
+          authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authoriz",
+          token_url:     "#{ENV['OKTA_SITE']}/oauth2/default/v1/token",
+          user_info_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/userinfo",
+          audience: ENV['OKTA_CLIENT_ID']
+        },
+        issuer: "#{ENV['OKTA_SITE']}/oauth2/default",
+        strategy_class: OmniAuth::Strategies::Okta
+      )
+
       config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
     end
   end
