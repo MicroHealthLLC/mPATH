@@ -159,7 +159,7 @@ ul {
 .disabled {
   opacity: 0.6;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -373,7 +373,7 @@ a:hover {
     font-size: 13px;
   }
   .over-six-steps {
-    /deep/.el-step__title {
+    ::v-deep.el-step__title {
       font-size: 11px !important;
       line-height: 23px !important;
       margin: 5px !important;
@@ -598,7 +598,7 @@ a:hover {
     background: #fff;
   }
   .overSixSteps {
-    /deep/.el-step__title {
+    ::v-deep.el-step__title {
       font-size: 11px !important;
       line-height: 23px !important;
       margin: 5px !important;
@@ -1489,7 +1489,7 @@ a:hover {
     border: solid 1.5px #1D336F;
   }
   
-  /deep/.el-progress-circle {
+  ::v-deep.el-progress-circle {
     height: 90px;
     width: 90px;
   }
@@ -1567,18 +1567,18 @@ a:hover {
     margin-right: 0px !important;
     width: 100%;
   }
-  .issueUser-select /deep/ .multiselect,
-  .taskUser-select /deep/ .multiselect,
-  .actions-select /deep/ .multiselect,
-  .issetype-select /deep/ .multiselect,
-  .issueSeverity-select /deep/ .multiselect,
-  .issueProgress-select /deep/ .multiselect,
-  .taskProgress-select /deep/ .multiselect,
-  .tasktype-select /deep/ .multiselect,
-  .progress-ranges-select /deep/ .multiselect,
-  .facilityname-search /deep/ .multiselect,
-  .facilitygroup-select /deep/ .multiselect,
-  .status-select /deep/ .multiselect {
+  .issueUser-select ::v-deep .multiselect,
+  .taskUser-select ::v-deep .multiselect,
+  .actions-select ::v-deep .multiselect,
+  .issetype-select ::v-deep .multiselect,
+  .issueSeverity-select ::v-deep .multiselect,
+  .issueProgress-select ::v-deep .multiselect,
+  .taskProgress-select ::v-deep .multiselect,
+  .tasktype-select ::v-deep .multiselect,
+  .progress-ranges-select ::v-deep .multiselect,
+  .facilityname-search ::v-deep .multiselect,
+  .facilitygroup-select ::v-deep .multiselect,
+  .status-select ::v-deep .multiselect {
     font-size: 14px;
     width: 280px;
     .multiselect__placeholder {
@@ -1605,7 +1605,7 @@ a:hover {
   .duedate-range {
     display: flex;
   }
-  .project-select /deep/ .multiselect {
+  .project-select ::v-deep .multiselect {
     font-size: 14px;
     width: 280px;
     .multiselect__tags {
@@ -1628,7 +1628,7 @@ a:hover {
       content: unset;
     }
   }
-  .taskissueoverdue-select /deep/ .multiselect {
+  .taskissueoverdue-select ::v-deep .multiselect {
     font-size: 14px;
     width: 280px;
     .multiselect__tags {
@@ -1664,7 +1664,7 @@ a:hover {
   .filter-header {
     height: 30px;
   }
-  .duedate-range, .portFilter /deep/ .mx-datepicker-range {
+  .duedate-range, .portFilter ::v-deep .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -1685,7 +1685,7 @@ a:hover {
       }
     }
   }
-  .notedate-range, .portFilter /deep/ .mx-datepicker-range {
+  .notedate-range, .portFilter ::v-deep .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -1706,7 +1706,7 @@ a:hover {
       }
     }
   }
-  .taskissueduedate-range, .portFilter /deep/ .mx-datepicker-range {
+  .taskissueduedate-range, .portFilter ::v-deep .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -1810,13 +1810,13 @@ a:hover {
     -moz-appearance: textfield;
     height: 34px;
   }
-  /deep/.mx-input {
+  ::v-deep.mx-input {
     font-size: .75rem !important;
   }
   .clear-btn {
     text-decoration-line: none !important;
   }
-  /deep/.multiselect__tags {   
+  ::v-deep.multiselect__tags {   
       padding: 4px 40px 0 8px;
       border-radius: 5px;
       border: 1px solid #ced4da;
@@ -1830,11 +1830,11 @@ a:hover {
      text-decoration-line: none !important;
   }
   
-  /deep/.vue-treeselect__multi-value-item {
+  ::v-deep.vue-treeselect__multi-value-item {
     background-color: #41b883;
     color: white;
   }
-  /deep/.vue-treeselect__value-remove {
+  ::v-deep.vue-treeselect__value-remove {
     color: rgba(56, 56, 56, 0.5);
   }
 }
@@ -2501,7 +2501,7 @@ td.col-issue_type, td.col-issue_severity {
 }
 
 /* vue date-picker style */
-.vdp-datepicker /deep/ {
+.vdp-datepicker ::v-deep {
   .form-control[readonly] {
     background-color: unset;
   }
@@ -2533,8 +2533,8 @@ td.col-issue_type, td.col-issue_severity {
   z-index: 10000001 !important;
 }
 
-.simple-select /deep/ .multiselect,
-.user-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect,
+.user-select ::v-deep .multiselect {
 
   .multiselect__tags {
     min-height: 25px;
@@ -2571,14 +2571,14 @@ td.col-issue_type, td.col-issue_severity {
     margin-bottom: 4px;
   }
 }
-body /deep/ .multiselect--disabled {
+body ::v-deep .multiselect--disabled {
   background: transparent;
   .multiselect__select {
     background: transparent;
   }
 }
-body /deep/ .mx-input:disabled,
-body /deep/ .mx-input.disabled {
+body ::v-deep .mx-input:disabled,
+body ::v-deep .mx-input.disabled {
   background-color: transparent;
   color: #555;
 }
@@ -2755,7 +2755,7 @@ th {
   margin: 6px;
 }
 
-.paginated-updates /deep/ .paginate-links {
+.paginated-updates ::v-deep .paginate-links {
   float: right;
   display: flex;
   align-items: center;
@@ -2781,7 +2781,7 @@ th {
     cursor: no-drop;
   }
 }
-.enum-select /deep/ .multiselect {
+.enum-select ::v-deep .multiselect {
   width: 140px;
 }
 .has-search .form-control {

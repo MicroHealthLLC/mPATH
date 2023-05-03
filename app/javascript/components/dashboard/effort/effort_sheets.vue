@@ -792,7 +792,7 @@
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
       0 3px 3px rgba(56, 56, 56, 0.23);
 }
-/deep/ #tab-0 {
+::v-deep #tab-0 {
   background-color: rgb(234, 234, 185) !important;
 }
 input::-webkit-outer-spin-button,
@@ -820,10 +820,10 @@ input[type=number] {
 }
   width: 70% !important;
 }
-/deep/ .el-table .cell {
+::v-deep .el-table .cell {
     word-break: break-word;
 }
-/deep/ .el-table thead {
+::v-deep .el-table thead {
     color: #383838 !important;
 }
   #search-addon {

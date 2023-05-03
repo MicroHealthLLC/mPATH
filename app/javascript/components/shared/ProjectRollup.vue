@@ -2995,21 +2995,21 @@ i.grow:hover{
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
 
-/deep/.el-dialog, /deep/.el-dialog--center  {
+::v-deep.el-dialog, ::v-deep.el-dialog--center  {
     width: 90% ;
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
     padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
   }
 
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
   display: none;
 }
 .programName {
@@ -3030,7 +3030,7 @@ em.text-dark{
 .bold{
   font-weight: 700;
 }
-/deep/.el-progress-circle {
+::v-deep.el-progress-circle {
   height: 118px !important;
   width: 118px !important;
 }
@@ -3081,7 +3081,7 @@ em.text-dark{
 
 .lessonsCard {
 .sheetHeight {
-  /deep/.el-card__body{
+  ::v-deep.el-card__body{
     min-height: 184px;
   }
  }
@@ -3089,7 +3089,7 @@ em.text-dark{
 
 .lessonsCard {
 .mapHeight {
-  /deep/.el-card__body{
+  ::v-deep.el-card__body{
     min-height: 175px;
   }
  }
