@@ -23,6 +23,7 @@
             !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'vehicle'
           "
           class="badge mx-0"
+          :data-cy="cTab.key"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
         >
@@ -38,6 +39,7 @@
             !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'contract'
           "
           class="badge mx-0"
+          :data-cy="cTab.key"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
         >

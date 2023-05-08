@@ -22,6 +22,6 @@ import './notes'
 import './facility'
 import './filter'
 import './risks'
-
+import './contract'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
