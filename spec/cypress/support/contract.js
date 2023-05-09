@@ -3,7 +3,7 @@
 Cypress.Commands.add("openContract", () => {
   cy.openProject()
   cy.contains('Test Contract 1')
-}))
+})
 
 Cypress.Commands.add("contractUnderGroup", () => {
   cy.get('[data-cy=facility_groups]').first().click()
