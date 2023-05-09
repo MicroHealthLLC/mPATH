@@ -8,7 +8,7 @@ describe('Sheets Tasks View', function() {
   })
   beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
-    cy.openFacilitySheet()
+    cy.openContractSheet()
     // cy.get('#customtabs > :nth-child(2)').contains('Tasks').should('be.visible').click()
     cy.get('[data-cy=tasks]').contains('Tasks').should('be.visible').click()
   })

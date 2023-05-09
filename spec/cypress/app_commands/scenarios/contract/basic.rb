@@ -285,3 +285,108 @@ new_task_1 = Task.find_or_create_by(
 )
 
 TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: client.id)
+
+issue_type = IssueType.first 
+issue_severity = IssueSeverity.first
+issue_stage = IssueStage.first
+
+test_issue_2 = Issue.find_or_create_by(
+  title: 'Test Issue 2',
+  description: 'Test issue 2 description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
+  issue_stage_id: issue_stage.id,
+  issue_severity_id: issue_severity.id,
+  project_contract_id: project_contract_1.id,
+  watched: true,
+  progress: 40
+)
+IssueUser.find_or_create_by(issue_id: test_issue_2.id, user_id: admin.id)
+IssueUser.find_or_create_by(issue_id: test_issue_2.id, user_id: client.id)
+
+new_issue_2 = Issue.find_or_create_by(
+  title: 'New Issue 2',
+  description: 'New issue 2 description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
+  issue_stage_id: issue_stage.id,
+  issue_severity_id: issue_severity.id,
+  project_contract_id: project_contract_1.id,
+  watched: true,
+  progress: 10
+)
+
+IssueUser.find_or_create_by(issue_id: new_issue_2.id, user_id: client.id)
+
+risk_stage = RiskStage.first
+
+test_risk_2 = Risk.find_or_create_by(
+  text: 'Test Risk 2',
+  risk_description: 'Test Risk 2 description',
+  impact_description: 'Test Risk 2 impact description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  risk_approach_description: 'Test Risk 2 approach description',
+  probability_description: 'Test Risk 2 probability description',
+  user_id: admin.id,
+  project_contract_id: project_contract_1.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true,
+  progress: 10
+)
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: client.id)
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: admin.id)
+
+RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
+
+new_risk_2 = Risk.find_or_create_by(
+  text: 'New Risk 2',
+  risk_description: 'New Risk 2 description',
+  impact_description: 'New Risk 2 impact description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  risk_approach_description: 'New Risk 2 approach description',
+  probability_description: 'New Risk 2 probability description',
+  user_id: client.id,
+  project_contract_id: project_contract_1.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true,
+  progress: 70
+)
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: client.id)
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: admin.id)
+
+RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
+
+new_lesson_2 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 2",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>project_contract_1.id,
+  "reportable"=>false,
+  "draft"=>false
+})
+
+facility_group_2 = FacilityGroup.find_or_create_by(
+  name: 'Test Facility Group 2',
+  code: 'TFG2',
+  status: 'active',
+  is_portfolio: true
+)
+
+Note.find_or_create_by(
+  noteable_type: 'ProjectContract',
+  noteable_id: project_contract_1.id,
+  user_id: client.id,
+  body: 'Test Note 3'
+)

@@ -7,7 +7,7 @@ describe('Sheets Notes View', function() {
 
   beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
-    cy.openFacilitySheet()
+    cy.openContractSheet()
     // cy.get('#customtabs > :nth-child(6)').contains('Notes').should('be.visible').click()
     cy.get('[data-cy=notes]').contains('Notes').should('be.visible').click()
 

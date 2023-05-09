@@ -7,7 +7,7 @@ describe('Sheets Risks View', function() {
   })
   beforeEach(() => {
     cy.login('client@test.com', 'T3$tClient')
-    cy.openFacilitySheet()
+    cy.openContractSheet()
     // cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
     cy.get('[data-cy=risks]').contains('Risks').should('be.visible').click()
 
@@ -93,13 +93,15 @@ describe('Sheets Risks View', function() {
   })
 
   it('Sort risk according to Due Date', function() {
+    cy.reload()
     var dayjs = require('dayjs')
-    const due_date = dayjs().add(5, 'day').format('DD MMM YYYY')
-    cy.get('[data-cy=risk_row]').first().contains(due_date).should('be.visible')
+    const new_due_date = dayjs().add(5, 'day').format('DD MMM YYYY')
+    const test_due_date = dayjs().add(6, 'day').format('DD MMM YYYY')
+    cy.get('[data-cy=risk_row]').first().contains(test_due_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(5)').click()
-    cy.get('[data-cy=risk_row]').first().contains(due_date).should('be.visible')
+    cy.get('[data-cy=risk_row]').first().contains(new_due_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(5)').click()
-    cy.get('[data-cy=risk_row]').first().contains(due_date).should('be.visible')
+    cy.get('[data-cy=risk_row]').first().contains(test_due_date).should('be.visible')
     // cy.logout()
   })
 

@@ -3,18 +3,17 @@
 Cypress.Commands.add("openContract", () => {
   cy.openProject()
   cy.contains('Test Contract 1')
-})
-
-
-// Open sheet of a facility
-Cypress.Commands.add("openFacilitySheet", () => {
-  cy.openSheet()
-  cy.contractUnderGroup()
-})
+}))
 
 Cypress.Commands.add("contractUnderGroup", () => {
   cy.get('[data-cy=facility_groups]').first().click()
   cy.get('[data-cy=contracts]').first().click({force: true})
+})
+
+// Open sheet of a facility
+Cypress.Commands.add("openContractSheet", () => {
+  cy.openSheet()
+  cy.contractUnderGroup()
 })
 
 // check facility rollup
