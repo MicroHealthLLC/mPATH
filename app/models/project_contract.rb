@@ -11,6 +11,7 @@ class ProjectContract < ApplicationRecord
   has_many :risks, dependent: :destroy
   has_many :lessons, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
+  has_many :role_users, as: :resource
 
   before_create :assign_default_facility_group 
   before_update :assign_default_facility_group 

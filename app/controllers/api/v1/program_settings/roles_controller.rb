@@ -61,6 +61,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     errors = []
     role_users.each do |role_user_hash|
       role_user  = role.role_users.new(role_user_hash)
+      role_user.update_resource_field
       if !role_user.check_only_single_admin_role
         if !role_user.save
           errors += role_user.errors.full_messages

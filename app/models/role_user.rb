@@ -2,6 +2,13 @@ class RoleUser < ApplicationRecord
   belongs_to :user
   belongs_to :role
   has_many :role_privileges, through: :role
+
+  belongs_to :resource, polymorphic: true
+  
+  # TODO: remove fields: facility_project_id, project_contract_id, project_contract_vehicle_id
+  # and add virtual attribute so that we can set resource_id and resource_type
+  attr_accessor :_facility_project_id, :_project_contract_id, :_project_contract_vehicle_id
+
   belongs_to :facility_project, optional: true
   belongs_to :project_contract, optional: true
   belongs_to :project_contract_vehicle, optional: true
@@ -12,6 +19,21 @@ class RoleUser < ApplicationRecord
   validates :project_id, presence: true
   
   after_create :create_program_admin_record
+
+  def update_resource_field
+    ru = self
+    if ru.facility_project_id
+      ru.resource_type = "FacilityProject"
+      ru.resource_id = ru.facility_project_id
+    elsif ru.project_contract_id
+      ru.resource_type = "ProjectContract"
+      ru.resource_id = ru.project_contract_id
+    elsif ru.project_contract_vehicle_id
+      ru.resource_type = "ProjectContractVehicle"
+      ru.resource_id = ru.project_contract_vehicle_id
+    end
+    # ru.save(validate: false)
+  end
 
   def create_program_admin_record
     admin_role = Role.program_admin_user_role
