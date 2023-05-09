@@ -551,7 +551,7 @@
     components: {
       RiskSheets
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         risks: Object,
@@ -646,13 +646,17 @@
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/new`
         );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/risks/new`
+        );
         } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
         );
       },
       showAllToggle() {
-         this.setToggleRACI(!this.getToggleRACI)  ;
+         this.setToggleRACI(!this.getToggleRACI);
       },
       editRisk(risk) {
         this.$emit('show-hide', risk)
@@ -768,9 +772,14 @@
       contractRoute(){
          return this.$route.params.contractId
       },
+      vehicleRoute(){
+         return this.$route.params.vehicleId
+      },
       object(){
       if (this.$route.params.contractId) {
         return this.contract
+       } else if (this.$route.params.vehicleId) {
+        return this.vehicle
        } else return this.facility
       },
       filteredRisks() {
@@ -1239,7 +1248,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

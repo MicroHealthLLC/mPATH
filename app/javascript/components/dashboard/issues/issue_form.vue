@@ -17,28 +17,36 @@
     <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="!this.facility && !this.vehicle && this.contract" style="font-size: 16px; margin-right: 2.5px"
               >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="!this.facility && !this.contract && this.vehicle" style="font-size: 16px; margin-right: 2.5px"
+              >  <i class="far fa-car mb-1 text-info"></i>
+            </span>
+            <span v-if="this.facility && !this.contract && !this.vehicle" style="font-size: 16px; margin-right: 2.5px"
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && (!contract || facility)">
+               <span  v-if="!isProgramView && !contract && !vehicle">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="this.$route.params.projectId && issue && !isProgramView">
+               <!-- <span v-if="this.$route.params.projectId && issue && !isProgramView">
                  {{  issue.facilityName }}
-                </span>
+                </span> -->
                 <span v-if="isProgramView && issue">
-                    {{ issue.facilityName || issue.contractNickname }}
+                    {{ issue.facilityName || issue.contractNickname || issue.vehicleNickname }}
                </span>
               </router-link>
               <router-link :to="backToContract">
                 <span v-if="contract  && !isProgramView">
                   {{ contract.name }}
                 </span>
-              </router-link>    
+              </router-link>
+              <router-link :to="backToVehicle">
+                <span v-if="vehicle  && !isProgramView">
+                  {{ vehicle.name }}
+                </span>
+              </router-link>     
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -1310,7 +1318,7 @@ import { API_BASE_PATH } from '../../../mixins/utils'
 
 export default {
   name: "IssueForm",
-  props: ["facility", "issue", "task", "fixedStage", "contract"],
+  props: ["facility", "issue", "task", "fixedStage", "contract", "vehicle"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1398,7 +1406,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateIssuesHash", "updateContractIssues"]),
+    ...mapMutations(["setTaskForManager", "updateIssuesHash", "updateContractIssues", "updateVehicleIssues"]),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues"]),
     INITIAL_ISSUE_STATE() {
       return {
@@ -1428,6 +1436,9 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    log(e) {
+      console.log(e)
     },
     _isallowed(salut) {
       return this.checkPrivileges("issue_form", salut, this.$route)
@@ -1839,6 +1850,9 @@ export default {
          if (this.contract) {
             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues.json`
          }
+         if (this.vehicle) {
+            url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/issues.json`
+         }
         let method = "POST";
         let callback = "issue-created";
 
@@ -1852,6 +1866,10 @@ export default {
         if (this.issue && this.issue.id && this.issue.projectContractId) {
           method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
+        }
+        if (this.issue && this.issue.id && this.issue.projectContractVehicleId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/issues/${this.issue.id}.json`;
         }
        axios({
           method: method,
@@ -1871,6 +1889,8 @@ export default {
             this.loadIssue(responseIssue);
           if (this.$route.params.contractId){
                this.updateContractIssues({ issue: responseIssue });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleIssues({ issue: responseIssue });
             } else {
              this.updateIssuesHash({ issue: responseIssue });
             }  
@@ -1900,6 +1920,9 @@ export default {
               );
             }  else if (this.isProgramView && this.issue.projectContractId) { this.$router.push(
               `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/issue/${response.data.issue.id}`
+            );
+            } else if (this.isProgramView && this.issue.projectContractVehicleId) { this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/issue/${response.data.issue.id}`
             );
             } else this.$router.push(
               `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/issue/${response.data.issue.id}`
@@ -2061,7 +2084,7 @@ export default {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
             1
-          );
+          ).then(this.saveIssue());
         });
     },
     addRelatedIssues(issues) {
@@ -2076,7 +2099,7 @@ export default {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
             1
-          );
+          ).then(this.saveIssue());
         });
     },
     addRelatedRisks(risks) {
@@ -2091,7 +2114,7 @@ export default {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
             1
-          );
+          ).then(this.saveIssue());
         });
     },
   },
@@ -2121,11 +2144,15 @@ export default {
    object(){
        if(this.$route.params.contractId){
         return 'contracts'
+       } else if(this.$route.params.vehicleId){
+        return 'vehicles'
        } else return 'projects'
     },
    route(){
        if(this.$route.params.contractId){
         return this.$route.params.contractId
+       } else if(this.$route.params.vehicleId){
+        return this.$route.params.vehicleId
        } else return this.$route.params.projectId
     },
     readyToSave() {
@@ -2139,7 +2166,7 @@ export default {
       );
     },
     isProgramView() {
-      return this.$route.name.includes("ProgramIssueForm") || this.$route.name.includes("ProgramContractIssueForm") ;
+      return this.$route.name.includes("ProgramIssueForm") || this.$route.name.includes("ProgramContractIssueForm") || this.$route.name.includes("ProgramVehicleIssueForm") ;
     },
     isMapView() {
       return this.$route.name === "MapIssueForm";
@@ -2196,9 +2223,11 @@ export default {
         return "kanban";
       }
     },
-  backToIssues() {
-     if (this.$route.params.contractId && !this.isProgramView) {
+    backToIssues() {
+      if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/issues`
+      } else if (this.$route.params.vehicleId && !this.isProgramView) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/issues`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`
@@ -2207,15 +2236,20 @@ export default {
       }
     },
     backToContract(){
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
-     },
+      return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+    },
+    backToVehicle(){
+      return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/`;
+    },
     projectNameLink() {
-      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        if (!this.contract && !this.vehicle && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
           return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
         } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
           return `/programs/${this.$route.params.programId}/${this.tab}`;
         } else if (this.$route.params.contractId) {
           return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+        } else if (this.$route.params.vehicleId) {
+          return `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/analytics`;
         } else {
           return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
         }
@@ -2368,8 +2402,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.issues-form {
-}
 .line {
   border-top: solid .25px lightgray;
 }
@@ -2405,21 +2437,21 @@ ul {
   cursor: all-scroll;
 }
 // Checklist feature UI
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   float: right;
   margin-top: -38px;
   font: small;
   color: #d9534f !important;
   border-bottom: none !important;
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
 .paperLook {
@@ -2572,7 +2604,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

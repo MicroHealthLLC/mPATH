@@ -16,18 +16,21 @@
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="!this.facility && this.contract && !this.vehicle" style="font-size: 16px; margin-right: 2.5px"
               >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+            <span v-if="this.facility && !this.contract && !this.vehicle" style="font-size: 16px; margin-right: 2.5px"
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
+            <span v-if="!this.facility && !this.contract && this.vehicle" style="font-size: 16px; margin-right: 2.5px"
+              > <i class="fal fa-car mb-1 text-info"></i>
+            </span>
             <router-link :to="projectNameLink">
-              <span v-if="!isProgramView && (!contract || facility)">
+              <span v-if="!isProgramView && (!vehicle && !contract || facility)">
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && task">
-                    {{ task.facilityName || task.contractNickname }}
+                    {{ task.facilityName || task.contractNickname || task.vehicleNickname }}
                </span>
                  <!-- <span v-if="!isProgramView && (contract || !facility)">
                     {{ task }}
@@ -38,7 +41,13 @@
                         contract.name
                   }}
               </span>
-            </router-link>     
+            </router-link>
+            <router-link :to="backToVehicle">
+              <span v-if="vehicle && !isProgramView">{{
+                        vehicle.name
+                  }}
+              </span>
+            </router-link>   
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -558,6 +567,7 @@
                 class="informed w-100"
                 track-by="id"
                 value-key="id"
+                :load="log(informedTaskUsers)"
                 multiple
                 clearable
                 filterable
@@ -1300,7 +1310,7 @@ const moment = extendMoment(Moment);
 
 export default {
   name: "TaskForm",
-  props: ["facility", "task", "title", "fixedStage", "contract"],
+  props: ["facility", "task", "title", "fixedStage", "contract", "vehicle"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1396,7 +1406,7 @@ export default {
     this._ismounted = true;
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateTasksHash", "updateContractTasks"]),
+    ...mapMutations(["setTaskForManager", "updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
     INITIAL_TASK_STATE() {
       return {
@@ -1426,7 +1436,11 @@ export default {
         notes: [],
       };
     },
+    log(e){
+      console.log(e)
+    },
     _isallowed(salut) {
+      // console.log(this.$route)
       return this.checkPrivileges("task_form", salut, this.$route)
     },
     selectedStage(item) {
@@ -1809,6 +1823,10 @@ export default {
         if (this.contract) {
             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks.json`
          }
+         if (this.vehicle) {
+          console.log(this.vehicle)
+            url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks.json`
+         }
         let method = "POST";
         let callback = "task-created";
 
@@ -1822,7 +1840,10 @@ export default {
         if (this.task && this.task.id && this.task.projectContractId) {
            method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
-        
+        }
+        if (this.task && this.task.id && this.task.projectContractVehicleId) {
+           method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
 
@@ -1844,10 +1865,14 @@ export default {
             //this.$emit(callback, responseTask)
             if (this.$route.params.contractId){
                this.updateContractTasks({ task: responseTask });
-            } else {
-                this.updateTasksHash({ task: responseTask });
+            }
+            if (this.$route.params.vehicleId){
+               this.updateVehicleTasks({ task: responseTask });
+            }
+            if (this.$route.params.projectId) {
+               this.updateTasksHash({ task: responseTask });
             }           
-            if (response.status === 200) {
+            if  (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
                 type: "success",
@@ -1875,9 +1900,10 @@ export default {
              }  else if (this.isProgramView && this.task.projectContractId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
               );
-              } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`
+              } else if (this.isProgramView && this.task.projectContractVehicleId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
               );
+              } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);
           })
           .catch((err) => {
             alert(err.response.data.error);
@@ -2042,7 +2068,7 @@ export default {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
             1
-          );
+          ).then(this.saveTask());
         });
     },
     addRelatedIssues(issues) {
@@ -2057,7 +2083,7 @@ export default {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
             1
-          );
+          ).then(this.saveTask());
         });
     },
     addRelatedRisks(risks) {
@@ -2072,7 +2098,7 @@ export default {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
             1
-          );
+          ).then(this.saveTask());
         });
     },
   },
@@ -2084,6 +2110,7 @@ export default {
       "currentRisks",
       "currentTasks",
       "getContracts",
+      "getVehicles",
       "facilities",
       'contentLoaded',
       "facilityGroups",
@@ -2101,16 +2128,22 @@ export default {
     id(){
       if(this.$route.params.contractId){
         return this.$route.params.contractId
+      } else if(this.$route.params.vehicleId){
+        return this.$route.params.vehicleId
       } else return this.$route.params.projectId
     },
     route(){
       if(this.$route.params.projectId){
         return this.$route.params.projectId
+      } else if(this.$route.params.vehicleId){
+        return this.$route.params.vehicleId
       } else return this.$route.params.contractId
     },
     object(){
        if(this.$route.params.contractId){
         return 'contracts'
+       } else if(this.$route.params.vehicleId){
+        return 'vehicles'
        } else return 'projects'
     },
     readyToSave() {
@@ -2123,7 +2156,7 @@ export default {
       );
     },
    isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") || this.$route.name.includes("ProgramContractTaskForm")        
+      return this.$route.name.includes("ProgramTaskForm") || this.$route.name.includes("ProgramContractTaskForm") || this.$route.name.includes("ProgramVehicleTaskForm")      
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2183,6 +2216,8 @@ export default {
     backToTasks() {
       if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
+      } else if (this.$route.params.vehicleId && !this.isProgramView) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
@@ -2193,13 +2228,18 @@ export default {
     backToContract(){
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
+     backToVehicle(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/`;
+     },
     projectNameLink() {
-     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+     if (!this.contract && !this.vehicle && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       } else if (this.$route.params.contractId) {
         return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else if (this.$route.params.vehicleId) {
+        return `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/analytics`;
       } else  {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
@@ -2278,6 +2318,7 @@ export default {
     informedTaskUsers: {
       handler: function(value) {
         if (value) {
+          console.log(value)
           this.DV_task.informedUserIds = _.uniq(_.map(value, "id"));
         } else {
           this.DV_task.informedUserIds = [];
@@ -2475,7 +2516,7 @@ ul {
 .disabled {
   opacity: 0.6;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -2512,21 +2553,21 @@ ul {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -36px;
@@ -2576,7 +2617,7 @@ input.file-link {
 }
 
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

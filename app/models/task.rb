@@ -19,8 +19,8 @@ class Task < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|task| task.project_contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|task| task.project_contract_id.nil?}
+  # after_save :update_owner_record
+  # after_destroy :update_owner_record
 
   attr_accessor :file_links
 
@@ -107,17 +107,6 @@ class Task < ApplicationRecord
     ]
   end
 
-  def update_facility_project
-    if self.previous_changes.keys.include?("progress")
-      fp = facility_project
-      p = fp.project
-
-      fp.update_progress
-      p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progress)
-    end
-  end
-
   def lesson_json
     {
       id: id,
@@ -147,7 +136,7 @@ class Task < ApplicationRecord
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+      is_overdue = ( progress < 100 && due_date && (due_date < Date.today) )
     end
 
     in_progress = false
@@ -230,7 +219,7 @@ class Task < ApplicationRecord
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
-      sub_risk_ids: sub_risks.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     }
 
     self.attributes.merge!(merge_h)
@@ -303,7 +292,7 @@ class Task < ApplicationRecord
     progress_status = "completed" if progress >= 100
 
     is_overdue = false
-    is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
+    is_overdue = progress < 100 && due_date && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
     closed = false
    
@@ -392,6 +381,7 @@ class Task < ApplicationRecord
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -527,7 +517,11 @@ class Task < ApplicationRecord
     if link_files && link_files.any?
       link_files.each do |f|
         next if !f.present? || f.nil? || !valid_url?(f)
-        self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+        filename = f
+        if f.length > URL_FILENAME_LENGTH
+          filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+        end        
+        self.task_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
       end
     end
   end

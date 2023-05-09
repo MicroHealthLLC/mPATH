@@ -1,3 +1,5 @@
+# Earlier we had is_default attribute to project_facility_group table
+# but since default group will be one per program, we have added field to facility_groups table
 class FacilityGroup < SortableRecord
   # default_scope {order(FacilityGroup.order_humanize)}
   has_many :facilities
@@ -13,10 +15,6 @@ class FacilityGroup < SortableRecord
   enum status: [:inactive, :active].freeze
   before_save :set_status
 
-  def is_default
-    project_facility_groups.any?(&:is_default)
-  end
-
   def set_status
     if !status
       status = :active
@@ -25,9 +23,6 @@ class FacilityGroup < SortableRecord
 
   def as_json(options=nil)
     json = super(options)
-    json.merge(
-      is_default: is_default,
-    ).as_json
   end
 
   def update_progress
@@ -40,7 +35,7 @@ class FacilityGroup < SortableRecord
   end
 
   def destroy
-    if project_facility_groups.where(is_default: true).exists? || is_portfolio
+    if is_default || is_portfolio
       (raise ActiveRecord::StatementInvalid.new("Can't destroy because Groups is either default or portoflio group.") )
     else
       super

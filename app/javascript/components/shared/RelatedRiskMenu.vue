@@ -51,6 +51,7 @@
 
 <script>
 import Vue from "vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "RelatedIssueMenu",
@@ -79,6 +80,7 @@ export default {
     };
   },
   computed: {
+   ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups",]),
     // get position of context menu
     style() {
       return {
@@ -92,7 +94,7 @@ export default {
       var relatedIssueIds = this.relatedIssues.map((issue) => issue.id);
       var relatedRiskIds = this.relatedRisks.map((risk) => risk.id);
 
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           // Project Groups
           id: index,

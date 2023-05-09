@@ -343,7 +343,7 @@
   .gantt_board {
     padding: 20px 70px;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .task_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     width: 325px;
     top: 30%;
     .sweet-content {
@@ -360,7 +360,7 @@
     opacity: 0.4;
     pointer-events: none;
   }
-  .gantt_chart_view /deep/ .gantt-elastic__main-view {
+  .gantt_chart_view ::v-deep .gantt-elastic__main-view {
     .gantt-elastic__main-container-wrapper {
       min-height: 70px;
     }

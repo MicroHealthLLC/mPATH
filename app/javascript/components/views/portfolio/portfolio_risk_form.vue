@@ -2039,13 +2039,15 @@
 <script>
 import axios from "axios";
 import humps from "humps";
+import * as Moment from "moment";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs.vue";
-import * as Moment from "moment";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
-import {API_BASE_PATH} from './../../../mixins/utils'
+import AuthorizationService from "../../../services/authorization_service"
+
 
 export default {
   name: "portfolioRiskForm",
@@ -2055,8 +2057,8 @@ export default {
     FormTabs,
     Draggable,
     RelatedRiskMenu,
+    AuthorizationService
   },
-
   data() {
     return {
       DV_risk: this.INITIAL_RISK_STATE(),
@@ -2149,14 +2151,22 @@ export default {
     if (this.fixedStage) {
       this.selectedRiskStage = this.fixedStage;
     }
-  },
+  }, 
   mounted() {
+    // this.fetchPortfolioAssignees()
+    this.fetchPortfolioRiskStages()
+    this.fetchPortfolioAssignees()
+    this.fetchPortfolioCategories()
+    console.log(this.$route.params)
+    AuthorizationService.getRolePrivileges();       
     if (!_.isEmpty(this.risk)) {
       this.loadRisk(this.risk);
     } else {
       this.loading = false;
       this.loadRisk(this.DV_risk);
-    }
+    }   
+    this.loading = false;
+    this._ismounted = true; 
   },
   methods: {
     ...mapMutations([
@@ -2173,6 +2183,10 @@ export default {
       "riskUpdated",
       "updateWatchedRisks",
       "updateApprovedRisks",
+      'fetchPortfolioAssignees', 
+      'fetchPortfolioCategories', 
+      'fetchPortfolioRiskStages',
+      'fetchPortfolioRisk'
     ]),
     INITIAL_RISK_STATE() {
       return {
@@ -2958,10 +2972,10 @@ export default {
   computed: {
     ...mapGetters([
       "portfolioRisks",
+      "portfolioRisk",
       "portfolioUsers",
       "currentIssues",
       "portfolioCategories", 
-      'fetchPortfolioRisks',
       'portfolioRiskLoaded',
       "categories",
       "currentProject",
@@ -2986,12 +3000,12 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
-  riskStages(){
+     riskStages(){
           if(this.portfolioRiskStages){
             return this.portfolioRiskStages.program_stages
           }
        },
-  riskStagesSorted() { 
+    riskStagesSorted() { 
       if (this.riskStages) {
         let stageObj =  [...this.riskStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
@@ -3022,7 +3036,7 @@ export default {
         return _.map(this.riskStages[this.programId], "percentage").toString();
      }    
     },
-  taskTypes(){
+    taskTypes(){
       return this.portfolioCategories  
     },
     isMapView() {
@@ -3726,7 +3740,7 @@ ul {
   border: solid 0.5px red;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -32px;
@@ -3736,26 +3750,26 @@ ul {
   }
 }
 .risk_matrix {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     border-bottom: none !important;
     background-color: #fff !important;
   }
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   text-transform: capitalize;
 }
 .inner-name-lowercase{
-  /deep/.el-input__inner{
+  ::v-deep.el-input__inner{
     text-transform: none !important;
   }
 }
@@ -3831,7 +3845,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

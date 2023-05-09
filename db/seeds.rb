@@ -1,13 +1,13 @@
 
 puts "Seed the application..."
 
-user = User.find_or_initialize_by(email: 'admin@example.com') do |user|  
-  user.password = 'adminPa$$w0rd'
-  user.password_confirmation = 'adminPa$$w0rd'
-  user.title = 'Mr.'
-  user.first_name =  'Super'
-  user.role = "superadmin"
-  user.last_name =  'Admin'
+user = User.find_or_initialize_by(email: 'admin@example.com') do |user1|  
+  user1.password = 'adminPa$$w0rd'
+  user1.password_confirmation = 'adminPa$$w0rd'
+  user1.title = 'Mr.'
+  user1.first_name =  'Super'
+  user1.role = "superadmin"
+  user1.last_name =  'Admin'
 end
 
 if user.privilege.nil?

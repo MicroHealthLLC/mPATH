@@ -5,6 +5,7 @@
 
 import portfolioRiskForm from "./portfolio_risk_form.vue"
 import{ mapActions, mapGetters }  from 'vuex';
+
 export default {
   name: "PortfolioRiskForm",
   components: {
@@ -22,7 +23,7 @@ export default {
     ...mapGetters(['portfolioRisk'])
   },
   mounted(){
-    this.fetchPortfolioRisk(this.$route.params) 
+    this.fetchPortfolioRisk(this.$route.params)
   },
 };
 </script>

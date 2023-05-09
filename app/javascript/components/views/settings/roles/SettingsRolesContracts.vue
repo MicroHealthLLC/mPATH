@@ -609,6 +609,7 @@
       width="120">
         <template slot-scope="scope">
       <el-button
+      size="small"
       type="default"
       v-tooltip="`Save role`"    
       v-if="(isEditting && currentRow == scope.$index) || 
@@ -620,6 +621,7 @@
     </el-button>
     <el-button
       type="default"
+      size="small"
       @click.prevent="editRole(scope.$index, scope.row)"
       v-if="!isEditting &&
       scope.row.name !== 'update-contract' &&
@@ -632,6 +634,7 @@
       </el-button>
 
       <el-button
+      size="small"
       type="default"
       @click.prevent="cancelEditRole(scope.$index, scope.row)"
        v-if="isEditting && currentRow == scope.$index"
@@ -641,6 +644,7 @@
       <i class="fas fa-ban"></i> 
       </el-button>
       <el-button
+      size="small"
       type="default"
       @click.prevent="cancelCreateRole(scope.$index, scope.row)"
       v-if="scope.$index == 0 && isEditting && scope.row.newRow"
@@ -1371,17 +1375,17 @@ export default {
   overflow-y: auto;
 }
 .crudRow{
-  /deep/.el-input__inner{
+  ::v-deep.el-input__inner{
   border: 1px solid #d9534f;
  }
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
-/deep/.el-dialog__header.users{
+::v-deep.el-dialog__header.users{
   padding: 0;
 }
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #383838;
 //   font-size: .9rem;
   text-align: center;

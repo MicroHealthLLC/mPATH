@@ -80,7 +80,6 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-          console.log(res)
         })
         .catch((err) => {
           console.log(err);
@@ -101,8 +100,7 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_DATA_OPTIONS", res.data);
-          console.log(res.data)
-        })
+          })
         .catch((err) => {
           console.log(err);
         })
@@ -114,7 +112,7 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_POCS_LOADED", false);   
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -147,7 +145,7 @@ const contractStore = {
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
       if(cProjectData.notes){
         formData.append("contract_project_data[notes]", cProjectData.notes)   
-        } 
+      } 
       if(cProjectData.contract_vehicle_id){
         formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
       }
@@ -197,6 +195,17 @@ const contractStore = {
         if (cVehicleData.cafFees){
           formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
         }
+        if (cVehicleData.subprime_name){
+          formData.append("contract_vehicle[subprime_name]", cVehicleData.subprime_name);
+        }
+        // prime
+        if (cVehicleData.prime_name){
+          formData.append("contract_vehicle[prime_name]", cVehicleData.prime_name);
+        }
+        // contract_name
+        if (cVehicleData.contract_name){
+          formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
+        }
         formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
         formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
         formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
@@ -245,7 +254,7 @@ const contractStore = {
        }       
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contract_project_pocs`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -340,60 +349,93 @@ const contractStore = {
   updateContractProject({ commit }, { cProjectData, id }) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     let formData = new FormData();
-    console.log(cProjectData)
       formData.append("contract_project_data[id]", id);
       formData.append("contract_project_data[charge_code]", cProjectData.charge_code);
       formData.append("contract_project_data[name]", cProjectData.name)
       formData.append("contract_project_data[contract_customer_id]", cProjectData.contract_customer_id)
       formData.append("contract_project_data[prime_or_sub]", cProjectData.prime_or_sub)
       formData.append("contract_project_data[total_contract_value]", cProjectData.total_contract_value)
-      formData.append("contract_project_data[contract_start_date]", cProjectData.contract_start_date)
-      formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
-      formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
-      formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
+      if(cProjectData.contract_start_date){
+        formData.append("contract_project_data[contract_start_date]", cProjectData.contract_start_date)
+      }
+      if(cProjectData.contract_end_date){
+        formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
+      }
+      if(cProjectData.contract_current_pop_start_date){
+        formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
+      }
+      if(cProjectData.contract_current_pop_end_date){
+        formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
+      }
+      
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
-     if(cProjectData.notes){
+      
+      if(cProjectData.notes){
         formData.append("contract_project_data[notes]", cProjectData.notes)   
-       } else formData.append("contract_project_data[notes]", "") 
-      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
-      if(cProjectData.contract_vehicle_id){
-      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      } else {
+        formData.append("contract_project_data[notes]", "") 
       }
+      
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
+      
+      if(cProjectData.contract_vehicle_id){
+        formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      }
+      
       if(cProjectData.contract_award_to_id){
         formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
       }
+      
       if(cProjectData.number){
         formData.append("contract_project_data[contract_number_id]", cProjectData.number)
       }
+
       if(cProjectData.expiredStatus){
         console.log(cProjectData.expired)
         formData.append("contract_project_data[ignore_expired]", cProjectData.expired)
       }
-      if(cProjectData.co_poc_id){
-        formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
+
+      if(cProjectData.co_poc_ids && cProjectData.co_poc_ids.length > 0){
+        cProjectData.co_poc_ids.forEach((ids) => {
+          formData.append("contract_project_data[co_contract_poc_ids][]", ids)
+        });
+      } else {
+        formData.append("contract_project_data[co_contract_poc_ids][]", '')
       }
-      if(cProjectData.gov_poc_id){
-        formData.append("contract_project_data[gov_contract_poc_id]", cProjectData.gov_poc_id)
+
+      if(cProjectData.gov_poc_ids && cProjectData.gov_poc_ids.length > 0){
+        cProjectData.gov_poc_ids.forEach((ids) => {
+          formData.append("contract_project_data[gov_contract_poc_ids][]", ids)
+        });
+      } else {
+        formData.append("contract_project_data[gov_contract_poc_ids][]", '')
       }
-      if(cProjectData.pm_poc_id){
-        formData.append("contract_project_data[pm_contract_poc_id]", cProjectData.pm_poc_id)  
-      }
+
+      if(cProjectData.pm_poc_ids && cProjectData.pm_poc_ids.length > 0){      
+        cProjectData.pm_poc_ids.forEach((ids) => {
+          formData.append("contract_project_data[pm_contract_poc_ids][]", ids)
+        });
+      } else {
+        formData.append("contract_project_data[pm_contract_poc_ids][]", '')
+      } 
+
       formData.append("contract_project_data[total_founded_value]", cProjectData.tfv)
       formData.append("contract_project_data[billings_to_date]", cProjectData.btd)
-      formData.append("contract_project_data[comments]", cProjectData.notes)      
-    axios({
-      method: "PUT",
-      url: `${API_BASE_PATH}/portfolio/contract_project_data/${id}`,
-      data: formData,
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-          .attributes["content"].value,
-      },
-    })
+      formData.append("contract_project_data[comments]", cProjectData.notes)
+
+      axios({
+        method: "PUT",
+        url: `${API_BASE_PATH}/portfolio/contract_project_data/${id}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
       .then((res) => {
         commit("SET_CONTRACT_PROJECT", res.data.contract_project_data);
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
@@ -420,13 +462,47 @@ const contractStore = {
     if (cVehicleData.cafFees){
       formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
     }
+    if (cVehicleData.subprime_name){
+      formData.append("contract_vehicle[subprime_name]", cVehicleData.subprime_name);
+    }
+    // prime
+    if (cVehicleData.prime_name){
+      formData.append("contract_vehicle[prime_name]", cVehicleData.prime_name);
+    }
+    // contract_name
+    if (cVehicleData.contract_name){
+      formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
+    }
+    if(cVehicleData.co_poc_ids && cVehicleData.co_poc_ids.length > 0){
+      cVehicleData.co_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[co_contract_poc_ids][]", ids)
+      });
+    } else {
+      formData.append("contract_vehicle[co_contract_poc_ids][]", '')
+    }
+
+    if(cVehicleData.gov_poc_ids && cVehicleData.gov_poc_ids.length > 0){
+      cVehicleData.gov_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[gov_contract_poc_ids][]", ids)
+      });
+    } else {
+      formData.append("contract_vehicle[gov_contract_poc_ids][]", '')
+    }
+
+    if(cVehicleData.pm_poc_ids && cVehicleData.pm_poc_ids.length > 0){      
+      cVehicleData.pm_poc_ids.forEach((ids) => {
+        formData.append("contract_vehicle[pm_contract_poc_ids][]", ids)
+      });
+    } else {
+      formData.append("contract_vehicle[pm_contract_poc_ids][]", '')
+    } 
     formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
     formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
     formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
     axios({
       method: "PUT",
-      url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+      url: `${API_BASE_PATH}/portfolio/contract_vehicles/${id}`,
       data: formData, 
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -459,7 +535,7 @@ const contractStore = {
     formData.append("contract_project_poc[notes]", cPOCsData.notes);
   axios({
     method: "PUT",
-    url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+    url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
     data: formData,
     headers: {
       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -504,7 +580,7 @@ const contractStore = {
       
         axios({
           method: "DELETE",
-          url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+          url: `${API_BASE_PATH}/portfolio/contract_vehicles/${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -526,7 +602,7 @@ const contractStore = {
     
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_pocs/${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

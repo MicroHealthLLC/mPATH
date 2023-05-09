@@ -25,7 +25,7 @@ ActiveAdmin.register Lesson do
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
-      sub_risk_ids: [],
+      sub_risk_ids: []
       # facility_project: [
       #   :id,
       #   :project_id,
@@ -115,7 +115,7 @@ ActiveAdmin.register Lesson do
 
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
 
     tabs do

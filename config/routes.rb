@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
+  devise_for :users, controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
   authenticate :user, lambda {|u| u.admin?} do
     begin
       ActiveAdmin.routes(self)
@@ -107,12 +107,6 @@ Rails.application.routes.draw do
         get "/tab_counts", to: "portfolio#tab_counts"
         get "/contracts", to: "portfolio#contracts"
       end
-
-      resources :privileges do
-        collection do
-          get :get_privileges, to: 'privileges#get_privileges'
-        end
-      end
       
       # For Admin panel
       get '/settings', to: 'settings#index'
@@ -133,12 +127,16 @@ Rails.application.routes.draw do
       resources :facility_groups do
         collection do
           put :bulk_project_update
+          post :move_to_program
+          post :duplicate_to_program
         end
       end
 
       resources :facilities do
         collection do
           put :bulk_projects_update
+          post :move_to_program
+          post :duplicate_to_program
         end
       end
 
@@ -190,6 +188,7 @@ Rails.application.routes.draw do
       end
 
       # Filter data
+      get "/filter_data/program_admin_programs", to: "filter_data#program_admin_programs"
       get "/filter_data/programs", to: "filter_data#programs"
       get "/filter_data/users", to: "filter_data#users"
       get "/filter_data/statuses", to: "filter_data#statuses"

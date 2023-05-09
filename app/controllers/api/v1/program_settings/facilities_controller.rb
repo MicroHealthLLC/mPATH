@@ -31,8 +31,8 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
     end
     if ActiveModel::Type::Boolean.new.cast(params[:all]) 
       projects = current_user.projects
-      projects.each do |project|
-        response_hash[project.id] = {facility_ids: project.facility_ids}
+      projects.each do |_project|
+        response_hash[_project.id] = {facility_ids: _project.facility_ids}
       end
     end
 
@@ -87,7 +87,7 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
   end
 
   def destroy
-    @facility = @project.facilities.find_by(id: params[:id])
+    @facility = Facility.find(params[:id])
     @facility.destroy!
     render json: {}, status: 200
   rescue

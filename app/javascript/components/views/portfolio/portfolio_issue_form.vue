@@ -266,6 +266,7 @@
               <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
+                :load="log(selectedTaskType)"
                 class="w-100"
                 clearable
                 track-by="id"
@@ -329,6 +330,7 @@
               >
               <el-select
                 v-model="selectedIssueSeverity"
+                :load="log(selectedIssueSeverity)"
                 v-validate="'required'"
                 class="w-100"
                 track-by="id"
@@ -1278,15 +1280,17 @@ Tab 1 Row Begins here -->
 <script>
 import axios from "axios";
 import humps from "humps";
+import 'vue2-datepicker/index.css'
 import Draggable from "vuedraggable";
+import DatePicker from 'vue2-datepicker'
+Vue.component('v2-date-picker', DatePicker)
+import FormTabs from "./../../shared/FormTabs";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
-import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
-import {API_BASE_PATH} from './../../../mixins/utils'
-import 'vue2-datepicker/index.css'
- Vue.component('v2-date-picker', DatePicker)
- import DatePicker from 'vue2-datepicker'
+import AuthorizationService from "../../../services/authorization_service"
+
 
 export default {
   name: "portfolioIssueForm",
@@ -1296,6 +1300,7 @@ export default {
     Draggable,
     FormTabs,
     RelatedIssueMenu,
+    AuthorizationService
   },
   data() {
     return {
@@ -1372,17 +1377,35 @@ export default {
     }
   },
   mounted() {
+    AuthorizationService.getRolePrivileges();
+    this.fetchPortfolioIssue(this.$route.params)
+    this.fetchPortfolioIssueStages()
+    this.fetchPortfolioCategories()
+    this.fetchPortfolioAssignees()
+    this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
     if (!_.isEmpty(this.issue)) {
       this.loadIssue(this.issue);
+      console.log(this.issue)
     } else {
-      this.loadIssue(this.DV_issue);     
+      this.loadIssue(this.DV_issue);  
     }
     this.loading = false;
     this._ismounted = true;
    },
   methods: {
     ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
-    ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues", 'fetchPortfolioIssue']),
+    ...mapActions([
+      "issueDeleted", 
+      "taskUpdated", 
+      "updateWatchedIssues", 
+      'fetchPortfolioIssue',
+      "fetchPortfolioCategories",
+      "fetchPortfolioIssueStages",
+      "fetchPortfolioAssignees",
+      "fetchPortfolioIssueTypes",
+      "fetchPortfolioIssueSeverities"
+    ]),
     INITIAL_ISSUE_STATE() {
       return {
         title: "",
@@ -1427,6 +1450,9 @@ export default {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
       }
+    },
+    log(e){
+      console.log(e)
     },
     clearStages() {
       this.selectedIssueStage = null;
@@ -1488,7 +1514,6 @@ export default {
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
-
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.responsible_user_ids.includes(u.id)
       )[0];
@@ -1501,7 +1526,6 @@ export default {
       this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.informed_user_ids.includes(u.id)
       );
-
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_issue.sub_issue_ids.includes(u.id)
       );

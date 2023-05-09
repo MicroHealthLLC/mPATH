@@ -1,6 +1,7 @@
 import http from "./../../common/http";
 import axios from "axios";
 import { API_BASE_PATH } from "./../../mixins/utils";
+import AuthorizationService from "./../../services/authorization_service";
 
 const settingsStore = {
   state: () => ({
@@ -8,7 +9,9 @@ const settingsStore = {
     show_create_row: false,
     user_status: true,
     edit_contract_sheet: false,
+    edit_vehicle_sheet: false,
     contract_table: [],
+    vehicle_table: [],
     group_filter: null,
     transfer_data: [],
     new_groups: [],
@@ -34,6 +37,10 @@ const settingsStore = {
     contracts_status: 0,
     vehicles_status: 0,
     vehicle_status: 0,
+    export_project_status: 0,
+    duplicate_group_status: 0,
+    duplicate_project_status: 0,
+    move_group_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
     contract_classifications: [],
@@ -44,7 +51,9 @@ const settingsStore = {
     prime: null,
     current_pop: [],
     contract_type_filter: 0,
+    vehicle_type_filter: 0,
     contract_group_types: {},
+    vehicle_group_types: {},
 
     portfolio_projects: [],
     portfolio_projects_loaded: true,
@@ -75,6 +84,7 @@ const settingsStore = {
     new_user_status: 0,
 
     new_contract_group_filter: null,
+    new_vehicle_group_filter: null,
     new_user_loaded: true,
     new_user_id: null,
 
@@ -156,35 +166,10 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* createVehicle({ commit }, { vehicle }) {
-      // Displays loader on front end
-      commit("TOGGLE_VEHICLES_LOADED", false);
-      // Utilize utility function to prep Lesson form data
-      let formData = vehicleFormData(vehicle);
-
-      axios({
-        method: "POST",
-        url: `${API_BASE_PATH}/vehicles?project_id=${vehicle.project_id}`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          commit("SET_VEHICLE", res.data.vehicle);
-          commit("SET_VEHICLE_STATUS", res.status);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_VEHICLES_LOADED", true);
-        });
-    }, */
     createGroup({ commit }, { group }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = groupFormData(group);
+     
 
       axios({
         method: "POST",
@@ -201,6 +186,174 @@ const settingsStore = {
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    moveGroup({ commit }, { group }) {
+
+      let formData = new FormData();
+      
+      console.log(group);
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_group_id", group.groupId);
+      formData.append("source_program_id", group.sourceProgramId);
+      formData.append("target_program_id", group.targetProgramId);
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facility_groups/move_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {   
+          commit("SET_GROUP", res.data.facility_groups);
+          if(res){
+            console.log(res);
+            commit("SET_MOVE_GROUP_STATUS", res.status);
+          }     
+        })
+        .catch((err) => {
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_MOVE_GROUP_STATUS", err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    duplicateGroup({ commit }, { group }) {
+
+      let formData = new FormData();
+      console.log(group);
+      commit("TOGGLE_GROUPS_LOADED", false);
+      formData.append("facility_group_id", group.groupId);
+      formData.append("source_program_id", group.sourceProgramId);
+      formData.append("target_program_id", group.targetProgramId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facility_groups/duplicate_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          // commit("SET_GROUP_STATUS", res.status);
+         
+          if(res){
+            console.log(res);
+            commit("SET_DUPLICATE_GROUP_STATUS", res.status);
+          }   
+        })
+        .catch((err) => {
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_DUPLICATE_GROUP_STATUS",  err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
+         
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    exportProject({ commit }, { project }) {
+      let formData = new FormData();
+      console.log(project)
+      commit("TOGGLE_GROUPS_LOADED", false);
+
+      formData.append("facility_id", project.projectId);
+      formData.append("source_program_id", project.sourceProgramId);
+      formData.append("target_program_id", project.targetProgramId);
+      formData.append("target_facility_group_id", project.targetGroupId);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facilities/move_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+        if(res){
+            console.log(res);
+            commit("SET_EXPORT_PROJECT_STATUS", res.status);
+          }   
+        })
+        .catch((err) => {
+          console.log(err);    
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_EXPORT_PROJECT_STATUS",err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    duplicateProject({ commit }, { project }) {
+      let formData = new FormData();
+      console.log(project)
+      commit("TOGGLE_GROUPS_LOADED", false);
+      formData.append("facility_id", project.projectId);
+      formData.append("source_program_id", project.sourceProgramId);
+      formData.append("target_program_id", project.targetProgramId);
+      formData.append("target_facility_group_id", project.targetGroupId);
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facilities/duplicate_to_program.json`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          if(res){
+            console.log(res);
+            commit("SET_DUPLICATE_PROJECT_STATUS", res.status);
+          }   
+        })
+        .catch((err) => {
+          console.log(err);    
+          if (err.response) {
+            // Request made and server responded
+            console.log(err.response.data);
+            commit("SET_DUPICATE_PROJECT_STATUS",err.response.status);
+            console.log(err.response.status);
+            // console.log(error.response.headers);
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.log(err.request);
+          }
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -424,7 +577,7 @@ const settingsStore = {
           if (res.data && res.data.role.type_of == "contract") {
             commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
           }
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -513,7 +666,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           // console.log(res)
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -606,7 +759,7 @@ const settingsStore = {
            console.log(res)
           //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
           if (
             userData.projectIds ||
             userData.contractIds ||
@@ -673,7 +826,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           console.log(res);
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -780,13 +933,13 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* fetchVehicle({ commit }, { id, programId }) {
+    fetchVehicle({ commit }, { id, programId }) {
       console.log(id, programId);
       commit("TOGGLE_VEHICLE_LOADED", false);
       // Retrieve vehicle by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}?project_id=${programId}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -801,7 +954,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLE_LOADED", true);
         });
-    },*/
+    },
     fetchVehicles({ commit }, id) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
@@ -1309,38 +1462,6 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    updateVehicle({ commit }, { vehicle, id }) {
-      // Displays loader on front end
-      commit("TOGGLE_VEHICLES_LOADED", false);
-      let formData = new FormData();
-      // Utilize utility function to prep Lesson form data
-      // let formData = contractFormData(contract);
-      formData.append("project_id", vehicle.programId);
-      formData.append(
-        "project_contract_vehicle[facility_group_id]",
-        vehicle.facility_group_id
-      );
-      axios({
-        method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          commit("SET_VEHICLE", res.data.contract_vehicle);
-          commit("SET_VEHICLE_STATUS", res.status);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_VEHICLES_LOADED", true);
-        });
-    },
     deleteContract({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1354,7 +1475,8 @@ const settingsStore = {
           });
       });
     },
-    /* updateVehicle({ commit }, { vehicle, id }) {
+    updateVehicle({ commit }, { vehicle, id }) {
+      console.log("vehicles")
       // Displays loader on front end
       commit("TOGGLE_VEHICLES_LOADED", false);
       let formData = new FormData();
@@ -1362,12 +1484,12 @@ const settingsStore = {
       // let formData = vehicleFormData(vehicle);
       formData.append("project_id", vehicle.programId);
       formData.append(
-        "project_vehicle[facility_group_id]",
+        "project_contract_vehicle[facility_group_id]",
         vehicle.facility_group_id
       );
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${id}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1385,7 +1507,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    },*/
+    },
     deleteVehicle({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1429,7 +1551,7 @@ const settingsStore = {
     deleteProgramProject({ commit }, { programId, id }) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/programs/${programId}/projects/${id}`)
+          .delete(`${API_BASE_PATH}/program_settings/facilities/${id}?project_id=${programId}`)
           .then((res) => {
             resolve(res.status);
           })
@@ -1451,10 +1573,10 @@ const settingsStore = {
       (state.new_contract_group_filter = loaded),
 
     // VEHICLES
-    /* setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
+    setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
     setVehicleTable: (state, value) => (state.vehicle_table = value),
     setNewVehicleGroupFilter: (state, loaded) =>
-      (state.new_vehicle_group_filter = loaded), */
+      (state.new_vehicle_group_filter = loaded),
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) =>
@@ -1627,6 +1749,12 @@ const settingsStore = {
     SET_PROGRAM_USERS_STATUS: (state, value) =>
       (state.program_users_status = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
+    SET_MOVE_GROUP_STATUS: (state, value) => (state.move_group_status = value),
+    SET_EXPORT_PROJECT_STATUS: (state, value) => (state.export_project_status = value),
+
+    SET_DUPLICATE_GROUP_STATUS: (state, value) => (state.duplicate_group_status = value),
+    SET_DUPLICATE_PROJECT_STATUS: (state, value) => (state.duplicate_project_status = value),
+
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) =>
       (state.portfolio_projects_status = status),
 
@@ -1729,6 +1857,12 @@ const settingsStore = {
     vehicles: (state) => state.vehicles,
     vehiclesStatus: (state) => state.vehicles_status,
 
+    moveGroupStatus: (state) => state.move_group_status,
+    exportProjectStatus: (state) => state.export_project_status,
+
+    duplicateGroupStatus: (state) => state.duplicate_group_status,
+    duplicateProjectStatus: (state) => state.duplicate_project_status,
+
     getNewUserId: (state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
 
@@ -1780,6 +1914,7 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
+    getVehicleTypeFilter: (state) => state.vehicle_type_filter,
     facilityGroupContracts: (state, getters) => (group) => {
       return {
         contracts: {

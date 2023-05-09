@@ -1,9 +1,8 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">       
-    <div style="height:85px">
+  <div class="container-fluid mx-3">       
+    <div style="height:85px" class="pt-2">
       <span @click.prevent="backHomeBtn">
-        <img
-          class="mb-2"
+        <img         
           style="width: 147px;cursor:pointer"
           :src="require('../../../../../assets/images/microhealthllc.png')"
         />
@@ -11,7 +10,7 @@
       </span>
       <span class="float-right mr-4">
         <button
-          class="portfolioHomeBtn mh-orange btn btn-sm"
+          class="portfolioHomeBtn mh-orange btn"
           style="cursor: pointer"
           @click.prevent="backHomeBtn"
         >
@@ -25,6 +24,7 @@
     v-loading="!contractVehiclesLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
+
     >
      <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
      VEHICLES
@@ -39,7 +39,7 @@
     >
      <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
     <div style="height:80vh" class="portfolio-contracts-module">
-      <div  style="height: 100%; overflow-y:auto">
+      <div style="height: 80vh; overflow-y:auto">
     <el-table
     :data="tableData"
     border
@@ -81,7 +81,7 @@
       fixed
       label="Project Name*"
       width="200"
-      prop="name">
+      >
       <template slot-scope="scope">
         <el-input
           size="small"
@@ -121,6 +121,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in customerOptions"
@@ -154,6 +155,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -176,6 +178,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -198,6 +201,7 @@
         allow-create
         placeholder=""
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in vehicleOptions"
@@ -233,6 +237,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractNumbers"
@@ -266,6 +271,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardToNums"
@@ -299,6 +305,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in naicsOptions"
@@ -332,6 +339,7 @@
         placeholder=""
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in awardTypes"
@@ -365,6 +373,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
       >
         <el-option
           v-for="item in contractTypes"
@@ -384,7 +393,7 @@
       <el-table-column
       label="Prime vs Sub"
       width="55"
-      prop="prime_or_sub">
+      >
      <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
@@ -396,6 +405,7 @@
         class="w-100"
         clearable
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in primeOrSub"
@@ -528,6 +538,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
         >
         <el-option
           v-for="item in pops"
@@ -561,6 +572,7 @@
         clearable
         allow-create
         default-first-option
+        size="small"
        >
         <el-option
           v-for="item in currentPops"
@@ -669,12 +681,13 @@
      </el-table-column>
     <el-table-column
       label="Actions"
-      width="140"
+      width="155"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
-      align="center">
+      align="right">
    <template slot-scope="scope">
-      <el-button
+       <el-button
+        size="mini"
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
@@ -685,52 +698,93 @@
           && scope.row.contract_pop_id && popStartDate && popEndDate
           )"  
         v-tooltip="`Save`" 
-        class="bg-primary btn-sm text-light mx-0">               
+        class="bg-primary text-light px-2">               
         <i class="far fa-save"></i>
         </el-button>
+        <el-popover
+          v-if="programNames && (scope.$index !== rowIndex) && (scope.$index !== createRow) &&
+          scope.row.associated_projects && scope.row.associated_projects.length > 0"
+          placement="left"
+          width="auto"
+          trigger="hover">         
+          <el-button
+          size="mini"  
+          v-for="item, i in scope.row.associated_projects" :key="i"
+          @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
+          >
+          <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
+          </el-button>        
+          <el-button
+          size="mini"
+          slot="reference"
+          type="default"        
+          v-tooltip="`Open Contract Tasks`" 
+          class="bg-light text-light mr-2 px-2">               
+          <i class="far fa-suitcase text-secondary"></i>
+        </el-button>
+        </el-popover>        
       <el-button 
+        size="mini"
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
-        class="bg-secondary btn-sm text-light mx-0">
+        class="bg-secondary text-light px-2">
       <i class="fas fa-ban"></i>
         </el-button>
         <el-button 
+        size="mini"
         type="default" 
         v-tooltip="`Remove expiration date exemption`"       
         v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
         @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
-        class="bg-light btn-sm mx-0">
+        class="bg-light px-2">
         <i class="fa-solid fa-calendar-xmark text-danger"></i>
         </el-button>
          <el-button
+          size="mini"
           type="default"
            v-tooltip="`Edit`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
+          size="mini"
           type="default"
            v-tooltip="`Delete`" 
-          class="bg-light btn-sm"
+          class="bg-light px-2"
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)  && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
         <el-button
+          size="mini"
           type="default"
           @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow && (
-          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
-          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
-          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
-          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          checkEmpty(scope.row.charge_code) && checkEmpty(scope.row.name) && checkEmpty(scope.row.contract_customer_id) && 
+          (checkEmpty(scope.row.contract_award_to_id) || checkEmpty(scope.row.contract_number_id)) && 
+          checkEmpty(scope.row.contract_naic_id) && checkEmpty(scope.row.contract_award_type_id) &&
+          checkEmpty(scope.row.contract_type_id) && newContractStartDate && newContractEndDate &&  checkEmpty(scope.row.total_contract_value)
+          && checkEmpty(scope.row.contract_pop_id) && newPopStartDate && newPopEndDate
           )" 
           v-tooltip="`Save`" 
-          class="bg-primary btn-sm text-light mx-0">               
+          class="bg-primary text-light px-2">               
         <i class="far fa-save"></i>
+        </el-button>
+        <el-button 
+        size="mini"
+        type="default" 
+        v-tooltip="`Cancel`"       
+        v-if="scope.$index == createRow && (
+          scope.row.charge_code || scope.row.name || scope.row.contract_customer_id || scope.row.contract_vehicle_id || scope.row.contract_award_to_id || scope.row.contract_number_id || 
+          scope.row.contract_naic_id || scope.row.contract_award_type_id ||
+          scope.row.contract_type_id || scope.row.prime_or_sub || newContractStartDate || newContractEndDate ||  scope.row.total_contract_value
+          || scope.row.contract_pop_id || scope.row.contract_current_pop_id || newPopStartDate || newPopEndDate || scope.row.notes
+          )"
+        @click.prevent="cancelNewRow(scope.row)"  
+        class="bg-secondary text-light px-2">
+      <i class="fas fa-ban"></i>
         </el-button>
        </template>
 
@@ -948,43 +1002,55 @@
          <template slot-scope="scope">
           <el-button
             type="default"
-          
+            size="mini"
             @click="saveContractPOC(scope.$index, scope.row)"
             v-if="(_isallowed('write')) && scope.$index == pocRowIndex" 
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
+            size="mini"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == pocRowIndex"
             @click.prevent="cancelPocEdits(scope.$index, scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light px-2">
           <i class="fas fa-ban"></i>
             </el-button>
             <el-button
+              size="mini"
               type="default"
               v-tooltip="`Edit`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="(_isallowed('write')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
+              size="mini"
               type="default"
               v-tooltip="`Delete`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="(_isallowed('delete')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="deleteContractPoc(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
             <el-button
               type="default"
+              size="mini"
               @click="saveContractPOC(scope.$index, scope.row)"             
-              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name)" 
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && checkEmpty(scope.row.name)" 
               v-tooltip="`Save`" 
-              class="bg-primary btn-sm text-light mx-0">               
+              class="bg-primary text-light px-2">               
             <i class="far fa-save"></i>
-            
+            </el-button>
+            <el-button 
+            size="mini"
+            type="default" 
+            v-tooltip="`Cancel Edit`"       
+            v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.name || scope.row.title || scope.row.email || scope.row.notes || mobNumberValNew || workNumberValNew)"
+            @click.prevent="cancelNewPoc(scope.row)"  
+            class="bg-secondary text-light px-2">
+          <i class="fas fa-ban"></i>
             </el-button>
           </template>
 
@@ -996,7 +1062,14 @@
 
       </div>
       </el-dialog>
-
+      <el-dialog
+        :visible.sync="contractProgramsModal"
+        append-to-body
+        center
+        class="p-0 users"       
+      >
+       TEST
+      </el-dialog>
       </div>
       </div>
     </el-tab-pane>
@@ -1010,7 +1083,7 @@
    <el-tab-pane>
     <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
     <i v-tooltip="`Manage POCs`" class="far fa-plus-circle mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'd-none']" @click="openPocModal"></i> 
-    CONTRACT POC   
+    POCS
     </span>  
     <PortfolioContractPOC/>    
     </el-tab-pane>
@@ -1028,8 +1101,7 @@
     </span>
   </el-tabs>
 
-  </div>
-      
+  </div>      
 </template>
     
 <script>
@@ -1062,10 +1134,14 @@ export default {
   
     data() {    
       return {
+        contractProgID: null, 
+        programContractRowID: null,
         today: new Date().toISOString().slice(0, 10),
+        contractProgramsModal: false, 
         blankVehicle: '',
         totalContractValue: 0,
         workNumberVal: '', 
+        sampleArray: [2, 3, 5, 7],
         workNumberValNew: '', 
         mobNumberVal: '', 
         mobNumberValNew: '', 
@@ -1102,6 +1178,8 @@ export default {
      "SET_CONTRACT_POCS_STATUS"
     ]),
     ...mapActions([
+      "fetchContracts",
+      "fetchPortfolioPrograms",
       //Contract Projects
       "createContractProject",
       "fetchContractProjects",
@@ -1118,6 +1196,9 @@ export default {
       "fetchContractVehicles",
       "fetchContractDataOptions"
     ]),
+    log(e){
+      console.log(e)     
+    },
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
@@ -1155,20 +1236,20 @@ export default {
     //  console.log(newSums.filter(t => !t[17]))
      return newSums
     },
-  validateEmail(m){
+    validateEmail(m){
+    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     if (m) {
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
-    {
-      this.isValidEmail = true
-      return (true)
-    }
-    this.$message({
-      message: `Please enter a valid email address.  Example: "john@example.com"`,
-      type: "warning",
-      showClose: true,
-    });
+      if (regex.test(m)){
+        this.isValidEmail = true
+        return (true)
+      }
+      this.$message({
+        message: `Please enter a valid email address.  Example: "john@example.com"`,
+        type: "warning",
+        showClose: true,
+      });
       this.isValidEmail = false
-       console.log( this.isValidEmail)
+      //  console.log( this.isValidEmail)
       return (false)
     }
   } ,
@@ -1180,7 +1261,7 @@ export default {
         return (true)    
       } else {
         this.isValidWorkNum = false
-          console.log(this.isValidWorkNum )
+          // console.log(this.isValidWorkNum )
         this.$message({
           message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
           type: "warning",
@@ -1193,11 +1274,11 @@ export default {
     if (m) {
   if (m.length == 14)
     {
-      console.log(m.length)
+    //   console.log(m.length)
       this.isValidMobNum = true
       return (true)    
     }
-       console.log(this.isValidMobNum )
+      //  console.log(this.isValidMobNum )
     this.$message({
       message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
       type: "warning",
@@ -1229,15 +1310,19 @@ export default {
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
-  log(e){
-    // console.log(e)
-  },
   openPocModal(){
     this.pocDialogVisible = true;
     this.fetchContractPOCs()
   },   
+  openContractTask(index, row, programId){
+    console.log(this.programNames)
+    this.contractProgID = programId
+    this.programContractRowID = row.id
+     this.fetchContracts(programId)  
+  }, 
   editMode(index, rows) {
-    console.log(rows)
+    //console.log(rows)
+    //console.log(this.programNames)
     this.rowIndex = index,
     this.rowId = rows.id
     if(rows.contract_current_pop_start_date){
@@ -1433,11 +1518,59 @@ export default {
     this.pocRowIndex = null;
     this.pocRowId = null;
     this.workNumberVal = null;
+    this.fetchContractPOCs()
        
+  },
+  cancelNewPoc(rows) {
+    let row = rows
+    for (let i in row) {
+      if (row[i] != "") {
+        row[i] = ""
+      }
+    }
+    this.workNumberValNew ?
+        this.workNumberValNew = null
+        : this.workNumberValNew
+    this.mobNumberValNew ?
+      this.mobNumberValNew = null
+      : this.mobNumberValNew
+  },
+  checkEmpty(str) {
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
+    }
+    if (typeof str != "string") {
+      return str
+    }
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;       
+    this.rowId = null;
+    this.fetchContractProjects();       
+  },
+  cancelNewRow(rows) {
+    console.log(rows)
+    let row = rows
+    for (let i in row) {
+      if (typeof row[i] == "string" && row[i] != "") {
+        row[i] = ""
+      }
+      else if (typeof row[i] == "number" && row[i] != null) {
+        row[i] = null
+      }
+    }
+    this.newContractStartDate ?
+      this.newContractStartDate = null
+      : this.newContractStartDate
+    this.newContractEndDate ?
+      this.newContractEndDate = null
+      : this.newContractEndDate
+    this.newPopEndDate ?
+      this.newPopEndDate = null
+      : this.newPopEndDate
+    this.newPopStartDate ?
+      this.newPopStartDate = null
+      : this.newPopStartDate
   },
   handleDelete(index, row) {
     console.log(index, row);
@@ -1518,10 +1651,13 @@ export default {
   mounted() {
     this.fetchContractProjects()
     this.fetchContractVehicles()
-    this.fetchContractDataOptions()
+    this.fetchPortfolioPrograms()
+    this.fetchContractDataOptions()    
   },
   computed: {
     ...mapGetters([
+      "contracts",
+      "portfolioPrograms",
       //Contract Projects 
       "contractProjectStatus",
       "contractProjects",
@@ -1542,7 +1678,7 @@ export default {
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         console.log(data)
+        //  console.log(data)
          return data   
 
      } else {
@@ -1550,6 +1686,11 @@ export default {
          data.push({})
          return data
      }      
+    },
+    programNames(){
+      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+        return this.portfolioPrograms
+      }      
     },
     createRow(){
       let lastItem = this.tableData.length - 1
@@ -1579,7 +1720,8 @@ export default {
         let unique = [];
         // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+        console.log(unique)
+         return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     primeOrSub(){
@@ -1593,14 +1735,14 @@ export default {
           let contractNums = this.contractDataOptions.contract_numbers
           .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
           .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
-         return contractNums        
+         return contractNums.filter(u => u.name.trim().length !== 0 && u.name !== 'null')        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        return vehicles
+        return vehicles.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     customerOptions(){
@@ -1610,7 +1752,7 @@ export default {
         let unique = [];
         // console.log(customers)
         customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     naicsOptions(){
@@ -1620,7 +1762,7 @@ export default {
         let unique = [];
         // console.log(naics)
         naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     awardTypes(){
@@ -1630,7 +1772,8 @@ export default {
         let unique = [];
         // console.log(awardType)
         awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        console.log(unique)
+        return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
       }
     },
     pops(){
@@ -1640,7 +1783,7 @@ export default {
         let unique = [];
         // console.log(pops)
         pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
     currentPops(){
@@ -1650,16 +1793,9 @@ export default {
         let unique = [];
         // console.log(currentPoPs)
         currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
-  //  validEmail() {
-  //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
-  //         this.msg[this.email] = 'Please enter a valid email address';
-  //     } else {
-  //         this.msg[this.email] = '';
-  //     }
-  //   },
     contractTypes(){
      if (this.contractProjects && this.contractProjects.length > 0){
         let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))
@@ -1667,7 +1803,7 @@ export default {
         let unique = [];
         // console.log(contractTypes)
         contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-         return unique
+         return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
       }
     },
   },
@@ -1695,6 +1831,14 @@ export default {
         }
       },
     }, 
+    contracts: {
+      handler() {
+        if (this.contracts && this.contracts.length > 0 && this.contractProgID && this.programContractRowID) {
+          let programContractId = this.contracts.filter(c => c.id ==  this.programContractRowID )[0].project_contract_id
+            window.open(`/programs/${this.contractProgID}/sheet/contracts/${programContractId}/tasks`)  
+          }                    
+        }
+    },
     contractPOCsStatus: {
       handler() {
         if (this.contractPOCsStatus == 200) {
@@ -1712,17 +1856,6 @@ export default {
           this.mobNumberValNew = '',
           this.pocRowIndex = null;
           this.pocRowId = null;
-
-          // this.dynamicValidateForm.newEmail = ''; 
-          // this.dynamicValidateForm.newName = ''; 
-          // this.dynamicValidateForm.newWorkNumber = ''; 
-          // this.dynamicValidateForm.newMobileNumber = ''; 
-          // this.dynamicValidateForm.newTitle = '';   
-          // this.validName = false; 
-          // this.validEmail = false; 
-          // this.validWorkNum = false;
-          // this.validMobileNum = false; 
-          // this.validTitle = false;
         }
       },
     },     
@@ -1731,7 +1864,7 @@ export default {
 </script>
     
 <style scoped lang="scss">
-/deep/.el-tabs--border-card {
+::v-deep.el-tabs--border-card {
   padding-bottom: 0;
 }
 .requiredFields{
@@ -1739,19 +1872,19 @@ export default {
   }
   .bottomTabs{
     position: absolute;
-    bottom: 2.5%;
+    bottom: 3.5%;
     width: 100%;
   }
- /deep/.el-dialog {
+ ::v-deep.el-dialog {
   width: 70%;  
  }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   padding: 1px 1px 1px 2px;
 }
-/deep/.el-tabs__content {
+::v-deep.el-tabs__content {
   padding-bottom: 0;
 }
-/deep/.el-table {
+::v-deep.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;

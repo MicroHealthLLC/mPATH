@@ -319,6 +319,7 @@
                         <h5 class="mh-orange-text">
                           Projects
                           <span
+                          :load="log(groupProjects)"
                             v-if="
                               groupProjects &&
                                 groupProjects
@@ -393,7 +394,6 @@
                         <h5 class="mh-orange-text">
                           Vehicles
                           <span
-                          :load="log(groupVehicles)"
                             v-if="
                               groupVehicles && groupVehicles.length > 0 &&
                                 groupVehicles
@@ -433,6 +433,7 @@
               <el-table-column label="Actions"  align="right" v-if="_isallowed('delete') || _isallowed('write')">
                 <template slot-scope="scope">
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Save`"
                     @click.prevent="saveEdits(scope.$index, scope.row)"
@@ -444,6 +445,7 @@
                     <i class="far fa-save"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Cancel Edit`"
                     v-if="
@@ -455,6 +457,7 @@
                     <i class="fas fa-ban"></i>
                   </el-button>
                   <el-button
+                    size="small"
                     type="default"
                     v-tooltip="`Edit Program Group`"
                     @click.prevent="editMode(scope.$index, scope.row)"
@@ -467,6 +470,7 @@
                     <i class="fal fa-edit text-primary"></i>
                   </el-button>
                   <el-button
+                   size="small"
                     type="default" 
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Portfolio Group'"            
@@ -479,6 +483,7 @@
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
                   <el-button
+                    size="small"
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
@@ -864,24 +869,27 @@ export default {
       } else return [];
     },
     groupProjects() {
+      let facilities = this.facilities.filter(f => f.facilityName != "" || f.facilityName != null)
       if (
-        this.facilities &&
-        this.facilities.length &&
-        this.facilities.length > 0
+        facilities &&
+        facilities.length &&
+        facilities.length > 0
       ) {
-        return this.facilities;
+        return facilities;
       }
     },
-  groupContracts() {
-     if (this.contracts && this.contracts.length > 0) {
-          // console.log(this.contracts)
-          return this.contracts.filter(t => t !== 'null');
+    groupContracts() {
+    let contracts = this.contracts.filter(f => f.name != "" && f.name != null && f.name != 'null')
+     if (contracts && contracts.length > 0) {
+          // console.log(contracts)
+          return contracts
       } else return []
     },
     groupVehicles() {
-     if (this.vehicles && this.vehicles.length > 0) {
-          // console.log(this.vehicles)
-          return this.vehicles.filter(t => t !== 'null');
+      let vehicles = this.vehicles.filter(f => f.contract_vehicle.name != "" && f.contract_vehicle.name != null && f.contract_vehicle.name != 'null')
+     if (vehicles && vehicles.length > 0) {
+          // console.log(vehicles)
+          return vehicles
       } else return []
     },
     // groupContracts() {
@@ -952,7 +960,7 @@ export default {
 .fa-calendar {
   font-size: x-large;
 }
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1.15rem;
 }
@@ -984,13 +992,13 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-table__row .el-input .el-input__inner {
+::v-deep.el-table__row .el-input .el-input__inner {
   border-style: none;
 }
-/deep/.el-table {
+::v-deep.el-table {
   font-size: 16px;
 }
-/deep/.hover-row .el-input .el-input__inner {
+::v-deep.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
 
@@ -999,30 +1007,30 @@ a {
 }
 
 // Move el-transfer styles to Common file if more files require same CSS
-/deep/.el-transfer-panel {
+::v-deep.el-transfer-panel {
   width: 400px;
   padding-bottom: 30px;
 }
-/deep/.el-transfer-panel__header {
+::v-deep.el-transfer-panel__header {
   font-size: 1.5rem;
   text-transform: uppercase;
   font-weight: 600 !important;
 }
-/deep/.el-transfer-panel__body {
+::v-deep.el-transfer-panel__body {
   min-height: 400px;
   margin-bottom: 30px;
 }
-/deep/.el-transfer-panel__list {
+::v-deep.el-transfer-panel__list {
   min-height: 425px;
 }
-/deep/.el-checkbox__input.is-disabled + span.el-checkbox__label {
+::v-deep.el-checkbox__input.is-disabled + span.el-checkbox__label {
   color: #1d336f !important;
   cursor: default;
 }
-/deep/.el-transfer-panel .el-transfer-panel__header {
+::v-deep.el-transfer-panel .el-transfer-panel__header {
   background-color: #ededed;
 }
-/deep/.el-table {
+::v-deep.el-table {
    .warning-row {
     background: oldlace;
   }
@@ -1033,11 +1041,11 @@ a {
     font-family: "FuturaPTBook";
   }
 }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   font-size: 1.1rem;
 }
 
-/deep/.el-button.confirm-save-group-names {
+::v-deep.el-button.confirm-save-group-names {
   background-color: rgba(40, 167, 69, 1);
 }
 
@@ -1060,19 +1068,19 @@ div.sticky {
 }
 
 .portfolioNames {
-  /deep/.el-dialog__header {
+  ::v-deep.el-dialog__header {
     padding-top: 0 !important;
   }
-  /deep/.el-dialog__headerbtn {
+  ::v-deep.el-dialog__headerbtn {
     display: none;
   }
 
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
     height: 68vh; 
   }
 
-  /deep/.el-checkbox-group {
+  ::v-deep.el-checkbox-group {
     overflow-y: auto;
     overflow-x: hidden;
     height: 35vh;
@@ -1084,15 +1092,15 @@ div.sticky {
   word-spacing: 2px !important;
 }
 .createNewGroup{
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
   padding-top: 0 !important;
  }
- /deep/.el-dialog {
+ ::v-deep.el-dialog {
   width: 30%;  
  }
 }
 
-/deep/.el-dialog__close.el-icon.el-icon-close{
+::v-deep.el-dialog__close.el-icon.el-icon-close{
   display: none;
 }
 .add-groups-header{

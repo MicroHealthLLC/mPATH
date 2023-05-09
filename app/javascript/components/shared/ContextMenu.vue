@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openTask">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -16,10 +16,8 @@
         :disabled="!isAllowed('write', 'tasks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
-        </template>
+      <el-submenu index="1" v-if="$route.params.projectId">
+        <template slot="title">Duplicate to... </template>
         <div>
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
@@ -27,7 +25,7 @@
             :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
-          <el-tree
+          <el-tree        
             :data="treeFormattedData"
             :props="defaultProps"
             :filter-node-method="filterNode"
@@ -58,10 +56,8 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Move to...</span>
-        </template>
+      <el-submenu index="2" :disabled="!isAllowed('delete', 'tasks')"  v-if="$route.params.projectId">
+        <template slot="title"> Move to...</template>
         <div>
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
@@ -99,7 +95,7 @@ export default {
   props: {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
-    facilityGroups: Array,
+    // facilityGroups: Array,
     task: Object,
   },
   data() {
@@ -117,7 +113,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups",]),
     // get position of context menu
     style() {
       return {
@@ -128,19 +124,21 @@ export default {
     placeholder(){
       if(this.$route.params.contractId){
         return "Filter Contracts"
+      } else if(this.$route.params.vehicleId){
+        return "Filter Vehicles"
       } else return "Filter Projects"
     },
    treeFormattedData() {
     if(this.$route.params.projectId){
       let data = [];
-      this.facilityGroups.forEach((group, index) => {
+      this.filteredFacilityGroups.forEach((group, index) => {
         data.push({
           id: index,
           label: group.name,
           children: [
             ...group.facilities
               .filter(
-                (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'task_project_context_menu', {facility_project_id: facility.id}) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -165,12 +163,37 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowed("write", 'tasks', contract.projectContractId) && contract.projectContractId !== this.task.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'task_contract_context_menu', {project_contract_id: contract.projectContractId} ) && contract.projectContractId !== this.task.projectContractId
                   )
                   .map((contract) => {
                     return {
                       id: contract.projectContractId,
                       label: contract.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+
+     if(this.$route.params.vehicleId){
+          let data = [];
+        let vehicleGroups = this.currentProject.vehicles
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (vehicle) => this.isAllowedFacility("write", 'task_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId} ) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
+                  )
+                  .map((vehicle) => {
+                    return {
+                      id: vehicle.projectContractVehicleId,
+                      label: vehicle.name,
                     };
                   }),
               ],
@@ -194,29 +217,16 @@ export default {
   },
   methods: {
     ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash", "updateContractTasks"]),
-    //TODO: change the method name of isAllowed
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-
-      // Temporary _isallowed method until contract projectPrivileges is fixed
-      isAllowed(salut) {
+    ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
+    log(e){
+      console.log(e)
+    },
+    isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
-     },
-      isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);          
-        }
-      },
+    },
+    isAllowedFacility(salut, module, extraData) {
+      return this.checkPrivileges(module, salut, this.$route, extraData)  
+    },
     // closes context menu
     close() {
       this.show = false;
@@ -245,7 +255,7 @@ export default {
       this.close();
     },
     moveTask(task, facilityProjectId) {
-      if (!this.isAllowed("write", 'tasks')) return;
+      // if (!this.isAllowed("write", 'tasks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -257,6 +267,8 @@ export default {
       
         if (this.$route.params.contractId) {
              formData.append("task[project_contract_id]", task.projectContractId);
+         } else if (this.$route.params.vehicleId) {
+             formData.append("task[project_contract_vehicle_id]", task.projectContractVehicleId);
          } else {
              formData.append("task[facility_project_id]", facilityProjectId);
          }
@@ -266,6 +278,9 @@ export default {
         if (this.$route.params.contractId) {
              method = "PATCH";
              url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+         } else if (this.$route.params.vehicleId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
          } else {
              method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
@@ -287,6 +302,8 @@ export default {
 
            if (this.$route.params.contractId){
                this.updateContractTasks({ task: responseTask });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleTasks({ task: responseTask });
             } else {
               this.updateFacilities(
               responseTask,
@@ -315,6 +332,7 @@ export default {
             this.loading = false;
             this.updateTasksHash({ task: task, action: "delete" });
              this.updateContractTasks({ task: task, action: "delete" });
+             this.updateVehicleTasks({ task: task, action: "delete" });
           });
       });
     },
@@ -334,6 +352,13 @@ export default {
     
       });
     },
+    updateVehicles(updatedTask) {
+      var vehicles = this.currentProject.vehicles;
+      vehicles.forEach((c) => {       
+          c.tasks.push(updatedTask);
+    
+      });
+    },
     updateFacilityTask(task) {
       var facilities = this.getUnfilteredFacilities;
 
@@ -347,6 +372,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_duplicate.json`;
+      } if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}/create_duplicate.json`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
       }
@@ -371,6 +398,10 @@ export default {
 
           if (this.$route.params.contractId){
               this.updateContractTasks({
+               task: responseTask 
+              });
+            } else if (this.$route.params.vehicleId){
+              this.updateVehicleTasks({
                task: responseTask 
               });
             } else {
@@ -407,10 +438,14 @@ export default {
       this.$refs.duplicatetree.setCheckedNodes([]);
     },
     move(node) {
-      if (!node.hasOwnProperty("children")) {
-        this.moveTask(this.task, node.id);
-        // console.log(node.id)
-      }
+      this.moveTask(this.task, node.id);
+        console.log(node.id)
+        console.log(this.task)
+      
+      // if (!node.hasOwnProperty("children")) {
+      //   this.moveTask(this.task, node.id);
+      //   // console.log(node.id)
+      // }
     },
     duplicateSelectedTasks() {
       this.submitted = true;
@@ -424,6 +459,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       }
@@ -440,13 +477,19 @@ export default {
           url += `contract_ids[]=${id}`;
         } else if (index !== 0 && this.$route.params.contractId)  {
           url += `&contract_ids[]=${id}`;
-        } 
+        } if (index === 0 && this.$route.params.vehicleId) {
+          url += `vehicle_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.vehicleId)  {
+          url += `&vehicle_ids[]=${id}`;
+        }
       });
 
       let formData = new FormData();
           formData.append("id", this.task.id);
       if ( this.$route.params.contractId){
          formData.append("contract_ids", ids);
+      } else if ( this.$route.params.vehicleId){
+         formData.append("vehicle_ids", ids);
       } else {
        formData.append("facility_project_ids", ids);
       } 
@@ -470,6 +513,14 @@ export default {
             response.data.tasks.forEach((task) => {
                  console.log(`task: ${task}`)
                 this.updateContractTasks({
+                task: humps.camelizeKeys(task)
+               });
+              });
+           
+         } else if (this.$route.params.vehicleId){
+            response.data.tasks.forEach((task) => {
+                 console.log(`task: ${task}`)
+                this.updateVehicleTasks({
                 task: humps.camelizeKeys(task)
                });
               });
@@ -554,6 +605,8 @@ export default {
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
+}.context-menu-inner{
+  width: 10vw;
 }
 hr {
   margin: 0;
