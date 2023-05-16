@@ -428,7 +428,8 @@ export default {
         full_name: this.addedUser.fullName,
         name: newTabName,
         content: 'New Tab content',
-        id: this.addedUser.id
+        id: this.addedUser.id,
+        tasks: []
       });
       this.addedUser = []
     },
@@ -445,7 +446,7 @@ export default {
       let hoursArr = item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat()
       console.log(hoursArr.map(t => t.hours));
       console.log(item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat())
-      console.log(item.tasks.filter(t => t.id == row.id)[0].id);;
+      // console.log(item.tasks.filter(t => t.id == row.id)[0].id);
       this.rowId = row.id
     },
     timeEdit(index, row, weekof, weekofIndex, effort) {
