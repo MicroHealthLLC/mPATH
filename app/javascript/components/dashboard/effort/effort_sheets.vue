@@ -199,9 +199,8 @@
                       :name="weekof" 
                       type="text" 
                       class="form-control" 
-                    />
-                    
-                    <!-- CREATE MODE IF ENTER/EDIT BUTTON IS CLICKED -->
+                    />              
+                  <!-- CREATE MODE IF ENTER/EDIT BUTTON IS CLICKED -->
                   </span>
 
                   <input v-else v-model="addedHrs[weekofIndex]" :name="weekof" type="text" class="form-control" :id="weekof" />
@@ -221,7 +220,7 @@
                   class="fa-light fa-calendar-pen text-primary"></i>
               </el-button>
               <el-button type="default" size="mini" @click.prevent="saveEffortRow(scope.$index, scope.row, item.id, item.tasks, weekof)"
-                v-tooltip="`Save`" class="bg-primary text-light  px-2">
+                v-tooltip="`Save`" class="bg-primary text-light  px-2" :disabled="rowId && rowId !== scope.row.id">
                 <i class="far fa-save"></i>
               </el-button>
             </template>
@@ -441,11 +440,6 @@ export default {
       this.editColValue = null;
       this.rowIndex = index
       this.userId = item.id
-      console.log("Edit button clicked", row, this.rowIndex, item)
-      let hoursArr = item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat()
-      console.log(hoursArr.map(t => t.hours));
-      console.log(item.tasks.filter(t => t.id == row.id).map(t => t.efforts).flat())
-      console.log(item.tasks.filter(t => t.id == row.id)[0].id);;
       this.rowId = row.id
     },
     timeEdit(index, row, weekof, weekofIndex, effort) {
