@@ -6,7 +6,7 @@
         a.navbar-brand href="/"
           =image_tag "microhealthllc.png"
       .social-box.pb-5.p-4
-        .row.mg-btm
+        .row
           .col-md-12
             = button_to("Continue with Google", omniauth_authorize_path(resource_name, :google_oauth2), method: :post, class: "btn btn-danger btn-block")
 
@@ -16,7 +16,7 @@
 
         .row
           .col-md-12
-            = button_to("Continue with okta", omniauth_authorize_path(resource_name, :okta), method: :post, class: "btn btn-info btn-block")
+            = button_to("Continue with okta", omniauth_authorize_path(resource_name, :okta), method: :post, class: "btn btn-primary btn-block")
       .form-group.mt-5.px-4
         =f.label :email, "Email"
         =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
