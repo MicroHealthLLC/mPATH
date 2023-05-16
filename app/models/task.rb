@@ -99,8 +99,8 @@ class Task < ApplicationRecord
   end
 
   def calculate_actual_effort
-    # efforts.not_projected_hours.sum(:hours).to_f
-    efforts.sum(:hours).to_f
+    efforts.not_projected_hours.sum(:hours).to_f
+    # efforts.sum(:hours).to_f
   end
 
   def update_actual_effort
