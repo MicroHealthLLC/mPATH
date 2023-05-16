@@ -427,7 +427,8 @@ export default {
         full_name: this.addedUser.fullName,
         name: newTabName,
         content: 'New Tab content',
-        id: this.addedUser.id
+        id: this.addedUser.id,
+        tasks: []
       });
       this.addedUser = []
     },
