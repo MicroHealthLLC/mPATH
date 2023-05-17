@@ -28,7 +28,7 @@ class Setting < ApplicationRecord
     Setting.load_available_settings
 
     Devise.setup do |config|
-      config.omniauth(:microsoft_office365, 
+      config.omniauth(:office365, 
         Setting['OFFICE365_KEY'], 
         Setting['OFFICE365_SECRET'], 
         :scope => 'openid profile email https://outlook.office.com/mail.read',

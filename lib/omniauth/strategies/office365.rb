@@ -2,8 +2,8 @@ require "omniauth/strategies/oauth2"
 
 module OmniAuth
   module Strategies
-    class MicrosoftOffice365 < OmniAuth::Strategies::OAuth2
-      option :name, :microsoft_office365
+    class Office365 < OmniAuth::Strategies::OAuth2
+      option :name, :office365
 
       DEFAULT_SCOPE="openid User.Read Contacts.Read"
 

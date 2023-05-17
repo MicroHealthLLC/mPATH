@@ -1,7 +1,7 @@
 class CallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :verify_authenticity_token
 
-  def microsoft_office365
+  def office365
     check_omniauth_auth
   end
 
