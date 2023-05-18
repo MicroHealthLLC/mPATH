@@ -3,11 +3,19 @@
 
 <template>
   <div class="container-fluid m-2" data-cy="facility_rollup" :load="log(weekOfArr)">
-
+       <el-alert  
+       v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
+        type="warning"
+        class="pt-0 pb-2"
+        show-icon >
+       <template slot="title">
+        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
+       </template>
+       </el-alert>
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->   
+    <div class="row pt-3 pb-2">
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded"  :load="log(showProjectedHours)">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
@@ -327,7 +335,7 @@
         class="reportCenter"
         center   
       >
-     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s 
+     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s F
       <button                
         class="btn mh-orange text-light profile-btns allCaps py-1" data-cy=program_viewer_btn>
         User Task Effort Reports
@@ -881,8 +889,10 @@
                   </h4>          
                 </div>               
                </div>      
-
-              <div v-if="filteredTasks.length">
+                
+           
+           
+                 <div v-if="filteredTasks.length">
                 <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                      
@@ -1814,6 +1824,23 @@ export default {
         })
           return tasks                
        }      
+     },
+     overdueTasks(){
+      const today = new Date()
+      const tomorrow = new Date(today)
+      let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
+      const current = new Date();      
+      let plusSevenDays = current.setDate(current.getDate() + 7);
+
+      if (this.filteredTasks.length > 0) {       
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        return {
+          value24: dueDatesTomorrow,   
+          value7: datesWithinSevenDays,          
+        }
+
+        }
      },
      fridayDayOfWeek( ) {
         let date = new Date();
@@ -2820,7 +2847,7 @@ export default {
       // )
      
   },
-  watch: {          
+  watch: {   
       dateOfWeekFilter(){
         if(this.dateOfWeekFilter !== ""){        
           let dateObj = {
@@ -2853,6 +2880,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.overdueWarningCard {
+  border-radius: 2px;
+  padding: 4px;
+  z-index:1;
+  width: 400px;
+  position: absolute;
+  bottom: 5rem;
+  right: 5rem;
+  box-shadow: 0 2.5px 5px rgba(236, 7, 7, 0.19),
+    0 3px 3px rgba(223, 11, 11, 0.23);
+  // border: solid red 1px;
+}
+
 .badge-color {
   height: 12px;
   padding-top: 2px;
