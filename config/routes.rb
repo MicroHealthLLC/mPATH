@@ -209,6 +209,10 @@ Rails.application.routes.draw do
           end
         end
         
+        collection do
+          get "project_efforts/:program_id", to: 'projects#project_efforts'
+        end
+
         member do
           # used in Admin
           get 'task_issues', to: 'projects#task_issues'
@@ -241,6 +245,8 @@ Rails.application.routes.draw do
           resources :lessons do
             get :count, on: :collection
           end
+          
+          resources :efforts
         end
       end
 
