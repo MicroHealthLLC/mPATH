@@ -14,6 +14,7 @@ import projectStore from "./modules/project-store";
 import riskStore from "./modules/risk-store";
 import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
+import effortStore from './modules/effort-store'
 import portfolioModule from "./modules/portfolio-store";
 import { API_BASE_PATH } from "./../mixins/utils";
 
@@ -34,6 +35,7 @@ export default new Vuex.Store({
     programStore,
     contractStore,
     projectStore,
+    effortStore,
     // taskStore,
     settingsStore,
     // issueStore,

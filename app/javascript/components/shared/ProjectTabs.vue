@@ -112,6 +112,12 @@ export default {
           closable: false,
           hidden: false,
         },
+        {
+          label: "Effort",
+          key: "effort",
+          closable: false,
+          hidden: false,
+        },
       ],
     };
   },
