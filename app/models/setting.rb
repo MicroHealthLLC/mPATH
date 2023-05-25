@@ -28,7 +28,17 @@ class Setting < ApplicationRecord
     Setting.load_available_settings
 
     Devise.setup do |config|
-      config.omniauth :office365, Setting['OFFICE365_KEY'], Setting['OFFICE365_SECRET'], :scope => 'openid profile email https://outlook.office.com/mail.read', provider_ignores_state: true
+      config.omniauth(:microsoft_office365, 
+        Setting['OFFICE365_KEY'], 
+        Setting['OFFICE365_SECRET'], 
+        :scope => 'openid profile email https://outlook.office.com/mail.read',
+        :client_options => {
+          :site => 'https://outlook.office.com/',
+          :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+          :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+        },
+        provider_ignores_state: true, prompt: :select_account)
+
       config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
     end
   end
