@@ -301,6 +301,9 @@ export default {
       if (this.$route.name === "SheetRisks") {
         return "/risks";
       }
+      if (url.includes("effort")) {
+        return "/effort";
+      }
       if (url.includes("lessons")) {
         return "/lessons";
       }
