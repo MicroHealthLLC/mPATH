@@ -1,5 +1,5 @@
 # require 'omniauth-oktaoauth'
-require Rails.root.join("lib", "omniauth", "strategies","microsoft_office365.rb")
+require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
 # frozen_string_literal: true
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
@@ -261,7 +261,7 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
-  config.omniauth(:microsoft_office365, 
+  config.omniauth(:office365, 
     ENV['OFFICE365_KEY'], 
     ENV['OFFICE365_SECRET'], 
     :scope => 'openid profile email https://outlook.office.com/mail.read',
