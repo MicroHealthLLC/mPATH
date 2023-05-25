@@ -202,7 +202,7 @@ Rails.application.routes.draw do
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
 
-      resources :projects, path: 'programs', only: [:index, :show] do
+      resources :projects, path: 'programs', only: [:index, :show,:project_efforts] do
         resources :query_filters do
           collection do
             delete "reset" => "query_filters#reset"
