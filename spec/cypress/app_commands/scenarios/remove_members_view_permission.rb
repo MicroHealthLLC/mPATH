@@ -1,5 +1,5 @@
 client = User.find_or_initialize_by(email: 'client@test.com')
-client.privilege.update(members: "")
+client.role_users.destroy_all
 
 # client.privilege = Privilege.new(
 #   overview: "R",

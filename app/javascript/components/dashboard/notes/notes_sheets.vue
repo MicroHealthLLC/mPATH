@@ -3,7 +3,7 @@
   <div data-cy="notes">
     <div v-if="C_editForManager" class="blur_show float-right">   
     </div>
-    <div class="notes_show mb-5 mx-2">
+    <div data-cy="notes_show" class="notes_show mb-5 mx-2">
       <div v-if="note">
         <div class="crud-actions mx-3 float-right">
           <span class="mr-2 edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">

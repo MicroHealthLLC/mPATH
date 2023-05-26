@@ -1,5 +1,9 @@
 import '@4tw/cypress-drag-drop'
 
+Cypress.Commands.add("cleanData", () => {
+  cy.app('clean')
+  Cypress.session.clearAllSavedSessions()
+} )
 // Open first Project
 Cypress.Commands.add("openPortoflioViewer", () => {
   cy.visit('/')
@@ -23,17 +27,23 @@ Cypress.Commands.add('preserveAllCookiesOnce', () => {
 
 // Login command
 Cypress.Commands.add("login", (email, password) => {
-  cy.visit('/')
-  cy.get('[data-cy=user_email]').type(email, {force: true}).should('have.value', email)
-  cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
-  cy.get('[data-cy=user_remember_me]').click({force: true})
-  cy.get('[data-cy=submit]').click({force: true})
+  console.log("Outside of session")
+  cy.session([email,password], () =>{
+    console.log("Inside of session")
+    cy.visit('/')
+    cy.get('[data-cy=user_email]').type(email, {force: true}).should('have.value', email)
+    cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
+    cy.get('[data-cy=user_remember_me]').click({force: true})
+    cy.get('[data-cy=submit]').click({force: true})
+  })
+  cy.visit("/")
 })
 
 // Logout Command
 Cypress.Commands.add("logout", () => {
   cy.get('[data-cy=logout]').click()
   cy.contains('You need to sign in before continuing.')
+  Cypress.session.clearAllSavedSessions()
 })
 
 // Open first Project
@@ -51,7 +61,7 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 // Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
-  cy.contains('Test Facility')
+  cy.contains('Test Facility 1')
 })
 
 // Open Teams page of a project
@@ -173,7 +183,7 @@ Cypress.Commands.add("openProgramTypeAP", () => {
 Cypress.Commands.add("openProjectGroupAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facility_groups').contains('Project Groups').click({force: true})
+    cy.get('#facility_groups').contains('Groups').click({force: true})
   })
 })
 

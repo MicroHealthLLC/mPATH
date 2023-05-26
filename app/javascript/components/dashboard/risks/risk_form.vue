@@ -2149,12 +2149,12 @@ export default {
         },
         {
           label: "Updates",
-          key: "tab8",
+          key: "tab7",
           closable: false,
         },
         {
           label: "Disposition",
-          key: "tab7",
+          key: "tab8",
           closable: false,
           disabled: false,
         },
