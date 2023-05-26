@@ -2127,6 +2127,11 @@ export default new VueRouter({
           component: SheetLessonForm,
         },
         {
+          name: "effort",
+          path: "projects/:projectId/effort",
+          component: SheetEffort,
+        },
+        {
           name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,

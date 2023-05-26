@@ -1,19 +1,7 @@
 <template>
   <div class="container-fluid" data-cy="facility_rollup" :load="log(weekOfArr)">
-
-      <el-alert  
-      v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
-      type="warning"
-      class="pt-0 pb-2"
-      show-icon >
-      <template slot="title">
-      You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
-      </template>
-      </el-alert>
-
-
       <div class="row pt-1 pb-2">
-      <div class="col-6 py-1 pl-0" v-if="contentLoaded" :load="log(showProjectedHours)">
+      <div class="col-6 p-3" v-if="contentLoaded" :load="log(showProjectedHours)">
         <span>
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
@@ -104,9 +92,9 @@
         filterable
       >
         <el-option
-          v-for="item in matrixDates"
+          v-for="item, i in matrixDates"
           :value="item"
-          :key="item"
+          :key="item + i"
           :label="item"
         >
         </el-option> 
@@ -393,9 +381,9 @@
         filterable
       >
         <el-option
-          v-for="item in matrixDates"
+          v-for="item, i in matrixDates"
           :value="item"
-          :key="item"
+          :key="item + i"
           :label="item"
         >
         </el-option> 
@@ -820,6 +808,27 @@
   
      
     </div>
+    
+    <el-alert  
+      v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
+      type="warning"
+      class="pt-0 pb-2 my-2"
+      show-icon >
+      <template slot="title">
+        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days: 
+        <span v-for="t, i in overdueTasks.value7" :key="i">
+          <router-link :to="`/programs/${$route.params.programId}/sheet/projects/${t.facilityId}/tasks/${t.id}`" > 
+            <span style="cursor: pointer; color:#e6a23c" >
+             {{ t.text }} 
+             <span v-if="overdueTasks.value7[overdueTasks.value7.length - 1].id == t.id">.</span>
+             <span v-else>,</span>
+            </span>   
+          </router-link> 
+         </span>
+
+      </template>
+      </el-alert>
+
 
    <el-tabs type="border-card" @tab-click="handleClick">
        <!-- <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && this.getShowProjectStats !== 0"> 
@@ -2121,7 +2130,8 @@ export default {
       'getHideOnhold',
       'getHideDraft',
       'getHideOverdue',
-      'programTaskEffort'
+      'programTaskEffort',
+      'programEfforts'
 
     ]),
         //BEGIN EFFORT / EFFORT RELATED CODE
@@ -2141,15 +2151,18 @@ export default {
       const today = new Date()
       const tomorrow = new Date(today)
       let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
-      const current = new Date();      
-      let plusSevenDays = current.setDate(current.getDate() + 7);
-
+      const nextWeek = new Date()
+      // add 7 days to the current date
+      nextWeek.setDate(new Date().getDate() + 7)
+      console.log('current: ' + nextWeek)
       if (this.filteredTasks.length > 0) {       
-        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
-        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )  
+        console.log('current: ' + nextWeek) 
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
         return {
           value24: dueDatesTomorrow,   
-          value7: datesWithinSevenDays,          
+          value7: datesWithinSevenDays,   
+          length: datesWithinSevenDays.length 
         }
 
         }
@@ -3445,18 +3458,23 @@ td.updates {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 
-::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
+::v-deep .el-collapse-item__header, ::v-deep .el-collapse-item__wrap  {
   border-bottom: none !important;
 }
-
-::v-deep.el-card__body {
+::v-deep .el-dialog {
+    width: 90% ;
+}
+::v-deep .el-dialog--center  {
+    width: 90% ;
+}
+::v-deep .el-card__body {
     padding-bottom: 0 !important;
 }
-::v-deep.el-collapse-item__header {
+::v-deep .el-collapse-item__header {
   font-size: 2rem;
   }
 
-::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
+::v-deep .el-collapse-item__arrow, ::v-deep .el-icon-arrow-right {
   display: none;
 }
 .programName {
@@ -3532,7 +3550,7 @@ em.text-dark{
 
 .lessonsCard {
 .sheetHeight {
-  ::v-deep.el-card__body{
+::v-deep.el-card__body{
     min-height: 184px;
   }
  }
