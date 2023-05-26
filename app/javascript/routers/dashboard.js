@@ -88,6 +88,7 @@ import SheetLessons from "./../components/views/sheet/SheetLessons";
 import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+import SheetEffort from "./../components/views/sheet/SheetEffort";
 
 
 // Kanban Routes Components
@@ -214,6 +215,11 @@ export default new VueRouter({
       name: "SettingsGroups",
       path: "/programs/:programId/settings/groups",
       component: SettingsGroups,
+    },
+    {
+      name: "SheetTimeEffort",
+      path: "projects/:projectId/effort",
+      component: SheetEffort,
     },
     {
       name: "SettingsUsers",
@@ -2119,6 +2125,11 @@ export default new VueRouter({
           name: "SheetLessonForm",
           path: "projects/:projectId/lessons/:lessonId",
           component: SheetLessonForm,
+        },
+        {
+          name: "effort",
+          path: "projects/:projectId/effort",
+          component: SheetEffort,
         },
         {
           name: "SheetNotes",

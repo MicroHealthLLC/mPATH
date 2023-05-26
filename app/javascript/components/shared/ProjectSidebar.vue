@@ -135,7 +135,7 @@
                   @click="showFacility(v)"
                   :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
                 >
-                  <p class="facility-header" data-cy="contracts">
+                  <p class="facility-header"data-cy="contracts">
                     <i class="far fa-car mr-1 text-info"></i> {{ v.name }}
                   </p>
                 </div>
@@ -168,7 +168,7 @@
       class="btn btn-sm btn-light program-settings-btn"
       @click.prevent="toggleAdminView"
       style="cursor: pointer"
-      data-cy="program_setting"
+       data-cy="program_setting"
     >
       <h6><i class="far fa-cog"></i> Program Settings</h6>
     </button>
@@ -302,6 +302,9 @@ export default {
       }
       if (this.$route.name === "SheetRisks") {
         return "/risks";
+      }
+      if (url.includes("effort")) {
+        return "/effort";
       }
       if (url.includes("lessons")) {
         return "/lessons";
@@ -611,4 +614,4 @@ export default {
     // white-space: nowrap;
   }
 }
-</style>
+

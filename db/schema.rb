@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_07_202520) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_23_191817) do
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -81,6 +81,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_07_202520) do
     t.bigint "user_id"
     t.integer "position", default: 0
     t.date "due_date"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
     t.index ["listable_id"], name: "index_checklists_on_listable_id"
     t.index ["listable_type"], name: "index_checklists_on_listable_type"
     t.index ["position"], name: "index_checklists_on_position"
@@ -331,6 +332,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_07_202520) do
     t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
+  end
+
+  create_table "efforts", charset: "utf8", force: :cascade do |t|
+    t.datetime "date_of_week", null: false
+    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
+    t.integer "user_id", null: false
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "facility_project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "projected", default: false
   end
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
@@ -992,6 +1005,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_07_202520) do
     t.integer "contract_id"
     t.integer "project_contract_id"
     t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
+    t.decimal "actual_effort", precision: 10, scale: 2, default: "0.0"
+    t.boolean "auto_calculate_planned_effort", default: true
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
