@@ -60,6 +60,7 @@ contract_types = [ "Prime Contract", "Non Prime contract", "Prime vehicles and I
 contract_types.each do |name|
   ContractType.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -76,6 +77,7 @@ contract_name_customers = ["VA",  "IPO",  "DHA",  "3M",  "DIA",  "SEC",  "Army",
 contract_name_customers.each do |name|
   ContractCustomer.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -84,6 +86,7 @@ contract_vehicles = ["VAEHRM","Connections II","GSA IT-70 SIN 132-51","T4NG","8(
 contract_vehicles.each do |name|
   ContractVehicle.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -124,6 +127,7 @@ contract_current_pops = ["Base Period","Base Period 2","Contract Yr 3","Option P
 contract_current_pops.each do |name|
   ContractCurrentPop.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
