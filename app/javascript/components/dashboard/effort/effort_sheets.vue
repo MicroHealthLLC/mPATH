@@ -122,7 +122,7 @@
             >
             <el-table-column prop="plannedEffort" label="Planned Effort" width="80" header-align="center">
             </el-table-column>
-            <el-table-column prop="actualEffort" label="Actual Effort1" width="80" header-align="center">
+            <el-table-column prop="actualEffort" label="Actual Effort" width="80" header-align="center">
             </el-table-column>
             <el-table-column prop="text" label="Tasks" width="250" header-align="center">
   
