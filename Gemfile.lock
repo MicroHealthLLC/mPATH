@@ -1,10 +1,6 @@
 GIT
   remote: https://github.com/activeadmin/activeadmin.git
-<<<<<<< HEAD
   revision: cecfcf5d24e109c911136229ece4ce4bb71d6821
-=======
-  revision: d0d4fa295efd7659bd05a32ff142c32c9d662656
->>>>>>> release
   branch: master
   specs:
     activeadmin (2.13.1)
@@ -17,7 +13,6 @@ GIT
       railties (>= 6.1, < 7.1)
       ransack (>= 2.1.1, < 4)
 
-<<<<<<< HEAD
 GIT
   remote: https://github.com/rails-on-services/apartment.git
   revision: 7d626d1fd53259da7c193a1710495b384cad6481
@@ -29,14 +24,6 @@ GIT
       public_suffix (>= 2.0.5, < 5.0)
       rack (>= 1.3.6, < 3.0)
 
-PATH
-  remote: lib/omniauth-office365
-  specs:
-    omniauth-office365 (1.0.0)
-      omniauth-oauth2 (~> 1.3.1)
-
-=======
->>>>>>> release
 GEM
   remote: https://rubygems.org/
   specs:
@@ -168,16 +155,12 @@ GEM
       railties (>= 3.2)
     erubi (1.12.0)
     execjs (2.8.1)
-<<<<<<< HEAD
-    faraday (2.7.5)
-=======
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faraday (2.7.4)
->>>>>>> release
+    faraday (2.7.5)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
@@ -210,11 +193,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.6.3)
-<<<<<<< HEAD
-    jwt (1.5.6)
-=======
     jwt (2.7.0)
->>>>>>> release
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.2)
@@ -251,7 +230,6 @@ GEM
     mini_mime (1.1.2)
     minitest (5.18.0)
     msgpack (1.7.1)
-    multi_json (1.15.0)
     multi_xml (0.6.0)
     mysql2 (0.5.5)
     net-imap (0.3.4)
@@ -271,8 +249,10 @@ GEM
       jwt (>= 1.0, < 3.0)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
     oj (3.14.3)
-    omniauth (1.9.2)
+    omniauth (2.1.1)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
       rack-protection
@@ -305,6 +285,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.7)
+    rack-protection (3.0.6)
+      rack
     rack-proxy (0.7.6)
       rack
     rack-test (2.1.0)
@@ -415,6 +397,9 @@ GEM
       actionpack (>= 3.1)
       railties (>= 3.1)
       slim (>= 3.0, < 6.0, != 5.0.0)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -436,6 +421,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (2.4.2)
+    version_gem (1.1.2)
     warden (1.2.9)
       rack (>= 2.0.9)
     websocket-driver (0.7.5)
