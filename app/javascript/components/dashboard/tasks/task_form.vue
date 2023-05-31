@@ -436,7 +436,44 @@
                 {{ errors.first("Start Date") }}
               </div>
             </div>
-            <div class="form-group col-md-6 pr-0">
+            <div class="form-group col-md-6 pr-0">            
+            <span >           
+            <label class="font-md"
+              >Planned Effort </label
+            ></span>
+            <span class="ml-3">
+            <label class="font-sm mb-0 d-inline-flex align-items-center">
+              <input
+                type="checkbox"
+                v-model="DV_task.autoCalculatePlannedEffort"               
+              />
+              <span>&nbsp;&nbsp;Auto Calculate Effort</span></label
+            >
+            </span>
+            <el-input
+            class="d-flex"
+            v-if="DV_task.autoCalculatePlannedEffort"
+            type="text"
+            :disabled="DV_task.autoCalculatePlannedEffort"
+            style="width: 15%;"
+            v-model="autoCalculatedPlannedEffort"
+            placeholder="Planned Effort Hours"
+            ></el-input>
+            <el-input
+            class="d-flex"
+            v-if="!DV_task.autoCalculatePlannedEffort"
+            type="text"
+            style="width: 15%;"
+            v-model="DV_task.plannedEffort"
+            placeholder="Planned Effort Hours"
+            ></el-input>          
+            </div>      
+          </div> 
+
+
+       
+          <div class="form-row mx-4">
+            <div class="form-group col-md-6 pl-0">
               <span v-if="DV_task.ongoing ">           
                <label class="font-md"
                 ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
@@ -452,7 +489,7 @@
               ></span>
           
                 <v2-date-picker
-                  v-validate="{ required: DV_task.progress != 100 && !DV_task.ongoing && !DV_task.onHold }"
+                  v-validate="{ required: !DV_task.ongoing && !DV_task.onHold }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
@@ -479,6 +516,21 @@
                 {{ errors.first("Due Date") }}
               </div>
               
+            </div>
+            <div class="form-group col-md-6 pr-0">
+            
+              <span >           
+               <label class="font-md"
+                >Actual Effort </label
+              ></span>          
+              <el-input
+              :disabled="true"
+              type="text"
+              style="width: 15%;"
+              class="d-flex"
+              v-model="DV_task.actualEffort"
+              placeholder="READ ONLY"
+              ></el-input>         
           
             <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
               THIS TASK IS ONGOING
@@ -486,7 +538,6 @@
             </div>
                
           </div>
-
           <!-- closing div for tab1 -->
         </div>
 
@@ -613,7 +664,7 @@
           </div>
 
           <div class="form-group pt-3 mx-4">
-            <label class="font-md">Checklists</label>
+            <label class="font-md">Subtasks</label>
             <span
               class="ml-2 clickable"
               v-if="_isallowed('write')"
@@ -654,7 +705,7 @@
                     style="background-color:#fafafa;position:relative"
                   >
                     <div class="row" style="width:97%">
-                      <div class="col-8 justify-content-start">
+                      <div class="col-6 justify-content-start">
                         <input
                           type="checkbox"
                           name="check"
@@ -668,23 +719,23 @@
                           name="text"
                           @input="updateCheckItem($event, 'text', index)"
                           :key="`text_${index}`"
-                          placeholder="Checkpoint name here"
+                          placeholder="Subtask name here"
                           type="text"
                           class="checklist-text pl-1"
                           maxlength="80"
                           :readonly="!_isallowed('write')"
                         />
                       </div>
+
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-1 pl-0 pr-0"
+                        class="col-1 text-right pr-1"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
                         v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
-                        class="col-3 pl-0"
-                        style="margin-left:-25px"
+                        class="col-2 pl-0"            
                       >
                         <v2-date-picker
                           v-model="check.dueDate"
@@ -696,11 +747,36 @@
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="dueDate"
-                          class="w-100 vue2-datepicker d-flex ml-auto"
+                          class="w-100 vue2-datepicker ml-auto bg-light"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
                         />
                       </div>
+
+
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-1 text-right pr-0"
+                      >
+                        <span class="font-sm dueDate">Planned Effort:</span>
+                      </div>
+                      <div
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
+                        class="col-2 pl-0"             
+                      >
+                      <input
+                          :value="check.plannedEffort"
+                          name="planned_effort"
+                          @input="updateCheckItem($event, 'planned_effort', index)"
+                          :key="`planned_effort_${index}`"
+                          placeholder=""
+                          type="text"
+                          class="checklist-text-planned-hrs pl-1"
+                          maxlength="80"
+                          :readonly="!_isallowed('write')"
+                        />
+                      </div>                                   
+                     
                     </div>
 
                     <!-- Collpase section begins here -->
@@ -1362,7 +1438,7 @@ export default {
           form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
         },
         {
-          label: "Checklist",
+          label: "Subtasks",
           key: "tab3",
           closable: false,
           form_fields: ["Checklists"],
@@ -1414,6 +1490,7 @@ export default {
         startDate: "",
         dueDate: "",      
         checklistDueDate: "",
+        plannedEffort: "",
         taskTypeId: "",
         taskStageId: "",
         important: false,
@@ -1431,6 +1508,7 @@ export default {
         description: "",
         progress: 0,
         autoCalculate: true,
+        autoCalculatePlannedEffort: true,
         taskFiles: [],
         checklists: [],
         notes: [],
@@ -1680,6 +1758,7 @@ export default {
         formData.append("task[task_stage_id]", this.DV_task.taskStageId);
         formData.append("task[progress]", this.DV_task.progress);
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
+        formData.append("task[auto_calculate_planned_effort]", this.DV_task.autoCalculatePlannedEffort);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
         formData.append("task[reportable]", this.DV_task.reportable);
@@ -1690,6 +1769,12 @@ export default {
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
+
+        if (this.DV_task.autoCalculatePlannedEffort){
+          formData.append("task[planned_effort]", this.autoCalculatedPlannedEffort);
+        } else {
+          formData.append("task[planned_effort]", this.DV_task.plannedEffort);
+        }
         // RACI USERS START HERE Awaiting backend work
 
         //Responsible USer Id
@@ -1997,18 +2082,50 @@ export default {
     calculateProgress(checks = null) {
       try {
         if (!checks) checks = this.DV_task.checklists;
+        console.log(checks)
+        let allUnchecked = checks.filter(t => t.checked == false).length       
+        if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        let sum =  this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+        console.log(sum)
         let checked = _.filter(
           checks,
           (v) => !v._destroy && v.checked && v.text.trim()
-        ).length;
-        let total = _.filter(checks, (v) => !v._destroy && v.text.trim())
+         ).length;        
+         if (sum && sum > 0.01){
+      
+        let checkedSubtask = _.filter(
+          checks,
+            (v) => !v._destroy && v.checked && v.text.trim()
+          )     
+         for (let i = 0; i < checked; i++) {
+          if (checkedSubtask.length > 1 ){           
+              this.DV_task.progress = Number(
+            ((checkedSubtask.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0) / sum) * 100 || 0).toFixed(2)
+              ); 
+            }      
+            
+          if (checkedSubtask.length == 1){            
+            this.DV_task.progress = Number(
+            ((checkedSubtask[0].plannedEffort / sum) * 100 || 0).toFixed(2)
+            );
+          }                
+        }
+        if (checks.length == allUnchecked) {
+            console.log("all Unchecked")
+            this.DV_task.progress = Number((0));
+          }   
+         }
+         if(sum == 0){
+          let total = _.filter(checks, (v) => !v._destroy && v.text.trim())
           .length;
-        this.DV_task.progress = Number(
+          this.DV_task.progress = Number(
           ((checked / total) * 100 || 0).toFixed(2)
-        );
-      } catch (err) {
+           );
+         }
+        }
+       } catch (err) {
         this.DV_task.progress = 0;
-      }
+       }
     },
     updateCheckItem(event, name, index) {
       if (name === "text") {
@@ -2018,6 +2135,8 @@ export default {
         this.DV_task.checklists[index].checked = event.target.checked;
       } else if (name === "dueDate" && this.DV_task.checklists[index].text) {
         this.DV_task.checklists[index].dueDate = event.target.value;
+      } else if (name === "planned_effort" && this.DV_task.checklists[index].text) {
+        this.DV_task.checklists[index].plannedEffort = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -2125,6 +2244,12 @@ export default {
       var taskStagesSortedReturn = [...this.taskStages]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
+    autoCalculatedPlannedEffort(){
+      if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        return this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)   
+      } else return this.DV_task.plannedEffort
+        
+    },
     id(){
       if(this.$route.params.contractId){
         return this.$route.params.contractId
@@ -2201,6 +2326,21 @@ export default {
           ? "Edit Task"
           : "Add Task"
         : "Task";
+    },
+      weightedProgress(){
+      //1:  Obtain all subtask plannedHours values
+      //2:  Determine sum of all subtask plannedHours
+      //3:  Divide subtask hours by sum of subtasks
+      let values = []
+      if(this.DV_task && this.DV_task.checklists && this.DV_task.checklists.length > 0  && this.DV_task.checklists.map(t => t.plannedEffort)){
+        let sum =  this.DV_task.checklists.map(t => t.plannedEffort).map(Number).reduce((a,b) => a + (b || 0), 0)   
+        let n =  this.DV_task.checklists.map(t => t.plannedEffort).length
+        for (let i = 0; i < n; i++) {
+          values.push(this.DV_task.checklists[i].plannedEffort)
+          console.log(values[i] / sum)
+        }
+       
+      } 
     },
     tab() {
       if (this.$route.path.includes("map")) {
@@ -2426,6 +2566,16 @@ th {
   border: solid #ededed 1px;
   border-radius: 4px;
 }
+.checklist-text-planned-hrs {
+  margin-left: 5px;
+  min-height: 33px;
+  border: 0;
+  width: 25%;
+  background-color: white;
+  outline: none;
+  border: solid #ededed 1px;
+  border-radius: 4px;
+}
 .drag {
   cursor: all-scroll;
 }
@@ -2553,17 +2703,17 @@ ul {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-::v-deep.el-collapse-item__header {
+::v-deep .el-collapse-item__header {
   background-color: #fafafa;
 }
 ::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-::v-deep.el-collapse-item__content {
+::v-deep .el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-::v-deep.el-collapse-item__header {
+::v-deep .el-collapse-item__header {
   background-color: #fafafa;
 }
 #roll_up {
