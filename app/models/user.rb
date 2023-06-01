@@ -23,6 +23,7 @@ class User < ApplicationRecord
   validate :password_complexity
   before_commit :set_color, on: :create
   after_create :provide_view_privileges
+  after_create :create_tenant
 
   enum role: [:client, :superadmin].freeze
   enum status: [:inactive, :active].freeze
@@ -44,6 +45,10 @@ class User < ApplicationRecord
     }
   has_settings do |s|
     s.key :preferences, defaults: PREFERENCES_HASH
+  end
+
+  def create_tenant
+    Apartment::Tenant.create(subdomain)
   end
 
   def can_contract_data?(permission = 'read')

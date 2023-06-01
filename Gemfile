@@ -108,4 +108,4 @@ gem 'addressable', '>= 2.8.0'
 
 gem 'nokogiri', '1.14.3'
 
-gem 'ros-apartment', require: 'apartment', github: 'rails-on-services/apartment', branch: 'development'
+gem 'ros-apartment',require: 'apartment', github: 'rails-on-services/apartment', branch: 'development'
