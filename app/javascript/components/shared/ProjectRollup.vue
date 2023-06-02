@@ -2044,6 +2044,7 @@
 
 <script>
 import Loader from "./loader";
+import {jsPDF} from "jspdf"
 import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
 import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import ProgramVehiclesSheet from "../views/program/ProgramVehiclesSheet.vue"
