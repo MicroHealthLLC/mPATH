@@ -56,7 +56,7 @@ class Effort < ApplicationRecord
     effort_params = params.require(:effort).permit(Effort.params_to_permit)
 
     effort = self
-    t_params = effort_params.dup.with_indifferent_access
+    t_params = effort_params.dup
 
     if t_params.has_key?(:facility_project_id)
       effort.facility_project_id = FacilityProject.find(params[:facility_project_id]).id
