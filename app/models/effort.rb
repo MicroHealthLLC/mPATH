@@ -47,8 +47,24 @@ class Effort < ApplicationRecord
     resource.update_actual_effort
   end
 
-  def self.update_projected
-    Effort.where("date_of_week < ? and projected = ?", Date.today, true ).update_all(projected: false)
+  def self.update_projected(options={})
+    facility_project = nil
+    effort_ids = []
+    if options[:project_id] && options[:facility_id]
+      facility_project = FacilityProject.where(project_id: options[:project_id], facility_id: options[:facility_id]).first
+    end
+    
+    if facility_project
+      effort_ids = Effort.where("date_of_week < ? and projected = ? and facility_project_id = ?", Date.today, true, facility_project.id ).pluck(:id)
+    else
+      effort_ids = Effort.where("date_of_week < ? and projected = ?", Date.today, true ).pluck(:id)
+    end
+    
+    if effort_ids.any?
+      Effort.where(id: effort_ids).update_all(projected: false)
+      task_ids = Effort.where(id: effort_ids).pluck(:resource_id).uniq
+      Task.where(id: task_ids).map(&:update_actual_effort)
+    end
   end
 
   def create_or_update_effort(params, user)
@@ -75,6 +91,8 @@ class Effort < ApplicationRecord
     else
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
+      puts "-------------Complete params:-------------"
+      puts t_params
     end
     effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
 
