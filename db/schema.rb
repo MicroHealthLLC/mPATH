@@ -1055,7 +1055,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_115458) do
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
-    t.string "subdomain"
+    t.string "subdomain", default: "mpath"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
