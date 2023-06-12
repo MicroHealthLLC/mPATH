@@ -112,7 +112,7 @@
       </span>
   
       <el-tabs type="border-card" v-model="editableTabsValue">
-        <el-tab-pane label="Summary" class="is-active">
+        <el-tab-pane label="Summary" class="is-active" name='0'>
           <el-table 
             v-if="tableData && tableData.length > 0 && matrixDates && matrixDates.length > 0"
             :data="tableData" 
@@ -145,7 +145,7 @@
           </div>
         </el-tab-pane>
   
-        <el-tab-pane v-for="(item, index) in efforts" :key="item.id" :label="item.full_name" :name="index">
+        <el-tab-pane v-for="(item) in efforts" :key="item.id" :label="item.full_name" >
           
           <el-table 
             v-if="tableData && tableData.length > 0  && matrixDates && matrixDates.length > 0" 
@@ -251,6 +251,7 @@
     props: ['facility', 'from'],
     data() {
       return {
+        editableTabsValue: null,
         tabIndex: this.editableTabsValue,
         userTasksDialog: false,
         loading: false,
