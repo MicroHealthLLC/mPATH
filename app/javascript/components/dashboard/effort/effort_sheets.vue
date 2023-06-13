@@ -2,6 +2,7 @@
     <div id="notes-index" data-cy="note_list" class="mt-5 pl-1" :load="log(weekOfArr)">
       <span :load="log(fridayDayOfWeek)" >
         <div class="form-group w-100 mr-1 row">
+     
         
           <div class="col-3">
             <label class="font-sm mb-0">Project Task Users</label>
@@ -301,6 +302,7 @@
         // console.log("getWeekOfEffort ")
         // console.log(e)
       },
+
       changeValues(event, weekOf, user, rowId, effort) {
         let ids = user.tasks.filter(t => t.id == rowId)
                 .map(t => t.efforts)
@@ -739,6 +741,10 @@
   .filters-wrapper {
     float: right;
     margin-top: -50px;
+  }
+
+  .timelineBtnCircularBarColor {
+    color: #A30000;
   }
   
   @media screen and (max-width: 1500px) {
