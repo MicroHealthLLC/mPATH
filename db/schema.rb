@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_01_115458) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_14_135319) do
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -1027,6 +1027,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_115458) do
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
 
+  create_table "tenants", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "subdomain", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", charset: "utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -1056,6 +1063,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_115458) do
     t.string "color"
     t.bigint "organization_id"
     t.string "subdomain", default: "mpath"
+    t.integer "tenant_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
