@@ -790,14 +790,14 @@ class User < ApplicationRecord
     resource_hash = {}
     role_users = []
     if resource_type == 'contract'
-      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
+      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES).distinct
 
     elsif resource_type == 'contract_vehicle'
       # We will be using Contract privileges to assign for contract vehicle. i.e. we will use same privileges values for contract vehicle as well.
-      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_vehicle_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
+      role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_vehicle_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES).distinct
     end
 
-    contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
     
     if resource_type == 'contract'
       role_users.each do |role_user|
@@ -873,7 +873,7 @@ class User < ApplicationRecord
 
   def authorized_contract_ids(project_ids: []) 
     user = self
-    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
     # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
     # if project_ids.any?
     #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
@@ -890,7 +890,7 @@ class User < ApplicationRecord
 
   def authorized_contract_vehicle_ids(project_ids: []) 
     user = self
-    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
     # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
     # if project_ids.any?
     #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
@@ -978,14 +978,14 @@ class User < ApplicationRecord
         program_id = project_contract.project_id.to_s
 
         role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_id == project_contract.id }.map(&:role_id).compact.uniq
-        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+        role_type = RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       elsif project_contract_vehicle
         project_contract_vehicle = project_contract_vehicle.is_a?(ProjectContractVehicle) ? project_contract_vehicle : ProjectContractVehicle.find( project_contract_vehicle.to_s)
 
         program_id = project_contract_vehicle.project_id.to_s
 
         role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_vehicle_id == project_contract_vehicle.id }.map(&:role_id).compact.uniq
-        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+        role_type = RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
