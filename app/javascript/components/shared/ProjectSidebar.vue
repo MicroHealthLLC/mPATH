@@ -284,11 +284,12 @@ export default {
       }
     },
     pathTab() {
-      let url = this.$route.path;
+      let url = this.$route.path;  
+  
       if (url.includes("tasks")) {
         return "/tasks";
       }
-      if (url.includes("issues")) {
+         if (url.includes("issues")) {
         return "/issues";
       }
       if (url.includes("analytics")) {
@@ -305,7 +306,7 @@ export default {
       }
       if (url.includes("effort")) {
         return "/effort";
-      }
+      }     
       if (url.includes("lessons")) {
         return "/lessons";
       }
@@ -350,9 +351,9 @@ export default {
       }
       this.$emit("on-expand-facility-group", group);
     },
-    log(e) {
-      console.log(e);
-    },
+    // log(e) {
+    //   console.log(e);
+    // },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
       return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
@@ -423,6 +424,11 @@ export default {
     }
   },
   watch: {
+    pathTab() {    
+      if (this.pathTab === "/" && this.$route.params.contractId) {
+       return "/tasks";
+      }
+    },
     contentLoaded: {
       handler() {
         if (

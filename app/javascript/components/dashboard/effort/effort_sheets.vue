@@ -5,7 +5,18 @@
      
         
           <div class="col-3">
-            <label class="font-sm mb-0">Project Task Users</label>
+            <label class="font-sm mb-0">              
+              <span v-show="$route.params.projectId">
+                Project 
+              </span>
+              <span v-show="$route.params.contractId">
+                Contract
+              </span>    
+              <span v-show="$route.params.vehicleId">
+                Vehicle
+              </span>           
+              Task Users
+            </label>
              <el-select 
                 v-model="addedUser" 
                 class="w-75 mr-2" 
@@ -112,7 +123,7 @@
         </div>
       </span>
   
-      <el-tabs type="border-card" v-model="editableTabsValue">
+      <el-tabs type="border-card" v-model="editableTabsValue" v-if="$route.params.projectId">
         <el-tab-pane label="Summary" class="is-active" name='0'>
           <el-table 
             v-if="tableData && tableData.length > 0 && matrixDates && matrixDates.length > 0"
@@ -239,6 +250,11 @@
         </el-button> -->
   
       </el-tabs>
+   
+        <div class="text-center calendarBtn my-5" v-else>
+          <h3 class="text-danger p-4"><em>Sorry. Task Effort entry is not yet supported for Contracts or Vehicles.</em></h3>
+        </div>
+
       <span class="float-right"><small>*Excludes <em>Ongoing:Closed, On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
   
   
@@ -612,8 +628,10 @@
         },    
     },
     mounted() {
-      this.fetchEfforts(this.$route.params)
-      this.fetchCurrentProject(this.$route.params.programId)
+      if(this.$route.params.projectId){
+        this.fetchEfforts(this.$route.params)
+        this.fetchCurrentProject(this.$route.params.programId)
+      }
     },
     watch: {
      effortStatus: {
