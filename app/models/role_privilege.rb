@@ -7,8 +7,9 @@ class RolePrivilege < ApplicationRecord
   PROJECT_RISKS = 'project_risks'
   PROJECT_LESSONS = 'project_lessons'
   PROJECT_NOTES = 'project_notes'
+  PROJECT_EFFORTS = 'project_efforts'
 
-  PROJECT_PRIVILEGS_ROLE_TYPES = [PROJECT_ANALYTICS, PROJECT_TASKS, PROJECT_ISSUES, PROJECT_RISKS, PROJECT_LESSONS, PROJECT_NOTES]
+  PROJECT_PRIVILEGES_ROLE_TYPES = [PROJECT_ANALYTICS, PROJECT_TASKS, PROJECT_ISSUES, PROJECT_RISKS, PROJECT_LESSONS, PROJECT_NOTES, PROJECT_EFFORTS]
 
   # This roles are used to access contract related data e.g. task, issues risks
   CONTRACT_ANALYTICS = 'contract_analytics'
@@ -29,7 +30,7 @@ class RolePrivilege < ApplicationRecord
   # if user user has any of this role privilege then they can access progra_settings page
   PROGRAM_SETTINGS_ROLE_TYPES = [PROGRAM_SETTING_GROUPS, PROGRAM_SETTING_USERS_ROLES, PROGRAM_SETTING_PROJECTS, PROGRAM_SETTING_CONTRACTS ]
 
-  ALL_ROLE_TYPES = PROJECT_PRIVILEGS_ROLE_TYPES + CONTRACT_PRIVILEGS_ROLE_TYPES + PROGRAM_SETTINGS_ROLE_TYPES
+  ALL_ROLE_TYPES = PROJECT_PRIVILEGES_ROLE_TYPES + CONTRACT_PRIVILEGS_ROLE_TYPES + PROGRAM_SETTINGS_ROLE_TYPES
   belongs_to :role
   validate :check_privileges, on: :create
   validates :role_type, inclusion: { in: ALL_ROLE_TYPES, message: "%{value} is not a valid role type" }

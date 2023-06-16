@@ -1,7 +1,7 @@
 desc "Convert privilege data to roles"
 task :convert_privilege_roles => :environment do
   
-  PROJECT_PRIVILEGS_ROLE_TYPES = ["project_analytics", "project_tasks", "project_issues", "project_risks", "project_lessons", "project_notes"]
+  PROJECT_PRIVILEGES_ROLE_TYPES = ["project_analytics", "project_tasks", "project_issues", "project_risks", "project_lessons", "project_notes"]
   CONTRACT_PRIVILEGS_ROLE_TYPES = ["contract_analytics", "contract_tasks", "contract_issues", "contract_risks", "contract_lessons", "contract_notes"]
   PROGRAM_SETTINGS_ROLE_TYPES = ["program_setting_groups", "program_setting_users_roles", "program_setting_projects", "program_setting_contracts" ]
 
@@ -296,7 +296,7 @@ task :convert_privilege_roles => :environment do
       role_name = "FacilityPrivilegeRole#{pp.id}"
       
       roles_count += 1
-      role_privileges_count += PROJECT_PRIVILEGS_ROLE_TYPES.size
+      role_privileges_count += PROJECT_PRIVILEGES_ROLE_TYPES.size
       pp.facility_project_ids.each do |pid|
         role_users_count += 1
       end

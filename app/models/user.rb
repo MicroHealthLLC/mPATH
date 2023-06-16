@@ -743,7 +743,7 @@ class User < ApplicationRecord
     program_ids = user.project_ids if !program_ids.any?
     project_hash = {}
     role_users = user.role_users.where.not(facility_project_id: nil)
-    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id).uniq ).group_by(&:role_id)
+    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES, role_id: role_users.pluck(:role_id).uniq ).group_by(&:role_id)
     all_facility_projects = FacilityProject.where(id: role_users.map(&:facility_project_id).compact.uniq ) 
     facility_project_hash = all_facility_projects.group_by{|fp| fp.id}.transform_values{|values| values.map{|v| [v.project_id, v.facility_id] }.flatten.compact }
 
@@ -770,7 +770,7 @@ class User < ApplicationRecord
     #     all_facility_project_ids.each do |fp_id2|
     #       if !project_hash[fp_id2]
     #         h2 = {}
-    #         RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_type|          
+    #         RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.each do |role_type|          
     #           h2[role_type] = ["R", "W", "D"]
     #         end
     #         project_hash[fp_id2] = h2
@@ -934,7 +934,7 @@ class User < ApplicationRecord
 
   def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
 
-    return has_permission_by_role?({action: "read", resource: resource, program: program, project: project})
+    return has_permission_by_role?({action: action, resource: resource, program: program, project: project})
 
     # begin
     #   program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
@@ -992,10 +992,9 @@ class User < ApplicationRecord
         facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}.id
         
         role_ids = user.role_users.select{|ru| ru.facility_project_id == facility_project_id}.map(&:role_id).compact.uniq
-        role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+        role_type = RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       end      
-      role_privileges = user.role_privileges.select{|rp| role_ids.include?(rp.role_id) && rp.role_type == role_type}.map(&:privilege).compact.flatten.join.chars.uniq
-
+      role_privileges = user.role_privileges.distinct.select{|rp| role_ids.include?(rp.role_id) && rp.role_type == role_type}.map(&:privilege).compact.flatten.join.chars.uniq
       result = false
       short_action_code = action_code_hash[action]
       if short_action_code == "R"
@@ -1013,7 +1012,7 @@ class User < ApplicationRecord
 
   def has_contract_permission?(action: "read", resource: , project_contract_vehicle: nil, project_contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
 
-    return has_permission_by_role?({action: "read", resource: resource , project_contract_vehicle: project_contract_vehicle, project_contract: project_contract})
+    return has_permission_by_role?({action: action, resource: resource , project_contract_vehicle: project_contract_vehicle, project_contract: project_contract})
 
     # begin
     #   contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)

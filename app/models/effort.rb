@@ -91,8 +91,6 @@ class Effort < ApplicationRecord
     else
       t_params[:resource_id] = t_params.delete(:task_id)
       t_params[:resource_type] = "Task"
-      puts "-------------Complete params:-------------"
-      puts t_params
     end
     effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
 
