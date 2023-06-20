@@ -111,7 +111,7 @@ ActiveAdmin.register Task do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
 
     tabs do
@@ -249,7 +249,7 @@ ActiveAdmin.register Task do
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   filter :exclude_closed, as: :check_boxes, collection: [['Exclude Closed Items', true]], label: ''
-  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', true]], label: ''
+  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', false]], label: ''
 
   controller do
     before_action :exclude_inactive_items, only: [:index]

@@ -2,9 +2,10 @@
 <template>
   <div id="facility-sheets" data-cy="facility_sheets">
     <div v-if="contentLoaded" class="position-sticky">
+     
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">          
             
             <div class="row filterDiv">      
                <div class="text-center filterLabel underline"><small class="px-2 bg">FILTERS </small></div>        
@@ -22,7 +23,28 @@
                   </div>
                 </div>
             </div>
-            <div class="row row-1 mt-3 task-issue-risk-row">
+            <div class="row row-1 mr-1 mt-2 task-issue-risk-row" v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0">
+              <el-alert  
+               
+                type="warning"
+                class="col-11 pt-0 mt-3 pb-2"
+                show-icon >
+                <template slot="title">
+                You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days: 
+                <span v-for="t, i in overdueTasks.value7" :key="i">
+                  <router-link :to="`/programs/${$route.params.programId}/sheet/projects/${t.facilityId}/tasks/${t.id}`" > 
+                    <span style="cursor: pointer; color:#e6a23c" >
+                    {{ t.text }} 
+                    <span v-if="overdueTasks.value7[overdueTasks.value7.length - 1].id == t.id">.</span>
+                    <span v-else>,</span>
+                    </span>   
+                  </router-link> 
+                </span>
+                </template>
+              </el-alert>
+             </div>
+            <div class="row row-1 mt-2 task-issue-risk-row">
+            
               <div class="col-9 pr-0" data-cy="facility_tasks">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row mb-3">
@@ -1039,6 +1061,22 @@ export default {
       "facilities",
       "getUnfilteredFacilities",
     ]),
+    overdueTasks(){
+      const today = new Date()
+      const tomorrow = new Date(today)
+      let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
+      const nextWeek = new Date()
+      // add 7 days to the current date
+      nextWeek.setDate(new Date().getDate() + 7)
+      if (this.filteredTasks.length > 0) {       
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
+        return {
+          value24: dueDatesTomorrow,   
+          value7: datesWithinSevenDays,          
+        }
+        }
+     },
     selectedStatus: {
       get() {
         return this.facility.statusId; //this.$data._selected
@@ -1695,11 +1733,11 @@ export default {
 .my-el-card {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.vue2-datepicker /deep/ .mx-input:disabled {
+.vue2-datepicker ::v-deep .mx-input:disabled {
   color: #555;
   background-color: #fff;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -1754,20 +1792,20 @@ export default {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+::v-deep.el-collapse-item__header, ::v-deep.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
     padding-bottom: 0 !important;
 }
-/deep/.el-progress-circle {
+::v-deep.el-progress-circle {
   height: 100px !important;
   width: 100px !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   font-size: 2rem;
   }
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+::v-deep.el-collapse-item__arrow, ::v-deep.el-icon-arrow-right {
   display: none;
 }
 .giantNumber {

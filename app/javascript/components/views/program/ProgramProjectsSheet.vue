@@ -229,21 +229,22 @@ export default {
   methods: {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
-    goToProject(index, rows) {  
-      if(this.isMapView){
-        // window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
-      } else  {
-      //  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
-     this.$router.push({
-        name: "SheetProject",
-        params: {
-          programId: this.$route.params.programId,
-          projectId: rows.id.toString(),          
-        },
-      });    
-     }   
+    goToProject(index, rows) {
+      console.log(index)
+      console.log(rows)
+      console.log("isMapView: " + this.isMapView)
+      if (this.isMapView) {
+        this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${rows.id.toString()}`)
+      } else {
+        this.$router.push({
+          name: "SheetProject",
+          params: {
+            programId: this.$route.params.programId,
+            projectId: rows.id.toString(),
+          },
+        });
+      }
     },
-  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
@@ -387,7 +388,7 @@ export default {
 .fa-calendar {
   font-size: x-large;
 }
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1rem;
 }
@@ -419,24 +420,24 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-table__row .el-input .el-input__inner {
+::v-deep.el-table__row .el-input .el-input__inner {
   border-style: none;
 }
-/deep/.hover-row .el-input .el-input__inner {
+::v-deep.hover-row .el-input .el-input__inner {
   border-style: none;
 }
-/deep/.el-dialog {
+::v-deep.el-dialog {
   width: 30%;
   border-top: solid 5px #1d336f !important;
 }
-/deep/.el-table {
+::v-deep.el-table {
   .el-input__inner {
     font-size: 16px !important;
   }
     overflow-x: auto !important;
 
 }
-/deep/td.el-table__cell{
+::v-deeptd.el-table__cell{
   word-wrap: break-word;
   word-break: break-all;
   table-layout: fixed;
@@ -444,7 +445,7 @@ a {
 .overflowX {
   overflow-x: auto !important;
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   background-color: #dc3545;
   border-radius: 50%;
   color: white;

@@ -227,9 +227,61 @@
                 </el-table-column>
                 <el-table-column label="Actions" align="right">
                   <template slot-scope="scope">
-                    <span class="px-0">
+                    <span class="px-0">                     
                       <el-button
-                        :load="log(scope.row)"
+                        size="small"
+                        type="default"
+                        v-tooltip="`Change Group`"
+                        @click.prevent="editMode(scope.$index, scope.row)"
+                        v-if="scope.$index !== rowIndex && _isallowed('write')"
+                        class="bg-light btn-sm px-2"
+                      >
+                        <i class="fal fa-network-wired mh-blue-text"></i>
+                      </el-button>
+                      <el-button
+                        size="small"
+                        type="default"
+                        v-tooltip="`Manage User(s)`"
+                        @click.prevent="addUserRole(scope.$index, scope.row)"
+                        v-if="scope.$index !== rowIndex"
+                        class="bg-primary text-light btn-sm px-2"
+                      >
+                        <i class="fas fa-users-medical"></i>
+                      </el-button>
+                      <el-button
+                        size="small"
+                        type="default"
+                        v-if="scope.$index == rowIndex"
+                        @click.prevent="saveEdits(scope.$index, scope.row)"
+                        v-tooltip="`Save`"
+                        class="bg-primary btn-sm text-light px-2"
+                      >
+                        <i class="far fa-save"></i>
+                      </el-button>
+                      <el-button
+                        size="small"
+                        type="default"
+                        v-tooltip="`Cancel Edit`"
+                        v-if="scope.$index == rowIndex"
+                        @click.prevent="cancelEdits(scope.$index, scope.row)"
+                        class="bg-secondary btn-sm text-light px-2"
+                      >
+                        <i class="fas fa-ban"></i>
+                      </el-button>
+                      <el-button
+                        type="default"
+                        size="small"
+                        class="bg-light btn-sm px-2"
+                        v-tooltip="'Remove Vehicle'"
+                        @click.prevent="
+                          removeVehicleBtn(scope.$index, scope.row)
+                        "
+                        v-if="scope.$index !== rowIndex && _isallowed('write')"
+                      >
+                        <i class="fa-light fa-circle-minus text-danger"></i>
+                      </el-button>
+                      <el-button
+                       size="small"
                         type="default"
                         v-tooltip="`Go To Vehicle`"
                         v-if="
@@ -242,54 +294,6 @@
                         class="bg-success text-light btn-sm"
                       >
                         <i class="fas fa-arrow-alt-circle-right"></i>
-                      </el-button>
-                      <el-button
-                        type="default"
-                        v-tooltip="`Change Group`"
-                        @click.prevent="editMode(scope.$index, scope.row)"
-                        v-if="scope.$index !== rowIndex && _isallowed('write')"
-                        class="bg-light btn-sm"
-                      >
-                        <i class="fal fa-network-wired mh-blue-text"></i>
-                      </el-button>
-                      <el-button
-                        type="default"
-                        v-tooltip="`Manage User(s)`"
-                        @click.prevent="addUserRole(scope.$index, scope.row)"
-                        v-if="scope.$index !== rowIndex"
-                        class="bg-primary text-light btn-sm"
-                      >
-                        <i class="fas fa-users-medical"></i>
-                      </el-button>
-                      <el-button
-                        type="default"
-                        v-if="scope.$index == rowIndex"
-                        @click.prevent="saveEdits(scope.$index, scope.row)"
-                        v-tooltip="`Save`"
-                        class="bg-primary btn-sm text-light"
-                      >
-                        <i class="far fa-save"></i>
-                      </el-button>
-                      <el-button
-                        type="default"
-                        v-tooltip="`Cancel Edit`"
-                        v-if="scope.$index == rowIndex"
-                        @click.prevent="cancelEdits(scope.$index, scope.row)"
-                        class="bg-secondary btn-sm text-light"
-                      >
-                        <i class="fas fa-ban"></i>
-                      </el-button>
-                      <el-button
-                        :load="log(scope.row)"
-                        type="default"
-                        class="bg-light btn-sm"
-                        v-tooltip="'Remove Vehicle'"
-                        @click.prevent="
-                          removeVehicleBtn(scope.$index, scope.row)
-                        "
-                        v-if="scope.$index !== rowIndex && _isallowed('write')"
-                      >
-                        <i class="fa-light fa-circle-minus text-danger"></i>
                       </el-button>
                     </span>
                     <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -437,60 +441,66 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="Actions" align="right">
-                  <template slot-scope="scope">
+                  <template slot-scope="scope">                   
                     <el-button
-                      type="default"
-                      v-tooltip="`Go To Vehicle`"
-                      v-if="_isallowedContracts(scope.row.id, 'read')"
-                      @click.prevent="goToVehicle(scope.$index, scope.row)"
-                      class="bg-success text-light btn-sm"
-                    >
-                      <i class="fas fa-arrow-alt-circle-right"></i>
-                    </el-button>
-                    <el-button
+                     size="small"
                       type="default"
                       v-tooltip="`Change Group`"
                       @click.prevent="editMode(scope.$index, scope.row)"
                       v-if="scope.$index !== rowIndex && _isallowed('write')"
-                      class="bg-light btn-sm"
+                      class="bg-light btn-sm px-2"
                     >
                       <i class="fal fa-network-wired mh-blue-text"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       v-tooltip="`Manage User(s)`"
                       @click.prevent="addUserRole(scope.$index, scope.row)"
                       v-if="scope.$index !== rowIndex"
-                      class="bg-primary text-light btn-sm"
+                      class="bg-primary text-light btn-sm px-2"
                     >
                       <i class="fas fa-users-medical mr-1"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       v-if="scope.$index == rowIndex"
                       @click.prevent="saveEdits(scope.$index, scope.row)"
                       v-tooltip="`Save`"
-                      class="bg-primary btn-sm text-light"
+                      class="bg-primary btn-sm text-light px-2"
                     >
                       <i class="far fa-save"></i>
                     </el-button>
-                    <el-button
+                     <el-button
+                      size="small"
                       type="default"
                       v-tooltip="`Cancel Edit`"
                       v-if="scope.$index == rowIndex"
                       @click.prevent="cancelEdits(scope.$index, scope.row)"
-                      class="bg-secondary btn-sm text-light"
+                      class="bg-secondary btn-sm text-light px-2"
                     >
                       <i class="fas fa-ban"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
-                      class="bg-light btn-sm"
+                      class="bg-light btn-sm px-2"
                       v-tooltip="'Remove Vehicle'"
                       @click.prevent="removeVehicleBtn(scope.$index, scope.row)"
                       v-if="scope.$index !== rowIndex && _isallowed('write')"
                     >
                       <i class="fa-light fa-circle-minus text-danger"></i>
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="default"
+                      v-tooltip="`Go To Vehicle`"
+                      v-if="_isallowedContracts(scope.row.id, 'read')"
+                      @click.prevent="goToVehicle(scope.$index, scope.row)"
+                      class="bg-success text-light btn-sm px-2"
+                    >
+                      <i class="fas fa-arrow-alt-circle-right"></i>
                     </el-button>
                   </template>
                 </el-table-column>
@@ -582,6 +592,7 @@
               >
 
               <el-button
+               size="small"
                 type="default"
                 @click="saveVehicleUserRole()"
                 v-if="contractRoleNames && contractRoleUsers"
@@ -752,15 +763,17 @@
                 >
                   <template slot-scope="scope" class="px-0">
                     <el-button
+                      size="small"
                       type="default"
                       @click="bulkChangeRole(scope.$index, scope.row)"
                       v-if="scope.$index !== rowIndex_1 && _isallowed('write')"
                       v-tooltip="`Change Role`"
-                      class="bg-light btn-sm mx-0"
+                      class="bg-light btn-sm mx-0 px-2"
                     >
                       <i class="fa-solid fa-users-gear text-primary"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       @click="saveBulkChangeRole(scope.$index, scope.row)"
                       v-if="
@@ -772,54 +785,59 @@
                           scope.row !== currentRoleName.id
                       "
                       v-tooltip="`Save`"
-                      class="bg-primary btn-sm text-light mx-0"
+                      class="bg-primary btn-sm text-light mx-0 px-2"
                     >
                       <i class="far fa-save"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       @click="saveRemoveUsers(scope.$index, scope.row)"
                       v-if="isEditingRoles && scope.$index == rowIndex_1"
                       v-tooltip="`Save`"
-                      class="bg-primary btn-sm text-light"
+                      class="bg-primary btn-sm text-light px-2"
                     >
                       <i class="far fa-save"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
                       v-tooltip="`Remove all users from this role`"
                       @click.prevent="removeAllUsers(scope.$index, scope.row)"
-                      class="bg-danger btn-sm mx-0"
+                      class="bg-danger btn-sm mx-0 px-2"
                     >
                       <i class="fa-solid fa-users-slash mr-1 text-light"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
                       v-tooltip="`Remove user(s) from this role`"
                       @click.prevent="editUsers(scope.$index, scope.row)"
-                      class="bg-danger text-light btn-sm mx-0"
+                      class="bg-danger text-light btn-sm mx-0 px-2"
                     >
                       <i class="fa-solid fa-user-slash text-light"></i>
                     </el-button>
                     <el-button
+                     size="small"
                       type="default"
                       v-if="isEditingRoles && scope.$index == rowIndex_1"
                       v-tooltip="`Cancel`"
                       @click.prevent="cancelEditRoles(scope.$index, scope.row)"
-                      class="btn btn-sm bg-secondary text-light"
+                      class="btn btn-sm bg-secondary text-light px-2"
                     >
                       <i class="fas fa-ban"></i>
                     </el-button>
                     <el-button
+                      size="small"
                       type="default"
                       v-if="changeRoleMode && scope.$index == rowIndex_1"
                       v-tooltip="`Cancel`"
                       @click.prevent="
                         cancelBulkChangeRole(scope.$index, scope.row)
                       "
-                      class="btn btn-sm bg-secondary text-light mx-0"
+                      class="btn btn-sm bg-secondary text-light mx-0 px-2"
                     >
                       <i class="fas fa-ban"></i>
                     </el-button>
@@ -944,6 +962,7 @@
                   <el-table-column label="Actions" fixed="right" align="right">
                     <template slot-scope="scope">
                       <el-button
+                        size="small"
                         type="default"
                         v-tooltip="`Add Vehicle`"
                         @click.prevent="
@@ -1019,6 +1038,7 @@
                   <el-table-column label="Actions" fixed="right">
                     <template slot-scope="scope">
                       <el-button
+                       size="small"
                         type="default"
                         v-tooltip="`Add Vehicle`"
                         @click.prevent="
@@ -1156,9 +1176,6 @@ export default {
         this.$route,
         { method: "isallowedVehicles", project_contract_vehicle_id: c }
       );
-    },
-    log(e) {
-      console.log(e);
     },
     editUsers(index, rowData) {
       console.log(rowData);
@@ -1851,7 +1868,7 @@ export default {
   min-height: 300px;
 }
 
-/deep/.el-popper {
+::v-deep.el-popper {
   .select-popper {
     display: none;
   }
@@ -1874,7 +1891,7 @@ export default {
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   padding-left: 1.5rem;
 }
 
@@ -1882,7 +1899,7 @@ export default {
   text-align: right;
 }
 
-/deep/.el-table__header,
+::v-deep.el-table__header,
 .el-table {
   width: auto !important;
 }
@@ -1891,27 +1908,27 @@ export default {
   font-size: x-large;
 }
 
-/deep/.el-table th.el-table__cell > .cell {
+::v-deep.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1rem;
   word-break: break-word;
 }
 
 .contractUsers {
-  /deep/.el-dialog {
+  ::v-deep.el-dialog {
     width: 60% !important;
 
-    /deep/.el-dialog__body {
+    ::v-deep.el-dialog__body {
       padding-top: 0;
     }
   }
 }
 
-// /deep/.el-dialog.contractUsers{
+// ::v-deep.el-dialog.contractUsers{
 //  width: 60% !important;
 //   }
 // .contractUsers{
-//  /deep/.el-dialog__body {
+//  ::v-deep.el-dialog__body {
 //    padding-top: 0;
 //  }
 // }
@@ -1948,40 +1965,40 @@ a {
   overflow-y: auto;
 }
 
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   font-weight: 300 !important;
 }
 
-/deep/.el-table__row .el-input .el-input__inner {
+::v-deep.el-table__row .el-input .el-input__inner {
   border-style: none;
   font-size: 16px !important;
 }
 
-/deep/.hover-row .el-input .el-input__inner {
+::v-deep.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
 
-/deep/.el-dialog.addVehicle {
+::v-deep.el-dialog.addVehicle {
   width: 60%;
 }
 
 .addVehicle {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
 }
 
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   display: none;
 }
 
-/deep/.el-table {
+::v-deep.el-table {
   .el-input__inner {
     font-size: 16px !important;
   }
 }
 
-/deep/.el-dialog__close.el-icon.el-icon-close {
+::v-deep.el-dialog__close.el-icon.el-icon-close {
   background-color: #dc3545;
   border-radius: 50%;
   color: white;
@@ -1990,11 +2007,11 @@ a {
 }
 
 .addUserRole {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding-top: 0 !important;
   }
 
-  /deep/.el-dialog {
+  ::v-deep.el-dialog {
     width: 55%;
   }
 }

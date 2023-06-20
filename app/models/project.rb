@@ -75,14 +75,26 @@ class Project < SortableRecord
   def default_facility_group
     create_default_facility_group
   end
+  
+  def list_default_facility_group_ids
+    self.project_groups.where(is_default: true).pluck(:id).uniq
+  end
 
+  # def create_default_facility_group
+  #   g = self.project_facility_groups.where(is_default: true).first
+  #   if !g
+  #     group = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name, is_default: true)
+  #     g = self.project_facility_groups.create(facility_group_id: group.id)
+  #   end
+  #   g.project_group
+  # end
   def create_default_facility_group
-    g = self.project_facility_groups.where(is_default: true).first
+    g = self.project_groups.where(is_default: true).first
     if !g
-      group = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name)
-      g = self.project_facility_groups.create(facility_group_id: group.id, is_default: true)
+      g = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name, is_default: true)
+      pg = self.project_facility_groups.create(facility_group_id: g.id)
     end
-    g.project_group
+    g
   end
 
   def self.ransackable_scopes(_auth_object = nil)
@@ -225,7 +237,7 @@ class Project < SortableRecord
     all_users = []
     all_user_ids = []
 
-    # all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, {facility_project: :facility} ]).where("tasks.facility_project_id in (?) or tasks.project_contract_id in (?) or tasks.project_contract_vehicle_id in (?)", facility_project_ids_with_project_tasks, project_contract_ids_with_contract_tasks, project_contract_vehicle_ids_with_contract_tasks).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
+    # all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :contract_vehicle, {facility_project: :facility} ]).where("tasks.facility_project_id in (?) or tasks.project_contract_id in (?) or tasks.project_contract_vehicle_id in (?)", facility_project_ids_with_project_tasks, project_contract_ids_with_contract_tasks, project_contract_vehicle_ids_with_contract_tasks).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
     
     task_query_string = "(tasks.owner_id in (?) and tasks.owner_type = 'FacilityProject') or (tasks.owner_id in (?) and tasks.owner_type = 'ProjectContract') or (tasks.owner_id in (?) and tasks.owner_type = 'ProjectContractVehicle')"
     all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, {facility_project: :facility} ]).where(task_query_string, facility_project_ids_with_project_tasks, project_contract_ids_with_contract_tasks, project_contract_vehicle_ids_with_contract_tasks).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
@@ -233,11 +245,11 @@ class Project < SortableRecord
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
 
-    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, :contract_project_data, {facility_project: :facility}, :issue_severity ]).where("issues.facility_project_id in (?) or issues.project_contract_id in (?) or issues.project_contract_vehicle_id in (?)", facility_project_ids_with_project_issues, project_contract_ids_with_contract_issues, project_contract_vehicle_ids_with_contract_issues)
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, :contract_project_data, :contract_vehicle, {facility_project: :facility}, :issue_severity ]).where("issues.facility_project_id in (?) or issues.project_contract_id in (?) or issues.project_contract_vehicle_id in (?)", facility_project_ids_with_project_issues, project_contract_ids_with_contract_issues, project_contract_vehicle_ids_with_contract_issues)
     all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
     all_user_ids += all_issue_users.values.flatten.map(&:user_id)
 
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, :contract_project_data,  {facility_project: :facility} ]).where("risks.facility_project_id in (?) or risks.project_contract_id in (?)  or risks.project_contract_vehicle_id in (?)", facility_project_ids_with_project_risks, project_contract_ids_with_contract_risks, project_contract_vehicle_ids_with_contract_risks).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, :contract_project_data, :contract_vehicle, {facility_project: :facility} ]).where("risks.facility_project_id in (?) or risks.project_contract_id in (?)  or risks.project_contract_vehicle_id in (?)", facility_project_ids_with_project_risks, project_contract_ids_with_contract_risks, project_contract_vehicle_ids_with_contract_risks).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)
 

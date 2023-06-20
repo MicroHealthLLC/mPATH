@@ -34,7 +34,6 @@ import VuePhoneNumberInput  from 'vue-phone-number-input'
 
 Vue.use(vco)
 Vue.mixin(utils)
-Vue.use(AuthorizationService)
 Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)
@@ -51,6 +50,7 @@ Vue.component('GmapCluster', GmapCluster)
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
+
 Vue.config.productionTip = false
 ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })

@@ -2149,12 +2149,12 @@ export default {
         },
         {
           label: "Updates",
-          key: "tab8",
+          key: "tab7",
           closable: false,
         },
         {
           label: "Disposition",
-          key: "tab7",
+          key: "tab8",
           closable: false,
           disabled: false,
         },
@@ -2500,8 +2500,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2973,7 +2973,7 @@ export default {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedIssues(issues) {
@@ -2988,7 +2988,7 @@ export default {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
             1
-          );
+          ).then(this.validateThenSave());
         });
     },
     addRelatedRisks(risks) {
@@ -3003,8 +3003,8 @@ export default {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
             1
-          );
-        });
+          ).then(this.validateThenSave());
+        })
     },
     author(id) {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
@@ -3818,7 +3818,7 @@ ul {
   border: solid 0.5px red;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -32px;
@@ -3828,26 +3828,26 @@ ul {
   }
 }
 .risk_matrix {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     border-bottom: none !important;
     background-color: #fff !important;
   }
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/.el-input__inner {
+::v-deep.el-input__inner {
   text-transform: capitalize;
 }
 .inner-name-lowercase{
-  /deep/.el-input__inner{
+  ::v-deep.el-input__inner{
     text-transform: none !important;
   }
 }
@@ -3923,7 +3923,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

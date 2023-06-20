@@ -121,10 +121,10 @@
           allow-create
           default-first-option
           placeholder=""
-
+          size="small"
         >
           <el-option
-            v-for="item in sinsOptions.filter(t => t.name !== 'null')"
+            v-for="item in sinsOptions"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -156,7 +156,7 @@
           allow-create
           default-first-option
           placeholder=""
-
+          size="small"
         >
           <el-option
             v-for="item in contractAgencyOptions"
@@ -190,7 +190,7 @@
           allow-create
           default-first-option
           placeholder=""
-
+          size="small"
         >
           <el-option
             v-for="item in vehicleTypes"
@@ -268,6 +268,8 @@
       </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow && scope.row.contract_number">
     {{ scope.row.contract_number.name }} 
+    </span>
+    <span v-else-if="scope.$index !== createRow">N/A
     </span>
 
         </template>
@@ -438,6 +440,7 @@
         >
         <template slot-scope="scope">
           <el-button
+          size="mini"
           type="default"
           @click="saveContractVehicle(scope.$index, scope.row)"
           v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.name && 
@@ -445,7 +448,7 @@
             scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
             bpStart && bpEnd)" 
           v-tooltip="`Save`" 
-          class="bg-primary btn-sm text-light mx-0">               
+          class="bg-primary text-light  px-2">               
           <i class="far fa-save"></i>
           </el-button>
           <el-popover
@@ -462,54 +465,57 @@
           </el-button>        
           <el-button
           slot="reference"
+          size="mini"
           type="default"        
           v-tooltip="`Open Vehicle Tasks`" 
-          class="bg-light btn-sm text-light mr-2">               
+          class="bg-light text-light px-2 mr-2">            
           <i class="far fa-suitcase text-secondary"></i>
-        </el-button>
-        </el-popover> 
-        <el-button 
+          </el-button>
+          </el-popover> 
+          <el-button 
           type="default" 
+          size="mini"
           v-tooltip="`Cancel Edit`"       
           v-if="scope.$index == rowIndex"
           @click.prevent="cancelEdits(scope.$index, scope.row)"  
-          class="bg-secondary btn-sm text-light mx-0">
+          class="bg-secondary text-light  px-2">
         <i class="fas fa-ban"></i>
           </el-button>
           <el-button
+           size="mini"
             type="default"
             v-tooltip="`Edit`" 
-            class="bg-light btn-sm"
+            class="bg-light px-2"
             v-if="( _isallowed('write') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
             @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
-            </el-button>
-            <el-button
-            type="default"
-            v-tooltip="`Delete`" 
-            class="bg-light btn-sm"
-            v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
-            @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
-            </el-button>
-            <el-button
+          </el-button>
+          <el-button
+          size="mini"
+          type="default"
+          v-tooltip="`Delete`" 
+          class="bg-light px-2 "
+          v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
+          @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
+          </el-button>
+          <el-button
+            size="mini"
             type="default"
             @click="saveContractVehicle(scope.$index, scope.row)"
-            v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
-            scope.row.full_name && scope.row.contract_sub_category_id &&
-            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
+            v-if="( _isallowed('write') )  && scope.$index == createRow && (checkEmpty(scope.row.name) && checkEmpty(scope.row.full_name) && checkEmpty(scope.row.prime_name) && checkEmpty(scope.row.contract_sub_category_id) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id) &&
             newBpStart && newBpEnd)" 
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary text-light  px-2">           
           <i class="far fa-save"></i>
           </el-button>
           <el-button 
+          size="mini"
           type="default" 
           v-tooltip="`Cancel`"       
-          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
-            scope.row.full_name && scope.row.contract_sub_category_id &&
-            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
-            newBpStart && newBpEnd)"
+          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.prime_name || scope.row.name || scope.row.full_name || scope.row.contract_sub_category_id ||
+            scope.row.contract_agency_id || scope.row.contract_vehicle_type_id ||
+            newBpStart || newBpEnd || scope.row.caf_fees || scope.row.ceiling || newContractNum || newOpStart || newOpEnd)"
           @click.prevent="cancelNewRow(scope.row)"  
-          class="bg-secondary btn-sm text-light mx-0">
+          class="bg-secondary text-light  px-2">
         <i class="fas fa-ban"></i>
           </el-button> 
           <!-- <el-button
@@ -520,7 +526,7 @@
             scope.row.contract_agency_id && scope.row.contract_vehicle_type_id && scope.row.ceiling &&
             newBpStart && newBpEnd" 
             v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            class="bg-primary btn-sm text-light ">               
           <i class="far fa-save"></i>
           </el-button> -->
         </template>
@@ -673,7 +679,7 @@
             allow-create
             default-first-option
             placeholder=""
-
+            size="small"
           >
             <el-option
               v-for="item in contractAgencyOptions"
@@ -707,7 +713,7 @@
             allow-create
             default-first-option
             placeholder=""
-
+            size="small"
           >
             <el-option
               v-for="item in vehicleTypes"
@@ -748,7 +754,7 @@
           controls-position="right"
           ></el-input>
           <el-input
-          size="small"
+          size="smal"
           v-if="rowId == scope.row.id && scope.$index !== subCreateRow  && !scope.row.contract_number"
           placeholder=""
           style="text-align:center"
@@ -759,6 +765,7 @@
       <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow && scope.row.contract_number">
       {{ scope.row.contract_number.name }} 
       </span>
+      <span v-else-if="scope.$index !== subCreateRow">N/A</span>
 
           </template>
         </el-table-column>
@@ -773,12 +780,13 @@
           >
           <template slot-scope="scope">
             <el-button
+            size="mini"
             type="default"
             @click="saveContractVehicle(scope.$index, scope.row)"
             v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.subprime_name && scope.row.name && 
               scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
               v-tooltip="`Save`" 
-              class="bg-primary btn-sm text-light mx-0">               
+              class="bg-primary text-light  px-2">       
             <i class="far fa-save"></i>
             </el-button>
             <el-popover
@@ -787,58 +795,65 @@
             placement="left"
             width="auto"
             trigger="hover">         
-            <el-button          
+            <el-button  
+            size="mini"
             v-for="item, i in scope.row.associated_projects" :key="i"
             @click="openContractTask(scope.$index, scope.row, programNames.filter(t => item.id == t.program_id)[0].program_id)"   
             >
             <span v-if="programNames.filter(t => item.id == t.program_id)[0]">{{ programNames.filter(t => item.id == t.program_id)[0].label}}</span>
             </el-button>        
             <el-button
+            size="mini"
             slot="reference"
             type="default"        
             v-tooltip="`Open Contract Tasks`" 
-            class="bg-light btn-sm text-light mr-2">               
+            class="bg-light btn-sm text-light px-2 mr-2">               
             <i class="far fa-suitcase text-secondary"></i>
           </el-button>
         </el-popover> 
           <el-button 
+            size="mini"
             type="default" 
             v-tooltip="`Cancel Edit`"       
             v-if="scope.$index == rowIndex"
             @click.prevent="cancelEdits(scope.$index, scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light  px-2">
           <i class="fas fa-ban"></i>
             </el-button>
             <el-button
+              size="mini"
               type="default"
               v-tooltip="`Edit`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2"
               v-if="( _isallowed('write') ) && (scope.$index !== rowIndex) && (scope.$index !== subCreateRow)"
               @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
+              size="mini"
               type="default"
               v-tooltip="`Delete`" 
-              class="bg-light btn-sm"
+              class="bg-light px-2 "
               v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== subCreateRow)"
               @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
               <el-button
               type="default"
+              size="mini"
               @click="saveContractVehicle(scope.$index, scope.row)"
-              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
-              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (checkEmpty(scope.row.subprime_name) && checkEmpty(scope.row.name) && 
+              checkEmpty(scope.row.full_name) && checkEmpty(scope.row.contract_agency_id) && checkEmpty(scope.row.contract_vehicle_type_id))" 
               v-tooltip="`Save`" 
-              class="bg-primary btn-sm text-light mx-0">               
+              :load="log(scope.row)"
+              class="bg-primary text-light  px-2">           
             <i class="far fa-save"></i>
             </el-button> 
             <el-button 
+            size="mini"
             type="default" 
             v-tooltip="`Cancel`"       
-            v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
-              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+            v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name || scope.row.name || scope.row.full_name || scope.row.contract_agency_id || scope.row.contract_vehicle_type_id || newContractNum || scope.row.contract_name)" 
             @click.prevent="cancelNewRow(scope.row)"  
-            class="bg-secondary btn-sm text-light mx-0">
+            class="bg-secondary text-light  px-2">
             <i class="fas fa-ban"></i>
             </el-button>
             <!-- <el-button
@@ -849,7 +864,7 @@
               scope.row.contract_agency_id && scope.row.contract_vehicle_type_id && scope.row.ceiling &&
               newBpStart && newBpEnd" 
               v-tooltip="`Save`" 
-              class="bg-primary btn-sm text-light mx-0">               
+              class="bg-primary btn-sm text-light ">               
             <i class="far fa-save"></i>
             </el-button> -->
           </template>
@@ -921,16 +936,27 @@ export default {
     ]),
     _isallowed(salut) {     
      return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    },
+    log(e) {
+      console.log(e)
     }, 
     handleClick(tab, event){
-      console.log(tab)
-      console.log(`${"event:", event}`)
+      /* console.log(tab)
+      console.log(`${"event:", event}`) */
     },
     openContractTask(index, row, programId){
       this.vehicleProgID = programId
       this.programVehicleRowID = row.id
       this.fetchVehicles(programId)  
-  }, 
+  },
+  checkEmpty(str) {
+    if (str && typeof str === "string"){
+      return str.trim().length > 0 ? str : ""
+    }
+    if (typeof str != "string") {
+      return str
+    }
+  },
     getSummaries(param) {
     const { columns, data } = param;
     const sums = [];
@@ -1116,27 +1142,34 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     this.updateContractNum = ''
-       
+    this.fetchContractVehicles();       
   },
-  cancelNewRow(rows) {
-    let row = rows
-    row.name = ""
-    row.subprime_name = ""
-    row.contract_name = ""
-    row.full_name = ""
-    row.prime_name = ""
-    row.contract_vehicle_id = null
-    row.contract_vehicle_type_id = null
-    row.contract_sub_category_id = null
-    row.contract_agency_id = null
-    row.caf_fees = ""
-    row.ceiling = ""
-    this.newContractNum = '';
-    this.newBpStart = null;
-    this.newBpEnd = null;
-    this.newOpStart = null;
-    this.newOpEnd = null;
-  },
+    cancelNewRow(rows) {
+      let row = rows
+      for (let i in row) {
+        if (typeof row[i] == "string" && row[i] != "") {
+          row[i] = ""
+        }
+        else if (typeof row[i] == "number" && row[i] != null) {
+          row[i] = null
+        }
+      }
+      this.newContractNum != '' ?
+        this.newContractNum = ''
+        : this.newContractNum
+      this.newBpEnd ?
+        this.newBpEnd = null
+        : this.newBpEnd
+      this.newBpStart ?
+        this.newBpStart = null
+        : this.newBpStart
+      this.newOpEnd ?
+        this.newOpEnd = null
+        : this.newOpEnd
+      this.newOpStart ?
+        this.newOpStart = null
+        : this.newOpStart
+    },
   backHomeBtn() {
       window.location.pathname = "/";
   },    
@@ -1203,7 +1236,8 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       agencies.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
     }
   },
   sinsOptions(){
@@ -1213,7 +1247,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       sins.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
     }
   },
   vehicleTypes(){
@@ -1223,7 +1257,7 @@ contractAgencyOptions(){
       let unique = [];
       // console.log(naics)
       types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-      return unique
+      return unique.filter(t => t.name.trim().length !== 0 && t.name !== 'null')
      }
     },
   },
@@ -1255,7 +1289,7 @@ contractAgencyOptions(){
           this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();
           this.fetchContractProjects();
-         this.fetchContractDataOptions();
+          this.fetchContractDataOptions();
           this.bpStart = null;
           this.newContractNum = '';
           this.updateContractNum = '';
@@ -1275,7 +1309,7 @@ contractAgencyOptions(){
 </script>
     
 <style scoped lang="scss">
-  /deep/.el-scrollbar__view.el-select-dropdown__list{
+  ::v-deep.el-scrollbar__view.el-select-dropdown__list{
     width: 450px !important;
   }
   .bottomTabs{
@@ -1301,7 +1335,7 @@ contractAgencyOptions(){
       -webkit-line-clamp: unset;
     }
   }
-  /deep/.el-table {
+  ::v-deep.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;

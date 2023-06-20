@@ -153,6 +153,7 @@
         this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
       editRisk() {
+        console.log(this.DV_risk)
         this.DV_edit_risk = this.DV_risk;
         if (this.$route.params.contractId){
           this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/${this.DV_edit_risk.id}`);
@@ -293,7 +294,7 @@
   .risk_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .risk_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .risk_form_modal.sweet-modal-overlay ::v-deep .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

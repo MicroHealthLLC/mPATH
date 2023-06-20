@@ -61,7 +61,7 @@ class Issue < ApplicationRecord
 
     is_overdue = false
     if !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+      is_overdue = ( progress < 100 && due_date && (due_date < Date.today) )
     end
 
     in_progress = false
@@ -262,7 +262,7 @@ class Issue < ApplicationRecord
     progress_status = "completed" if progress >= 100
 
     is_overdue = false
-    is_overdue = progress < 100 && (due_date < Date.today) if !on_hold && !draft
+    is_overdue = progress < 100 && due_date && (due_date < Date.today) if !on_hold && !draft
 
     in_progress = false
     completed = false

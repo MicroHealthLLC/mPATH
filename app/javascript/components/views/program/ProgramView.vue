@@ -670,6 +670,7 @@
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -677,6 +678,7 @@
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
                       class="btn btn-md exportBtns text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -686,6 +688,7 @@
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
                       class="btn btn-md mx-1 exportBtns text-light"
+                      :disabled="filteredTasks.filtered.tasks.length == 0"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -2478,16 +2481,16 @@ export default {
   z-index: 1045;
   width: 350px;
 }
-/deep/.el-switch__label, .el-switch__label--left {
+::v-deep.el-switch__label, .el-switch__label--left {
   color: lightgray;
 }
-/deep/.el-switch__label, .el-switch__label--right {
+::v-deep.el-switch__label, .el-switch__label--right {
   color: lightgray;
 }
-/deep/.el-switch__label.is-active, .el-switch__label--left {
+::v-deep.el-switch__label.is-active, .el-switch__label--left {
   color: #383838;
 }
-/deep/.vue-treeselect__control {
+::v-deep.vue-treeselect__control {
   height: 40px !important;
 }
 .lightBtn {

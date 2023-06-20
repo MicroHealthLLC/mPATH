@@ -3,6 +3,7 @@
     <div class="stick">
       <div
         @click="deselectProject"
+        data-cy="program_name"
         id="program_name"
         class="programNameDiv smallCaps pl-2 pr-3"
       >
@@ -31,7 +32,16 @@
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
-              <span class="d-flex">
+              <span class="d-flex" v-if="!group.isDefault" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
+                <span v-show="getExpandedGroup != group.id">
+                  <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
+                </span>
+                <span v-show="getExpandedGroup == group.id">
+                  <i class="fa fa-angle-down font-md mr-2 clickable"></i>
+                </span>
+                <p class="clickable groupName expandText">{{ group.name }}</p>
+              </span>
+              <span class="d-flex" v-else>
                 <span v-show="getExpandedGroup != group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
@@ -68,6 +78,7 @@
             >
               <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
+                  @mouseup.right="openProjectContextMenu($event, facility.id )" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
@@ -93,13 +104,14 @@
                 "
               >
                 <div 
+                  @mouseup.right="openProjectContextMenu" @contextmenu.prevent=""
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{
                     active: c.projectContractId == $route.params.contractId,
                   }"
                 >
-                  <p class="facility-header" data-cy="facilities">
+                  <p class="facility-header" data-cy="contracts">
                     <i class="far fa-file-contract mr-1 mh-orange-text"></i>
                     {{ c.name }}
                   </p>
@@ -123,7 +135,7 @@
                   @click="showFacility(v)"
                   :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
                 >
-                  <p class="facility-header" data-cy="facilities">
+                  <p class="facility-header"data-cy="contracts">
                     <i class="far fa-car mr-1 text-info"></i> {{ v.name }}
                   </p>
                 </div>
@@ -139,11 +151,24 @@
       </div>
     </div>
     <!-- <router-link  >  -->
+      <MoveProjectContextMenu
+        :display="showProjectContextMenu"
+        :projectId="projectId"
+        ref="moveProjectContextMenu"
+        >  
+      </MoveProjectContextMenu>
+      <MoveGroupContextMenu      
+        :display="showGroupContextMenu"
+        :groupId="groupId"
+        ref="moveGroupContextMenu"
+        >  
+      </MoveGroupContextMenu>
     <button
       v-if="_isallowedProgramSettings('read')"
       class="btn btn-sm btn-light program-settings-btn"
       @click.prevent="toggleAdminView"
       style="cursor: pointer"
+       data-cy="program_setting"
     >
       <h6><i class="far fa-cog"></i> Program Settings</h6>
     </button>
@@ -153,12 +178,16 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import MoveProjectContextMenu from "./MoveProjectContextMenu";
+import MoveGroupContextMenu from "./MoveGroupContextMenu";
 import Loader from "./loader";
 
 export default {
   name: "ProjectSidebar",
   components: {
     Loader,
+    MoveProjectContextMenu,
+    MoveGroupContextMenu
   },
   props: [
     "title",
@@ -166,7 +195,6 @@ export default {
     "currentFacilityGroup",
     "currentContract",
     "currentContractGroup",
-    ,
     "currentVehicle",
     "currentVehicleGroup",
   ],
@@ -175,8 +203,12 @@ export default {
       value: "",
       totalGroupContract: 0,
       totalGroupVehicle: 0,
+      groupId: null, 
+      projectId: null, 
       filteredGroupSize: null,
       projectCount: 0,
+      showProjectContextMenu: false, 
+      showGroupContextMenu: false, 
     };
   },
   computed: {
@@ -252,11 +284,12 @@ export default {
       }
     },
     pathTab() {
-      let url = this.$route.path;
+      let url = this.$route.path;  
+  
       if (url.includes("tasks")) {
         return "/tasks";
       }
-      if (url.includes("issues")) {
+         if (url.includes("issues")) {
         return "/issues";
       }
       if (url.includes("analytics")) {
@@ -271,6 +304,9 @@ export default {
       if (this.$route.name === "SheetRisks") {
         return "/risks";
       }
+      if (url.includes("effort")) {
+        return "/effort";
+      }     
       if (url.includes("lessons")) {
         return "/lessons";
       }
@@ -297,6 +333,16 @@ export default {
       "createVehicle",
       "updateVehicle",
     ]),
+    openProjectContextMenu(e, id) {
+      this.projectId = id
+      e.preventDefault();
+      this.$refs.moveProjectContextMenu.open(e);
+   },
+    openGroupContextMenu(e, id) {
+      this.groupId = id
+      e.preventDefault();
+      this.$refs.moveGroupContextMenu.open(e);
+   },
     expandFacilityGroup(group) {
       if (this.currentContract && this.currentFacility == {}) {
         group = this.currentContract.facilityGroup.id;
@@ -305,9 +351,9 @@ export default {
       }
       this.$emit("on-expand-facility-group", group);
     },
-    log(e) {
-      console.log(e);
-    },
+    // log(e) {
+    //   console.log(e);
+    // },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
       return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
@@ -378,6 +424,11 @@ export default {
     }
   },
   watch: {
+    pathTab() {    
+      if (this.pathTab === "/" && this.$route.params.contractId) {
+       return "/tasks";
+      }
+    },
     contentLoaded: {
       handler() {
         if (
@@ -431,7 +482,7 @@ export default {
   z-index: 1140;
 }
 
-/deep/.el-dialog__title {
+::v-deep.el-dialog__title {
   padding: 5px 10px;
   background-color: #dd9036;
   color: white;
@@ -440,7 +491,7 @@ export default {
   border-radius: 0.25rem;
 }
 
-// /deep/.el-dialog__body {
+// ::v-deep.el-dialog__body {
 //     padding: 10px 20px;
 //  }
 .saveBtns {

@@ -7,7 +7,7 @@
     tabindex="0"
     @mouseleave="close"
   >
-    <el-menu collapse>
+    <el-menu collapse class="context-menu-inner">
       <el-menu-item @click="openIssue">Open</el-menu-item>
       <hr />
       <el-menu-item
@@ -16,9 +16,8 @@
         :disabled="!isAllowed('write', 'issues')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'issues')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
+      <el-submenu index="1" v-if="$route.params.projectId">
+        <template slot="title">Duplicate to...
         </template>
         <div>
           <div class="menu-subwindow-title">Duplicate to...</div>
@@ -58,9 +57,8 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'issues')"  v-if="$route.params.projectId">
-        <template slot="title">
-          <span slot="title">Move to...</span>
+      <el-submenu index="2" :disabled="!isAllowed('delete', 'issues')"  v-if="$route.params.projectId">
+        <template slot="title">Move to...
         </template>
         <div>
           <div class="menu-subwindow-title">Move to...</div>
@@ -117,7 +115,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
+    ...mapGetters(["currentProject", "getUnfilteredFacilities", "filteredFacilityGroups"]),
     // get position of context menu
     style() {
       return {
@@ -135,14 +133,14 @@ export default {
     treeFormattedData() {
     if(this.$route.params.projectId){
         let data = [];
-        this.facilityGroups.forEach((group, index) => {
+        this.filteredFacilityGroups.forEach((group, index) => {
           data.push({
             id: index,
             label: group.name,
             children: [
               ...group.facilities
                 .filter(
-                  (facility) => this.isAllowedFacility("write", 'issues', facility.facility.id) && facility.facility.id !== this.issue.facilityId
+                  (facility) => this.isAllowedFacility("write", 'issue_project_context_menu', {facility_project_id: facility.id}) && facility.facility.id !== this.issue.facilityId
                 )
                 .map((facility) => {
                   return {
@@ -165,7 +163,7 @@ export default {
               children: [
                   ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'issues', contract.projectContractId) && contract.projectContractId !== this.issue.projectContractId
+                    (contract) => this.isAllowedFacility("write", 'issue_contract_context_menu', {project_contract_id: contract.projectContractId}) && contract.projectContractId !== this.issue.projectContractId
                   )
                   .map((contract) => {
                     return {
@@ -190,7 +188,7 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowedFacility("write", 'issues', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.issue.projectContractVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'issue_vehicle_context_menu', {project_contract_vehicle_id: vehicle.projectContractVehicleId}) && vehicle.projectContractVehicleId !== this.issue.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
@@ -223,23 +221,9 @@ export default {
     isAllowed(salut) {
       return this.checkPrivileges("issue_form", salut, this.$route)
      },
-     isAllowedFacility(salut, module, facility_id) {
-         if (this.$route.params.projectId) {
-         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
-        }
-      },
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-    // closes context menu
+     isAllowedFacility(salut, module, extraData) {
+      return this.checkPrivileges(module, salut, this.$route, extraData)  
+    },
     close() {
       this.show = false;
       this.left = 0;
@@ -267,7 +251,7 @@ export default {
       this.close();
     },
     moveIssue(issue, facilityProjectId) {
-      if (!this.isAllowed("write", 'issues')) return;
+      // if (!this.isAllowed("write", 'issues')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -603,6 +587,9 @@ export default {
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
+}
+.context-menu-inner{
+  width: 10vw;
 }
 hr {
   margin: 0;

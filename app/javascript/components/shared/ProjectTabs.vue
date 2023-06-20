@@ -1,5 +1,5 @@
 <template>
-  <div :load="log()" v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
+  <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
     <span v-if="$route.params.projectId" class="d-flex">
       <div v-for="cTab in cTabs" :key="cTab.key" class="d-flex">
         <div
@@ -7,6 +7,7 @@
             !cTab.hidden && cTab.key !== 'contract' && cTab.key !== 'vehicle'
           "
           class="badge mx-0"
+          :data-cy="cTab.key"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
         >
@@ -22,6 +23,7 @@
             !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'vehicle'
           "
           class="badge mx-0"
+          :data-cy="cTab.key"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
         >
@@ -37,6 +39,7 @@
             !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'contract'
           "
           class="badge mx-0"
+          :data-cy="cTab.key"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
         >
@@ -112,6 +115,12 @@ export default {
           closable: false,
           hidden: false,
         },
+        {
+          label: "Effort",
+          key: "effort",
+          closable: false,
+          hidden: false,
+        },
       ],
     };
   },
@@ -164,9 +173,6 @@ export default {
     }
   },
   methods: {
-    log(e) {
-      console.log(e)
-    },
     changeCtab(cTab) {
       if (this.$route.params.contractId) {
         if (cTab.key === "contract") {
@@ -190,11 +196,6 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
     privileges() {
-      console.log(
-        "privileges()",
-        AuthorizationService.getProjectTabPrivilege(this.$route),
-        this.$route
-      );
       return AuthorizationService.getProjectTabPrivilege(this.$route);
     },
     currentCtab() {
@@ -294,6 +295,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 #customtabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
