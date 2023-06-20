@@ -378,21 +378,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.string "code"
     t.integer "status", default: 1
     t.integer "region_type", default: 0
-<<<<<<< HEAD
-    t.string "center"
-=======
     t.string "center", default: "[]"
->>>>>>> release
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.boolean "is_portfolio", default: false
     t.integer "user_id"
     t.integer "owner_id"
     t.string "owner_type"
-<<<<<<< HEAD
-=======
     t.boolean "is_default", default: false
->>>>>>> release
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -1025,12 +1018,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.integer "project_contract_vehicle_id"
     t.integer "owner_id"
     t.string "owner_type"
-<<<<<<< HEAD
-=======
     t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
     t.decimal "actual_effort", precision: 10, scale: 2, default: "0.0"
     t.boolean "auto_calculate_planned_effort", default: true
->>>>>>> release
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -1062,10 +1052,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-<<<<<<< HEAD
-=======
     t.string "privileges", default: ""
->>>>>>> release
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
