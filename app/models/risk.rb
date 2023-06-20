@@ -3,15 +3,11 @@ class Risk < ApplicationRecord
   include Tasker
 
   belongs_to :user
-  has_many :risk_users, dependent: :destroy
   belongs_to :risk_stage, optional: true
-  has_many :users, through: :risk_users
+
   belongs_to :task_type, optional: true
-  has_many_attached :risk_files, dependent: :destroy
-  has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
@@ -226,6 +222,8 @@ class Risk < ApplicationRecord
       :approved,
       :approved_at,
       :approval_time,
+      :owner_id,
+      :owner_type,
       :facility_project_id,
       :risk_description,
       :impact_description,

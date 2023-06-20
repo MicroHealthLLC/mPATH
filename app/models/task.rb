@@ -15,7 +15,6 @@ class Task < ApplicationRecord
   validates :text, presence: true
   validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   validates :due_date, presence: true, if: -> { progress != 100 && ongoing == false && on_hold == false }
-  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_update :validate_states
@@ -58,6 +57,8 @@ class Task < ApplicationRecord
       :text,
       :task_type_id,
       :task_stage_id,
+      :owner_id,
+      :owner_type,
       :facility_project_id,
       :due_date,
       :start_date,
@@ -443,7 +444,7 @@ class Task < ApplicationRecord
 
     task.attributes = t_params 
     if params[:project_contract_id]
-      task.project_contract_id = params[:project_contract_id]
+      task.project_contract_id = params[:project_contract_id]     
     elsif params[:project_contract_vehicle_id]
       task.project_contract_vehicle_id = params[:project_contract_vehicle_id]
 

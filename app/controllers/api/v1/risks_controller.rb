@@ -71,6 +71,7 @@ class Api::V1::RisksController < AuthenticatedController
         end
       end
     end
+    binding.pry
     @risk.update(r_params)
     @risk.assign_users(params)
     @risk.add_link_attachment(params)

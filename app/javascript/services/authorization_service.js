@@ -49,11 +49,11 @@ const AuthorizationService = {
     })
       .then((res) => {
         AuthorizationService.projectPrivilegesRoles =
-          res.data.project_privilegs_roles;
+          res.data.project_privileges_roles;
         AuthorizationService.programPrivilegesRoles =
-          res.data.program_privilegs_roles;
+          res.data.program_privileges_roles;
         AuthorizationService.contractPrivilegesRoles =
-          res.data.contract_privilegs_roles;
+          res.data.contract_privileges_roles;
         AuthorizationService.contractVehiclePrivilegesRoles =
           res.data.contract_vehicle_privileges_roles;
         AuthorizationService.programSettingPrivilegesRoles =
@@ -538,6 +538,7 @@ const AuthorizationService = {
       }
     } else if (
       [
+        "ProjectTabs",
         "SheetContract",
         "SheetVehicle",
         "MapAnalytics",
@@ -551,8 +552,14 @@ const AuthorizationService = {
       ].includes(page)
     ) {
       if (contract_id) {
+        console.log(
+          page,
+          AuthorizationService.contractPrivilegesRoles,
+          contract_id
+        );
         let contract_privileges =
           AuthorizationService.contractPrivilegesRoles[contract_id];
+
         return (
           contract_privileges &&
           contract_privileges.contract_analytics &&

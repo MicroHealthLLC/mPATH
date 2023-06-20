@@ -4,8 +4,10 @@ module Tasker
   extend ActiveSupport::Concern
 
   included do |base|
-    default_scope {order(due_date: :asc)}
-
+    # Do not include it for Lesson
+    if name != "Lesson"
+      default_scope {order(due_date: :asc)}
+    end
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
 
@@ -26,6 +28,8 @@ module Tasker
     has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
 
     has_many :checklists, as: :listable, dependent: :destroy
+  
+    has_many :notes, as: :noteable, dependent: :destroy
 
     has_many :related_tasks, as: :relatable, dependent: :destroy
     has_many :related_issues, as: :relatable, dependent: :destroy
@@ -34,8 +38,29 @@ module Tasker
     has_many :sub_issues, through: :related_issues, class_name: "Issue"
     has_many :sub_risks, through: :related_risks, class_name: "Risk"
 
+    belongs_to :owner, polymorphic: :true, optional: true
+
+    if name == "Lesson"
+      has_many :lesson_users, dependent: :destroy
+      has_many :users, through: :lesson_users
+      has_many_attached :lesson_files, dependent: :destroy
+    elsif name == "Issue"
+      has_many :issue_users, dependent: :destroy
+      has_many :users, through: :issue_users
+      has_many_attached :issue_files, dependent: :destroy
+    elsif name == "Task"
+      has_many :task_users, dependent: :destroy
+      has_many :users, through: :task_users
+      has_many_attached :task_files, dependent: :destroy
+    elsif name == "Risk"
+      has_many :risk_users, dependent: :destroy
+      has_many :users, through: :risk_users
+      has_many_attached :risk_files, dependent: :destroy
+    end
+
     accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
     accepts_nested_attributes_for :facility_project, reject_if: :all_blank
+    accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
     validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
@@ -43,6 +68,24 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
+    before_save :update_owner_record
+
+    #NOTE: once everything is working fine without below fields, remove it from database. So we will use owner_id and owner_type
+    attr_accessor :facility_project_id, :project_contract_id, :project_contract_vehicle_id
+    
+    def update_owner_record
+      ru = self
+      if facility_project_id
+        ru.owner_type = "FacilityProject"
+        ru.owner_id = ru.facility_project_id
+      elsif project_contract_id
+        ru.owner_type = "ProjectContract"
+        ru.owner_id = ru.project_contract_id
+      elsif project_contract_vehicle_id
+        ru.owner_type = "ProjectContractVehicle"
+        ru.owner_id = ru.project_contract_vehicle_id
+      end
+    end
    
     base.const_set :URL_FILENAME_LENGTH, 252
 
@@ -83,25 +126,25 @@ module Tasker
       end
     end
 
-    def update_owner_record
-      if self.previous_changes.keys.include?("progress")
-        _owner = nil
-        if facility_project.present?
-          _owner = facility_project
-        elsif project_contract_id.present?
-          _owner = project_contract
-        elsif project_contract_vehicle_id.present?
-          _owner = project_contract_vehicle
-        end
+    # def update_owner_record
+    #   if self.previous_changes.keys.include?("progress")
+    #     _owner = nil
+    #     if facility_project.present?
+    #       _owner = facility_project
+    #     elsif project_contract_id.present?
+    #       _owner = project_contract
+    #     elsif project_contract_vehicle_id.present?
+    #       _owner = project_contract_vehicle
+    #     end
   
-        return if !_owner
+    #     return if !_owner
   
-        p = _owner.project
-        _owner.update_progress
-        p.update_progress
-        FacilityGroup.where(project_id: p.id).map(&:update_progress)
-      end
-    end
+    #     p = _owner.project
+    #     _owner.update_progress
+    #     p.update_progress
+    #     FacilityGroup.where(project_id: p.id).map(&:update_progress)
+    #   end
+    # end
     
     def handle_related_taskers
       subclass = "sub_#{self.class.name.downcase.pluralize}"
