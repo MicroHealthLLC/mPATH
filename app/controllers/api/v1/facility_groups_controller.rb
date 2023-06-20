@@ -53,22 +53,21 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
 
   def duplicate_to_program
     source_program = Project.find(params[:source_program_id])
-    target_program = Project.find(params[:target_program_id])
+    target_program = Project.includes(:project_groups).find(params[:target_program_id])
     source_facility_group = FacilityGroup.find(params[:facility_group_id])
     if source_facility_group.is_default
       render json: {message: "Can't duplicate default group"}, status: 406
       return
     end
     target_facility_group = source_facility_group
-    if !source_facility_group.is_portfolio?
-      dup_facility_group = source_facility_group.dup
-      dup_facility_group.name = "#{source_facility_group} - copy"
-      dup_facility_group.save
-      target_program.project_groups << source_facility_group
-      target_facility_group = dup_facility_group
-    elsif !target_program.facility_groups.include?(source_facility_group)
-      target_program.project_groups << source_facility_group
-    end    
+    
+    dup_facility_group = source_facility_group.dup
+    dup_facility_group.name = "#{source_facility_group.name} - copy"
+    dup_facility_group.is_default = false
+    dup_facility_group.is_portfolio = false
+    dup_facility_group.save
+    target_program.project_groups << dup_facility_group
+    target_facility_group = dup_facility_group  
 
     all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: source_facility_group.id)
     failed_facility_projects = []
@@ -89,18 +88,18 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
   def move_to_program
     source_program = Project.find(params[:source_program_id])
     target_program = Project.find(params[:target_program_id])
-    facility_group = FacilityGroup.find(params[:facility_group_id])
+    source_facility_group = FacilityGroup.find(params[:facility_group_id])
 
     if source_facility_group.is_default
       render json: {message: "Can't move default group"}, status: 406
       return
     end
 
-    if !target_program.facility_groups.include?(facility_group)
-      target_program.project_groups << facility_group
+    if !target_program.project_groups.include?(source_facility_group)
+      target_program.project_groups << source_facility_group
     end
 
-    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: facility_group.id)
+    all_facility_projects = FacilityProject.where(project_id: source_program.id, facility_group_id: source_facility_group.id)
     failed_facility_projects = []
     all_facility_projects.each do |fp|
       result = fp.move_to_program(target_program.id, params[:target_facility_group_id])
@@ -109,7 +108,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       end 
     end
     
-    source_project_facility_group = source_program.project_facility_groups.where(facility_group_id: facility_group.id).first
+    source_project_facility_group = source_program.project_facility_groups.where(facility_group_id: source_facility_group.id).first
     source_project_facility_group.destroy if source_project_facility_group
 
     # self.update(project_id: target_program_id)

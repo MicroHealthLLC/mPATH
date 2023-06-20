@@ -316,6 +316,7 @@
           <template slot-scope="scope">
             <el-button
               type="default"
+              data-cy="add_contract_btn"
               v-tooltip="`Add Contract`"
               @click.prevent="addExistingContract(scope.$index, scope.row)"          
               class="bg-primary text-light btn-sm">

@@ -8,11 +8,13 @@ Cypress.Commands.add("risksList", () => {
 
 // Open Kanban Risks
 Cypress.Commands.add("openKanbanRisk", () => {
+  cy.wait(1000)
   cy.openKanban()
+  cy.facilityUnderGroup()
+
   cy.get('[data-cy=risk_link]').within(() => {
     cy.contains('Risks').should('be.visible').click()
   })
-  cy.facilityUnderGroup()
 })
 
 // Fill Risk form
