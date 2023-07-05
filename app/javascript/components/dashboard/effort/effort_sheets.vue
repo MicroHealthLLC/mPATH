@@ -154,7 +154,7 @@
           </div>
         </el-tab-pane>
   
-        <el-tab-pane v-for="(item) in efforts"  :key="item.id" :label="item.full_name" class="effort_tab_pane" >
+        <el-tab-pane v-for="(item) in efforts"  :key="item.id" :label="item.full_name" class="effort_tab_pane" data-cy="effort_tab_pane" >
           
           <el-table 
             v-if="tableData && tableData.length > 0  && matrixDates && matrixDates.length > 0" 
@@ -162,7 +162,7 @@
             height="450" 
             id="crudRow"
             class="crudRow mt-4" 
-            :data-cy="`effort_table_${item.id}`"
+            data-cy="effort_table"
             :header-row-style="{ textAlign: 'center' }"
             >
             <el-table-column prop="plannedEffort" label="Planned Effort" width="80" header-align="center">
@@ -208,13 +208,13 @@
                         :value="getWeekOfEffort(item.tasks, scope.row, weekof, item)"
                         :name="weekof" 
                         type="text" 
-                        :class="`form-control effort_input_${scope.$index}`"
-                        :data-cy="`effort_input_${scope.$index}`"
+                        :class="form-control"
+                        data-cy="effort_input"
                       />              
                     <!-- CREATE MODE IF ENTER/EDIT BUTTON IS CLICKED -->
                     </span>
   
-                    <input v-else v-model="addedHrs[weekofIndex]" :name="weekof" type="text" :class="`form-control effort_input_${scope.$index}`" :id="weekof" :data-cy="`effort_input_${scope.$index}`" />
+                    <input v-else v-model="addedHrs[weekofIndex]" :name="weekof" type="text" :class="form-control" :id="weekof" data-cy="effort_input" />
                   </span>
                 </template>
               </el-table-column>
@@ -226,9 +226,9 @@
                   @click.prevent="cancelEdits(scope.$index, scope.row)" class="bg-secondary text-light  px-2">
                   <i class="fas fa-ban"></i>
                 </el-button>
-                <el-button size="mini" :data-cy="`add_edit_effort_btn_${scope.$index}`" type="default" v-tooltip="`Add/Edit Effort`" class="bg-light px-2" v-if="scope.$index !== rowIndex" @click.prevent="editToggle(scope.$index, scope.row, rowIndex, item)"> <i class="fa-light fa-calendar-pen text-primary"></i>
+                <el-button size="mini" data-cy="add_edit_effort_btn" type="default" v-tooltip="`Add/Edit Effort`" class="bg-light px-2" v-if="scope.$index !== rowIndex" @click.prevent="editToggle(scope.$index, scope.row, rowIndex, item)"> <i class="fa-light fa-calendar-pen text-primary"></i>
                 </el-button>
-                <el-button type="default" size="mini" @click.prevent="saveEffortRow(scope.$index, scope.row, item.id, item.tasks, weekof)" v-tooltip="`Save`" class="bg-primary text-light  px-2"  :data-cy="`save_effort_btn_${scope.$index}`" :disabled="rowId && rowId !== scope.row.id">
+                <el-button type="default" size="mini" @click.prevent="saveEffortRow(scope.$index, scope.row, item.id, item.tasks, weekof)" v-tooltip="`Save`" class="bg-primary text-light  px-2"  data-cy="save_effort_btn" :disabled="rowId && rowId !== scope.row.id">
                   <i class="far fa-save"></i>
                 </el-button>
               </template>

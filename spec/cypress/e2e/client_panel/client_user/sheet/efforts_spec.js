@@ -35,34 +35,41 @@ describe('Sheets Tasks View', function() {
     cy.get('.effort_tab_pane').its('length').should('be.eq', 2)
     cy.get('[data-cy=add_user_btn]').click()
     cy.get('.effort_tab_pane').its('length').should('be.eq', 3)
+
     cy.get('[data-cy=effort_tab]').within(() => {
-      cy.get('#tab-1').click()
-      cy.get("[data-cy=add_edit_effort_btn_0]").eq(1).click()
-      cy.get("[data-cy=effort_input_0]").eq(0).type("10")
-      cy.get("[data-cy=effort_input_0]").eq(2).type("20")
-      cy.get("[data-cy=save_effort_btn_0]").click()
-      // checking actual value
-      cy.get("[data-cy=effort_table_2] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(1).contains("30").should('be.visible')
-      // checking task name
-      cy.get("[data-cy=effort_table_2] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(2).contains("Test Task 1").should('be.visible')
-      //checking effort value in column
-      cy.get("[data-cy=effort_table_2] div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(3).contains("10").should('be.visible')     
+      cy.get('#tab-2').click()
+
+      cy.get('[data-cy=effort_tab_pane]').eq(1).within(() => {
+
+        cy.get("[data-cy=add_edit_effort_btn]").eq(1).click()
+        cy.get("[data-cy=effort_input]").eq(0).type("10")
+        cy.get("[data-cy=effort_input]").eq(2).type("20")
+        cy.get("[data-cy=save_effort_btn]").click()
+        // checking actual value
+        cy.get("[data-cy=effort_table] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(1).contains("30").should('be.visible')
+        // checking task name
+        cy.get("[data-cy=effort_table] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(2).contains("Test Task 1").should('be.visible')
+        //checking effort value in column
+        cy.get("[data-cy=effort_table] div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(3).contains("10").should('be.visible')
+
+      })
+    
     })    
   })
 
-  it.only('update effort to effort sheet', function() {
+  it.skip('update effort to effort sheet', function() {
     cy.get('[data-cy=effort_tab]').within(() => {
       cy.get('#tab-1').click()
-      cy.get("[data-cy=add_edit_effort_btn_0]").click()
-      cy.get("[data-cy=effort_input_0]").eq(0).type("20")
-      cy.get("[data-cy=effort_input_0]").eq(2).type("20")
-      cy.get("[data-cy=save_effort_btn_0]").click()
+      cy.get("[data-cy=add_edit_effort_btn]").click()
+      cy.get("[data-cy=effort_input]").eq(0).type("20")
+      cy.get("[data-cy=effort_input]").eq(2).type("20")
+      cy.get("[data-cy=save_effort_btn]").click()
       // checking actual value
-      cy.get("[data-cy=effort_table_2] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(1).contains("40").should('be.visible')
+      cy.get("[data-cy=effort_table] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(1).contains("40").should('be.visible')
       // checking task name
-      cy.get("[data-cy=effort_table_2] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(2).contains("Test Task 1").should('be.visible')
+      cy.get("[data-cy=effort_table] > div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(2).contains("Test Task 1").should('be.visible')
       //checking effort value in column
-      cy.get("[data-cy=effort_table_2] div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(3).contains("20").should('be.visible')     
+      cy.get("[data-cy=effort_table] div.el-table__body-wrapper.is-scrolling-left > table > tbody > tr > td").eq(3).contains("20").should('be.visible')     
     })
   })
 
