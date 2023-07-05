@@ -23,5 +23,6 @@ import './facility'
 import './filter'
 import './risks'
 import './contract'
+import './efforts'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
