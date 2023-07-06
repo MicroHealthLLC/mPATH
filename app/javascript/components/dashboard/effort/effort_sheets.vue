@@ -66,12 +66,14 @@
               value-key="id"         
               placeholder="Select Week of Begin" 
               filterable
+              data-cy="week_begin_select"
               >
               <el-option 
                 v-for="item, i in weekOfBegin" 
                 :value="item" 
                 :key="i" 
                 :label="item"
+                data-cy="week_begin_options"
                 >
               </el-option>
             </el-select>
@@ -86,12 +88,14 @@
               value-key="id"
               placeholder="Select Week of End" 
               filterable
+              data-cy="week_end_select"
             >
             <el-option 
               v-for="item, i in weekOfEnd" 
               :value="item" 
               :key="i" 
               :label="item"
+              data-cy="week_end_options"
               >
             </el-option>
             </el-select>
@@ -120,24 +124,23 @@
         </div>
       </span>
   
-      <el-tabs data-cy="effort_tab" class="effort_tab" type="border-card" v-model="editableTabsValue" v-if="$route.params.projectId">
-        <el-tab-pane label="Summary" class="is-active effort_tab_pane" name='0'>
+      <el-tabs data-cy="effort_tab" type="border-card" v-model="editableTabsValue" v-if="$route.params.projectId">
+        <el-tab-pane label="Summary" class="is-active" name='0' data-cy="effort_tab_pane">
           <el-table 
             v-if="tableData && tableData.length > 0 && matrixDates && matrixDates.length > 0"
             :data="tableData" 
             height="450"
             class="crudRow mt-4" 
             :header-row-style="{ textAlign: 'center' }"
-            >
+            data-cy="effort_table">
             <el-table-column prop="plannedEffort" label="Planned Effort" width="80" header-align="center">
             </el-table-column>
             <el-table-column prop="actualEffort" label="Actual Effort" width="80" header-align="center">
             </el-table-column>
-            <el-table-column prop="text" label="Tasks" width="250" header-align="center">
-  
+            <el-table-column prop="text" label="Tasks" width="250" header-align="center">  
             </el-table-column>
             <el-table-column label="Week of" header-align="center" v-if="matrixDates && matrixDates.length > 0">
-              <el-table-column v-for="weekof, i in matrixDates" :key="i" :label='weekof' width="120">
+              <el-table-column v-for="weekof, i in matrixDates" :key="i" :label='weekof' width="120" class-name="week_date_column">
                 <template slot-scope="scope">
                   <span v-if="userTime && userTime.length > 0 && calculateHours(userTime, scope.row, weekof) !== 0">
                     {{
@@ -154,7 +157,7 @@
           </div>
         </el-tab-pane>
   
-        <el-tab-pane v-for="(item) in efforts"  :key="item.id" :label="item.full_name" class="effort_tab_pane" data-cy="effort_tab_pane" >
+        <el-tab-pane v-for="(item) in efforts"  :key="item.id" :label="item.full_name" data-cy="effort_tab_pane" >
           
           <el-table 
             v-if="tableData && tableData.length > 0  && matrixDates && matrixDates.length > 0" 

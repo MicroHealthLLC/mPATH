@@ -216,13 +216,17 @@
  )
  
  TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: client.id)
+ 
+ Time.zone = 'Eastern Time (US & Canada)'
 
- effort_1 = Effort.find_or_create_by({
-  date_of_week: DateTime.now,
-  hours: 10,
-  user_id: client.id,
-  resource_id: test_task_1.id,
-  resource_type: 'Task',
-  facility_project_id: facility_project_1.id,
-  projected: false
- })
+  last_date = (Date.today.monday..(Date.today.monday + 4)).last
+
+  effort_1 = Effort.find_or_create_by({
+    date_of_week: last_date,
+    hours: 10,
+    user_id: client.id,
+    resource_id: test_task_1.id,
+    resource_type: 'Task',
+    facility_project_id: facility_project_1.id,
+    projected: false
+  })
