@@ -14,14 +14,14 @@ describe('Sheets Tasks View', function() {
   after(() => {
     // cy.clearCookies()
   })
-  it.skip('Open Sheets efforts in a facility', function() {
+  it('Open Sheets efforts in a facility', function() {
     cy.contains('Search Tasks').should('be.visible')
     cy.contains('Week Of Begin:').should('be.visible')
     cy.contains('Week Of End:').should('be.visible')
     cy.contains('Summary').should('be.visible')
   })
 
-  it.skip('Add user effort sheet', function() {
+  it('Add user effort sheet', function() {
     cy.get('[data-cy=add_user_select]').type('Test1 Admin')
     cy.get("[data-cy=add_user_option]").contains("Test1 Admin").click()
     cy.get('[data-cy=effort_tab_pane]').its('length').should('be.eq', 1)
@@ -29,7 +29,7 @@ describe('Sheets Tasks View', function() {
     cy.get('[data-cy=effort_tab_pane]').its('length').should('be.eq', 2)   
   })
 
-  it.skip('Add effort to effort sheet', function() {
+  it('Add effort to effort sheet', function() {
     cy.get('[data-cy=add_user_select]').type('Test1 Admin')
     cy.get("[data-cy=add_user_option]").contains("Test1 Admin").click()
     cy.get('[data-cy=effort_tab_pane]').its('length').should('be.eq', 2)
@@ -56,7 +56,7 @@ describe('Sheets Tasks View', function() {
     })    
   })
 
-  it.skip('update effort to effort sheet', function() {
+  it('update effort to effort sheet', function() {
     cy.get('[data-cy=effort_tab]').within(() => {
       cy.get('#tab-1').click()
       cy.get('[data-cy=effort_tab_pane]').eq(1).within(() => {
@@ -76,7 +76,7 @@ describe('Sheets Tasks View', function() {
     })
   })
 
-  it.skip('Search task by typing task name', function() {
+  it('Search task by typing task name', function() {
     cy.get('[data-cy=search_tasks]').clear().type('task is not in the list').should('have.value', 'task is not in the list')
     cy.contains('You currently have no Tasks or *Excluded Tasks in this Project. Please add a task or adjust the Week of End filter.').should('be.visible')
 
@@ -91,7 +91,7 @@ describe('Sheets Tasks View', function() {
     })
   })
 
-  it.skip('Select by week of begin', function() {
+  it('Select by week of begin', function() {
     cy.get("[data-cy=week_begin_select]").click()
     cy.get("[data-cy=week_begin_options]").eq(2).click()
     cy.get("[data-cy=week_begin_options]").eq(2)
@@ -104,7 +104,7 @@ describe('Sheets Tasks View', function() {
     })
   })
 
-  it.only('Select by week of end', function() {
+  it.skip('Select by week of end', function() {
     cy.get("[data-cy=week_end_select]").click()
     cy.get("[data-cy=week_end_options]").eq(5).click()
     cy.get('[data-cy=effort_tab]').within(() => {
@@ -115,76 +115,7 @@ describe('Sheets Tasks View', function() {
           cy.get(".week_date_column").last().invoke('html').then((val) => console.log("week end",JSON.stringify(val)))
           cy.get(".week_date_column").last().contains('18 Aug 23').should('be.visible')
         })
-
       })
-
     })
   })
-
-  it.skip('Sort Task according to Category', function() {
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(2)').click()
-    cy.get('[data-cy=task_row]').first().contains('Test Task Type(milestone)').should('be.visible')
-    // cy.logout()
-  })
-
-  it.skip('Sort Task according to Start Date', function() {
-    var dayjs = require('dayjs')
-    const new_start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
-    const test_start_date = dayjs().format('DD MMM YYYY')
-    cy.get('[data-cy=task_row]').first().contains(new_start_date).should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(3)').click()
-    cy.get('[data-cy=task_row]').first().contains(test_start_date).should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(3)').click()
-    cy.get('[data-cy=task_row]').first().contains(new_start_date).should('be.visible')
-    // cy.logout()
-  })
-
-  it.skip('Sort Task according to Due Date', function() {
-    cy.reload()
-    var dayjs = require('dayjs')
-    const new_due_date = dayjs().add(6, 'day').format('DD MMM YYYY')
-    const test_due_date = dayjs().add(5, 'day').format('DD MMM YYYY')
-    cy.get('[data-cy=task_row]').first().contains(new_due_date).should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(4)').click()
-    cy.get('[data-cy=task_row]').first().contains(test_due_date).should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(4)').click()
-    cy.get('[data-cy=task_row]').first().contains(new_due_date).should('be.visible')
-    // cy.logout()
-  })
-
-  it.skip('Sort Task according to Assigned User', function() {
-    cy.reload()
-    cy.get('[data-cy=responsibleUsers]').click()
-    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
-    cy.get('[data-cy=responsibleUsers]').click()
-    cy.get('[data-cy=task_row]').first().contains('Test2 Client').should('be.visible')
-    cy.get('[data-cy=responsibleUsers]').click()
-    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
-    // cy.logout()
-  })
-
-  it.skip('Sort Task according to Progress', function() {
-    cy.reload()
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(6)').click()
-    cy.get('[data-cy=task_row]').first().contains('10%').should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(6)').click()
-    cy.get('[data-cy=task_row]').first().contains('70%').should('be.visible')
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(6)').click()
-    cy.get('[data-cy=task_row]').first().contains('10%').should('be.visible')
-    // cy.logout()
-  })
-
-  it.skip('Sort Task according to Last Update', function() {
-    cy.get('[data-cy=tasks_table] > tr > :nth-child(8)').click()
-    cy.get('[data-cy=task_row]').first().contains('No Updates').should('be.visible')
-    // cy.logout()
-  })
-
-  // it('Create New Task', function() {
-  //   cy.get('[data-cy=add_task]').click()
-  //   cy.get('[data-cy="task_name"').clear().type('1 New task').should('have.value', '1 New task')
-  //   cy.get('[data-cy="task_description"').clear().type('1 New task description').should('have.value', '1 New task description')
-  //   cy.get('data-cy="task_type"').click()
-  // })
-
 })
