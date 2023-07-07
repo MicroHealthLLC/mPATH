@@ -55,9 +55,9 @@ class Effort < ApplicationRecord
     end
     
     if facility_project
-      effort_ids = Effort.where("date_of_week < ? and projected = ? and facility_project_id = ?", Date.today, true, facility_project.id ).pluck(:id)
+      effort_ids = Effort.where("DATE(date_of_week) <= ? and projected = ? and facility_project_id = ?", Date.today, true, facility_project.id ).pluck(:id)
     else
-      effort_ids = Effort.where("date_of_week < ? and projected = ?", Date.today, true ).pluck(:id)
+      effort_ids = Effort.where("DATE(date_of_week) <= ? and projected = ?", Date.today, true ).pluck(:id)
     end
     
     if effort_ids.any?
@@ -98,7 +98,7 @@ class Effort < ApplicationRecord
 
     effort.attributes = t_params
     
-    effort.projected = effort.date_of_week > this_week_dates.last
+    effort.projected = effort.projected_effort?
 
     effort.transaction do
       effort.save
