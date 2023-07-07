@@ -189,7 +189,7 @@
             </el-table-column>
             <!-- Column of individual users -->
             <el-table-column label="Week of" header-align="center">
-              <el-table-column v-for="weekof, weekofIndex in matrixDates" :key="weekofIndex" :label='weekof' width="120">
+              <el-table-column v-for="weekof, weekofIndex in matrixDates" :key="weekofIndex" :label='weekof' width="120" class-name="week_date_column">
                 <template slot-scope="scope">
                   <!-- DEFAULT VIEW MODE  -->
                   <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">
