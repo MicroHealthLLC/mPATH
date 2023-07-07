@@ -22,7 +22,16 @@
                   </div>
                 </div>
             </div>
-            <div class="row row-1 mt-3 task-issue-risk-row">
+            <div class="row row-1 mt-3 task-issue-risk-row"> 
+              <el-alert  
+                v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
+                type="warning"
+                class="pt-0 pb-2 mr-5"
+                show-icon >
+              <template slot="title">
+                You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
+              </template>
+              </el-alert>
               <div class="col-9 pr-0" data-cy="facility_tasks">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row mb-3">
@@ -1007,6 +1016,23 @@ export default {
       "facilities",
       "getUnfilteredFacilities",
     ]),
+    overdueTasks(){
+      const today = new Date()
+      const tomorrow = new Date(today)
+      let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
+      const current = new Date();      
+      let plusSevenDays = current.setDate(current.getDate() + 7);
+
+      if (this.filteredTasks.length > 0) {       
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        return {
+          value24: dueDatesTomorrow,   
+          value7: datesWithinSevenDays,          
+        }
+
+        }
+     },
     selectedStatus: {
       get() {
         return this.facility.statusId; //this.$data._selected

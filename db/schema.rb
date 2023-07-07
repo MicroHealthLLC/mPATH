@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_13_184128) do
+ActiveRecord::Schema.define(version: 2023_04_10_210832) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 2023_03_13_184128) do
     t.bigint "user_id"
     t.integer "position", default: 0
     t.date "due_date"
-    t.decimal "planned_effort", precision: 10, default: "0"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
     t.index ["listable_id"], name: "index_checklists_on_listable_id"
     t.index ["listable_type"], name: "index_checklists_on_listable_type"
     t.index ["position"], name: "index_checklists_on_position"
@@ -333,6 +333,18 @@ ActiveRecord::Schema.define(version: 2023_03_13_184128) do
     t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
+  end
+
+  create_table "efforts", charset: "utf8", force: :cascade do |t|
+    t.datetime "date_of_week", precision: 6, null: false
+    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
+    t.integer "user_id", null: false
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "facility_project_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "projected", default: false
   end
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
@@ -1014,17 +1026,6 @@ ActiveRecord::Schema.define(version: 2023_03_13_184128) do
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
-  end
-
-  create_table "timesheets", charset: "utf8", force: :cascade do |t|
-    t.datetime "date_of_week", precision: 6, null: false
-    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
-    t.integer "user_id", null: false
-    t.integer "resource_id", null: false
-    t.string "resource_type", null: false
-    t.integer "facility_project_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", charset: "utf8", force: :cascade do |t|

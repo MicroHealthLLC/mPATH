@@ -1,3 +1,8 @@
+desc "Update Effort data for projected hours"
+task :update_projected_efforts => :environment do
+  Effort.where("date_of_week > ? and projected = ?", Date.today, false ).update_all(projected: true)
+end
+
 desc "Update Progress"
 task :update_progress => :environment do
 

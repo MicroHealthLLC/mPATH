@@ -1,13 +1,23 @@
 <!--  NOTE: This File is used in Map view right side bard -->
+<!-- In Select Date of Week Filter, if date is future, render column with projected_dates -->
+
 <template>
   <div class="container-fluid m-2" data-cy="facility_rollup" :load="log(weekOfArr)">
-
+       <el-alert  
+       v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
+        type="warning"
+        class="pt-0 pb-2"
+        show-icon >
+       <template slot="title">
+        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
+       </template>
+       </el-alert>
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->   
+    <div class="row pt-3 pb-2">
       <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded">
+        <span v-if="contentLoaded"  :load="log(showProjectedHours)">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
@@ -82,7 +92,9 @@
         >
         </el-option> 
       </el-select>
+     
         </div>
+     
       </div> 
       <button 
         @click="printProgramEffortReport(currentProject.name, programDateOfWeekFilter)"   
@@ -98,8 +110,8 @@
       >
       <thead>        
         <tr style="background-color:#ededed">
-          <th style="width:32%; font-size: 1rem">Project</th>
-          <th style="width:32%; font-size: 1rem">Task</th>    
+          <th style="width:28%; font-size: 1rem">Project</th>
+          <th style="width:28%; font-size: 1rem">Task</th>    
           <th style="font-size: 1rem">Planned Effort<br>for Entire Task</th>
           <th style="font-size: 1rem">Actual Effort<br>for Entire Task</th>
           <th style="font-size: 1rem">Actual Effort<br>for This Week</th>
@@ -128,7 +140,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{ each.timesheet_actual_effort }} <br>    
+            {{ each.efforts_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -141,17 +153,17 @@
       <tr class="py-2">
        <td >     
       </td> 
-      <td class="text-right">     
+      <td class="text-right">      
         <span class="bold">Project Efforts Totals: </span>
       </td>         
       <td class="text-center">     
-       <b class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+       <b class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td>        
       </td>
@@ -169,7 +181,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)            
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) 
         }}</span>  
       </td> 
       <td class="text-center">     
@@ -178,7 +190,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</b>  
       
       </td> 
@@ -188,7 +200,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</b>  
       
       </td> 
@@ -243,7 +255,7 @@
         </td>       
         <td class="updates text-center">            
           <span class="a" v-for="each, i in task.tasks.filter(g => g && g.on_hold == false)" :key="i">           
-            {{  each.timesheet_actual_effort }} <br>    
+            {{  each.efforts_actual_effort }} <br>    
           </span>          
         </td>       
         <td class="updates text-center">            
@@ -260,13 +272,13 @@
         <em class="bold float-left">Project Efforts Totals: </em>   
       </td> 
       <td class="text-center">    
-        <em class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -285,7 +297,7 @@
               .map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</em>  
       </td> 
       <td class="text-center">
@@ -294,7 +306,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) 
         }}</em>        
       </td> 
       <td class="text-center">
@@ -303,7 +315,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.timesheet_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</em>        
       </td> 
       <td>     
@@ -323,7 +335,7 @@
         class="reportCenter"
         center   
       >
-     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s 
+     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s F
       <button                
         class="btn mh-orange text-light profile-btns allCaps py-1" data-cy=program_viewer_btn>
         User Task Effort Reports
@@ -372,6 +384,21 @@
       </el-select> 
 
         </div>
+        <div class="col-2 px-0 mt4">
+        <el-switch
+        v-model="showProjectedHours"
+        active-text="Show Projected Effort"
+       >
+      </el-switch>
+
+      <!-- 
+       WHERE PROJECTED HOURS TOGGLE NEEDS TO BE APPLIED 
+      Values asterisk in bottom left, 
+      Columnd header
+      Print Out
+      Watch property
+      In row logic -->
+      </div>
 
       </div> 
      
@@ -414,7 +441,9 @@
         @click="printTaskReport(userIndex,
          dateOfWeekFilter, 
          user.full_name, 
-         user.title       
+         user.title, 
+         dateOfWeekFilter, 
+         showProjectedHours
          )"               
         class="btn btn-sm profile-btns text-light  allCaps pl-2  mb-2" > <i class="fas fa-print text-dark grow" ></i>  
       </button>   
@@ -433,7 +462,15 @@
           <th style="width:14%; font-size: 1rem">Task</th>
           <th style="width:22%; font-size: 1rem">Last Update</th>
           <th style="width:14%; font-size: 1rem">Planned Effort <br>for Entire Task</th>
-          <th style="width:12%; font-size: 1rem">Actual Effort for<br> User This Week</th>
+          <th  style="width:12%; font-size: 1rem"> 
+            <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+              Actual (Projected) <br> Effort for User
+            </span>              
+            <span v-else>
+            Actual Effort for<br> User This Week
+            </span>  
+                   
+          </th>
           <th style="width:12%; font-size: 1rem">%Completion <br>(if applicable)</th>
         </tr>
       </thead>
@@ -444,13 +481,13 @@
         </td>
         <!-- Col 2 -->
         <td class="updates">
-          <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
           {{ each.text }}<br>
         </span>
         </td>
          <!-- Col 3 -->
         <td class="updates">
-        <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
+        <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
          <span v-if="each.last_update && each.last_update.body"> {{ each.last_update.body }}</span>  <br>
         </span>       
         </td>
@@ -465,9 +502,17 @@
         <!-- Col 5 -->
       
        <td class="text-center">
-          <span v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">
-          {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}<br>
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          <span>
+            {{ each.efforts.filter(t => !t.projected || fridayDayOfWeek == t.date_of_week ).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}
+          </span>
+
+          <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+            ({{ each.efforts.filter(t => t.projected && fridayDayOfWeek !== t.date_of_week).map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }})
+          </span>     
+          <br>
         </span>
+        
          
         </td> 
          <!-- Col 6 -->  
@@ -487,7 +532,7 @@
       <td ></td> 
        <!-- Col 4 -->  
       <td class="text-right" >
-        <span class="bold">Project's Actual Effort Total:   
+        <span class="bold">Project's Effort Total:   
             
         </span>   
 
@@ -495,7 +540,25 @@
       <!-- Col 5 -->  
       <td class="text-center">   
         <span class="bold">
-            {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
+            {{ task.tasks
+              .filter(t => t.efforts.length > 0)
+              .map(t => t.efforts)
+              .flat()
+              .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+              .map(t => t.hours )
+              .map(Number)
+              .reduce((a,b) => a + (b || 0), 0) 
+              }} 
+        </span>   
+        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">          
+            ({{ task.tasks
+              .filter(t => t.efforts.length > 0)
+              .map(t => t.efforts).flat()
+              .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+              .map(t => t.hours)
+              .map(Number)
+              .reduce((a,b) => a + (b || 0), 0) 
+              }})                   
         </span>   
       </td> 
        <!-- Col 6 -->  
@@ -513,19 +576,36 @@
           <th style="width:15%; font-size: 1rem"></th>
           <th style="width:14%; font-size: 1rem"></th>
           <th style="width:22%; font-size: 1rem"></th>
-          <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Actual Effort Total: </th>
-          <th style="width:12%; font-size: .80rem; text-align: center">  
-          {{ user.facilities
-         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
-         .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-          }}
+          <th style="width:14%; font-size: .80rem; text-align: right; padding-right: 4px">Program's Effort Total: </th>
+          <th style="width:12%; font-size: .80rem; text-align: center">          
+            {{ user.facilities
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts)
+            .flat().filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
+            }}
+          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">                  
+            ({{ user.facilities
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
+            }})
+          </span>
           </th>
           <th style="width:12%; font-size: 1rem"></th>
         </tr>       
-        
+      
       </thead>
+     
     </table> 
-
+    <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">( ) Values in parenthesis represent Projected Effort</span>
    <!-- BEGIN USER EFFORT PRINT OUT TABLE -->    
     <table class="table table-sm mt-3" 
       :id="`taskSheetsList1${userIndex}`"
@@ -538,7 +618,14 @@
           <th>Task</th>
           <th>Last Update</th> 
           <th>Planned Effort <br>for Entire Task</th>
-          <th>Actual Effort <br>for User This Week</th>
+          <th>
+            <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+              Actual (Projected) <br> Effort for User
+            </span>              
+            <span v-else>
+            Actual Effort for<br> User This Week
+            </span>              
+          </th>
           <th>%Completion <br>(if applicable)</th>
         </tr>
   
@@ -546,37 +633,49 @@
       <tbody v-for="(task, i) in user.facilities.filter(t => t  && t.tasks.length > 0)" :key="i" class="mb-2">
 
        <tr class="mb-1" v-if="task" style="line-height: 3">
-        <td>{{ task.facility_name }}</td>
+        <td>{{ task.facility_name }}</td>       
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
-          <li >{{ each.text }}<br></li>       
-          </ul> 
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          {{ each.text }}<br>
+        </span>
         </td>
         <td>
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">           
-           <li v-if="each.last_update && each.last_update.body" >{{each.last_update.body }}<br></li>       
-          </ul>
+        <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+         <span v-if="each.last_update && each.last_update.body"> {{ each.last_update.body }}</span>  <br>
+        </span>  
         </td>
          <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks" :key="i">          
-          <li>        
-           {{ each.planned_effort }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.planned_effort }}<br>
+        </span>
         </td>   
+
         <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
-          <li>        
-           {{ each.timesheets.map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks.filter(t => t.efforts.length > 0)" :key="i">
+          <span>
+            {{ each.efforts
+            .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }}
+          </span>
+          <span v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">
+            ({{ each.efforts
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }})
+          </span> 
+           <br>
+          </span>    
         </td>   
+
          <td class="text-center">
-          <ul class="a" v-for="each, i in task.tasks.filter(t => t.timesheets.length > 0)" :key="i">          
-          <li>        
-           {{ each.progress }} <br>
-          </li>         
-          </ul> 
+          <span v-for="each, i in task.tasks" :key="i">
+          {{ each.progress }}<br>
+        </span>
         </td>   
       </tr>  
      
@@ -589,13 +688,30 @@
        
       </td> 
       <td >
-        <em class="bold">Project's Actual Effort Total:  
+        <em class="bold">Project's Effort Total:  
         </em>
       </td>   
       <td> 
-        <em class="bold">
-            {{ task.tasks.filter(t => t.timesheets.length > 0).map(t => t.timesheets).flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0) }}          
-        </em>     
+        <span class="bold">
+            {{ task.tasks
+            .filter(t => t.efforts.length > 0)
+            .map(t => t.efforts).flat()
+            .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+            .map(t => t.hours )
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }} 
+        </span>   
+        <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">          
+            ({{ task.tasks
+            .filter(t => t.efforts.length > 0)
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)            
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0) 
+            }})                   
+        </span>   
       </td> 
          <td>
 
@@ -609,19 +725,36 @@
       <td></td>
       <!-- Col 4 -->
       <td >
-        <em class="text-dark">Program's Actual Effort Total:
+        <em class="text-dark">Program's Effort Total:
         </em>
       </td>
       <!-- Col 5 -->
       <td>
-        {{ user.facilities
-         .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => t.timesheets)
-         .flat().map(t => t.hours).map(Number).reduce((a,b) => a + (b || 0), 0)            
-       }}
+          {{ user.facilities
+          .filter(t => t.tasks && t.tasks.length > 0)
+          .map(t => t.tasks).flat()
+          .map(t => t.efforts).flat()
+          .filter(t => !t.projected || fridayDayOfWeek == t.date_of_week)
+          .map(t => t.hours)
+          .map(Number)
+          .reduce((a,b) => a + (b || 0), 0)            
+          }}
+          <span class="bold" v-if="dateOfWeekFilter == 'ALL WEEKS' && showProjectedHours">                  
+            ({{ user.facilities
+            .filter(t => t.tasks && t.tasks.length > 0)
+            .map(t => t.tasks).flat()
+            .map(t => t.efforts).flat()
+            .filter(t => t.projected && fridayDayOfWeek !== t.date_of_week)
+            .map(t => t.hours)
+            .map(Number)
+            .reduce((a,b) => a + (b || 0), 0)            
+            }})
+          </span>
       </td>
       <!-- Col 6 -->
       <td></td>           
-      </tr>
+      </tr>     
+ 
     </table>
    <!-- END USER EFFORT PRINT OUT TABLE -->
    
@@ -756,8 +889,10 @@
                   </h4>          
                 </div>               
                </div>      
-
-              <div v-if="filteredTasks.length">
+                
+           
+           
+                 <div v-if="filteredTasks.length">
                 <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                      
@@ -1618,6 +1753,8 @@ export default {
       reportCenterModal: false, 
       dialog2Visible: false,  
       // d: new Printd(),
+      showProjectedHours: true, 
+      projectedHoursDisplay: false,
       userTasksDialog: false,    
       matrixDates: [],
       filteredUsers: [],
@@ -1629,7 +1766,7 @@ export default {
   computed: {
     ...mapGetters([
       "activeProjectUsers",
-      "programTimesheets",
+      "programEfforts",
       "contentLoaded",
       "currentProject",
       "lessonsLoaded",
@@ -1675,10 +1812,10 @@ export default {
       'programTaskEffort'
 
     ]),
-    //BEGIN TIMESHEET / EFFORT RELATED CODE
+    //BEGIN EFFORT / EFFORT RELATED CODE
     tableData() {
-      if (this.programTimesheets && this.programTimesheets.length > 0){            
-        let tasks = this.programTimesheets.filter(t => t.facilities && t.facilities.length > 0)
+      if (this.programEfforts && this.programEfforts.length > 0){            
+        let tasks = this.programEfforts.filter(t => t.facilities && t.facilities.length > 0)
         .filter((task) => {
         if (this.filteredUsers && this.filteredUsers.length > 0 ) {       
           let status = this.filteredUsers.map((t) => t.id);
@@ -1688,6 +1825,23 @@ export default {
           return tasks                
        }      
      },
+     overdueTasks(){
+      const today = new Date()
+      const tomorrow = new Date(today)
+      let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
+      const current = new Date();      
+      let plusSevenDays = current.setDate(current.getDate() + 7);
+
+      if (this.filteredTasks.length > 0) {       
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        return {
+          value24: dueDatesTomorrow,   
+          value7: datesWithinSevenDays,          
+        }
+
+        }
+     },
      fridayDayOfWeek( ) {
         let date = new Date();
         let friday = 5; 
@@ -1696,29 +1850,43 @@ export default {
         return moment(resultDate).format("DD MMM YY");
       },
      effortUsers(){
-      if(this.programTimesheets && this.activeProjectUsers){
-          return this.programTimesheets.filter( t => t && t.facilities.length > 0)    
+      if(this.programEfforts && this.activeProjectUsers){
+          return this.programEfforts.filter( t => t && t.facilities.length > 0)    
       }
      },
      weekOfArr(){      
           // let taskStartDates = this.facility.tasks.map(t => new Date(t.startDate))  
-         let taskDueDates = this.facilities.filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => new Date(t.dueDate))
+        if(this.facilities ){
+            let taskDueDates = this.facilities.filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks).flat().map(t => new Date(t.dueDate))
         
-          // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
-          let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+        // let earliestTaskDate = taskStartDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[0]
+        let latestTaskDate = taskDueDates.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0))[taskDueDates.length - 1]
+       
+        if(taskDueDates.length == 1 ){
+          console.log(taskDueDates[0])   
+          latestTaskDate = new Date(taskDueDates[0])
+        }
 
-          var start = new Date("01/06/2023");  
-          //Change this datre or Change the DTG Format on backend        
-          var end = latestTaskDate;  
-          var loop = new Date(start);
-          while(loop <= end){  
-            this.matrixDates.push(moment(loop).format("DD MMM YY"))        
-            var newDate = loop.setDate(loop.getDate() + 7);
-            loop = new Date(newDate);
-          }     
+        console.log( this.facilities )
+
+        let start = new Date("01/06/2023");  
+
+        if (latestTaskDate){
+          let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);             
+        //Change this datre or Change the DTG Format on backend        
+        // let end = latestTaskDate.setDate(latestTaskDate.getDate() + 7);  
+ 
+        let loop = new Date(start);
+        while(loop <= end){  
+          this.matrixDates.push(moment(loop).format("DD MMM YY"))        
+          let newDate = loop.setDate(loop.getDate() + 7);
+          loop = new Date(newDate);
+         } 
+        }
+       }     
           
       },
-    // END TIMESHEET /EFFORT RELATED CODE
+    // END EFFORT /EFFORT RELATED CODE
     toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
@@ -2357,7 +2525,7 @@ export default {
   methods: {
       ...mapActions([
         'fetchProgramLessonCounts',
-        'fetchProgramTimesheets',
+        'fetchProgramEfforts',
         'fetchDateOfWeekQuery',
         "fetchProgramEffortReport"
      ]), 
@@ -2383,7 +2551,7 @@ export default {
       // this.userTasksDialog = true;
       this.dateOfWeekFilter = this.fridayDayOfWeek
       this.reportCenterModal = true
-      this.fetchProgramTimesheets({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
+      this.fetchProgramEfforts({programId: this.$route.params.programId,  date: this.fridayDayOfWeek })
     },
     showLessToggle() {
       this.showLess = "Show Less";
@@ -2396,7 +2564,7 @@ export default {
         link.setAttribute('download', 'Team_Members_list.xls');
         link.click();
       },
-    printTaskReport(index, week, username, title) {
+    printTaskReport(index, week, username, title, weekFilter, showProjEffort) {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
       const html =  this.$refs.table.innerHTML       
@@ -2415,8 +2583,7 @@ export default {
           3: {cellWidth: 50, halign: 'center'},
           4: {cellWidth: 50, halign: 'center'},
           5: {cellWidth: 32.5, halign: 'center'}     
-        },
-        
+        },        
       //didDrawPage function is for standard content you want on all pages (eg, header, footer)
         didDrawPage: function (data) {
           
@@ -2432,8 +2599,10 @@ export default {
         doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
         doc.text(5, 20, `Name of Staff:  ${username} `); 
         doc.text(5, 25, `Position:  ${title} `); 
-      
-
+        console.log("TEST TEST")
+        if(weekFilter == 'ALL WEEKS' && showProjEffort){
+          doc.text(5, 205, `( ) Values in parenthesis represent Projected Effort`); 
+        }  
         // Footer
         doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
 
@@ -2678,16 +2847,16 @@ export default {
       // )
      
   },
-  watch: {          
+  watch: {   
       dateOfWeekFilter(){
         if(this.dateOfWeekFilter !== ""){        
           let dateObj = {
             programId: this.$route.params.programId,
             date: this.dateOfWeekFilter.replace(/\s+/g, '-')
           }
-          this.fetchProgramTimesheets(dateObj)
+          this.fetchProgramEfforts(dateObj)
         } else  {
-          this.fetchProgramTimesheets({programId: this.$route.params.programId})
+          this.fetchProgramEfforts({programId: this.$route.params.programId})
           this.dateOfWeekFilter = "ALL WEEKS"
         }
       }, 
@@ -2699,8 +2868,11 @@ export default {
           }
           this.fetchProgramEffortReport(dateObj)
         } else  {
+          this.projectedHoursDisplay = true
+          console.log(this.projectedHoursDisplay)
           this.fetchProgramEffortReport({programId: this.$route.params.programId})
-          this.programDateOfWeekFilter = "ALL WEEKS"
+          this.programDateOfWeekFilter = "ALL WEEKS"        
+      
         }
       }, 
     }
@@ -2708,6 +2880,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.overdueWarningCard {
+  border-radius: 2px;
+  padding: 4px;
+  z-index:1;
+  width: 400px;
+  position: absolute;
+  bottom: 5rem;
+  right: 5rem;
+  box-shadow: 0 2.5px 5px rgba(236, 7, 7, 0.19),
+    0 3px 3px rgba(223, 11, 11, 0.23);
+  // border: solid red 1px;
+}
+
 .badge-color {
   height: 12px;
   padding-top: 2px;

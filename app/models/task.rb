@@ -1,14 +1,15 @@
 class Task < ApplicationRecord
   include Normalizer
   include Tasker
-
+  include CommonUtilities
+  
   belongs_to :task_type
   belongs_to :task_stage, optional: true
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :timesheets, as: :resource, dependent: :destroy
+  has_many :efforts, as: :resource, dependent: :destroy
   
   validates :text, presence: true
   validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
@@ -98,7 +99,8 @@ class Task < ApplicationRecord
   end
 
   def calculate_actual_effort
-    timesheets.sum(:hours).to_f
+    efforts.not_projected_hours.sum(:hours).to_f
+    # efforts.sum(:hours).to_f
   end
 
   def update_actual_effort
@@ -241,12 +243,17 @@ class Task < ApplicationRecord
     self.attributes.merge!(merge_h)
   end
 
-  def timesheet_json(options = {})
-    _timesheets = options[:timesheets] || timesheets
+  def effort_json(options = {})
+    _efforts = options[:efforts] || efforts.not_projected_hours
     _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
-    as_json.merge({ timesheet_actual_effort: _timesheets.sum(&:hours), last_update: _last_update, timesheets: _timesheets })
+    as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
   end
 
+  def as_json(options= {})
+    self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort) })
+  end
+  
   def to_json(options = {})
     attach_files = []
     tf = self.task_files
@@ -345,7 +352,7 @@ class Task < ApplicationRecord
 
     
     sorted_notes = notes.sort_by(&:created_at).reverse
-    self.as_json.merge(
+    self.attributes.with_indifferent_access.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       progress_status: progress_status,
@@ -373,8 +380,8 @@ class Task < ApplicationRecord
       on_hold: on_hold,
       closed_date: closed_date,
 
-      planned_effort: self.planned_effort,
-      actual_effort: self.actual_effort,
+      planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort),
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

@@ -1,5 +1,6 @@
 class Checklist < ApplicationRecord
   include Normalizer
+  include CommonUtilities
 
   default_scope {order(position: :asc)}
   belongs_to :listable, polymorphic: true
@@ -9,14 +10,15 @@ class Checklist < ApplicationRecord
   
   after_save :calculate_planned_effort
 
-  def calculate_planned_effort
-    listable.calculate_planned_effort
+  def calculate_planned_effort 
+    listable.calculate_planned_effort if listable_type == "Task"
   end
 
   def as_json(options=nil)
     json = super(options)
     json.merge(
       # user: self.user.as_json(only: [:id, :full_name]),
+      planned_effort: strip_trailing_zero(self.planned_effort),
       user: self.user&.checklist_json,
       progress_lists: ( self.progress_lists )
     ).as_json
