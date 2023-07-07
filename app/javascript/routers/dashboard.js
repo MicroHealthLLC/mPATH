@@ -62,6 +62,7 @@ import ContractLessons from "./../components/views/sheet/contracts/ContractLesso
 import ContractLessonForm from "./../components/views/sheet/contracts/ContractLessonForm";
 import ContractNotes from "./../components/views/sheet/contracts/ContractNotes";
 import ContractNoteForm from "./../components/views/sheet/contracts/ContractNoteForm";
+import ContractEffort from "./../components/views/sheet/contracts/ContractEffort";
 
 import SheetVehicle from "./../components/views/sheet/vehicles/SheetVehicle";
 import VehicleTaskForm from "./../components/views/sheet/vehicles/VehicleTaskForm";
@@ -75,6 +76,7 @@ import VehicleLessons from "./../components/views/sheet/vehicles/VehicleLessons"
 import VehicleLessonForm from "./../components/views/sheet/vehicles/VehicleLessonForm";
 import VehicleNotes from "./../components/views/sheet/vehicles/VehicleNotes";
 import VehicleNoteForm from "./../components/views/sheet/vehicles/VehicleNoteForm";
+import VehicleEffort from "./../components/views/sheet/vehicles/VehicleEffort";
 
 import SheetProject from "./../components/views/sheet/SheetProject";
 import SheetAnalytics from "./../components/views/sheet/SheetAnalytics";
@@ -88,6 +90,7 @@ import SheetLessons from "./../components/views/sheet/SheetLessons";
 import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+import SheetEffort from "./../components/views/sheet/SheetEffort";
 
 
 // Kanban Routes Components
@@ -2119,6 +2122,21 @@ export default new VueRouter({
           name: "SheetLessonForm",
           path: "projects/:projectId/lessons/:lessonId",
           component: SheetLessonForm,
+        },
+        {
+          name: "effort",
+          path: "projects/:projectId/effort",
+          component: SheetEffort,
+        },
+        {
+          name: "contract_effort",
+          path: "contracts/:contractId/effort",
+          component: ContractEffort,
+        },
+        {
+          name: "vehicle_effort",
+          path: "vehicles/:vehicleId/effort",
+          component: VehicleEffort,
         },
         {
           name: "SheetNotes",

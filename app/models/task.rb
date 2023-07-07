@@ -1,6 +1,7 @@
 class Task < ApplicationRecord
   include Normalizer
   include Tasker
+  include CommonUtilities
 
   belongs_to :task_type
   belongs_to :task_stage, optional: true
@@ -9,7 +10,8 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-
+  has_many :efforts, as: :resource, dependent: :destroy
+  
   validates :text, presence: true
   validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   validates :due_date, presence: true, if: -> { progress != 100 && ongoing == false && on_hold == false }
@@ -72,6 +74,8 @@ class Task < ApplicationRecord
       :reportable,
       :project_contract_id,
       :project_contract_vehicle_id,
+      :planned_effort, 
+      :auto_calculate_planned_effort,
       :nickname, 
       task_files: [],
       file_links: [],
@@ -90,6 +94,7 @@ class Task < ApplicationRecord
         :listable_type,
         :listable_id,
         :position,
+        :planned_effort,
         progress_lists_attributes: [
           :id,
           :_destroy,
@@ -105,6 +110,33 @@ class Task < ApplicationRecord
         :body
       ]
     ]
+  end
+
+  def calculate_actual_effort
+    efforts.not_projected_hours.sum(:hours).to_f
+    # efforts.sum(:hours).to_f
+  end
+
+  def update_actual_effort
+    self.update(actual_effort: calculate_actual_effort)
+  end
+
+  def calculate_planned_effort
+    if self.auto_calculate_planned_effort
+      self.planned_effort = self.checklists.sum(:planned_effort)
+      save!
+    end
+  end
+
+  def effort_json(options = {})
+    _efforts = options[:efforts] || efforts.not_projected_hours
+    _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
+    as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
+  end
+  
+  def as_json(options= {})
+    self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort) })
   end
 
   def lesson_json
@@ -359,6 +391,9 @@ class Task < ApplicationRecord
       draft: draft,
       on_hold: on_hold,
       closed_date: closed_date,
+
+      planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort),
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

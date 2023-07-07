@@ -75,14 +75,26 @@ class Project < SortableRecord
   def default_facility_group
     create_default_facility_group
   end
+  
+  def list_default_facility_group_ids
+    self.project_groups.where(is_default: true).pluck(:id).uniq
+  end
 
+  # def create_default_facility_group
+  #   g = self.project_facility_groups.where(is_default: true).first
+  #   if !g
+  #     group = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name, is_default: true)
+  #     g = self.project_facility_groups.create(facility_group_id: group.id)
+  #   end
+  #   g.project_group
+  # end
   def create_default_facility_group
-    g = self.project_facility_groups.where(is_default: true).first
+    g = self.project_groups.where(is_default: true).first
     if !g
-      group = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name)
-      g = self.project_facility_groups.create(facility_group_id: group.id, is_default: true)
+      g = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name, is_default: true)
+      pg = self.project_facility_groups.create(facility_group_id: g.id)
     end
-    g.project_group
+    g
   end
 
   def self.ransackable_scopes(_auth_object = nil)

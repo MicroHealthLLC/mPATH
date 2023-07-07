@@ -14,7 +14,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def passthru
-    render status: 404, text: "Not found. Authentication passthru."
+    respond_to do |format|
+      format.html {render status: 404, text: "Not found. Authentication passthru."}
+    end    
   end
 
   def failure

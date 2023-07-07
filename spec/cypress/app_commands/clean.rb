@@ -7,6 +7,7 @@ else
   Issue.destroy_all if defined?(Issue)
   Task.destroy_all if defined?(Task)
   Risk.destroy_all if defined?(Risk)
+  Contract.destroy_all
   FacilityProject.destroy_all if defined?(FacilityProject)
   Facility.destroy_all if defined?(Facility)
   FacilityGroup.destroy_all if defined?(FacilityGroup)

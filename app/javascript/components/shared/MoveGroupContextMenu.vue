@@ -2,10 +2,12 @@
     <div
       class="context-menu"
       v-show="show"
+      :load="log(currentProject)"
       :style="style"
       ref="context"
       tabindex="0"
       @mouseleave="close"
+    
       >
     <!-- Nothing to see here -->
       <el-menu collapse class="context-menu-inner">
@@ -13,7 +15,7 @@
         <el-submenu index="1" v-if="$route.params.programId">
           <template slot="title"><i class="fa-sharp fa-copy pr-1"></i> Duplicate Group to Another Program </template>
           <div>
-            <div class="menu-subwindow-title px-2">Duplicate Group to Another Program</div>
+            <div class="menu-subwindow-title px-2">Duplicate <span class="text-info px-1"> {{ sourceGroupName }}</span> group to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -43,7 +45,7 @@
         <el-submenu index="2" v-if="$route.params.programId">
           <template slot="title"><i class="far fa-share-from-square pr-1"></i> Move Group to Another Program</template>
           <div>
-            <div class="menu-subwindow-title px-2">Move Group to Another Program</div>
+            <div class="menu-subwindow-title px-2">Move <span class="text-info px-1"> {{ sourceGroupName }}</span> group to Another Program</div>
             <el-input
               class="filter-input"
               :placeholder="placeholder"
@@ -105,13 +107,18 @@
       };
     },
     computed: {
-      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "portfolioPrograms", "moveGroupStatus"]),
+      ...mapGetters(["currentProject", "getUnfilteredFacilities", "projectContracts", "filteredFacilityGroups", "authorizedPortfolioPrograms", "moveGroupStatus", "duplicateGroupStatus"]),
       // get position of context menu
       style() {
         return {
           top: this.top + "px",
           left: this.left + "px",
         };
+      },
+      sourceGroupName(){
+        if(this.currentProject && this.currentProject.facilities  && this.currentProject.facilities.length > 0 && this.groupId){
+          return this.currentProject.facilities.filter(t => t.facilityGroupId == this.groupId)[0].facility.facilityGroupName
+        }
       },
       placeholder(){
         if(this.$route.params.contractId){
@@ -121,9 +128,9 @@
         } else return "Filter Programs & Groups"
       },
      treeFormattedData() {
-      if(this.portfolioPrograms && this.portfolioPrograms.length > 0){
+      if(this.authorizedPortfolioPrograms && this.authorizedPortfolioPrograms.length > 0){
         let data = [];
-        this.portfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {
+        this.authorizedPortfolioPrograms.filter(t => t.program_id != this.$route.params.programId).forEach((program, index) => {
           // console.log("treeFormattedData", program)    
           data.push({
             id: index,
@@ -147,11 +154,11 @@
       },
     },
     methods: {
-      ...mapActions(["taskDeleted", "fetchPortfolioPrograms", "moveGroup", "duplicateGroup","fetchCurrentProject"]),
+      ...mapActions(["taskDeleted", "fetchAuthorizedPortfolioPrograms", "moveGroup", "duplicateGroup","fetchCurrentProject"]),
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_MOVE_GROUP_STATUS", "SET_DUPLICATE_GROUP_STATUS"]),
-      // log(e){
-      //   console.log(e)
-      // },
+      log(e){
+        console.log(e)
+      },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
       },
@@ -222,7 +229,8 @@
       },
     },
     mounted() {
-    this.fetchPortfolioPrograms()
+    this.fetchAuthorizedPortfolioPrograms()
+    this.fetchCurrentProject(this.$route.params.programId); 
     },
     watch: {
       filterTree(value) {
@@ -230,10 +238,14 @@
         this.$refs.duplicatetree.filter(value);
         this.$refs.movetree.filter(value);
       },
+      sourceGroupName(){
+        if(this.sourceGroupName){
+          return this.sourceGroupName
+        } else return 'Group'
+      },
       moveGroupStatus: {
       handler() {
         if (this.moveGroupStatus == 200) {
-
           console.log("Group move worked")
           this.$message({
             message: `Group moved successfully.`,
@@ -242,9 +254,73 @@
           });
           this.SET_MOVE_GROUP_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);      
+        } 
+        if (this.moveGroupStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to make this move.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
         }
+        if (this.moveGroupStatus == 406 ) {
+          this.$message({
+          message: `Warning.  Group successfully moved, but not all projects were included.`,
+          type: "info",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
+        this.fetchCurrentProject(this.$route.params.programId);      
+        }
+        if (this.moveGroupStatus == 500 ) {        
+          this.$message({
+          message: `Sorry. This group already exists in target program.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_MOVE_GROUP_STATUS(0);
+        }                
       },
-    },
+      },
+      duplicateGroupStatus: {
+      handler() {
+        if (this.duplicateGroupStatus == 200) {
+          console.log("Group move worked")
+          this.$message({
+            message: `Group duplicated successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_DUPLICATE_GROUP_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);      
+        } 
+        if (this.duplicateGroupStatus == 401 ) {        
+          this.$message({
+          message: `Sorry. You need to be a Program Admin in target program to duplicate.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        }
+        if (this.duplicateGroupStatus == 406 ) {
+          this.$message({
+          message: `Warning.  Group successfully duplicated, but not all projects were included.`,
+          type: "info",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        this.fetchCurrentProject(this.$route.params.programId);      
+        }
+        if (this.duplicateGroupStatus == 500 ) {        
+          this.$message({
+          message: `Sorry. This group already exists in target program.`,
+          type: "warning",
+          showClose: true,
+        }); 
+        this.SET_DUPLICATE_GROUP_STATUS(0);
+        }                
+      },
+      },
     },
   };
   </script>

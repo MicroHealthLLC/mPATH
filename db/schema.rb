@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_23_191817) do
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -81,6 +81,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.bigint "user_id"
     t.integer "position", default: 0
     t.date "due_date"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
     t.index ["listable_id"], name: "index_checklists_on_listable_id"
     t.index ["listable_type"], name: "index_checklists_on_listable_type"
     t.index ["position"], name: "index_checklists_on_position"
@@ -279,8 +280,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "conctract_sub_category_id"
     t.integer "contract_sub_category_id"
+    t.integer "contract_agency_id"
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
     t.text "full_name"
@@ -289,7 +290,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.datetime "base_period_end", precision: nil
     t.datetime "option_period_start", precision: nil
     t.datetime "option_period_end", precision: nil
-    t.integer "contract_agency_id"
     t.integer "contract_number_id"
     t.decimal "caf_fees", precision: 4, scale: 2, default: "0.0"
     t.text "subprime_name"
@@ -302,17 +302,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.bigint "contract_type_id", null: false
     t.integer "project_code"
     t.string "nickname"
-    t.bigint "contract_status_id", null: false
-    t.bigint "contract_customer_id", null: false
-    t.bigint "contract_vehicle_id", null: false
-    t.bigint "contract_vehicle_number_id", null: false
-    t.bigint "contract_number_id", null: false
-    t.bigint "contract_classification_id", null: false
-    t.bigint "subcontract_number_id", null: false
-    t.bigint "contract_prime_id", null: false
+    t.bigint "contract_status_id"
+    t.bigint "contract_customer_id"
+    t.bigint "contract_vehicle_id"
+    t.bigint "contract_vehicle_number_id"
+    t.bigint "contract_number_id"
+    t.bigint "contract_classification_id"
+    t.bigint "subcontract_number_id"
+    t.bigint "contract_prime_id"
     t.datetime "start_date", precision: nil
     t.datetime "end_date", precision: nil
-    t.bigint "contract_current_pop_id", null: false
+    t.bigint "contract_current_pop_id"
     t.datetime "current_pop_start_time", precision: nil
     t.datetime "current_pop_end_time", precision: nil
     t.integer "days_remaining"
@@ -332,6 +332,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
+  end
+
+  create_table "efforts", charset: "utf8", force: :cascade do |t|
+    t.datetime "date_of_week", null: false
+    t.decimal "hours", precision: 4, scale: 2, default: "0.0"
+    t.integer "user_id", null: false
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "facility_project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "projected", default: false
   end
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
@@ -366,12 +378,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.integer "status", default: 1
     t.integer "region_type", default: 0
     t.string "center", default: "[]"
+    t.bigint "project_id"
     t.integer "progress", default: 0
-    t.integer "project_id"
     t.boolean "is_portfolio", default: false
     t.integer "user_id"
     t.integer "owner_id"
     t.string "owner_type"
+    t.boolean "is_default", default: false
+    t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -386,10 +400,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.integer "facility_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "lessons", default: "---\n- R\n"
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
+    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -991,6 +1005,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.integer "contract_id"
     t.integer "project_contract_id"
     t.integer "project_contract_vehicle_id"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.decimal "planned_effort", precision: 10, scale: 2, default: "0.0"
+    t.decimal "actual_effort", precision: 10, scale: 2, default: "0.0"
+    t.boolean "auto_calculate_planned_effort", default: true
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -1022,7 +1041,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.text "privileges"
+    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
@@ -1037,6 +1056,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_08_195322) do
   add_foreign_key "contracts", "facility_groups"
   add_foreign_key "contracts", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
+  add_foreign_key "facility_groups", "projects"
   add_foreign_key "facility_projects", "facilities"
   add_foreign_key "facility_projects", "projects"
   add_foreign_key "facility_projects", "statuses"

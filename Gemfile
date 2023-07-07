@@ -5,7 +5,7 @@ ruby '3.1.0'
 # updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '7.0.4.1' #'6.1.6.1' #'~> 5.2.3'
+gem 'rails', '7.0.4.3' #'6.1.6.1' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
@@ -42,10 +42,9 @@ gem 'devise', '4.8.1' #, '~> 4.7.1'
 gem 'geocoder'
 gem 'jquery-rails'
 gem 'slim-rails'
-# gem 'omniauth-office365', github: 'jcarbo/omniauth-office365'
-gem 'omniauth-google-oauth2'
-gem 'omniauth-office365', path: './lib/omniauth-office365'
+gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
 # gem 'omniauth-oktaoauth'
+
 gem 'dotenv-rails'
 gem 'strip_attributes'
 
@@ -55,7 +54,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  # gem 'cypress-on-rails', '~> 1.0'
+  gem 'cypress-on-rails', '~> 1.13', '>= 1.13.1'
   gem 'letter_opener'
   # gem 'bullet', '6.1.0'
   gem 'pry', '~> 0.13.1'
@@ -64,6 +63,8 @@ group :development, :test do
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
+  gem 'factory_bot_rails'
+  gem 'database_cleaner-active_record'
 end
 
 group :development do
@@ -90,7 +91,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import', '1.4.1'
 
-gem 'omniauth-rails_csrf_protection', '~> 0.1'
+gem 'omniauth-rails_csrf_protection', '~> 1.0'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
 gem 'amoeba'
@@ -101,6 +102,8 @@ gem 'oj'
 
 gem 'will_paginate', '3.3.1'
 
-gem 'jwt'
+gem 'jwt', '~> 2.7'
 
 gem 'addressable', '>= 2.8.0'
+
+gem 'nokogiri', '1.14.3'
