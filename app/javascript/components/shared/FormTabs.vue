@@ -12,7 +12,7 @@
         class="form-tabs"
         :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
         @click.prevent="changeTab(tab)"
-        data-cy="facility_tabs"
+        :data-cy="tab.key"
       >
         <div :class="{ label: tabHasErrors(tab) }">
           <span class="inner-label-text">{{ tab.label }}</span>

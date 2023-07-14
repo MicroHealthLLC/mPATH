@@ -310,7 +310,7 @@
                 size="small"
                 @click.prevent="cancelCreateGroup"
                 class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"                  
+                v-tooltip="`Cancel`"                  
               >
                <i class="fas fa-ban"></i> 
               </button>
@@ -356,7 +356,7 @@
                   </el-button>
                   <el-button
                     @click.prevent="closeImportProjectBtn"
-                    v-tooltip="`Close`"
+                    v-tooltip="`Cancel`"
                     class="btn bg-secondary ml-0 text-light modalBtns"
                   >
                     <i class="fas fa-ban"></i> 
@@ -654,7 +654,7 @@
                <button
                 @click.prevent="closeUserRoles"
                 class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"                  
+                v-tooltip="`Cancel`"                  
               >
                <i class="fas fa-ban"></i> 
               </button>

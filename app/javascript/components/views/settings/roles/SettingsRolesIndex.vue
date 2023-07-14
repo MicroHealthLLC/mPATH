@@ -1236,7 +1236,7 @@
                     <button
                       @click.prevent="closeUserRoles"
                       class="btn btn-md bg-secondary text-light modalBtns"
-                      v-tooltip="`Close`"
+                      v-tooltip="`Cancel`"
                     >
                       <i class="fas fa-ban"></i>
                     </button>

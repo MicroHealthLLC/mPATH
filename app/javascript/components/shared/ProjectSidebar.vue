@@ -3,6 +3,7 @@
     <div class="stick">
       <div
         @click="deselectProject"
+        data-cy="program_name"
         id="program_name"
         class="programNameDiv smallCaps pl-2 pr-3"
       >
@@ -110,7 +111,7 @@
                     active: c.projectContractId == $route.params.contractId,
                   }"
                 >
-                  <p class="facility-header" data-cy="facilities">
+                  <p class="facility-header" data-cy="contracts">
                     <i class="far fa-file-contract mr-1 mh-orange-text"></i>
                     {{ c.name }}
                   </p>
@@ -134,7 +135,7 @@
                   @click="showFacility(v)"
                   :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
                 >
-                  <p class="facility-header" data-cy="facilities">
+                  <p class="facility-header"data-cy="contracts">
                     <i class="far fa-car mr-1 text-info"></i> {{ v.name }}
                   </p>
                 </div>
@@ -167,6 +168,7 @@
       class="btn btn-sm btn-light program-settings-btn"
       @click.prevent="toggleAdminView"
       style="cursor: pointer"
+       data-cy="program_setting"
     >
       <h6><i class="far fa-cog"></i> Program Settings</h6>
     </button>
@@ -282,11 +284,12 @@ export default {
       }
     },
     pathTab() {
-      let url = this.$route.path;
+      let url = this.$route.path;  
+  
       if (url.includes("tasks")) {
         return "/tasks";
       }
-      if (url.includes("issues")) {
+         if (url.includes("issues")) {
         return "/issues";
       }
       if (url.includes("analytics")) {
@@ -301,6 +304,9 @@ export default {
       if (this.$route.name === "SheetRisks") {
         return "/risks";
       }
+      if (url.includes("effort")) {
+        return "/effort";
+      }     
       if (url.includes("lessons")) {
         return "/lessons";
       }
@@ -345,9 +351,9 @@ export default {
       }
       this.$emit("on-expand-facility-group", group);
     },
-    log(e) {
-      console.log(e);
-    },
+    // log(e) {
+    //   console.log(e);
+    // },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
       return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
@@ -418,6 +424,11 @@ export default {
     }
   },
   watch: {
+    pathTab() {    
+      if (this.pathTab === "/" && this.$route.params.contractId) {
+       return "/tasks";
+      }
+    },
     contentLoaded: {
       handler() {
         if (

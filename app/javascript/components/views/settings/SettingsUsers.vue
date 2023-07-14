@@ -228,7 +228,7 @@
                   <button
                     @click.prevent="cancelAddNewUser"
                     class="btn btn-md bg-secondary text-light ml-0 modalBtns"
-                    v-tooltip="`Close`"
+                    v-tooltip="`Cancel`"
                   >
                     <i class="fas fa-ban"></i>
                   </button>
@@ -298,7 +298,7 @@
                   <button
                     @click.prevent="cancelAddUser"
                     class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
-                    v-tooltip="`Close`"
+                    v-tooltip="`Cancel`"
                   >
                     <i class="fas fa-ban"></i>
                   </button>
@@ -312,7 +312,7 @@
                   <button
                     @click.prevent="cancelAddUser"
                     class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
-                    v-tooltip="`Close`"
+                    v-tooltip="`Cancel`"
                   >
                     <i class="fas fa-ban"></i>
                   </button>
@@ -419,7 +419,7 @@
                     <button
                       @click.prevent="cancelEdits"
                       class="btn btn-md bg-secondary text-light modalBtns"
-                      v-tooltip="`Close`"
+                      v-tooltip="`Cancel`"
                     >
                       <i class="fas fa-ban"></i>
                     </button>
@@ -1016,7 +1016,7 @@
                   type="default"
                   @click.prevent="closeProjectRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
-                  v-tooltip="`Close`"
+                  v-tooltip="`Cancel`"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -1113,7 +1113,7 @@
                   type="default"
                   @click.prevent="closeContractRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
-                  v-tooltip="`Close`"
+                  v-tooltip="`Cancel`"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -1211,7 +1211,7 @@
                   type="default"
                   @click.prevent="closeVehicleRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
-                  v-tooltip="`Close`"
+                  v-tooltip="`Cancel`"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -1287,7 +1287,7 @@
                   type="default"
                   @click.prevent="closeAdminRoles"
                   class="btn btn-sm bg-secondary text-light modalBtns"
-                  v-tooltip="`Close`"
+                  v-tooltip="`Cancel`"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -1308,7 +1308,7 @@
               <button
                 @click.prevent="closeUserRoles"
                 class="btn btn-sm bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"
+                v-tooltip="`Cancel`"
               >
                 <i class="fas fa-ban"></i>
               </button>
