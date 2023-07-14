@@ -13,6 +13,7 @@ ActiveAdmin.register User do
   permit_params do
     permitted = [
       :email,
+      :subdomain,
       :first_name,
       :last_name,
       :title,
@@ -108,6 +109,7 @@ ActiveAdmin.register User do
 
           f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :subdomain, input_html: {:'data-id' => user.id, autocomplete: :off}
           f.input :phone_number, as: :hidden
           f.input :country_code, as: :hidden
           div id: 'user_phone_number-tab'
@@ -189,6 +191,7 @@ ActiveAdmin.register User do
     column "Position", :title
     column :first_name
     column :last_name
+    column :subdomain
     column :email
     column :organization, nil, sortable: 'organizations.title' do |user|
       if current_user.admin_write?

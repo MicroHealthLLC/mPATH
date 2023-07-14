@@ -526,10 +526,10 @@ class User < ApplicationRecord
     self.projects.where(id: project_ids)
   end
 
-  def initialize(*args)
-    privilege ||= Privilege.new
-    super
-  end
+  # def initialize(*args)
+  #   privilege ||= Privilege.new
+  #   super
+  # end
 
   def admin_read?
     superadmin? || privilege.admin.include?("R")
