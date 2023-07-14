@@ -27,6 +27,14 @@ class Effort < ApplicationRecord
     ]
   end
 
+  def this_week_dates
+    (Date.today.monday..(Date.today.monday + 4))
+  end
+
+  def projected_effort?
+    self.date_of_week.to_date > this_week_dates.last
+  end
+
   def as_json(options = {})
     self.to_json
   end
@@ -72,7 +80,7 @@ class Effort < ApplicationRecord
 
     effort.attributes = t_params
     
-    effort.projected = effort.date_of_week > Date.today
+    effort.projected = effort.date_of_week > this_week_dates.last
 
     effort.transaction do
       effort.save

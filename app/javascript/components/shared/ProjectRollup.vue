@@ -3,11 +3,19 @@
 
 <template>
   <div class="container-fluid m-2" data-cy="facility_rollup" :load="log(weekOfArr)">
-
+       <el-alert  
+       v-if="overdueTasks && overdueTasks.value7 && overdueTasks.value7.length > 0"
+        type="warning"
+        class="pt-0 pb-2"
+        show-icon >
+       <template slot="title">
+        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
+       </template>
+       </el-alert>
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->   
+    <div class="row pt-3 pb-2">
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded"  :load="log(showProjectedHours)">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
@@ -145,17 +153,17 @@
       <tr class="py-2">
        <td >     
       </td> 
-      <td class="text-right">     
+      <td class="text-right">      
         <span class="bold">Project Efforts Totals: </span>
       </td>         
       <td class="text-center">     
-       <b class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+       <b class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td class="text-center">     
-        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</b>
+        <b class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) }}</b>
       </td> 
       <td>        
       </td>
@@ -173,7 +181,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)            
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) 
         }}</span>  
       </td> 
       <td class="text-center">     
@@ -182,7 +190,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</b>  
       
       </td> 
@@ -192,7 +200,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</b>  
       
       </td> 
@@ -264,13 +272,13 @@
         <em class="bold float-left">Project Efforts Totals: </em>   
       </td> 
       <td class="text-center">    
-        <em class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold" >{{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td class="text-center">     
-        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  }}</em>
+        <em class="bold"> {{ task.tasks.filter(g => g && g.on_hold == false).map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)  }}</em>
       </td> 
       <td>      
       </td>     
@@ -289,7 +297,7 @@
               .map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.planned_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</em>  
       </td> 
       <td class="text-center">
@@ -298,7 +306,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2) 
         }}</em>        
       </td> 
       <td class="text-center">
@@ -307,7 +315,7 @@
               .filter(t => t.tasks && t.tasks.length > 0).map(t => t.tasks)
               .flat()
               .filter(g => g && g.on_hold == false)
-              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0)  
+              .map(t => t.efforts_actual_effort).map(Number).reduce((a,b) => a + (b || 0), 0).toFixed(2)
         }}</em>        
       </td> 
       <td>     
@@ -327,7 +335,7 @@
         class="reportCenter"
         center   
       >
-     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s 
+     <h4 class="centerLogo mb-5">{{ currentProject.name }}'s
       <button                
         class="btn mh-orange text-light profile-btns allCaps py-1" data-cy=program_viewer_btn>
         User Task Effort Reports
@@ -415,13 +423,22 @@
         </div>
       </div>
    
-    <div v-if="tableData && tableData.length > 0" class="row ml-1" :load="log(programTaskEffort)">
+  <div v-if="tableData && tableData.length > 0" class="ml-1" :load="log(programTaskEffort)">
+  <div class="mb-2">
+  <button 
+    v-tooltip="`Export to PDF`"   
+    @click="printAllReports(dateOfWeekFilter, tableData, showProjectedHours)"               
+    class="btn btn-md p-2 orange mb-2"> 
+    <i class="fas fa-print pr-2" ></i>  
+    PRINT ALL
+  </button>  
+  </div>
+    <br/>
   
     <div 
      class="taskUserInfo mb-4 col-11" 
      v-for="user, userIndex in tableData.filter(t => t.facilities.map(t => t.tasks.length > 0)) "      
-     :key="user.id"
-      
+     :key="user.id"      
      >
      <!-- <button 
         v-tooltip="`Print All`"   
@@ -881,8 +898,10 @@
                   </h4>          
                 </div>               
                </div>      
-
-              <div v-if="filteredTasks.length">
+                
+           
+           
+                 <div v-if="filteredTasks.length">
                 <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                      
@@ -1815,6 +1834,23 @@ export default {
           return tasks                
        }      
      },
+     overdueTasks(){
+      const today = new Date()
+      const tomorrow = new Date(today)
+      let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
+      const current = new Date();      
+      let plusSevenDays = current.setDate(current.getDate() + 7);
+
+      if (this.filteredTasks.length > 0) {       
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        return {
+          value24: dueDatesTomorrow,   
+          value7: datesWithinSevenDays,          
+        }
+
+        }
+     },
      fridayDayOfWeek( ) {
         let date = new Date();
         let friday = 5; 
@@ -2540,7 +2576,8 @@ export default {
     printTaskReport(index, week, username, title, weekFilter, showProjEffort) {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
-      const html =  this.$refs.table.innerHTML       
+      const html =  this.$refs.table.innerHTML   
+     
       const logo = require('../../../assets/images/microhealthllc.png')
       var imgLogo = new Image()
       imgLogo.src = logo    
@@ -2556,7 +2593,8 @@ export default {
           3: {cellWidth: 50, halign: 'center'},
           4: {cellWidth: 50, halign: 'center'},
           5: {cellWidth: 32.5, halign: 'center'}     
-        },        
+          },        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
       //didDrawPage function is for standard content you want on all pages (eg, header, footer)
         didDrawPage: function (data) {
           
@@ -2565,9 +2603,7 @@ export default {
         doc.setFontSize(10);
         doc.setTextColor(33,33,33);
         doc.setFont("undefined", "undefined").text(str, 280, 10);    
-
         doc.setFont("undefined","bold").text(120, 11, `USER TASK EFFORT REPORT`)
-
         doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${week}`); 
         doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
         doc.text(5, 20, `Name of Staff:  ${username} `); 
@@ -2578,7 +2614,6 @@ export default {
         }  
         // Footer
         doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
-
         },
         didParseCell: function(hookData) {
           if (hookData.section == "head") {
@@ -2595,6 +2630,71 @@ export default {
         });        
       doc.setLineHeightFactor(3)
       doc.save("User_Task_Effort_Totals.pdf")
+    },
+    printAllReports(week, users, showProjEffort) {
+      //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
+     for (let i = 0; i < users.length; i++) {
+      let eachUser = users[i]
+      const doc = new jsPDF({orientation: "l"})     
+      const html =  this.$refs.table.innerHTML  
+      console.log("each User: " , eachUser)
+      const logo = require('../../../assets/images/microhealthllc.png')
+      var imgLogo = new Image()
+      imgLogo.src = logo    
+      doc.autoTable({
+        html:  `#taskSheetsList1${i}`,
+        margin: { top: 30, left: 5, right: 5, bottom: 15 },
+        theme: 'grid',
+          columnStyles: {
+            0: {cellWidth: 40},
+            1: {cellWidth: 45},
+            2: {cellWidth: 69},
+            3: {cellWidth: 50, halign: 'center'},
+            4: {cellWidth: 50, halign: 'center'},
+            5: {cellWidth: 32.5, halign: 'center'}     
+          },        
+    
+       didDrawPage: function (data) {
+              
+            // Header        
+            var str = "Page " + doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(33,33,33);
+            doc.setFont("undefined", "undefined").text(str, 280, 10);    
+
+            doc.setFont("undefined","bold").text(120, 11, `USER TASK EFFORT REPORT`)
+
+            doc.setFont("undefined", "undefined").text(5, 10, `Week of:  ${week}`); 
+            doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
+            doc.text(5, 20, `Name of Staff:  ${eachUser.full_name} `); 
+            doc.text(5, 25, `Position:  ${eachUser.title} `); 
+            console.log("TEST TEST")
+            if( week == 'ALL WEEKS' && showProjEffort){
+              doc.text(5, 205, `( ) Values in parenthesis represent Projected Effort`); 
+            }  
+            // Footer
+            doc.addImage(imgLogo, 'PNG', 129, 195, 35, 10)
+
+        },
+        didParseCell: function(hookData) {
+          if (hookData.section == "head") {
+            hookData.cell.styles.fillColor = [237, 237, 237];
+            hookData.cell.styles.textColor = "#383838";
+          }     
+          if (hookData.table.body) {
+              hookData.cell.styles.overflow = 'ellipsize';
+          }  
+          if (hookData.section == 'row') {
+            hookData.cell.styles.rowHeight = 3;  
+          }               
+         },
+        });     
+
+        doc.save(`${eachUser.full_name}_Effort_Report.pdf`)
+        doc.setLineHeightFactor(3) 
+
+      }                
+        
     },
     printProgramEffortReport(programName, week) {
       const doc = new jsPDF("l")
@@ -2820,7 +2920,7 @@ export default {
       // )
      
   },
-  watch: {          
+  watch: {   
       dateOfWeekFilter(){
         if(this.dateOfWeekFilter !== ""){        
           let dateObj = {
@@ -2853,6 +2953,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.overdueWarningCard {
+  border-radius: 2px;
+  padding: 4px;
+  z-index:1;
+  width: 400px;
+  position: absolute;
+  bottom: 5rem;
+  right: 5rem;
+  box-shadow: 0 2.5px 5px rgba(236, 7, 7, 0.19),
+    0 3px 3px rgba(223, 11, 11, 0.23);
+  // border: solid red 1px;
+}
+
 .badge-color {
   height: 12px;
   padding-top: 2px;
