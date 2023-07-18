@@ -69,6 +69,12 @@ module Tasker
       self.watched_at = DateTime.now
     end
 
+    def update_closed     
+      if self.ongoing && self.due_date.present? && !self.draft && !self.on_hold
+        self.closed_date = self.due_date
+      end
+    end
+
     # def project
     #   facility_project.try(:project)
     # end

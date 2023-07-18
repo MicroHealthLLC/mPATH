@@ -29,7 +29,7 @@ class Risk < ApplicationRecord
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
-  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   attr_accessor :file_links
@@ -127,16 +127,17 @@ class Risk < ApplicationRecord
     end
 
     self.ongoing = false if on_hold && ongoing
-    
-    closed = false
-   
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    closed = self.closed_date.present?
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # closed = false
+   
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
+
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
 
     is_overdue = false
@@ -375,15 +376,17 @@ class Risk < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && due_date && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
-    closed = false
-   
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    closed = self.closed_date.present?
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # closed = false
+   
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
+
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
     in_progress = false
     completed = false
@@ -590,6 +593,7 @@ class Risk < ApplicationRecord
 
     end
     risk.add_link_attachment(params)
+    risk.update_closed
 
     risk.reload
   end

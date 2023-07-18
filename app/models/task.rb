@@ -20,6 +20,7 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
+  before_save :update_closed
 
   # after_save :update_owner_record
   # after_destroy :update_owner_record
@@ -28,7 +29,7 @@ class Task < ApplicationRecord
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
-  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do
@@ -156,15 +157,16 @@ class Task < ApplicationRecord
 
     self.ongoing = false if on_hold && ongoing
 
-    closed = false
+    closed = self.closed_date.present?
+    # closed = false
    
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
@@ -326,15 +328,17 @@ class Task < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && due_date && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
-    closed = false
-   
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    closed = self.closed_date.present?
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # closed = false
+   
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
+
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
     in_progress = false
     completed = false
@@ -543,6 +547,8 @@ class Task < ApplicationRecord
     # Reproduce: Create new task with file and link both and it is giving an error
     # Error performing ActiveStorage::AnalyzeJob ActiveStorage::FileNotFoundError (ActiveStorage::FileNotFoundError):
     task.add_link_attachment(params)
+    
+    task.update_closed
 
     task.reload
   end
