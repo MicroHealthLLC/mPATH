@@ -161,33 +161,33 @@ roles = [
   {
     role_type: "update-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
   },
   {
     role_type: "read-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
     role_type: "contribute-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },
 
   {
     role_type: "update-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
   },
   {
     role_type: "read-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
     role_type: "contribute-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },
 
   {
