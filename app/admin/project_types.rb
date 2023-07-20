@@ -27,7 +27,7 @@ ActiveAdmin.register ProjectType do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     f.inputs nil do
       f.input :name
     end

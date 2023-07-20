@@ -649,13 +649,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .calendarBtn {
   transition: all .2s ease-in-out;
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-/deep/ #tab-0 {
+#tab-0 {
   background-color: rgb(234, 234, 185) !important;
 }
 
@@ -690,11 +691,107 @@ input[type=number] {
   width: 70% !important;
 }
 
-/deep/ .el-table .cell {
+.el-table .cell {
   word-break: break-word;
 }
 
-/deep/ .el-table thead {
+.el-table thead {
+  color: #383838 !important;
+}
+
+#search-addon {
+  background-color: #ededed !important;
+}
+
+#notes-index {
+  height: 500px;
+}
+
+input[type=search] {
+  color: #383838;
+  text-align: left;
+  cursor: pointer;
+  display: block;
+}
+
+.addNote {
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19), 0 1px 1px rgba(56, 56, 56, 0.23);
+}
+
+.notes {
+  padding: 8px;
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19), 0 1px 1px rgba(56, 56, 56, 0.23);
+  z-index: 100;
+}
+
+#notesHover:hover {
+  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
+  background-color: rgba(91, 192, 222, 0.3);
+  border-left: solid rgb(91, 192, 222);
+}
+
+.notes-container {
+  position: relative;
+  overflow: auto;
+  height: 61vh;
+}
+
+.filters-wrapper {
+  float: right;
+  margin-top: -50px;
+}
+
+@media screen and (max-width: 1500px) { 
+  .filters-wrapper {
+    width: 65% !important;
+  }
+}
+
+.calendarBtn {
+  transition: all .2s ease-in-out;
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+#tab-0 {
+  background-color: rgb(234, 234, 185) !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.editCol {
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cursor {
+    cursor: pointer;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  width: 70% !important;
+}
+
+.el-table .cell {
+  word-break: break-word;
+}
+.el-table thead {
   color: #383838 !important;
 }
 
@@ -746,118 +843,4 @@ input[type=search] {
   }
 }
 
-// notes-rows creates a scroallable div within a container, preventing the need to scroll beyond the viewport height
-// .notes-rows {
-//   overflow-y: scroll;
-//   box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
-//   max-height: 59vh;
-//   border-top: solid 4px #ededed;
-//   padding-top: 8px;  
-// }
-</style>
-.calendarBtn {
-  transition: all .2s ease-in-out;
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-
-/deep/ #tab-0 {
-  background-color: rgb(234, 234, 185) !important;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.editCol {
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  .cursor {
-    cursor: pointer;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-
-  width: 70% !important;
-}
-
-/deep/ .el-table .cell {
-  word-break: break-word;
-}
-
-/deep/ .el-table thead {
-  color: #383838 !important;
-}
-
-#search-addon {
-  background-color: #ededed !important;
-}
-
-#notes-index {
-  height: 500px;
-}
-
-input[type=search] {
-  color: #383838;
-  text-align: left;
-  cursor: pointer;
-  display: block;
-}
-
-.addNote {
-  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19), 0 1px 1px rgba(56, 56, 56, 0.23);
-}
-
-.notes {
-  padding: 8px;
-  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19), 0 1px 1px rgba(56, 56, 56, 0.23);
-  z-index: 100;
-}
-
-#notesHover:hover {
-  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
-  background-color: rgba(91, 192, 222, 0.3);
-  border-left: solid rgb(91, 192, 222);
-}
-
-.notes-container {
-  position: relative;
-  overflow: auto;
-  height: 61vh;
-}
-
-.filters-wrapper {
-  float: right;
-  margin-top: -50px;
-}
-
-@media screen and (max-width: 1500px) {
-  .filters-wrapper {
-    width: 65% !important;
-  }
-}
-
-// notes-rows creates a scroallable div within a container, preventing the need to scroll beyond the viewport height
-// .notes-rows {
-//   overflow-y: scroll;
-//   box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
-//   max-height: 59vh;
-//   border-top: solid 4px #ededed;
-//   padding-top: 8px;  
-// }
 </style>

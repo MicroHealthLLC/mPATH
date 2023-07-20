@@ -1191,7 +1191,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
@@ -1208,7 +1208,7 @@ i, .icons {
     width: 65% !important;
   } 
 }
-/deep/.el-collapse   {
+::v-deep.el-collapse   {
   border-bottom: none !important;
   }
   
