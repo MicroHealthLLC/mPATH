@@ -9,8 +9,18 @@
         class="pt-0 pb-2"
         show-icon >
        <template slot="title">
-        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days:  <em>{{ overdueTasks.value7.map(t => t.text).join(", ") }}</em>  
-       </template>
+        You have {{  overdueTasks.value7.length}} Task(s) due within the next 7 days: 
+        <span v-for="t, i in overdueTasks.value7" :key="i">
+          <router-link :to="`/programs/${$route.params.programId}/sheet/projects/${t.facilityId}/tasks/${t.id}`" > 
+            <span style="cursor: pointer; color:#e6a23c" >
+             {{ t.text }} 
+             <span v-if="overdueTasks.value7[overdueTasks.value7.length - 1].id == t.id">.</span>
+             <span v-else>,</span>
+            </span>   
+          </router-link> 
+         </span>
+        
+      </template>
        </el-alert>
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
@@ -1838,15 +1848,20 @@ export default {
       const today = new Date()
       const tomorrow = new Date(today)
       let tomorr = tomorrow.setDate(tomorrow.getDate() + 1)       
-      const current = new Date();      
-      let plusSevenDays = current.setDate(current.getDate() + 7);
+      const nextWeek = new Date()
+
+      // add 7 days to the current date
+      nextWeek.setDate(new Date().getDate() + 7)
+      console.log('current: ' + nextWeek)
 
       if (this.filteredTasks.length > 0) {       
-        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
-        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )  
+        console.log('current: ' + nextWeek) 
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
         return {
           value24: dueDatesTomorrow,   
-          value7: datesWithinSevenDays,          
+          value7: datesWithinSevenDays,   
+          length: datesWithinSevenDays.length 
         }
 
         }
@@ -2548,6 +2563,9 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+      // toTask(id){
+      //    this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${id}`)
+      // },
     openProjectGroup() {
     this.dialog2Visible = true;
     this.programDateOfWeekFilter = this.fridayDayOfWeek
