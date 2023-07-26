@@ -21,7 +21,7 @@ Bundler.require(*Rails.groups)
 module MGIS
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 7.0
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -29,9 +29,10 @@ module MGIS
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
-    config.eager_load_paths << Rails.root.join("lib")
 
+    # config.autoload_paths << "#{Rails.root}/lib"
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.autoload_paths << Rails.root.join('lib')
   end
 end
