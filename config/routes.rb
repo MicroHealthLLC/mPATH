@@ -240,6 +240,7 @@ Rails.application.routes.draw do
             post :batch_update, on: :collection
             post :create_duplicate, on: :member
             post :create_bulk_duplicate, on: :member
+            get :versions, on: :member
           end
 
           resources :lessons do

@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   around_action :user_time_zone, if: :current_user
   before_action :update_projected_efforts, if: :current_user
+  
+  before_action :set_paper_trail_whodunnit
 
   after_action :release_memory#, if: -> {Rails.env.development?}
   # rescue_from NameError, Exception, with: lambda { |exception| render_error(exception, 500) }

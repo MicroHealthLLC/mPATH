@@ -2,6 +2,9 @@ class Task < ApplicationRecord
   include Normalizer
   include Tasker
   include CommonUtilities
+  
+  # Adding log for Task
+  has_paper_trail
 
   belongs_to :task_type
   belongs_to :task_stage, optional: true
