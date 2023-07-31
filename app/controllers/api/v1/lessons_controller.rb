@@ -5,7 +5,7 @@ class Api::V1::LessonsController < AuthenticatedController
 
   def check_permission
     action = nil
-    if ["index", "show" ].include?(params[:action]) 
+    if ["index", "show", "versions" ].include?(params[:action]) 
       action = "read"
     elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
       action = "write"
@@ -166,6 +166,11 @@ class Api::V1::LessonsController < AuthenticatedController
     end
 
     render json: response_hash, status: status_code
+  end
+  
+  def versions
+    lesson = Lesson.find(params[:id])
+    render json: lesson.versions_json
   end
 
   def create

@@ -1073,6 +1073,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_26_202731) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object", size: :long
+    t.text "object_changes", size: :long
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end

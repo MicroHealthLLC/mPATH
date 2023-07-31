@@ -230,11 +230,13 @@ Rails.application.routes.draw do
             post :batch_update, on: :collection
             post :create_duplicate, on: :member
             post :create_bulk_duplicate, on: :member
+            get :versions, on: :member
           end
           resources :risks do
             post :batch_update, on: :collection
             post :create_duplicate, on: :member
             post :create_bulk_duplicate, on: :member
+            get :versions, on: :member
           end
           resources :tasks do
             post :batch_update, on: :collection
@@ -245,6 +247,7 @@ Rails.application.routes.draw do
 
           resources :lessons do
             get :count, on: :collection
+            get :versions, on: :member
           end
           
           resources :efforts

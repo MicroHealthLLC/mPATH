@@ -2,12 +2,12 @@ class Api::V1::RisksController < AuthenticatedController
 # NOTE: uncomment this when we move to token based authentication
 # class  Api::V1::RisksController < Api::ApplicationController
   before_action :set_resources#, except: [:show]
-  before_action :set_risk, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_risk, only: [:versions,:update, :destroy, :create_duplicate, :create_bulk_duplicate]
   before_action :check_permission
 
   def check_permission
     action = nil
-    if ["index", "show" ].include?(params[:action]) 
+    if ["index", "show", "versions" ].include?(params[:action]) 
       action = "read"
     elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
       action = "write"
@@ -45,6 +45,10 @@ class Api::V1::RisksController < AuthenticatedController
     render json: {risks: h, total_pages: all_risks.total_pages, current_page: all_risks.current_page, next_page: all_risks.next_page}
 
     # render json: {risks: @facility_project.risks.map(&:to_json)}
+  end
+
+  def versions
+    render json: @risk.versions_json
   end
 
   def create

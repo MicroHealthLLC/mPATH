@@ -25,8 +25,7 @@ class Api::V1::TasksController < AuthenticatedController
   end
 
   def versions
-
-    render json: {versions: @task.versions }
+    render json: @task.versions_json
   end
 
   def index

@@ -2,12 +2,12 @@ class Api::V1::IssuesController < AuthenticatedController
 # NOTE: uncomment this when we move to token based authentication
 # class Api::V1::IssuesController < Api::ApplicationController
   before_action :set_resources#, except: [:show]
-  before_action :set_issue, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_issue, only: [:versions,:update, :destroy, :create_duplicate, :create_bulk_duplicate]
   before_action :check_permission  
 
   def check_permission
     action = nil
-    if ["index", "show" ].include?(params[:action]) 
+    if ["index", "show", "versions" ].include?(params[:action]) 
       action = "read"
     elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
       action = "write"
@@ -46,6 +46,10 @@ class Api::V1::IssuesController < AuthenticatedController
     render json: {issues: h, total_pages: all_issues.total_pages, current_page: all_issues.current_page, next_page: all_issues.next_page}
 
     # render json: {issues: @facility_project.issues.map(&:to_json)}
+  end
+  
+  def versions
+    render json: @issue.versions_json
   end
 
   def create
