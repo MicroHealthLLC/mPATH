@@ -1,6 +1,7 @@
 class Task < ApplicationRecord
   include Normalizer
   include Tasker
+  include CommonUtilities
 
   belongs_to :task_type
   belongs_to :task_stage, optional: true
@@ -9,7 +10,8 @@ class Task < ApplicationRecord
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
-
+  has_many :efforts, as: :resource, dependent: :destroy
+  
   validates :text, presence: true
   validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   validates :due_date, presence: true, if: -> { progress != 100 && ongoing == false && on_hold == false }
@@ -18,6 +20,7 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
+  before_save :update_closed
 
   # after_save :update_owner_record
   # after_destroy :update_owner_record
@@ -26,7 +29,7 @@ class Task < ApplicationRecord
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
-  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do
@@ -72,6 +75,8 @@ class Task < ApplicationRecord
       :reportable,
       :project_contract_id,
       :project_contract_vehicle_id,
+      :planned_effort, 
+      :auto_calculate_planned_effort,
       :nickname, 
       task_files: [],
       file_links: [],
@@ -90,6 +95,7 @@ class Task < ApplicationRecord
         :listable_type,
         :listable_id,
         :position,
+        :planned_effort,
         progress_lists_attributes: [
           :id,
           :_destroy,
@@ -105,6 +111,33 @@ class Task < ApplicationRecord
         :body
       ]
     ]
+  end
+
+  def calculate_actual_effort
+    efforts.not_projected_hours.sum(:hours).to_f
+    # efforts.sum(:hours).to_f
+  end
+
+  def update_actual_effort
+    self.update(actual_effort: calculate_actual_effort)
+  end
+
+  def calculate_planned_effort
+    if self.auto_calculate_planned_effort
+      self.planned_effort = self.checklists.sum(:planned_effort)
+      save!
+    end
+  end
+
+  def effort_json(options = {})
+    _efforts = options[:efforts] || efforts.not_projected_hours
+    _last_update =  notes.sort_by(&:created_at).reverse.first&.attributes
+    as_json.merge({ efforts_actual_effort: strip_trailing_zero(_efforts.sum(&:hours) ), last_update: _last_update, efforts: _efforts })
+  end
+  
+  def as_json(options= {})
+    self.attributes.with_indifferent_access.merge({ planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort) })
   end
 
   def lesson_json
@@ -124,15 +157,16 @@ class Task < ApplicationRecord
 
     self.ongoing = false if on_hold && ongoing
 
-    closed = false
+    closed = self.closed_date.present?
+    # closed = false
    
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
@@ -294,15 +328,17 @@ class Task < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && due_date && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
-    closed = false
-   
-    if ongoing && due_date.present? && !draft && !on_hold
-      closed_date = due_date
-    end
+    closed = self.closed_date.present?
 
-    if closed_date.present? && ongoing && !draft && !on_hold
-       closed = true 
-    end 
+    # closed = false
+   
+    # if ongoing && due_date.present? && !draft && !on_hold
+    #   closed_date = due_date
+    # end
+
+    # if closed_date.present? && ongoing && !draft && !on_hold
+    #    closed = true 
+    # end 
 
     in_progress = false
     completed = false
@@ -359,6 +395,9 @@ class Task < ApplicationRecord
       draft: draft,
       on_hold: on_hold,
       closed_date: closed_date,
+
+      planned_effort: strip_trailing_zero(self.planned_effort),
+      actual_effort: strip_trailing_zero(self.actual_effort),
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
@@ -508,6 +547,8 @@ class Task < ApplicationRecord
     # Reproduce: Create new task with file and link both and it is giving an error
     # Error performing ActiveStorage::AnalyzeJob ActiveStorage::FileNotFoundError (ActiveStorage::FileNotFoundError):
     task.add_link_attachment(params)
+    
+    task.update_closed
 
     task.reload
   end

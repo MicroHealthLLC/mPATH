@@ -31,6 +31,69 @@ sorts.each do |sort|
   end
 end
 
+roles = [
+  {
+    role_type: "update-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "update-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contribute-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "program-admin",
+    type_of: 'admin',
+    role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-users",
+    type_of: 'admin',
+    role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-contract",
+    type_of: 'admin',
+    role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+]
+
+roles.each do |role_hash|
+  Role.find_or_create_by(name: role_hash[:role_type]) do |s|
+    s.name = role_hash[:role_type]
+    s.is_portfolio = true
+    s.is_default = true
+    s.type_of = role_hash[:type_of]
+    s.role_privileges_attributes = role_hash[:role_privileges]
+  end
+end
+
+program_admin_role = Role.program_admin_user_role
+project_update_role = Role.where(name: "update-project").first
+
 organization = Organization.find_or_create_by(title: 'Test Organization')
 admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
@@ -97,11 +160,15 @@ client.save(validate: false)
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 
 project_type = ProjectType.find_or_create_by(name: 'Test Project Type')
-project = Project.find_or_create_by(
+project = Project.new(
   name: 'Test Project',
   description: 'Test project description',
-  project_type_id: project_type.id
+  project_type_id: project_type.id,
+  admin_program_admins: [admin.id.to_s]
 )
+project.save
+
+RoleUser.new(project_id: project.id, user_id: admin.id, role_id: program_admin_role.id ).save
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
@@ -142,7 +209,8 @@ project_issue_type = ProjectIssueType.create(project_id: project.id, issue_type_
 facility_group_1 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 1',
   code: 'TFG1',
-  status: 'active'
+  status: 'active',
+  is_portfolio: true
 )
 facility_1 = Facility.find_or_create_by(
   facility_name: 'Test Facility 1',
@@ -162,8 +230,12 @@ facility_project_1 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_1.id,
   status_id: active_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_1.facility_group.id
 )
+
+RoleUser.new(project_id: project.id, facility_project_id: facility_project_1.id, user_id: client.id, role_id: project_update_role.id ).save
+
 
 Note.find_or_create_by(
   noteable_type: 'FacilityProject',
@@ -303,7 +375,8 @@ facility_project_2 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_2.id,
   status_id: inactive_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_2.facility_group.id
 )
 
 Note.find_or_create_by(
@@ -429,7 +502,8 @@ new_lesson_2 = Lesson.find_or_create_by({
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
   code: 'TFG2',
-  status: 'active'
+  status: 'active',
+  is_portfolio: true
 )
 facility_3 = Facility.find_or_create_by(
   facility_name: 'Test Facility 3',
@@ -449,7 +523,8 @@ facility_project_3 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_3.id,
   status_id: active_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_3.facility_group.id
 )
 
 Note.find_or_create_by(
@@ -590,7 +665,8 @@ facility_project_4 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_4.id,
   status_id: inactive_status.id,
-  due_date: Date.today + 10.days
+  due_date: Date.today + 10.days,
+  facility_group_id: facility_4.facility_group.id
 )
 
 Note.find_or_create_by(

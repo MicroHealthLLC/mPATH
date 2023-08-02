@@ -60,6 +60,7 @@ contract_types = [ "Prime Contract", "Non Prime contract", "Prime vehicles and I
 contract_types.each do |name|
   ContractType.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -76,6 +77,7 @@ contract_name_customers = ["VA",  "IPO",  "DHA",  "3M",  "DIA",  "SEC",  "Army",
 contract_name_customers.each do |name|
   ContractCustomer.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -84,6 +86,7 @@ contract_vehicles = ["VAEHRM","Connections II","GSA IT-70 SIN 132-51","T4NG","8(
 contract_vehicles.each do |name|
   ContractVehicle.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -124,6 +127,7 @@ contract_current_pops = ["Base Period","Base Period 2","Contract Yr 3","Option P
 contract_current_pops.each do |name|
   ContractCurrentPop.find_or_create_by(name: name) do |s|
     s.name = name
+    s.user_id = user.id
   end
 end
 
@@ -157,33 +161,33 @@ roles = [
   {
     role_type: "update-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
   },
   {
     role_type: "read-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
     role_type: "contribute-project", 
     type_of: 'project',
-    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },
 
   {
     role_type: "update-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
   },
   {
     role_type: "read-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
     role_type: "contribute-contract", 
     type_of: 'contract',
-    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },
 
   {

@@ -316,6 +316,7 @@
           <template slot-scope="scope">
             <el-button
               type="default"
+              data-cy="add_contract_btn"
               v-tooltip="`Add Contract`"
               @click.prevent="addExistingContract(scope.$index, scope.row)"          
               class="bg-primary text-light btn-sm">
@@ -591,7 +592,7 @@
           <button
           @click.prevent="closeUserRoles"
           class="btn btn-md bg-secondary text-light modalBtns"
-          v-tooltip="`Close`"                  
+          v-tooltip="`Cancel`"                  
         >
           <i class="fas fa-ban"></i> 
         </button>

@@ -188,6 +188,7 @@ Rails.application.routes.draw do
       end
 
       # Filter data
+      get "/filter_data/program_admin_programs", to: "filter_data#program_admin_programs"
       get "/filter_data/programs", to: "filter_data#programs"
       get "/filter_data/users", to: "filter_data#users"
       get "/filter_data/statuses", to: "filter_data#statuses"
@@ -201,13 +202,17 @@ Rails.application.routes.draw do
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
 
-      resources :projects, path: 'programs', only: [:index, :show] do
+      resources :projects, path: 'programs', only: [:index, :show,:project_efforts] do
         resources :query_filters do
           collection do
             delete "reset" => "query_filters#reset"
           end
         end
         
+        collection do
+          get "project_efforts/:program_id", to: 'projects#project_efforts'
+        end
+
         member do
           # used in Admin
           get 'task_issues', to: 'projects#task_issues'
@@ -240,6 +245,8 @@ Rails.application.routes.draw do
           resources :lessons do
             get :count, on: :collection
           end
+          
+          resources :efforts
         end
       end
 

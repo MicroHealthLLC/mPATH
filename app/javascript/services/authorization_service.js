@@ -153,7 +153,20 @@ const AuthorizationService = {
           facility_project_privileges.project_risks.includes(s)
         );
       }
-    } else if(["task_project_context_menu", "task_contract_context_menu", "task_vehicle_context_menu", 
+    } else if (["effort_sheets"].includes(page)){
+
+      let facility_project_id = AuthorizationService.findFacilityProjectId(
+        program_id,
+        project_id
+      );
+      let facility_project_privileges =
+        AuthorizationService.projectPrivilegesRoles[facility_project_id];
+      return (
+        facility_project_privileges &&
+        facility_project_privileges.project_efforts &&
+        facility_project_privileges.project_efforts.includes(s)
+      );
+    }else if(["task_project_context_menu", "task_contract_context_menu", "task_vehicle_context_menu", 
     "issue_project_context_menu", "issue_contract_context_menu", "issue_vehicle_context_menu",
     "risk_project_context_menu", "risk_contract_context_menu", "risk_vehicle_context_menu",
   , ].includes(page)){

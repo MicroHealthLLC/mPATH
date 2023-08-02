@@ -788,6 +788,123 @@
 
   </el-table-column>
 
+  <el-table-column label="Efforts">
+    <el-table-column
+      prop="read"
+      label="Read"
+      width="75">
+
+    <template slot-scope="scope">
+
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+      <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.efforts)"
+       >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+      </span>
+     <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+     </span> 
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="effortsRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isEffortsRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+     </span>    
+      </template>
+    </el-table-column>
+      <el-table-column
+      prop="write"
+      label="Write"
+      width="75">
+      <template slot-scope="scope">
+      <!-- <span 
+      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"
+      v-if="scope.$index == 0">
+       <span v-if="isLessonsWrite">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+        </span>
+         <span v-if="!isLessonsWrite">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>
+    </span> -->
+
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+      <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.lessons)"
+       >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+      </span>
+     <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+    </span> 
+    <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"      
+      >
+      <span v-if="isLessonsWrite">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+      </span>    
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="delete"
+      label="Delete"
+      width="75">
+      <template slot-scope="scope">
+      <!-- <span 
+      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"
+      v-if="scope.$index == 0">
+       <span v-if="isLessonsDelete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+        </span>
+         <span v-if="!isLessonsDelete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>
+    </span> -->
+
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.lessons)"
+       >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+      </span>
+     <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+    </span> 
+      <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"      
+      >
+      <span v-if="isLessonsDelete">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+      </span>    
+
+      </template>
+    </el-table-column>
+
+  </el-table-column>
+
+
     <el-table-column 
       fixed="right" 
       label="Actions"
@@ -887,6 +1004,7 @@ export default {
         risksPriv: [],
         lessonsPriv: [],
         notesPriv: [],
+        effortsPriv: []
        }
   },
   methods: {
@@ -1254,6 +1372,10 @@ export default {
         this.isLessonsWrite = true,
         this.isLessonsDelete = true,
 
+        this.isEffortsRead = true,
+        this.isEffortsWrite = true,
+        this.isEffortsDelete = true,
+
         this.analyticsPriv = [],
         this.tasksPriv = [],
         this.issuesPriv = [],
@@ -1292,7 +1414,11 @@ export default {
           this.notesPriv.push(..."W")     
           this.notesPriv.push(..."D")       
       }
-  
+      if (this.isEffortsRead && this.isEffortsWrite && this.isEffortsWrite) {
+          this.effortsPriv.push(..."R")     
+          this.effortsPriv.push(..."W")     
+          this.effortsPriv.push(..."D")       
+      }
  },
   cancelEditRole(index, rowData){    
     this.isEditting = false;
@@ -1358,6 +1484,17 @@ export default {
       if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('project_notes')){
           this.isNotesDelete = !this.isNotesDelete
       }
+
+      //Efforts
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('project_efforts')){
+          this.isEffortsRead = !this.isEffortsRead
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('project_efforts')) {
+          this.isEffortsWrite = !this.isEffortsWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('project_efforts')){
+          this.isEffortsDelete = !this.isEffortsDelete
+      }
   },
   cancelCreateRole(){
     this.tableData.shift({});
@@ -1414,6 +1551,12 @@ export default {
                 name: rowData.name,
                 id:  rowData.role_privileges[5].id
               },
+              {
+                privilege: this.effortsPriv.join(''),
+                role_type: "project_efforts",
+                name: rowData.name,
+                id:  rowData.role_privileges[5].id
+              },
             ],
         },
       };
@@ -1460,6 +1603,11 @@ export default {
                 role_type: "project_lessons",
                 name:  rowData.name, 
               },
+              {
+                privilege: this.effortsPriv.join(''),
+                role_type: "project_efforts",
+                name: rowData.name
+              },
             ],
         },
       };
@@ -1499,7 +1647,8 @@ export default {
         issues: 'project_issues',
         risks: 'project_risks',
         lessons: 'project_lessons',
-        notes: 'project_notes'
+        notes: 'project_notes',
+        efforts: 'project_efforts'
       }
     },
      backToSettings() {

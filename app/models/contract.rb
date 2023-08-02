@@ -1,3 +1,5 @@
+# ContractProjectData is the original contrat model.
+# TODO: remove this table if no error found.
 class Contract < ApplicationRecord
   belongs_to :contract_type, optional: true
   belongs_to :contract_status, optional: true

@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
   around_action :user_time_zone, if: :current_user
+  before_action :update_projected_efforts, if: :current_user
 
   after_action :release_memory#, if: -> {Rails.env.development?}
-
   # rescue_from NameError, Exception, with: lambda { |exception| render_error(exception, 500) }
   rescue_from NameError, Exception do |exception| 
     render_error(exception, 500)
@@ -29,6 +29,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def update_projected_efforts
+    if current_user && signed_in?
+      Effort.update_projected(params)
+    end
+  end
 
   def release_memory
     GC.start
