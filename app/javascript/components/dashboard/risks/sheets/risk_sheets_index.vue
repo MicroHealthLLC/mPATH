@@ -1,7 +1,7 @@
 <template>
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
-    <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
+    <div class="d-flex align-item-center  w-50 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
@@ -1213,7 +1213,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

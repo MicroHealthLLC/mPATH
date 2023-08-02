@@ -185,7 +185,7 @@ import { API_BASE_PATH } from '../../../mixins/utils'
 </script>
 
 <style lang="scss" scoped>
-  .street-address /deep/ .multiselect__select {
+  .street-address ::v-deep .multiselect__select {
     display: none;
   }
   .form-control.error {

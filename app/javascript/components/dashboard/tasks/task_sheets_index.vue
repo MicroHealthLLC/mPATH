@@ -2,8 +2,8 @@
   <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index" :load="log(filteredTasks.filtered.tasks)">
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
-         <div class="ml-3 task-search-bar w-100">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-50 filters-wrapper">
+         <div class="ml-3 task-search-bar w-75">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
@@ -1191,7 +1191,7 @@ i, .icons {
 
 }
 
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';

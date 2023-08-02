@@ -58,7 +58,7 @@ ActiveAdmin.register Project do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
 
     tabs do
       tab 'Basic' do

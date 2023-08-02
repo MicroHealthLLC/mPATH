@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+      <div class="d-flex align-item-center w-50 float-right filters-wrapper">
         <div class="ml-3 task-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
@@ -1191,7 +1191,7 @@ i, .icons {
 .smallerFont {
   font-size: 10px;
 }
-/deep/.v-input__slot {
+::v-deep.v-input__slot {
   display: inline;
   .v-label {
    font-family: 'FuturaPTBook';
@@ -1208,7 +1208,7 @@ i, .icons {
     width: 65% !important;
   } 
 }
-/deep/.el-collapse   {
+::v-deep.el-collapse   {
   border-bottom: none !important;
   }
   

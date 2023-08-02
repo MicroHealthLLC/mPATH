@@ -2353,21 +2353,21 @@ ul {
   cursor: all-scroll;
 }
 // Checklist feature UI
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   float: right;
   margin-top: -38px;
   font: small;
   color: #d9534f !important;
   border-bottom: none !important;
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
 .paperLook {
@@ -2520,7 +2520,7 @@ input.file-link {
   background: #fff;
 }
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;

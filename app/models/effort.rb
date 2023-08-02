@@ -8,9 +8,13 @@ class Effort < ApplicationRecord
 
   validates :date_of_week, presence: true
   validates :hours, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :user_id, presence: true, uniqueness: { scope: [:date_of_week, :resource_id, :resource_type, :facility_project_id] }, on: :create
 
   after_create :update_acutal_effort_to_task
   after_update :update_acutal_effort_to_task
+
+  scope :not_projected_hours, lambda {where(projected: false)}
+  scope :projected_hours, lambda {where(projected: true)}
 
   def self.params_to_permit
     [
@@ -24,6 +28,14 @@ class Effort < ApplicationRecord
     ]
   end
 
+  def this_week_dates
+    (Date.today.monday..(Date.today.monday + 4))
+  end
+
+  def projected_effort?
+    self.date_of_week.to_date > this_week_dates.last
+  end
+
   def as_json(options = {})
     self.to_json
   end
@@ -34,6 +46,10 @@ class Effort < ApplicationRecord
 
   def update_acutal_effort_to_task
     resource.update_actual_effort
+  end
+
+  def self.update_projected
+    Effort.where("date_of_week < ? and projected = ?", Date.today, true ).update_all(projected: false)
   end
 
   def create_or_update_effort(params, user)
@@ -64,6 +80,8 @@ class Effort < ApplicationRecord
     effort.date_of_week = Date.parse(t_params.delete(:date_of_week) ) rescue nil 
 
     effort.attributes = t_params
+    
+    effort.projected = effort.date_of_week > this_week_dates.last
 
     effort.transaction do
       effort.save

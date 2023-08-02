@@ -5,7 +5,7 @@ class Api::V1::ProjectsController < AuthenticatedController
 
   def project_efforts
     facility_project_ids = FacilityProject.where(project_id: params[:program_id]).pluck(:id)
-    
+
     all_project_users = Project.find(params[:program_id]).users.includes(:organization)
     facility_projects = FacilityProject.includes(:facility).where(project_id: params[:program_id])
     if params[:date_of_week]

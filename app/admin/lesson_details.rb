@@ -36,7 +36,7 @@ ActiveAdmin.register LessonDetail do
     end
   end
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     f.inputs 'Basic Details' do
       f.input :id, input_html: { value: f.object.id }, as: :hidden
       f.input :finding

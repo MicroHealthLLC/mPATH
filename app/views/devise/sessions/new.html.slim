@@ -1,44 +1,44 @@
 .container
 .login-wrapper.signin-section
   .row.d-flex.justify-content-center
-    =form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-signin mg-btm' }) do |f|
-      = render "devise/shared/messages"
+
+    div.form-signin.mg-btm
       h3.heading-desc.text-center
         a.navbar-brand href="/"
           =image_tag "microhealthllc.png"
+
       .social-box.pb-5.p-4
-        .row.mg-btm
-          .col-md-12
-            a.btn.btn-danger.btn-block href="#{omniauth_authorize_path(resource_name, :google_oauth2)}" data-method="post"
-              i.icon-facebook
-              | Continue with Google
+        .row
+         .col-md-12
+            = button_to("Continue with Google", omniauth_authorize_path(resource_name, :google_oauth2), method: :post, class: "btn btn-danger btn-block")
+
         .row
           .col-md-12
-            a.btn.btn-info.btn-block href="#{omniauth_authorize_path(resource_name, :office365)}" data-method="post"
-              i.icon-twitter
-              | Continue with Office 365
-        / .row
-        /   .col-md-12
-        /     a.btn.btn-info.btn-block href="#{user_oktaoauth_omniauth_authorize_path}" method='post'
-        /       i.icon-twitter
-        /       | Continue with Okta
-      .form-group.mt-4.px-4
-        =f.label :email, "Email"
-        =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com", data: {cy: 'user_email'}
-        br
-        =f.label :password, "Password"
-        =f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password", data: {cy: "user_password"}
-        -if devise_mapping.rememberable?
-          .form-group.mt-3
-            .form-check
-              = f.check_box :remember_me, class: 'form-check-input', data: {cy: "user_remember_me"}
-              = f.label :remember_me
-        span.clearfix
-      .login-footer.p-4
+            = button_to("Continue with Office 365", omniauth_authorize_path(resource_name, :office365), method: :post, class: "btn btn-info btn-block")
+
         .row
-          .col-xs-6.col-md-6
-            .left-section
-              a href="#{new_password_path(resource_name)}" Forgot your password?
-              br
-          .col-xs-6.col-md-6.pull-right
-            =f.submit "Login", class: 'btn btn-large btn-danger pull-right', data: {cy: "submit"}
+          .col-md-12
+            = button_to("Continue with okta", omniauth_authorize_path(resource_name, :okta), method: :post, class: "btn btn-primary btn-block")
+
+      =form_for(resource, as: resource_name, url: session_path(resource_name), html: {  }) do |f|
+        = render "devise/shared/messages"
+        .form-group.mt-4.px-4
+          =f.label :email, "Email"
+          =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com", data: {cy: 'user_email'}
+          br
+          =f.label :password, "Password"
+          =f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password", data: {cy: "user_password"}
+          -if devise_mapping.rememberable?
+            .form-group.mt-3
+              .form-check
+                = f.check_box :remember_me, class: 'form-check-input', data: {cy: "user_remember_me"}
+                = f.label :remember_me
+          span.clearfix
+        .login-footer.p-4
+          .row
+            .col-xs-6.col-md-6
+              .left-section
+                a href="#{new_password_path(resource_name)}" Forgot your password?
+                br
+            .col-xs-6.col-md-6.pull-right
+              =f.submit "Login", class: 'btn btn-large btn-danger pull-right', data: {cy: "submit"}
