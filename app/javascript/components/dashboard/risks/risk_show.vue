@@ -208,7 +208,7 @@
           this.$confirm(`Are you sure you want to remove this risk from on-watch?`, 'Confirm Remove', {
             confirmButtonText: 'Remove',
             cancelButtonText: 'Cancel',
-            type: 'warning'
+            type: MessageDialogService.msgTypes.WARNING
           }).then(() => {
             this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
             this.updateWatchedRisks(this.DV_risk)

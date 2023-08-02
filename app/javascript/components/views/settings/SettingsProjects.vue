@@ -788,7 +788,7 @@ export default {
   //       {
   //         confirmButtonText: "Remove",
   //         cancelButtonText: "Cancel",
-  //         type: "warning",
+  //         type: MessageDialogService.msgTypes.WARNING,
   //       }
   //      ).then(() => {
   //        alert("We're still working on the remove project functionality :)")
@@ -805,16 +805,16 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.deleteProgramProject({programId, id}).then((value) => {
           if (value === 200) {
            this.fetchCurrentProject(this.$route.params.programId);
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${rows.facilityName} was deleted successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
         });
@@ -829,7 +829,7 @@ removeProject(index, rows) {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.removePortfolioProject({ fpId, pId  });
@@ -924,7 +924,7 @@ removeProject(index, rows) {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
       let user_ids = this.assignedProjectUsers.map(t => t.id);
@@ -1021,10 +1021,10 @@ removeProject(index, rows) {
         },
       }).then((response) => {
         if (response.status === 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `New Project ${this.newProjectName} has been saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
          this.fetchCurrentProject(this.programId)
          this.hideSaveBtn = true;
@@ -1074,10 +1074,10 @@ removeProject(index, rows) {
         },
       }).then((response) => {
         if (response.status === 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Edits has been saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.fetchCurrentProject(this.programId)
        this.rowIndex = null;
@@ -1338,10 +1338,10 @@ removeProject(index, rows) {
     addUserToRoleStatus: {
       handler() {
         if (this.addUserToRoleStatus == 204 || this.addUserToRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully added user/role to project.`,
-            type: "success",
-            showClose: true,
+            
+            
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
@@ -1359,10 +1359,10 @@ removeProject(index, rows) {
       //This status property is not working.  Once fixed, we need to move all this actions out of the method and uncomment these. 
       handler() {
         if (this.bulkUpdateRoleStatus == 204 || this.bulkUpdateRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully changed user roles.`,
-            type: "success",
-            showClose: true,
+            
+            
           });         
           console.log("bulkUpdateRoleStatus is good")
 
@@ -1380,10 +1380,10 @@ removeProject(index, rows) {
     bulkProjectAddStatus: {
      handler() {
         if (this.bulkProjectAddStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully added projects from program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_PROGRAM_SETTINGS_PROJECTS_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);
@@ -1395,10 +1395,10 @@ removeProject(index, rows) {
     removePortfolioProjectsStatus: {
       handler() {
         if (this.removePortfolioProjectsStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully removed project from program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_REMOVE_PORTFOLIO_PROJECTS_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);
@@ -1410,10 +1410,10 @@ removeProject(index, rows) {
   portfolioProjectsStatus: {
       handler() {
         if (this.portfolioProjectsStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_PORTFOLIO_PROJECTS_STATUS(0);
           this.fetchPortfolioProjects(this.$route.params.programId)
@@ -1426,10 +1426,10 @@ removeProject(index, rows) {
     removeProjectRoleStatus: {
       handler() {
         if (this.removeProjectRoleStatus == 204  || this.removeProjectRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully removed user(s) from role.`,
-            type: "success",
-            showClose: true,
+            
+            
           });  
           this.fetchRoles(this.$route.params.programId)   
           this.SET_REMOVE_PROJECT_ROLE_STATUS(0);   

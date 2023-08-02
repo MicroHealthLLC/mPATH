@@ -672,7 +672,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.relatedTasks.splice(
           this.relatedTasks.findIndex((task) => task.id == id),
@@ -687,7 +687,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.relatedIssues.splice(
           this.relatedIssues.findIndex((issue) => issue.id == id),
@@ -702,7 +702,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.relatedRisks.splice(
           this.relatedRisks.findIndex((risk) => risk.id == id),
@@ -722,7 +722,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -744,7 +744,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -766,7 +766,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -786,7 +786,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -817,7 +817,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -835,7 +835,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1042,10 +1042,10 @@ export default {
     contractLessonStatus: {
       handler() {
         if (this.contractLessonStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.lesson.title} was saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_LESSON_STATUS(0);
         }
@@ -1058,10 +1058,10 @@ export default {
     vehicleLessonStatus: {
       handler() {
         if (this.vehicleLessonStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.lesson.title} was saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_VEHICLE_LESSON_STATUS(0);
         }
@@ -1074,10 +1074,10 @@ export default {
     lessonStatus: {
       handler() {
         if (this.lessonStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.lesson.title} was saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_LESSON_STATUS(0);
           if (this.$route.path.includes("sheet")) {

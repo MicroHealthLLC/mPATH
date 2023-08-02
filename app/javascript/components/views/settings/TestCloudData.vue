@@ -267,10 +267,10 @@ export default {
     contractStatus: {
       handler() {
         if (this.contractStatus == 200 && this.contractNameText) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
      
           this.SET_CONTRACT_STATUS(0);

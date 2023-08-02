@@ -807,7 +807,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
        let user_ids = this.assignedContractUsers.map(t => t.id);
@@ -914,7 +914,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.removeContract({ ...contract });
@@ -966,16 +966,16 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.deleteContract(id).then((value) => {
           if (value === 200) {
             this.fetchContracts();
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${rows.name} was deleted successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
         });
@@ -1181,10 +1181,10 @@ export default {
     contractStatus: {
       handler() {
         if (this.contractStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.newGroup = null;
           this.SET_CONTRACT_STATUS(0);
@@ -1196,10 +1196,10 @@ export default {
   contractsStatus: {
       handler() {
         if (this.contractsStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully removed contract from program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACTS_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
@@ -1211,10 +1211,10 @@ export default {
     associatedContractsStatus:{
       handler() {
         if (this.associatedContractsStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract successfully added to program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_ASSOCIATED_CONTRACTS_STATUS(0);
           this.fetchContractProjects(this.$route.params.programId);
@@ -1227,10 +1227,10 @@ export default {
     removeContractRoleStatus: {
       handler() {
         if (this.removeContractRoleStatus == 204  || this.removeContractRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully removed user(s) from role.`,
-            type: "success",
-            showClose: true,
+            
+            
           });  
           this.fetchRoles(this.$route.params.programId)   
           this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);   
@@ -1244,10 +1244,10 @@ export default {
       addUserToRoleStatus: {
       handler() {
         if (this.addUserToRoleStatus == 204 || this.addUserToRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully added user/role to project.`,
-            type: "success",
-            showClose: true,
+            
+            
           });     
           this.fetchCurrentProject(this.$route.params.programId)    
           this.SET_ADD_USER_TO_ROLE_STATUS(0);

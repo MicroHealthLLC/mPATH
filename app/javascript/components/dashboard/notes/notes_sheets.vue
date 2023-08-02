@@ -167,7 +167,7 @@
         this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           http
             .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
@@ -188,22 +188,19 @@
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
           this.deleteContractNote({ id: this.contractNote.id, contractId: this.$route.params.contractId });
-          this.$message({
-            type: "success",
+          MessageDialogService.showDialog({
             message: "Note successfully deleted",
-            showClose: true,
+            
           });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-            showClose: true,
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: "Delete canceled",            
           });
         });      
     },
@@ -214,22 +211,21 @@
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
           this.deleteVehicleNote({ id: this.vehicleNote.id, vehicleId: this.$route.params.vehicleId });
-          this.$message({
-            type: "success",
+          MessageDialogService.showDialog({
+            
             message: "Note successfully deleted",
-            showClose: true,
+            
           });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-            showClose: true,
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: "Delete canceled",
+            
           });
         });      
     },

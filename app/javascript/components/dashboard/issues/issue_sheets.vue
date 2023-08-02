@@ -134,7 +134,7 @@
         this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.issueDeleted(this.DV_issue)
         });
@@ -164,7 +164,7 @@
           this.$confirm(`Are you sure you want to remove this issue from on-watch?`, 'Confirm Remove', {
             confirmButtonText: 'Remove',
             cancelButtonText: 'Cancel',
-            type: 'warning'
+            type: MessageDialogService.msgTypes.WARNING
           }).then(() => {
             this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
             this.updateWatchedIssues(this.DV_issue)

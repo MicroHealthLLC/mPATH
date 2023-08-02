@@ -183,7 +183,7 @@
         this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           if (file.uri) {
             var index = this.DV_note.noteFiles.findIndex(f => f.guid === file.guid)
@@ -241,10 +241,10 @@
             this.loadNote(responseNote)   
             this.updateNotesHash({ note: responseNote, facilityId: this.$route.params.projectId})
             if (response.status === 200) {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: `${note.body} was saved successfully.`,
                 type: "success",
-                showClose: true,
+                
               });
             }
             if (this.$route.path.includes("sheet")) {
@@ -265,7 +265,7 @@
         this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           // TODO: this is sending facilityProjectId in facilityId parameter. So now we will process with note id
           this.noteDeleted({note: this.DV_note, facilityId: this.$route.params.projectId, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })

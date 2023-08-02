@@ -288,35 +288,32 @@
       exportProjectStatus: {
       handler() {
         if (this.exportProjectStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Project moved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_EXPORT_PROJECT_STATUS(0);               
           this.fetchCurrentProject(this.$route.params.programId);  
         }
         if (this.exportProjectStatus == 401 ) {        
-          this.$message({
+          MessageDialogService.showDialog({
           message: `Sorry. You need to be a Program Admin in target program to make this move.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         }); 
         this.SET_EXPORT_PROJECT_STATUS(0);
         }    
         if (this.exportProjectStatus == 406 ) {        
-          this.$message({
+          MessageDialogService.showDialog({
           message: `Sorry. This project already exists in target program.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         }); 
         this.SET_EXPORT_PROJECT_STATUS(0);
         }   
         if (this.exportProjectStatus == 404 ) {        
-          this.$message({
+          MessageDialogService.showDialog({
           message: `Sorry. Something went wrong.`,
-          type: "danger",
-          showClose: true,
+          type: "danger"
         }); 
         this.SET_EXPORT_PROJECT_STATUS(0);
         }              
@@ -325,27 +322,25 @@
     duplicateProjectStatus: {
       handler() {
         if (this.duplicateProjectStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Project duplicate successful.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_DUPLICATE_PROJECT_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);      
         }
         if (this.duplicateGroupStatus == 401 ) {        
-          this.$message({
+          MessageDialogService.showDialog({
           message: `Sorry. You need to be a Program Admin in target program to duplicate.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         }); 
         this.SET_DUPLICATE_PROJECT_STATUS(0);
         }
         if (this.duplicateGroupStatus == 404 ) {
-          this.$message({
+          MessageDialogService.showDialog({
           message: `Sorry.  Something went wrong.`,
-          type: "danger",
-          showClose: true,
+          type: "danger"
         }); 
         this.SET_DUPLICATE_PROJECT_STATUS(0);
         }

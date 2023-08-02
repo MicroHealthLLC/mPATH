@@ -557,22 +557,21 @@
       this.$confirm(`Are you sure you want to delete ${task.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.taskDeleted(task).then((value) => {
             if (value === 'Success') {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: `${task.text} was deleted successfully.`,
-                type: "success",
-                showClose: true,
+                
+                
               });
             }
             this.reRenderCalendar()
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled',
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: 'Delete canceled',
             showClose: true
           });          
         });

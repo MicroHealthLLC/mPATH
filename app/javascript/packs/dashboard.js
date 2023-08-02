@@ -14,6 +14,7 @@ import router               from 'routers/dashboard'
 import store                from './../store'
 import utils                from './../mixins/utils'
 import AuthorizationService from '../services/authorization_service'
+import MessageDialogService from '../services/message_dialog_service'
 import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
@@ -36,6 +37,8 @@ import VueDataTables        from 'vue-data-tables'
 Vue.use(vco)
 Vue.mixin(utils)
 Vue.use(AuthorizationService)
+console.log("MessageDialogService")
+Vue.use(MessageDialogService)
 Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)

@@ -219,6 +219,8 @@
   
 <script>
 import { mapMutations, mapGetters, mapActions } from "vuex"
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: 'SheetEffort',
   props: ['facility', 'from'],
@@ -600,18 +602,16 @@ export default {
         console.log('effortStatus')
         if (this.effortStatus == 200) {
           console.log('effort status OK')
-          this.$message({
-            message: `Task Effort successfully saved.`,
-            type: "success",
-            showClose: true,
-          });
+          MessageDialogService.showDialog({
+            message: `Task Effort successfully saved.`
+          })
           this.effortIds = [],
-            this.effortHours = [],
-            this.addedHrs = [];
+          this.effortHours = [],
+          this.addedHrs = [];
           this.editColValue = null;
           this.columnIndex = null;
           this.updatedEffort = null,
-            this.SET_EFFORT_STATUS(0);
+          this.SET_EFFORT_STATUS(0);
           this.SET_EFFORTS_STATUS(0)
           this.fetchCurrentProject(this.$route.params.programId)
           this.fetchEfforts(this.$route.params)

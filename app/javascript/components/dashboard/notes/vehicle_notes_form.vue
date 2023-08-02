@@ -140,7 +140,7 @@
           {
             confirmButtonText: "Delete",
             cancelButtonText: "Cancel",
-            type: "warning",
+            type: MessageDialogService.msgTypes.WARNING,
           }
         )
           .then(() => {
@@ -187,26 +187,25 @@
           {
             confirmButtonText: "Delete",
             cancelButtonText: "Cancel",
-            type: "warning",
+            type: MessageDialogService.msgTypes.WARNING,
           }
         )
           .then(() => {
             this.deleteVehicleNote({ id: this.vehicleNote.id, vehicleId: this.$route.params.vehicleId });
             console.log({ id: this.vehicleNote.id, ...this.$route.params })
-            this.$message({
-              type: "success",
+            MessageDialogService.showDialog({
+              
               message: "Note successfully deleted",
-              showClose: true,
+              
             });
              this.$router.push(
               `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/notes`
             );
           })
           .catch(() => {
-            this.$message({
-              type: "info",
-              message: "Delete canceled",
-              showClose: true,
+            MessageDialogService.showDialog({
+              type: MessageDialogService.msgTypes.INFO,              message: "Delete canceled",
+              
             });
           });      
       },
@@ -276,10 +275,10 @@
        vehicleNoteStatus: {
           handler() {
               if (this.vehicleNoteStatus == 200) {
-              this.$message({
+              MessageDialogService.showDialog({
                   message: `Note saved successfully.`,
-                  type: "success",
-                  showClose: true,
+                  
+                  
               });
               this.SET_VEHICLE_NOTE_STATUS(0);
               }       

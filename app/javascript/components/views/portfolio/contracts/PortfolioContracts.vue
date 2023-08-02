@@ -1243,10 +1243,10 @@ export default {
         this.isValidEmail = true
         return (true)
       }
-      this.$message({
+      MessageDialogService.showDialog({
         message: `Please enter a valid email address.  Example: "john@example.com"`,
-        type: "warning",
-        showClose: true,
+        type: MessageDialogService.msgTypes.WARNING,
+        
       });
       this.isValidEmail = false
       //  console.log( this.isValidEmail)
@@ -1262,10 +1262,9 @@ export default {
       } else {
         this.isValidWorkNum = false
           // console.log(this.isValidWorkNum )
-        this.$message({
+        MessageDialogService.showDialog({
           message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         });
       }  
     }
@@ -1279,10 +1278,10 @@ export default {
       return (true)    
     }
       //  console.log(this.isValidMobNum )
-    this.$message({
+    MessageDialogService.showDialog({
       message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
-      type: "warning",
-      showClose: true,
+      type: MessageDialogService.msgTypes.WARNING,
+      
     });
       this.isValidMobNum = false
       return (false)
@@ -1358,7 +1357,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.deleteContractPOC(rows.id);
@@ -1371,7 +1370,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.deleteContractProject(rows.id);
@@ -1489,10 +1488,10 @@ export default {
        console.log(row)
       if (row.id){
       if ((this.workNumberVal && this.workNumberVal.length !== 14) || (this.mobNumberVal && this.mobNumberVal.length !== 14)){
-         this.$message({
+         MessageDialogService.showDialog({
               message: `Please fix invalid field(s) before saving.`,
-              type: "warning",
-              showClose: true,
+              type: MessageDialogService.msgTypes.WARNING,
+              
             });
 
         } else {
@@ -1501,10 +1500,10 @@ export default {
            }
       }  else {
          if ((this.workNumberValNew && this.workNumberValNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
-         this.$message({
+         MessageDialogService.showDialog({
               message: `Please fix invalid field(s) before saving.`,
-              type: "warning",
-              showClose: true,
+              type: MessageDialogService.msgTypes.WARNING,
+              
             });
 
         } else {      
@@ -1811,10 +1810,10 @@ export default {
     contractProjectStatus: {
       handler() {
         if (this.contractProjectStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract Project saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.contractStartDate = null;
           this.contractEndDate = null;
@@ -1842,10 +1841,10 @@ export default {
     contractPOCsStatus: {
       handler() {
         if (this.contractPOCsStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `POC data saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_POCS_STATUS(0);
           this.fetchContractPOCs();

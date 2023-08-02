@@ -677,10 +677,10 @@ export default {
         .then((res) => {
           this.updateFacilityHash(updatedFacility);
           if (res.status === 200) {
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${res.data.facility.facilityName} was saved successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
         })

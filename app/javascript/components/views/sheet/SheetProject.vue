@@ -351,10 +351,10 @@ export default {
           },
         }).then((response) => {
           if (response.status === 200) {
-            this.$message({
+            MessageDialogService.showDialog({
               message: `Edits has been saved successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
             this.fetchCurrentProject(this.$route.params.programId)
             this.edit = true
@@ -385,10 +385,10 @@ export default {
         .then((res) => {
           this.updateFacilityHash(updatedFacility);
           if (res.status === 200) {
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${res.data.facility.facilityName} was saved successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
         })
