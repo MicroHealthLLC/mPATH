@@ -1,7 +1,6 @@
 <template>
   <div 
     v-loading="!contentLoaded"   
-    :load="log(DV_task.progress)"
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -71,6 +70,7 @@
           <button
             class="btn btn-sm sticky-btn btn-outline-secondary"
             @click.prevent="cancelSave"
+            :disabled="errorTrue"
             data-cy="task_close_btn"
           >
             Close
@@ -79,6 +79,15 @@
       
       </div>
 
+      <el-alert  
+       v-if="errorTrue"
+        type="warning"
+        class="py-1 ml-3 w_97"
+        show-icon >
+       <template slot="title">
+        <em> There was a problem saving.</em>  
+       </template>
+       </el-alert>
       <hr class="mx-4 mb-6 mt-2" />
 
       <div
@@ -1332,6 +1341,8 @@
             </paginate>
           </div>
         </div>
+
+       
         <!-- closing div for tab5 -->
       
     
@@ -1392,6 +1403,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       editTimeLive: "",
+      errorTrue: false,
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1452,6 +1464,7 @@ export default {
           closable: false,
           form_fields: ["Progress", "Updates"],
         },
+        
       ],
     };
   },
@@ -1519,7 +1532,7 @@ export default {
       }
     },
   log(e){
-      console.log(e)
+      // console.log(e)
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1917,6 +1930,7 @@ export default {
           },
         })
           .then((response) => {
+           
             // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
             var responseTask = humps.camelizeKeys(response.data.task);
@@ -1929,6 +1943,7 @@ export default {
                 type: "success",
                 showClose: true,
               });
+              this.errorTrue = false
             }
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
@@ -1953,7 +1968,10 @@ export default {
               );
           })
           .catch((err) => {
-            alert(err.response.data.error);
+           console.log(err.response.data.error);
+          if(err) {
+            this.errorTrue = true
+           }
           })
           .finally(() => {
             this.loading = false;
@@ -2662,6 +2680,9 @@ ul {
 .hover:hover {
   cursor: pointer;
   background-color: rgba(91, 192, 222, 0.3);
+}
+.w_97{
+  width: 97%;
 }
 input.file-link {
   outline: 0 none;
