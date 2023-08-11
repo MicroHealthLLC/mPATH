@@ -93,7 +93,15 @@
         </div>
       
       </div>
-
+      <el-alert  
+       v-if="errorTrue"
+        type="warning"
+        class="py-1 ml-3 w_97"
+        show-icon >
+       <template slot="title">
+        <em> There was a problem saving.</em>  
+       </template>
+       </el-alert>
       <hr class="mx-4 mb-6 mt-2" />
 
       <div
@@ -1411,6 +1419,7 @@ export default {
       relatedTasks: [],
       relatedRisks: [],
       editToggle: false,
+      errorTrue: false,
       _ismounted: false,
       showErrors: false,
       loading: true,
@@ -1964,6 +1973,9 @@ export default {
                 showClose: true,
               });
             }
+            if  (response.status !== 200) {
+              this.errorTrue = true
+            }
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
@@ -1991,7 +2003,11 @@ export default {
               } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);
           })
           .catch((err) => {
-            alert(err.response.data.error);
+            console.log(err.response.data.error);
+              if(err) {
+            this.errorTrue = true
+           }
+            // alert(err.response.data.error);
           })
           .finally(() => {
             this.loading = false;
@@ -2805,5 +2821,8 @@ a:hover {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 
+}
+.w_97{
+  width: 97%;
 }
 </style>
