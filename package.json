@@ -94,6 +94,9 @@
       "./node_modules/shakapacker/package/babel/preset.js"
     ]
   },
+  "resolutions": {
+    "semver": "^7.5.2"
+  },
   "browserslist": [
     "defaults"
   ],
