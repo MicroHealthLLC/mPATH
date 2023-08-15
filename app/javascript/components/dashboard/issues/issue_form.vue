@@ -91,6 +91,15 @@
           </button>
         </div>
     </div>
+        <el-alert  
+        v-if="errorTrue"
+        type="warning"
+        class="py-1 ml-3 w_97"
+        show-icon >
+       <template slot="title">
+        <em> There was a problem saving.</em>  
+       </template>
+       </el-alert>
     
       <hr class="mx-4 mb-6 mt-2" />
 
@@ -1346,6 +1355,7 @@ export default {
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
+      errorTrue: false,
       loading: true,
       movingSlot: "",
       currentTab: "tab1",
@@ -1897,6 +1907,9 @@ export default {
                 message: `${response.data.issue.title} was saved successfully.`                
               });
             }
+            if (response.status !== 200) {
+              this.errorTrue = true
+            }
             if (this.$route.path.includes("sheet"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/issues/${response.data.issue.id}`
@@ -1925,6 +1938,9 @@ export default {
           })
           .catch((err) => {
             console.log(err);
+            if(err) {
+            this.errorTrue = true
+           }
           })
           .finally(() => {
             this.loading = false;

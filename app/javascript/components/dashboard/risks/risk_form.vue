@@ -86,6 +86,15 @@
             </button>
           </div>
         </div>
+        <el-alert  
+       v-if="errorTrue"
+        type="warning"
+        class="py-1 ml-3 w_97"
+        show-icon >
+       <template slot="title">
+        <em> There was a problem saving.</em>  
+       </template>
+       </el-alert>
         <hr class="mx-4 mb-6 mt-2" />
         <div
           v-if="_isallowed('read')"
@@ -2230,6 +2239,7 @@ export default {
         subIssueIds: [],
         subRiskIds: [],
         checklists: [],
+        errorTrue: false,
         notes: [],
       };
     },
@@ -2757,6 +2767,9 @@ export default {
                 
               });
             }
+            if (response.status !== 200) {
+              this.errorTrue = true
+            }
             //Route to newly created risk form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
@@ -2786,6 +2799,9 @@ export default {
           })
           .catch((err) => {
             console.log(err);
+            if(err) {
+            this.errorTrue = true
+           }
           })
           .finally(() => {
             this.loading = false;

@@ -87,6 +87,15 @@
               </el-table-column>
               <el-table-column prop="last_name" sortable label="Last Name">
               </el-table-column>
+              <el-table-column label="Roles">
+             
+                <template slot-scope="scope">
+                <span v-if="projectUsers" >        
+                {{ [...new Set(projectUsers.data.filter(t => t.user_id === scope.row.id).map(t => t.role_name))].join(', ')}}          
+                </span>
+                </template>
+          
+              </el-table-column>
 
               <!--BEGIN Expandable Column Containing Priveleges Info -->
               <!-- END Expandable Column Containing Priveleges Info -->
@@ -1693,9 +1702,7 @@ export default {
     },
     openUserRoleDialog(index, rows) {
       this.projId = rows.id;
-      if (this.getRoles && this.getRoles.length <= 0) {
-        this.fetchRoles(this.$route.params.programId);
-      }
+    
     // console.log(this.projectUsers)
         //console.log(rows)
       this.openUserRoles = true;
@@ -1704,7 +1711,7 @@ export default {
       this.fetchVehicles(this.$route.params.programId);
     },
     closeUserRoles() {
-      this.openUserRoles = false;
+      this.openUserRoles = false;      
     },
     closeProjectRoles() {
       this.assignProle = false;
@@ -1808,8 +1815,11 @@ export default {
   },
   mounted() {
     if (this.programUsers.length <= 0) {
-      this.fetchProgramUsers(this.$route.params.programId);
+      this.fetchProgramUsers(this.$route.params.programId);     
     }
+    if (this.getRoles && this.getRoles.length <= 0) {
+        this.fetchRoles(this.$route.params.programId);
+      }
     this.fetchPortfolioUsers(this.$route.params.programId);
   },
   computed: {
@@ -2034,7 +2044,7 @@ export default {
         let data = [].concat
           .apply([], roleUsers)
           .filter((t) => {
-            if (this.projId) {
+            if (this.projId) {         
               return this.projId == t.user_id;
             } else return true;
           })
@@ -2187,7 +2197,15 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
   },
-  watch: {
+  watch: { 
+    openUserRoles:{
+      handler() {
+        if (this.openUserRoles == false) {
+          this.projId = null;
+          this.fetchRoles(this.$route.params.programId);
+        }
+      }
+    },
     newUserStatus: {
       handler() {
         if (this.newUserStatus == 200) {
