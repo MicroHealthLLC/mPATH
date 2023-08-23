@@ -112,6 +112,9 @@ import { API_BASE_PATH } from '../../../mixins/utils'
             http.put(`${API_BASE_PATH}/programs/${this.$route.params.projectId}/projects/${this.facility.id}.json`, data)
               .then((res) => {
                 this.$emit('facility-update', res.data.facility);
+                MessageDialogService.showDialog({
+                  response: res
+                })
               })
               .catch((err) => {
                 console.error(err)
@@ -121,6 +124,9 @@ import { API_BASE_PATH } from '../../../mixins/utils'
             http.post(`${API_BASE_PATH}/programs/${this.$route.params.projectId}/projects.json`, data)
               .then((res) => {
                 this.$emit('facility-created', res.data.facility);
+                MessageDialogService.showDialog({
+                  response: res
+                })
               })
               .catch((err) => {
                 console.error(err)

@@ -314,6 +314,9 @@
           .then((res) => {
             this.taskUpdated({facilityId: this.AC_task.facilityId, projectId: this.AC_task.projectId, cb})
             this.onCloseTask()
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

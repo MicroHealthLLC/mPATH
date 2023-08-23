@@ -369,6 +369,9 @@ export default {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
+            MessageDialogService.showDialog({
+              response: res
+            })
           }).catch((err) => console.log(err))
     },
     exportToPdf() {

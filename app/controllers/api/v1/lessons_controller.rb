@@ -172,9 +172,9 @@ class Api::V1::LessonsController < AuthenticatedController
     # authorize!(:create, Lesson.new)
     lesson = Lesson.new.create_or_update_lesson(params, current_user)
     if lesson.errors.any?
-      render json: {errors: lesson.errors.full_messages.join(" ")}, status: 406
+      render json: {errors: lesson.errors.full_messages.join(" "), msg: lesson.errors.full_messages.join(" ")}, status: 406
     else
-      render json: {lesson: lesson.to_json}, status: 200
+      render json: {lesson: lesson.to_json, msg: 'Error crating lesson'}, status: 200
     end
   end
 
@@ -185,9 +185,9 @@ class Api::V1::LessonsController < AuthenticatedController
     lesson = lesson.create_or_update_lesson(params, current_user)
 
     if lesson.errors.any?
-      render json: {errors: lesson.errors.full_messages.join(" ")}, status: 402
+      render json: {errors: lesson.errors.full_messages.join(" "), msg: lesson.errors.full_messages.join(" ")}, status: 402
     else
-      render json: {lesson: lesson.to_json}, status: 200
+      render json: {lesson: lesson.to_json, msg: "Error updating lesson"}, status: 200
     end
   end
 
@@ -203,9 +203,9 @@ class Api::V1::LessonsController < AuthenticatedController
     lesson = Lesson.find(params[:id])
     # authorize!(:destroy, lesson)
     if lesson.destroy
-      render json: {lesson: lesson.to_json}, status: 200
+      render json: {lesson: lesson.to_json, msg: "Lesson destroyed successfully"}, status: 200
     else
-      render json: {lesson: lesson.to_json}, status: 402
+      render json: {lesson: lesson.to_json, msg: 'Error destroying lesson'}, status: 402
     end
   end
 

@@ -678,9 +678,7 @@ export default {
           this.updateFacilityHash(updatedFacility);
           if (res.status === 200) {
             MessageDialogService.showDialog({
-              message: `${res.data.facility.facilityName} was saved successfully.`,
-              
-              
+              response: res
             });
           }
         })

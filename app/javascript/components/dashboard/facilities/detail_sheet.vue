@@ -70,10 +70,13 @@
       taskDeleted(task) {
         http
           .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.DV_facility.id}/tasks/${task.id}.json`)
-          .then((res) => {
+          .then((res) => {            
             let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
             this.$emit('refresh-facility')
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

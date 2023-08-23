@@ -991,13 +991,9 @@ export default {
         )
         .then((res) => {
           this.updateFacilityHash(updatedFacility);
-          if (res.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${res.data.facility.facilityName} was saved successfully.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: res              
+          });
         })
         .catch((err) => {
           console.error(err);

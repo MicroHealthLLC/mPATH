@@ -7,18 +7,25 @@ const MessageDialogService = {
   },
   showDialog: (data) => {
     let msg = '';
-    let msg_type = MessageDialogService.msgTypes.SUCCESS;
+    let msgType = MessageDialogService.msgTypes.SUCCESS;
     let showClose = true
+    let response = ''
 
     if(data){
       msg = data['message']
       msgType = data['type']
       showClose = data['showClose']
+      response = data['response']
     }
-
+    // if (response.status === 200) {
+    //   msgType = MessageDialogService.msgTypes.SUCCESS;
+    // }
+    // if (response.status !== 200) {
+    //   this.errorTrue = true
+    // }
     Vue.prototype.$message({
       message: msg,
-      type: msg_type,
+      type: msgType,
       showClose: showClose,
     });
   }

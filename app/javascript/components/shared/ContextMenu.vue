@@ -310,14 +310,9 @@ export default {
               facilityProjectId
             );
             }           
-           
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${task.text} was moved successfully.`,
-                
-                
-              });
-            }
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             MessageDialogService.showDialog({
@@ -410,13 +405,9 @@ export default {
               this.task.facilityProjectId
              );
             }      
-          if (response.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${this.task.text} was duplicated successfully.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response
+          });
         })
         .catch((err) => {
           MessageDialogService.showDialog({
@@ -533,13 +524,9 @@ export default {
              );
            });
          }
-          if (response.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${this.task.text} was duplicated successfully to selected projects.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response
+          });
         })
         .catch((err) => {
           MessageDialogService.showDialog({

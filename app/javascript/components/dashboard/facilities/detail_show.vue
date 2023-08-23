@@ -74,6 +74,9 @@
             let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
             this.$emit('refresh-facility')
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

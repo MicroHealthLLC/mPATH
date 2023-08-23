@@ -113,6 +113,9 @@
             .then((res) => {
               this.loading = false
               this.$emit('note-deleted', this.note)
+              MessageDialogService.showDialog({
+                response: res
+              })
             })
             .catch((err) => {
               this.loading = false

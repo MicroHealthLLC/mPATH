@@ -1894,7 +1894,7 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue);
             this.loadIssue(responseIssue);
-          if (this.$route.params.contractId){
+            if (this.$route.params.contractId){
                this.updateContractIssues({ issue: responseIssue });
             } else if (this.$route.params.vehicleId){
                this.updateVehicleIssues({ issue: responseIssue });
@@ -1902,11 +1902,6 @@ export default {
              this.updateIssuesHash({ issue: responseIssue });
             }  
            
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${response.data.issue.title} was saved successfully.`                
-              });
-            }
             if (response.status !== 200) {
               this.errorTrue = true
             }
@@ -1935,6 +1930,9 @@ export default {
             } else this.$router.push(
               `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/issue/${response.data.issue.id}`
             );
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             console.log(err);

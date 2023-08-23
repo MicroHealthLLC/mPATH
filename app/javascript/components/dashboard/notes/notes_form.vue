@@ -240,18 +240,14 @@
             var responseNote = humps.camelizeKeys(note)
             this.loadNote(responseNote)   
             this.updateNotesHash({ note: responseNote, facilityId: this.$route.params.projectId})
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${note.body} was saved successfully.`,
-                type: "success",
-                
-              });
-            }
             if (this.$route.path.includes("sheet")) {
               this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${note.id}`);
             } else if (this.$route.path.includes("map")) {
               this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${note.id}`);           
             }
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             console.log(err)

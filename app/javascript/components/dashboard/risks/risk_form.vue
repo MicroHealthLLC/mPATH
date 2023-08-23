@@ -2759,14 +2759,6 @@ export default {
             } else {
               this.updateRisksHash({ risk: responseRisk });
             }  
-          
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${response.data.risk.text} was saved successfully.`,
-                
-                
-              });
-            }
             if (response.status !== 200) {
               this.errorTrue = true
             }
@@ -2796,6 +2788,9 @@ export default {
               } else this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             console.log(err);

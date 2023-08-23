@@ -1966,13 +1966,6 @@ export default {
             if (this.$route.params.projectId) {
                this.updateTasksHash({ task: responseTask });
             }           
-            if  (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${response.data.task.text} was saved successfully.`,
-                
-                
-              });
-            }
             if  (response.status !== 200) {
               this.errorTrue = true
             }
@@ -2001,6 +1994,9 @@ export default {
                 `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
               );
               } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             console.log(err.response.data.error);

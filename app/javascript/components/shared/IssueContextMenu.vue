@@ -309,20 +309,11 @@ export default {
               facilityProjectId
              );
             }            
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${issue.title} was moved successfully.`,
-                
-                
-              });
-            }
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
-            MessageDialogService.showDialog({
-              message: `Unable to move ${issue.title}. Please try again.`,
-              type: "error",
-              
-            });
             // var errors = err.response.data.errors
             console.log(err);
           })
@@ -396,21 +387,11 @@ export default {
             this.issue.facilityProjectId
             );
           }
-
-          if (response.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${this.issue.title} was duplicated successfully.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response
+          });
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${this.issue.title}. Please try again.`,
-            type: "error",
-            
-          });
           // var errors = err.response.data.errors
           console.log(err);
         })

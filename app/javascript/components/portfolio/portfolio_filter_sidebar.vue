@@ -1146,6 +1146,9 @@ export default {
       .then((response) => {
         var res = response.data
         this.favoriteFilterOptions = res
+        MessageDialogService.showDialog({
+          response: response
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
@@ -1387,7 +1390,7 @@ export default {
         this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
         MessageDialogService.showDialog({
-          message: `Favorite Filter is saved successfully.`
+          response: response
         });
       })
       .catch((err) => {
@@ -1534,9 +1537,7 @@ export default {
           //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
           //Vue.set(this.favoriteFilterOptions, i, null)
           MessageDialogService.showDialog({
-            message: `Favorite Filter is removed successfully.`,
-            
-            
+            response: response
           });
         })
         .catch((err) => {

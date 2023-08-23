@@ -50,9 +50,9 @@ class Api::V1::TasksController < AuthenticatedController
     @task = Task.new.create_or_update_task(params, current_user)
 
     if @task.errors.any?
-      render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: {task: @task.to_json, msg: @task.errors.full_messages.join(", "), errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {task: @task.to_json}
+      render json: {task: @task.to_json, msg: 'Task created successfully!'}
     end
     
   end
@@ -80,9 +80,9 @@ class Api::V1::TasksController < AuthenticatedController
       response = @task.to_json
     end
     if @task.errors.any?
-      render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: {task: @task.to_json, msg: @task.errors.full_messages.join(", "), errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {task: response}
+      render json: {task: response, msg: "Task updated successfully"}
     end
   end
 
@@ -90,7 +90,7 @@ class Api::V1::TasksController < AuthenticatedController
     duplicate_task = @task.amoeba_dup
     duplicate_task.save
     # @task.create_or_update_task(params, current_user)
-    render json: {task: duplicate_task.reload.to_json}
+    render json: {task: duplicate_task.reload.to_json, msg: "Duplicate task craeted successfully"}
   end
 
   def create_bulk_duplicate
@@ -121,7 +121,7 @@ class Api::V1::TasksController < AuthenticatedController
     end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
-    render json: {tasks: all_objs.map(&:to_json)}
+    render json: {tasks: all_objs.map(&:to_json), msg: 'Bulk duplicate task created successfully'}
   end
 
   def show
@@ -131,12 +131,15 @@ class Api::V1::TasksController < AuthenticatedController
 
   def destroy
     @task.destroy!
-    render json: {task: @task.to_json}, status: 200
+    render json: {task: @task.to_json, msg: "Task destroy successfully"}, status: 200
   end
 
   def batch_update
-    Task.update(params[:tasks].keys, params[:tasks].values)
-    render json: @owner.as_json
+    if Task.update(params[:tasks].keys, params[:tasks].values)
+      render json: {task: @owner.as_json, msg: 'Task batch update successfully'}
+    else
+      render json: {msg: 'Error risk batch update'}
+    end
   end
 
   private

@@ -272,6 +272,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
 import FormTabs from "../../shared/FormTabs.vue";
 import { API_BASE_PATH } from "./../../../mixins/utils";
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: "SheetProject",
@@ -384,13 +385,9 @@ export default {
         )
         .then((res) => {
           this.updateFacilityHash(updatedFacility);
-          if (res.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${res.data.facility.facilityName} was saved successfully.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: res              
+          });
         })
         .catch((err) => {
           console.error(err);
