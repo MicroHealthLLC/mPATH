@@ -438,7 +438,7 @@
 
             })
             .catch((err) => {
-              alert(err.response.data.errors)
+              console.log(err)
             })
         })
       },

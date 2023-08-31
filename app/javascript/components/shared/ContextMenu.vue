@@ -315,13 +315,7 @@ export default {
             });
           })
           .catch((err) => {
-            MessageDialogService.showDialog({
-              message: `Unable to move ${task.text}. Please try again.`,
-              type: "error",
-              
-            });
-            // var errors = err.response.data.errors
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             this.loading = false;
@@ -410,13 +404,7 @@ export default {
           });
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${this.task.text}. Please try again.`,
-            type: "error",
-            
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false
@@ -529,13 +517,7 @@ export default {
           });
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${this.task.text} to selected projects. Please try again.`,
-            type: "error",
-            
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false

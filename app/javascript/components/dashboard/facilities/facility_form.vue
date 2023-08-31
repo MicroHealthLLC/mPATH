@@ -70,8 +70,9 @@
 <script>
 import { API_BASE_PATH } from '../../../mixins/utils'
   import http from './../../../common/http'
+  import MessageDialogService from "../../../services/message_dialog_service";
 
-  export default {
+export default {
     name: 'Facilitiesform',
     props: ['facility', 'regions'],
 

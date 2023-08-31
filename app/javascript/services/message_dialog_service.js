@@ -1,3 +1,5 @@
+// Status code: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#information_responses
+
 const MessageDialogService = {
   msgTypes: {
     SUCCESS: 'success',
@@ -17,12 +19,19 @@ const MessageDialogService = {
       showClose = data['showClose']
       response = data['response']
     }
-    // if (response.status === 200) {
-    //   msgType = MessageDialogService.msgTypes.SUCCESS;
-    // }
-    // if (response.status !== 200) {
-    //   this.errorTrue = true
-    // }
+    if(response){
+      msg = response.data.msg
+      if(response.status > 99 && response.status < 200){
+        msgType = MessageDialogService.msgTypes.INFO;
+      }
+      if (response.status > 199 && response.status < 300) {
+        msgType = MessageDialogService.msgTypes.SUCCESS;
+      }
+      if(response.status > 399 && response.status < 500){
+        msgType = MessageDialogService.msgTypes.ERROR;
+      }
+    }
+
     Vue.prototype.$message({
       message: msg,
       type: msgType,

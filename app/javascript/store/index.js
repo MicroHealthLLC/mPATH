@@ -3971,7 +3971,7 @@ export default new Vuex.Store({
     //         resolve("Success");
     //       })
     //       .catch((err) => {
-    //         console.log(err);
+    //         console.log("Error",err);
     //         reject();
     //       });
     //   });
@@ -4008,7 +4008,7 @@ export default new Vuex.Store({
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4041,7 +4041,7 @@ export default new Vuex.Store({
             resolve();
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4077,7 +4077,7 @@ export default new Vuex.Store({
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4113,7 +4113,7 @@ export default new Vuex.Store({
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });

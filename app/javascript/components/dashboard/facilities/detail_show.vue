@@ -29,8 +29,9 @@
   import TaskForm from './../tasks/task_form'
   import {mapGetters, mapMutations} from 'vuex'
   import {API_BASE_PATH} from './../../../mixins/utils'
+  import MessageDialogService from "../../../services/message_dialog_service";
 
-  export default {
+export default {
     name: 'DetailShow',
     props: ['facility', 'from'],
     components: {

@@ -302,22 +302,12 @@ export default {
               facilityProjectId
              );
             }           
-            if (response.status === 200) {
-              MessageDialogService.showDialog({
-                message: `${risk.title} was moved successfully.`,
-                
-                
-              });
-            }
+            MessageDialogService.showDialog({
+              response: response              
+            });
           })
           .catch((err) => {
-            MessageDialogService.showDialog({
-              message: `Unable to move ${risk.title}. Please try again.`,
-              type: "error",
-              
-            });
-            // var errors = err.response.data.errors
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             this.loading = false;
@@ -388,22 +378,12 @@ export default {
             this.risk.facilityProjectId
           );
             }     
-            if (response.status === 200) {
             MessageDialogService.showDialog({
-              message: `${responseRisk.text} was duplicated successfully.`,
-              
-              
+              response: response              
             });
-          }
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${responseRisk.text}. Please try again.`,
-            type: "error",
-            
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false
@@ -504,22 +484,12 @@ export default {
             );
           });
          }
-         if (response.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${this.risk.text} was duplicated successfully to selected projects.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response              
+          });
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${this.risk.text} to selected projects. Please try again.`,
-            type: "error",
-            
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false

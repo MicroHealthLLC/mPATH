@@ -89,7 +89,9 @@
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'NotesSheetsIndex',
     components: {
       NotesForm,

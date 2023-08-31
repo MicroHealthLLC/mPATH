@@ -97,6 +97,8 @@ import ContextMenu from "../../shared/ContextMenu";
 import moment from "moment";
 Vue.prototype.moment = moment;
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "TaskSheets",
   components: {

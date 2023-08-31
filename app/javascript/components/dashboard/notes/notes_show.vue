@@ -55,7 +55,9 @@
   import NotesForm from './notes_form'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     props: ['facility', 'note', 'from'],
     components: {
       NotesForm

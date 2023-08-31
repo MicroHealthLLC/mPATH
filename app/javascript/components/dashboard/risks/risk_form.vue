@@ -86,15 +86,7 @@
             </button>
           </div>
         </div>
-        <el-alert  
-       v-if="errorTrue"
-        type="warning"
-        class="py-1 ml-3 w_97"
-        show-icon >
-       <template slot="title">
-        <em> There was a problem saving.</em>  
-       </template>
-       </el-alert>
+
         <hr class="mx-4 mb-6 mt-2" />
         <div
           v-if="_isallowed('read')"
@@ -2073,6 +2065,8 @@ import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
 import { API_BASE_PATH } from '../../../mixins/utils';
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "RiskForm",
   props: ["facility", "risk", "facilities", "fixedStage", "contract", "vehicle"],
@@ -2793,10 +2787,8 @@ export default {
             });
           })
           .catch((err) => {
-            console.log(err);
-            if(err) {
+            console.log("Error",err);
             this.errorTrue = true
-           }
           })
           .finally(() => {
             this.loading = false;

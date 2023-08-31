@@ -511,8 +511,9 @@
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
   import {API_BASE_PATH} from './../../../mixins/utils'
+  import MessageDialogService from "../../../services/message_dialog_service";
 
-  export default {
+export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from', 'contract', 'vehicle'],
     components: {

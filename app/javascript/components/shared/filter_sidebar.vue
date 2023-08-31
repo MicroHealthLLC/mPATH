@@ -1024,7 +1024,6 @@ export default {
         this.favoriteFilterOptions = res
       })
       .catch((err) => {
-        // var errors = err.response.data.errors
         console.log(err)
       })
       .finally(() => {
@@ -1269,10 +1268,6 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        MessageDialogService.showDialog({
-          message: err.response.data.error ,
-          type: "error"
-        });
       })
       .finally(() => {
         // this.loading = false
@@ -1396,13 +1391,6 @@ export default {
         .catch((err) => {
           // var errors = err.response.data.errors
           console.log(err)
-          if(err.response.data.error){
-            MessageDialogService.showDialog({
-              message: err.response.data.error,
-              type: "error",
-              
-            });
-          }
 
         })
         .finally(() => {

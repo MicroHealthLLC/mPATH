@@ -51,9 +51,9 @@ class Api::V1::IssuesController < AuthenticatedController
   def create
     @issue = Issue.new.create_or_update_issue(params, current_user)
     if @issue.errors.any?
-      render json: {errors: @issue.errors.full_messages.join(" "), msg: @issue.errors.full_messages.join(" ")}, status: 406
+      render json: {errors:@issue.reload.to_json, msg: @issue.errors.full_messages.join(" ")}, status: 406
     else
-      render json: {issue: @issue.reload.to_json, msg: 'Error crating issue'}, status: 200
+      render json: {issue: @issue.reload.to_json, msg: 'Issue created successfully.'}, status: 200
     end
   end
 
@@ -69,15 +69,18 @@ class Api::V1::IssuesController < AuthenticatedController
         end
       end
     end
-    @issue.update(i_params)
-    @issue.assign_users(params)
-    @issue.add_link_attachment(params)
-    
-    if params[:source] == "portfolio_viewer"
-      render json: {issue: @issue.reload.portfolio_json, msg: 'Issue updated successfully.'}
+    if @issue.update(i_params)
+      @issue.assign_users(params)
+      @issue.add_link_attachment(params)
+      if params[:source] == "portfolio_viewer"
+        render json: {issue: @issue.reload.portfolio_json, msg: 'Issue updated successfully.'}
+      else
+        render json: {issue:  @issue.reload.to_json, msg: 'Issue updated successfully.'}
+      end 
     else
-      render json: {issue:  @issue.reload.to_json, msg: 'Error updating issue.'}
-    end   
+      render json: {issue:  @issue.reload.to_json, msg: @issue.errors.full_messages.join(" ,")}, status: :unprocessable_entity
+    end
+  
   end
 
   def create_duplicate
@@ -115,7 +118,7 @@ class Api::V1::IssuesController < AuthenticatedController
     end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
-    render json: {issues: all_objs.map(&:to_json), , msg: 'Bulk Duplicate issues created successfully.'}
+    render json: {issues: all_objs.map(&:to_json), msg: 'Bulk Duplicate issues created successfully.'}
   end
 
   def show
@@ -136,8 +139,7 @@ class Api::V1::IssuesController < AuthenticatedController
       render json: {msg: "Issue destroyed successfully"}, status: 200
 
     else
-      render json: {msg: "Issue destroyed successfully"}, status: 200
-
+      render json: {msg: "Error updating batch issues!"}, status: :unprocessable_entity
     end
     render json: @facility_project.as_json
   end

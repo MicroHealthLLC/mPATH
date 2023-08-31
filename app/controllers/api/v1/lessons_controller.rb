@@ -174,7 +174,7 @@ class Api::V1::LessonsController < AuthenticatedController
     if lesson.errors.any?
       render json: {errors: lesson.errors.full_messages.join(" "), msg: lesson.errors.full_messages.join(" ")}, status: 406
     else
-      render json: {lesson: lesson.to_json, msg: 'Error crating lesson'}, status: 200
+      render json: {lesson: lesson.to_json, msg: 'Lesson created successfully'}, status: 200
     end
   end
 

@@ -85,7 +85,9 @@
     import {mapGetters, mapMutations, mapActions} from 'vuex'
     import AttachmentInput from './../../shared/attachment_input'
   
-    export default {
+    import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
       name: 'VehicleNotesForm',
       props: ['title', 'from', 'vehicle'],    
       components: {

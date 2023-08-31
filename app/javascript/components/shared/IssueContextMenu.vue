@@ -315,7 +315,7 @@ export default {
           })
           .catch((err) => {
             // var errors = err.response.data.errors
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             this.loading = false;
@@ -393,7 +393,7 @@ export default {
         })
         .catch((err) => {
           // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false
@@ -497,22 +497,12 @@ export default {
             );
           });
          }
-         if (response.status === 200) {
-            MessageDialogService.showDialog({
-              message: `${this.issue.title} was duplicated successfully to selected projects.`,
-              
-              
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response              
+          });
         })
         .catch((err) => {
-          MessageDialogService.showDialog({
-            message: `Unable to duplicate ${this.issue.title} to selected projects. Please try again.`,
-            type: "error",
-            
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false

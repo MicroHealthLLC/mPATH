@@ -288,7 +288,9 @@
   const moment = extendMoment(Moment)
   library.add(faFilePdf)
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'RiskIndex',
     props: ['facility', 'from'],
     components: {

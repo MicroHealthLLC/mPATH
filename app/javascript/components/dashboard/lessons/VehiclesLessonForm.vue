@@ -796,6 +796,8 @@ import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
 import AttachmentInput from "./../../shared/attachment_input.vue";
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "VehiclesLessonForm",
   props: ["vehicle"],

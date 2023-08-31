@@ -112,7 +112,9 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import ContextMenu from "../../shared/ContextMenu"
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'TaskShow',
     components: {
       ContextMenu

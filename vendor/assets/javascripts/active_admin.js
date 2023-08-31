@@ -1928,7 +1928,7 @@ jQuery(function($) {
               let blob = await $.directFileUpload(file);
               if (!(blob instanceof Error)) file_blobs.push(blob);
             } catch (err) {
-              console.log(err);
+              console.log("Error",err);
             }
           }
           $(uploadfile_text).val(JSON.stringify(file_blobs.map(f => f.id)));
@@ -2443,7 +2443,7 @@ jQuery(function($) {
           let blob = await $.directFileUpload(file);
           if (!(blob instanceof Error)) $.Vue_uploadedTaskFiles.addFile({...blob, _new: true});
         } catch (err) {
-          console.log(err);
+          console.log("Error",err);
         }
       }
     });

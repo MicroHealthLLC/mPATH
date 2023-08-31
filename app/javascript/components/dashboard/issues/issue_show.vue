@@ -130,7 +130,9 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import IssueContextMenu from "../../shared/IssueContextMenu"
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'IssueShow',
     components: {
       IssueContextMenu

@@ -48,7 +48,7 @@ class Api::V1::NotesController < AuthenticatedController
     @note = @owner.notes.new(note_params)
     @note.user = current_user
     if @note.save
-      render json: {note: @note.to_json, msg: "Note created successfully!!!" }, status: 200
+      render json: {note: @note.to_json, msg: "Note created successfully." }, status: 200
     else
       render json: {errors: @note.errors.full_messages, msg: @note.errors.full_messages}, status: 406
     end
@@ -57,7 +57,7 @@ class Api::V1::NotesController < AuthenticatedController
   def update
     destroy_files_first if destroy_file_ids.present?
     if @note.update(note_params.merge({noteable: @owner}))
-      render json: {note: @note.to_json, msg: "Note updated successfully!!!" }, status: 200
+      render json: {note: @note.to_json, msg: "Note updated successfully." }, status: 200
     else
       render json: {errors: @note.errors.full_messages, msg: "Error updating Note."}, status: 406
     end
@@ -65,7 +65,7 @@ class Api::V1::NotesController < AuthenticatedController
 
   def destroy
     if @note.destroy
-      render json: {note: @note.to_json, msg: "Note destroyed successfully!!!"}, status: 200
+      render json: {note: @note.to_json, msg: "Note destroyed successfully."}, status: 200
     else
       render json: {errors: @note.errors.full_messages, msg: "Error destroying notes"}, status: 406
     end

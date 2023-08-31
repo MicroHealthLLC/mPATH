@@ -86,7 +86,9 @@
   import {SweetModal} from 'sweet-modal-vue'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     props: ['facility', 'note', 'from', "contract", "contractNote", 'vehicle', 'vehicleNote'],
     components: {
       NotesForm,

@@ -78,7 +78,9 @@
   import moment from 'moment'
   Vue.prototype.moment = moment
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'IssueSheets',
     components: {
       IssueForm,

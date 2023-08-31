@@ -388,7 +388,9 @@
 
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
-  export default {
+  import MessageDialogService from "../../../../services/message_dialog_service";
+
+export default {
     name: 'RiskCalendar',
     props:
       {

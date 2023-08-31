@@ -93,15 +93,7 @@
         </div>
       
       </div>
-      <el-alert  
-       v-if="errorTrue"
-        type="warning"
-        class="py-1 ml-3 w_97"
-        show-icon >
-       <template slot="title">
-        <em> There was a problem saving.</em>  
-       </template>
-       </el-alert>
+
       <hr class="mx-4 mb-6 mt-2" />
 
       <div
@@ -1390,6 +1382,8 @@ import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
 import { API_BASE_PATH } from '../../../mixins/utils';
+import MessageDialogService from "../../../services/message_dialog_service";
+
 const moment = extendMoment(Moment);
 
 export default {
@@ -1994,16 +1988,15 @@ export default {
                 `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
               );
               } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);
+            
             MessageDialogService.showDialog({
               response: response
             });
+
           })
           .catch((err) => {
-            console.log(err.response.data.error);
-              if(err) {
+            console.log("Error", err);
             this.errorTrue = true
-           }
-            // alert(err.response.data.error);
           })
           .finally(() => {
             this.loading = false;

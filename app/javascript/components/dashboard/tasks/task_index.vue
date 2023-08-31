@@ -223,6 +223,8 @@ import * as Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: 'TasksIndex',
   components: {

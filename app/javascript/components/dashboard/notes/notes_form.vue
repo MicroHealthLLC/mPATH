@@ -103,7 +103,9 @@
   import AttachmentInput from './../../shared/attachment_input'
   import { API_BASE_PATH } from '../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     props: ['facility', 'note', 'title', 'from'],
     components: {
       AttachmentInput

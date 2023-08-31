@@ -142,7 +142,7 @@ class Api::V1::RisksController < AuthenticatedController
     if Risk.update(params[:risks].keys, params[:risks].values)
       render json: {facility_project: @facility_project.as_json, msg: "Risk batch update successfully"}
     else
-      render json: {msg: "Error risk batch update"}
+      render json: {msg: "Error risk batch update"}, status: :unprocessable_entity
     end
   end
 

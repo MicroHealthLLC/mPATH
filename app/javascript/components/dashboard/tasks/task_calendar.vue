@@ -396,7 +396,9 @@
  library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck, faTrashAlt)
  Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'TaskCalendar',
     props:{        
       facility: Object, 

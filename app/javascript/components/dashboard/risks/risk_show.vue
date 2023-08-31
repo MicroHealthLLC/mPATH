@@ -121,7 +121,9 @@
   import RiskContextMenu from "../../shared/RiskContextMenu"
 
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'RiskShow',
     components: {
       RiskContextMenu

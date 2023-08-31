@@ -441,7 +441,9 @@
 
 
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'FacilitySheets',
     components: {
       DetailSheet,
