@@ -64,7 +64,9 @@
   import NotesForm from './notes_form'
   import NotesShow from './notes_show'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'NotesIndex',
     components: {
       NotesForm,

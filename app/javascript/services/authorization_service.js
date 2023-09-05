@@ -60,7 +60,7 @@ const AuthorizationService = {
           res.data.program_settings_privileges_roles;
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {});
   },

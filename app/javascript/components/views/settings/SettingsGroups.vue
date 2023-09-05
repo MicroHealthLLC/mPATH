@@ -672,7 +672,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.removeOrDeleteGroup({ ...group });
@@ -684,7 +684,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.removeOrDeleteGroup({ ...group });
@@ -925,10 +925,10 @@ export default {
     groupStatus: {
       handler() {
         if (this.groupStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);

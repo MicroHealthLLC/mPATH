@@ -1472,7 +1472,7 @@ export default {
       this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.taskDeleted(this.DV_task);
         this.cancelSave();
@@ -1539,7 +1539,7 @@ export default {
       this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         if (file.uri || file.link) {
           let index = this.DV_task.task_files.findIndex(
@@ -1566,24 +1566,24 @@ export default {
         return
       }      
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
-         this.$message({
+         MessageDialogService.showDialog({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
-            type: "warning",
-            showClose: true,
+            type: MessageDialogService.msgTypes.WARNING,
+            
           });      
         return
       } 
       if (this.DV_task.watched) {
-         this.$message({
+         MessageDialogService.showDialog({
             message: `${this.DV_task.text} has been removed from On Watch status.`,
-            type: "warning",
-            showClose: true,
+            type: MessageDialogService.msgTypes.WARNING,
+            
           });
       } else {
-         this.$message({
+         MessageDialogService.showDialog({
             message: `${this.DV_task.text} successfully placed On Watch status.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
       }
       this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
@@ -1832,10 +1832,10 @@ export default {
 
           
             if (response.status === 200) {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: `${response.data.task.text} was saved successfully.`,
-                type: "success",
-                showClose: true,
+                
+                
               });
             }
             //Route to newly created task form page
@@ -1884,7 +1884,7 @@ export default {
       this.$confirm(`Are you sure you want to delete note?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         let i = note.id
           ? this.DV_task.notes.findIndex((n) => n.id === note.id)
@@ -1907,7 +1907,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this Program list item?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         let i = progress_list.id
           ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
@@ -1920,7 +1920,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         let i = check.id
           ? this.DV_task.checklists.findIndex((c) => c.id === check.id)
@@ -2004,7 +2004,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
@@ -2019,7 +2019,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
@@ -2034,7 +2034,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
@@ -2175,7 +2175,7 @@ export default {
     //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
     //       this.$alert(`${this.DV_task.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_task.text} Due Date Warning`, {
     //       confirmButtonText: 'Ok',
-    //       type: 'warning'
+    //       type: MessageDialogService.msgTypes.WARNING
     //     });
     //     }
     //   }

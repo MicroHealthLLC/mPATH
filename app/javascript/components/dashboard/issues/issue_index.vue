@@ -253,6 +253,7 @@ import * as Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
 import {API_BASE_PATH} from './../../../mixins/utils'
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: 'IssueIndex',
@@ -369,6 +370,9 @@ export default {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
+            MessageDialogService.showDialog({
+              response: res
+            })
           }).catch((err) => console.log(err))
     },
     exportToPdf() {

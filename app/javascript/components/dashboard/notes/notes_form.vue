@@ -103,7 +103,9 @@
   import AttachmentInput from './../../shared/attachment_input'
   import { API_BASE_PATH } from '../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     props: ['facility', 'note', 'title', 'from'],
     components: {
       AttachmentInput
@@ -183,7 +185,7 @@
         this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           if (file.uri) {
             var index = this.DV_note.noteFiles.findIndex(f => f.guid === file.guid)
@@ -240,18 +242,14 @@
             var responseNote = humps.camelizeKeys(note)
             this.loadNote(responseNote)   
             this.updateNotesHash({ note: responseNote, facilityId: this.$route.params.projectId})
-            if (response.status === 200) {
-              this.$message({
-                message: `${note.body} was saved successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
             if (this.$route.path.includes("sheet")) {
               this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${note.id}`);
             } else if (this.$route.path.includes("map")) {
               this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${note.id}`);           
             }
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
             console.log(err)
@@ -265,7 +263,7 @@
         this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           // TODO: this is sending facilityProjectId in facilityId parameter. So now we will process with note id
           this.noteDeleted({note: this.DV_note, facilityId: this.$route.params.projectId, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })

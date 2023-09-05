@@ -1338,10 +1338,10 @@ export default {
     newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `New role successfully added to your program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });         
           this.SET_NEW_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)   
@@ -1352,10 +1352,10 @@ export default {
     updatedContractRoleStatus: {
       handler() {
         if (this.updatedContractRoleStatus == 200) {
-        this.$message({
+        MessageDialogService.showDialog({
             message: `Role successfully updated.`,
-            type: "success",
-            showClose: true,
+            
+            
           }); 
           console.log("updatedRole in contracts Tab")
           this.isEditting = false;

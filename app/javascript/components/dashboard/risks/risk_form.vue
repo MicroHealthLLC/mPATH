@@ -86,15 +86,7 @@
             </button>
           </div>
         </div>
-        <el-alert  
-       v-if="errorTrue"
-        type="warning"
-        class="py-1 ml-3 w_97"
-        show-icon >
-       <template slot="title">
-        <em> There was a problem saving.</em>  
-       </template>
-       </el-alert>
+
         <hr class="mx-4 mb-6 mt-2" />
         <div
           v-if="_isallowed('read')"
@@ -2073,6 +2065,8 @@ import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
 import { API_BASE_PATH } from '../../../mixins/utils';
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "RiskForm",
   props: ["facility", "risk", "facilities", "fixedStage", "contract", "vehicle"],
@@ -2374,7 +2368,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this risk?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.riskDeleted(this.DV_risk);
           this.cancelRiskSave();
@@ -2385,7 +2379,7 @@ export default {
       this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           if (file.uri || file.link) {
             let index = this.DV_risk.riskFiles.findIndex(
@@ -2412,24 +2406,20 @@ export default {
         return
       }
       if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
-        this.$message({
+        MessageDialogService.showDialog({
           message: `Risks at 100% progress cannot be placed On Watch status.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         });
         return;
       }
       if (this.DV_risk.watched) {
-        this.$message({
+        MessageDialogService.showDialog({
           message: `${this.DV_risk.text} has been removed from On Watch status.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         });
       } else {
-        this.$message({
-          message: `${this.DV_risk.text} successfully placed On Watch status.`,
-          type: "success",
-          showClose: true,
+        MessageDialogService.showDialog({
+          message: `${this.DV_risk.text} successfully placed On Watch status.`
         });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
@@ -2763,14 +2753,6 @@ export default {
             } else {
               this.updateRisksHash({ risk: responseRisk });
             }  
-          
-            if (response.status === 200) {
-              this.$message({
-                message: `${response.data.risk.text} was saved successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
             if (response.status !== 200) {
               this.errorTrue = true
             }
@@ -2800,12 +2782,13 @@ export default {
               } else this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
-            console.log(err);
-            if(err) {
+            console.log("Error",err);
             this.errorTrue = true
-           }
           })
           .finally(() => {
             this.loading = false;
@@ -2829,7 +2812,7 @@ export default {
       this.$confirm(`Are you sure you want to delete Progress List item?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           let i = progressList.id
             ? check.progressLists.findIndex((c) => c.id === progressList.id)
@@ -2853,7 +2836,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         let i = note.id
           ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
@@ -2884,7 +2867,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         let i = check.id
           ? this.DV_risk.checklists.findIndex((c) => c.id === check.id)
@@ -2984,7 +2967,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
@@ -2999,7 +2982,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
@@ -3014,7 +2997,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
@@ -3409,7 +3392,7 @@ export default {
     //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
     //       this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
     //       confirmButtonText: 'Ok',
-    //       type: 'warning'
+    //       type: MessageDialogService.msgTypes.WARNING
     //     });
     //     }
     //   }

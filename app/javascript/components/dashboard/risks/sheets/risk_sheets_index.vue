@@ -546,7 +546,9 @@
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
-  export default {
+  import MessageDialogService from "../../../../services/message_dialog_service";
+
+export default {
     name: 'RiskSheetsIndex',
     components: {
       RiskSheets

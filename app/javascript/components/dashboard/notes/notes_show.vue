@@ -55,7 +55,9 @@
   import NotesForm from './notes_form'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     props: ['facility', 'note', 'from'],
     components: {
       NotesForm
@@ -106,13 +108,16 @@
         this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           http
             .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
             .then((res) => {
               this.loading = false
               this.$emit('note-deleted', this.note)
+              MessageDialogService.showDialog({
+                response: res
+              })
             })
             .catch((err) => {
               this.loading = false

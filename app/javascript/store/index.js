@@ -3653,6 +3653,7 @@ export default new Vuex.Store({
             commit("setFacilities", facilities);
             commit("setProjectsLoaded", true);
             resolve();
+            
           })
           .catch((err) => {
             console.error(err);
@@ -3855,6 +3856,9 @@ export default new Vuex.Store({
           )
           .then((res) => {
             commit("updateTasksHash", { task: res.data.task });
+            MessageDialogService.showDialog({
+              response: res
+            });
             resolve();
           })
           .catch((err) => {
@@ -3872,6 +3876,9 @@ export default new Vuex.Store({
           )
           .then((res) => {
             commit("updateIssuesHash", { issue: res.data.issue });
+            MessageDialogService.showDialog({
+              response: res
+            });
             resolve();
           })
           .catch((err) => {
@@ -3889,6 +3896,9 @@ export default new Vuex.Store({
           )
           .then((res) => {
             commit("updateRisksHash", { risk: res.data.risk });
+            MessageDialogService.showDialog({
+              response: res
+            });
             resolve();
           })
           .catch((err) => {
@@ -3906,6 +3916,9 @@ export default new Vuex.Store({
           )
           .then((res) => {
             commit("updateRisksHash", { risk: res.data.risk });
+            MessageDialogService.showDialog({
+              response: res
+            });
             resolve();
           })
           .catch((err) => {
@@ -3934,6 +3947,9 @@ export default new Vuex.Store({
               (f) => f.id == facility.id
             );
             if (index > -1) commit("updateFacilities", { index, facility });
+            MessageDialogService.showDialog({
+              response: res
+            });
             return resolve(res);
           })
           .catch((err) => {
@@ -3955,7 +3971,7 @@ export default new Vuex.Store({
     //         resolve("Success");
     //       })
     //       .catch((err) => {
-    //         console.log(err);
+    //         console.log("Error",err);
     //         reject();
     //       });
     //   });
@@ -3985,11 +4001,14 @@ export default new Vuex.Store({
             } 
             if (task.projectContractId)  {
               commit("updateContractTasks", { task: task, action: "delete" });
-            }            
+            }
+            MessageDialogService.showDialog({
+              response: res
+            });            
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4016,10 +4035,13 @@ export default new Vuex.Store({
               commit("updateContractNotes", { note: note, action: "delete" });
             }            
             if (cb) cb();
+            MessageDialogService.showDialog({
+              response: res
+            });
             resolve();
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4048,11 +4070,14 @@ export default new Vuex.Store({
             }    
             if (issue.projectContractVehicleId)  {
               commit("updateVehicleIssues", {issue: issue, action: "delete" });
-            }              
+            }    
+            MessageDialogService.showDialog({
+              response: res
+            });          
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });
@@ -4081,11 +4106,14 @@ export default new Vuex.Store({
             } 
             if (risk.projectContractId)  {
               commit("updateContractRisks", { risk: risk, action: "delete" });
-            }          
+            }    
+            MessageDialogService.showDialog({
+              response: res
+            });      
             resolve("Success");
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
             reject();
           });
       });

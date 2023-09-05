@@ -18,7 +18,7 @@ class Api::V1::UsersController < AuthenticatedController
     @user = User.new(user_params)
     @user.password =  ENV['NEW_USER_PASSWORD'] || SecureRandom.hex(7)
     if @user.save      
-      render json: {msg: @user.id }, status: 200
+      render json: {msg: "User updated successfully" }, status: 200
     else
       render json: {msg: "Error crating user"}, status: 406
     end

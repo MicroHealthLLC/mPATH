@@ -53,9 +53,9 @@ class Api::V1::RisksController < AuthenticatedController
     
     @risk = Risk.new.create_or_update_risk(params, current_user)
     if @risk.errors.any?
-      render json: {task: @risk.to_json, errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: {task: @risk.to_json, msg:  @risk.errors.full_messages.join(", "), errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {risk: @risk.reload.to_json}
+      render json: {risk: @risk.reload.to_json, msg: 'Risk created successfully!'}
     end
   end
 
@@ -80,9 +80,9 @@ class Api::V1::RisksController < AuthenticatedController
       response = @risk.reload.to_json
     end
     if @risk.errors.any?
-      render json: {task: @risk.to_json, errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: {task: @risk.to_json, msg: @risk.errors.full_messages.join(", "), errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {risk: response}
+      render json: {risk: response, msg: "Risk updated successfully"}
     end
 
   end
@@ -91,7 +91,7 @@ class Api::V1::RisksController < AuthenticatedController
     duplicate_risk = @risk.amoeba_dup
     duplicate_risk.save
     # @task.create_or_update_task(params, current_user)
-    render json: {risk: duplicate_risk.reload.to_json}
+    render json: {risk: duplicate_risk.reload.to_json, msg: "Duplicate risk created successfully"}
   end
 
   def create_bulk_duplicate
@@ -122,7 +122,7 @@ class Api::V1::RisksController < AuthenticatedController
     end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
-    render json: {risks: all_objs.map(&:to_json)}
+    render json: {risks: all_objs.map(&:to_json), msg: "Bulk duplicate risk created successfully"}
   end
 
   def show
@@ -131,15 +131,19 @@ class Api::V1::RisksController < AuthenticatedController
   end
 
   def destroy
-    @risk.destroy!
-    render json: {}, status: 200
-  rescue
-    render json: {}, status: 500
+    if @risk.destroy!
+      render json: {msg: "Risk destroyed successfully"}, status: 200
+    else
+      render json: {msg: "Error in risk destroy"}, status: :unprocessable_entity
+    end
   end
 
   def batch_update
-    Risk.update(params[:risks].keys, params[:risks].values)
-    render json: @facility_project.as_json
+    if Risk.update(params[:risks].keys, params[:risks].values)
+      render json: {facility_project: @facility_project.as_json, msg: "Risk batch update successfully"}
+    else
+      render json: {msg: "Error risk batch update"}, status: :unprocessable_entity
+    end
   end
 
   private
