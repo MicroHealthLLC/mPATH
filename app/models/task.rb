@@ -27,7 +27,7 @@ class Task < ApplicationRecord
 
   attr_accessor :file_links
 
-  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
+  scope :exclude_closed_in, -> (dummy) { where("ongoing is false and closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do

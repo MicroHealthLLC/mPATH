@@ -27,7 +27,7 @@ class Risk < ApplicationRecord
   # after_save :update_owner_record
   # after_destroy :update_owner_record
 
-  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
+  scope :exclude_closed_in, -> (dummy) { where("ongoing is false and closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   attr_accessor :file_links
