@@ -43,7 +43,10 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
-   
+
+    scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
+    scope :inactive_facility, -> { includes(facility_project: [:facility]).where.not(facility_project: { facilities: { status: 0 } }) }
+
     base.const_set :URL_FILENAME_LENGTH, 252
 
     def valid_url?(url)

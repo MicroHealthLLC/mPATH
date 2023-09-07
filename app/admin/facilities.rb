@@ -205,8 +205,19 @@ ActiveAdmin.register Facility do
   end
 
   controller do
+    # before_action :allow_portfolio_facility, only: [:edit, :update]
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    # def allow_portfolio_facility
+
+    #   resource.is_portfolio if resource.present?
+    #   redirect_to '/not_found' and return unless resource.is_portfolio
+    #   super
+    # rescue ActiveRecord::StatementInvalid
+    #   flash[:error] = "Could not edit program projects. Only Portofolio projects are allowed."
+    #   redirect_back fallback_location: root_path
+    # end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -257,9 +268,13 @@ ActiveAdmin.register Facility do
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
+    
+    # def find_resource
+    #   scoped_collection.where(id: params[:id]).first!
+    # end
 
     def scoped_collection
-      super.includes(:facility_group).where(is_portfolio: true)
+      super.includes(:facility_group).where("facilities.is_portfolio": true)
     end
   end
 

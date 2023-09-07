@@ -27,8 +27,6 @@ class Risk < ApplicationRecord
   # after_save :update_owner_record
   # after_destroy :update_owner_record
 
-  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
-  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
   scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
