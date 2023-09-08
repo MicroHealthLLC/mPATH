@@ -494,7 +494,7 @@
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import XLSX from 'xlsx'
+import * as XLSX from "xlsx/xlsx";
 import 'vue2-datepicker/index.css'
  Vue.component('v2-date-picker', DatePicker)
  import DatePicker from 'vue2-datepicker'
