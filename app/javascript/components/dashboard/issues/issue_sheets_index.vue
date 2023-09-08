@@ -511,8 +511,9 @@
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
   import {API_BASE_PATH} from './../../../mixins/utils'
+  import MessageDialogService from "../../../services/message_dialog_service";
 
-  export default {
+export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from', 'contract', 'vehicle'],
     components: {
@@ -671,6 +672,9 @@
           .put(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

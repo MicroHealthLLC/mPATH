@@ -1537,7 +1537,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.removeUserRole({
@@ -1766,7 +1766,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.removeProgramUser({ ...projectUserRoleData });
@@ -2209,11 +2209,11 @@ export default {
     newUserStatus: {
       handler() {
         if (this.newUserStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: ` ${this.firstName +
               this.lastName} successfully added to your program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
 
           if (this.getNewUserId && this.getNewUserId.msg) {
@@ -2236,10 +2236,10 @@ export default {
     editUserDataStatus: {
       handler() {
         if (this.editUserDataStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully updated user`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_EDIT_USER_DATA_STATUS(0);
           this.fetchProgramUsers(this.programId);
@@ -2251,10 +2251,10 @@ export default {
       handler() {
         if (this.addedUsersToProgramStatus == 200) {
           if (this.portfolioUsers.length > 0) {
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${this.portfolioUsers.length} user(s) successfully added to your program.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
           this.addMoreUsersBtn = true;
@@ -2266,10 +2266,10 @@ export default {
     programUsersStatus: {
       handler() {
         if (this.programUsersStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully removed user from program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.fetchProgramUsers(this.programId);
           this.SET_PROGRAM_USERS_STATUS(0);
@@ -2282,10 +2282,10 @@ export default {
           this.addUserToRoleStatus == 204 ||
           this.addUserToRoleStatus == 200
         ) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully assigned user to role(s).`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.assignProle = false;
           this.assignCrole = false;
@@ -2307,10 +2307,10 @@ export default {
     removeRoleStatus: {
       handler() {
         if (this.removeRoleStatus == 204 || this.removeRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully removed association(s) from role.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.assignArole = false;
           this.fetchRoles(this.$route.params.programId);

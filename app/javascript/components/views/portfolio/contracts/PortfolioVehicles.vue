@@ -1032,7 +1032,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
        ).then(() => {
         this.deleteContractVehicle(rows.id);
@@ -1281,10 +1281,10 @@ contractAgencyOptions(){
      contractVehicleStatus: {
       handler() {
         if (this.contractVehicleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Vehicle data saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();

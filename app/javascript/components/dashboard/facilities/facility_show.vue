@@ -449,7 +449,9 @@
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'FacilitiesShow',
     components: {
       DetailShow,
@@ -572,6 +574,9 @@
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             if (this.from == "manager_view") this.updateFacilityHash(this.DV_facility)
             this.$emit('facility-update', this.DV_facility)
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => {
             console.error(err);

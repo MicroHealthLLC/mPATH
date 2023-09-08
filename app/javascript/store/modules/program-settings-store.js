@@ -50,7 +50,7 @@ const programSettingsStore = {
           commit("SET_CONTRACT_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -76,7 +76,7 @@ const programSettingsStore = {
           commit("SET_GROUP_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -97,7 +97,7 @@ const programSettingsStore = {
           commit("SET_CONTRACT", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_LOADED", true);
@@ -118,7 +118,7 @@ const programSettingsStore = {
           commit("SET_CONTRACTS", res.data.contracts);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -139,7 +139,7 @@ const programSettingsStore = {
           commit("SET_CONTRACT_GROUP_TYPES", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -160,7 +160,7 @@ const programSettingsStore = {
           commit("SET_CONTRACT_CLASSIFICATIONS", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -181,7 +181,7 @@ const programSettingsStore = {
           commit("SET_CUSTOMER_AGENCIES_FILTER", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -202,7 +202,7 @@ const programSettingsStore = {
           commit("SET_CURRENT_POP", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -223,7 +223,7 @@ const programSettingsStore = {
           commit("SET_PRIME", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -244,7 +244,7 @@ const programSettingsStore = {
           commit("SET_VEHICLES", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -265,7 +265,7 @@ const programSettingsStore = {
           commit("SET_VEHICLE_NUMBERS", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -286,7 +286,7 @@ const programSettingsStore = {
           commit("SET_CONTRACT_NUMBER", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -307,7 +307,7 @@ const programSettingsStore = {
           commit("SET_SUBCONTRACT_NUMBER", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -328,7 +328,7 @@ const programSettingsStore = {
           // console.log(res.data)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
@@ -348,7 +348,7 @@ const programSettingsStore = {
           commit("SET_GROUPS", res.data.facility_groups);        
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
@@ -375,7 +375,7 @@ const programSettingsStore = {
           console.log(contract, id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);

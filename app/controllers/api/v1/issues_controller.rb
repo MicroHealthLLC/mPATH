@@ -50,7 +50,11 @@ class Api::V1::IssuesController < AuthenticatedController
 
   def create
     @issue = Issue.new.create_or_update_issue(params, current_user)
-    render json: {issue: @issue.reload.to_json}
+    if @issue.errors.any?
+      render json: {errors:@issue.reload.to_json, msg: @issue.errors.full_messages.join(" ")}, status: 406
+    else
+      render json: {issue: @issue.reload.to_json, msg: 'Issue created successfully.'}, status: 200
+    end
   end
 
   def update
@@ -65,24 +69,25 @@ class Api::V1::IssuesController < AuthenticatedController
         end
       end
     end
-    @issue.update(i_params)
-    @issue.assign_users(params)
-    @issue.add_link_attachment(params)
-    
-    if params[:source] == "portfolio_viewer"
-      response = @issue.reload.portfolio_json
+    if @issue.update(i_params)
+      @issue.assign_users(params)
+      @issue.add_link_attachment(params)
+      if params[:source] == "portfolio_viewer"
+        render json: {issue: @issue.reload.portfolio_json, msg: 'Issue updated successfully.'}
+      else
+        render json: {issue:  @issue.reload.to_json, msg: 'Issue updated successfully.'}
+      end 
     else
-      response = @issue.reload.to_json
+      render json: {issue:  @issue.reload.to_json, msg: @issue.errors.full_messages.join(" ,")}, status: :unprocessable_entity
     end
-
-    render json: {issue: response}
+  
   end
 
   def create_duplicate
     duplicate_issue = @issue.amoeba_dup
     duplicate_issue.save
     # @task.create_or_update_task(params, current_user)
-    render json: {issue: duplicate_issue.reload.to_json}
+    render json: {issue: duplicate_issue.reload.to_json, msg: 'Duplicate issue created successfully.'}
   end
 
   def create_bulk_duplicate
@@ -113,7 +118,7 @@ class Api::V1::IssuesController < AuthenticatedController
     end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
-    render json: {issues: all_objs.map(&:to_json)}
+    render json: {issues: all_objs.map(&:to_json), msg: 'Bulk Duplicate issues created successfully.'}
   end
 
   def show
@@ -122,14 +127,20 @@ class Api::V1::IssuesController < AuthenticatedController
   end
 
   def destroy
-    @issue.destroy!
-    render json: {}, status: 200
-  rescue
-    render json: {}, status: 500
+    if @issue.destroy!
+      render json: {msg: "Issue destroyed successfully"}, status: 200
+    else
+      render json: {msg: "Error in issue destroy"}, status: :unprocessable_entity
+    end
   end
 
   def batch_update
-    Issue.update(params[:issues].keys, params[:issues].values)
+    if Issue.update(params[:issues].keys, params[:issues].values)
+      render json: {msg: "Issue destroyed successfully"}, status: 200
+
+    else
+      render json: {msg: "Error updating batch issues!"}, status: :unprocessable_entity
+    end
     render json: @facility_project.as_json
   end
 

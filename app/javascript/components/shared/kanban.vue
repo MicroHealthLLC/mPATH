@@ -144,10 +144,10 @@ export default {
         this.updateKanbanTaskIssues({ projectId, facilityId, data, type: this.kanbanType, })
           .then((res) => {
             if (res.status === 200 && item.added) {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: 'Stage was updated successfully.',
-                type: "success",
-                showClose: true,
+                
+                
               });
             }
           });

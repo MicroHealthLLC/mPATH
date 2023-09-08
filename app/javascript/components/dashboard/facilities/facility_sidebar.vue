@@ -38,7 +38,9 @@
   import {mapGetters} from 'vuex'
   import Loader from './../../shared/loader'
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'FacilitySidebar',
     components: {
       Loader

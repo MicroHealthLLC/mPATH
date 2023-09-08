@@ -1291,7 +1291,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         let user_ids = this.assignedContractUsers.map((t) => t.id);
@@ -1400,7 +1400,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.removeVehicle({ ...vehicle });
@@ -1452,16 +1452,16 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       ).then(() => {
         this.deleteVehicle(id).then((value) => {
           if (value === 200) {
             this.fetchVehicles();
-            this.$message({
+            MessageDialogService.showDialog({
               message: `${rows.contract_vehicles.name} was deleted successfully.`,
-              type: "success",
-              showClose: true,
+              
+              
             });
           }
         });
@@ -1774,10 +1774,10 @@ export default {
     vehicleStatus: {
       handler() {
         if (this.vehicleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Vehicle saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.newGroup = null;
           this.SET_VEHICLE_STATUS(0);
@@ -1789,10 +1789,10 @@ export default {
     vehiclesStatus: {
       handler() {
         if (this.vehiclesStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Successfully removed vehicle from program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_VEHICLES_STATUS(0);
           this.fetchVehicles(this.$route.params.programId);
@@ -1804,10 +1804,10 @@ export default {
     associatedVehiclesStatus: {
       handler() {
         if (this.associatedVehiclesStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Vehicle successfully added to program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_ASSOCIATED_VEHICLES_STATUS(0);
           this.fetchContractVehicles(this.$route.params.programId);
@@ -1822,10 +1822,10 @@ export default {
           this.removeVehicleRoleStatus == 204 ||
           this.removeVehicleRoleStatus == 200
         ) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully removed user(s) from role.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.fetchRoles(this.$route.params.programId);
           this.SET_REMOVE_VEHICLE_ROLE_STATUS(0);
@@ -1842,10 +1842,10 @@ export default {
           this.addUserToRoleStatus == 204 ||
           this.addUserToRoleStatus == 200
         ) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully added user/role to project.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);

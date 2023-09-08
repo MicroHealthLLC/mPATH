@@ -795,6 +795,7 @@ import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
 import AttachmentInput from "./../../shared/attachment_input.vue";
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: "ContractsLessonForm",
@@ -984,7 +985,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
@@ -999,7 +1000,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
@@ -1014,7 +1015,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
@@ -1034,7 +1035,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1056,7 +1057,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1078,7 +1079,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1098,7 +1099,7 @@ export default {
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1129,7 +1130,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1147,7 +1148,7 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
@@ -1329,10 +1330,10 @@ export default {
     contractLessonStatus: {
       handler() {
         if (this.contractLessonStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.contractLesson.title} was saved successfully.`,
             type: "success",
-            showClose: true,
+            
           });
           this.SET_CONTRACT_LESSON_STATUS(0);
           if (this.$route.path.includes("sheet")) {

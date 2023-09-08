@@ -151,7 +151,7 @@ const portfolioModule = {
            commit("SET_PORTFOLIO_COUNTS", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_COUNTS_LOADED", true);
@@ -174,7 +174,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_PROGRAMS", res.data.portfolio_filters);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_PROGRAMS_LOADED", true);
@@ -195,7 +195,7 @@ const portfolioModule = {
          commit("SET_AUTHORIZED_PORTFOLIO_PROGRAMS", res.data.portfolio_filters);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_AUTHORIZED_PORTFOLIO_PROGRAMS_LOADED", true);
@@ -218,7 +218,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_CATEGORIES", res.data.categories);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_CATEGORIES_LOADED", true);
@@ -240,7 +240,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_USERS", res.data.users);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_USERS_LOADED", true);
@@ -263,7 +263,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_STATUSES", res.data.statuses);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_STATUSES_LOADED", true);
@@ -286,7 +286,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_TASK_STAGES", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_TASK_STAGES_LOADED", true);
@@ -308,7 +308,7 @@ const portfolioModule = {
         commit("SET_PORTFOLIO_ISSUE_STAGES", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_ISSUE_STAGES_LOADED", true);
@@ -330,7 +330,7 @@ const portfolioModule = {
         commit("SET_PORTFOLIO_ISSUE_SEVERITIES", res.data.issue_severities);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_ISSUE_SEVERITIES_LOADED", true);
@@ -352,7 +352,7 @@ const portfolioModule = {
         commit("SET_PORTFOLIO_ISSUE_TYPES", res.data.issue_types);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED", true);
@@ -374,7 +374,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_RISK_STAGES", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_RISK_STAGES_LOADED", true);
@@ -396,7 +396,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_RISK_APPROACHES", res.data.risk_approaches);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_RISK_APPROACHES_LOADED", true);
@@ -419,7 +419,7 @@ const portfolioModule = {
           commit("SET_PORTFOLIO_RISK_PRIORITIES", res.data.risk_priorities);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", true);
@@ -441,7 +441,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_TASKS", res.data);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
@@ -464,7 +464,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_TASK", res.data.task);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
@@ -486,7 +486,7 @@ const portfolioModule = {
             commit("SET_PORTFOLIO_ISSUES", res.data);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", true);
@@ -509,7 +509,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_ISSUE", res.data.issue);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", true);
@@ -531,7 +531,7 @@ const portfolioModule = {
             commit("SET_PORTFOLIO_RISKS", res.data);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
@@ -554,7 +554,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_RISK", res.data.risk);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_RISK_LOADED", true);
@@ -576,7 +576,7 @@ const portfolioModule = {
             commit("SET_PORTFOLIO_LESSONS", res.data);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
@@ -599,7 +599,7 @@ const portfolioModule = {
              commit("SET_PORTFOLIO_LESSON", res.data.lesson);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_LESSON_LOADED", true);
@@ -621,7 +621,7 @@ const portfolioModule = {
             commit("SET_PORTFOLIO_LESSON_STAGES", res.data);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", true);

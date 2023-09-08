@@ -43,7 +43,7 @@ const effortStore = {
           console.log(res.data)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_EFFORTS_LOADED", true);
@@ -69,7 +69,7 @@ const effortStore = {
           console.log(res.data)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PROGRAM_EFFORTS_LOADED", true);
@@ -96,7 +96,7 @@ const effortStore = {
           console.log(res.data.efforts)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_PROGRAM_TASK_EFFORT_LOADED", true);
@@ -132,7 +132,7 @@ const effortStore = {
           commit("SET_EFFORTS_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_EFFORTS_LOADED", true);
@@ -156,7 +156,7 @@ const effortStore = {
             console.log(res.data)
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_EFFORTS_LOADED", true);
@@ -186,7 +186,7 @@ const effortStore = {
           commit("SET_EFFORTS_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_EFFORT_LOADED", true);

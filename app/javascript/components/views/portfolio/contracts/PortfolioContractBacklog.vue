@@ -339,10 +339,10 @@ export default {
    contractProjectStatus: {
       handler() {
         if (this.contractProjectStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract POCs saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();

@@ -388,7 +388,9 @@
 
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
-  export default {
+  import MessageDialogService from "../../../../services/message_dialog_service";
+
+export default {
     name: 'RiskCalendar',
     props:
       {
@@ -569,22 +571,21 @@
       this.$confirm(`Are you sure you want to delete ${risk.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.riskDeleted(risk).then((value) => {
             if (value === 'Success') {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: `${risk.text} was deleted successfully.`,
-                type: "success",
-                showClose: true,
+                
+                
               });
             }
             this.reRenderCalendar()
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled',
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: 'Delete canceled',
             showClose: true
           });          
         });

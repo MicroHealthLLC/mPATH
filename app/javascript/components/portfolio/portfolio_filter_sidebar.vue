@@ -1146,6 +1146,9 @@ export default {
       .then((response) => {
         var res = response.data
         this.favoriteFilterOptions = res
+        MessageDialogService.showDialog({
+          response: response
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
@@ -1386,20 +1389,13 @@ export default {
         _.remove(this.favoriteFilterOptions, (t) => t.id === null)
         this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
-        this.$message({
-          message: `Favorite Filter is saved successfully.`,
-          type: "success",
-          showClose: true,
+        MessageDialogService.showDialog({
+          response: response
         });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        this.$message({
-          message: err.response.data.error ,
-          type: "error",
-          showClose: true,
-        });
       })
       .finally(() => {
         // this.loading = false
@@ -1454,7 +1450,7 @@ export default {
       this.$confirm(`Are you sure you want to remove this favorite filter?`, 'Confirm Remove', {
         confirmButtonText: 'Remove',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.setPortfolioUsersFilter([])
         this.setPortfolioCategoriesFilter([])
@@ -1536,22 +1532,13 @@ export default {
 
           //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
           //Vue.set(this.favoriteFilterOptions, i, null)
-          this.$message({
-            message: `Favorite Filter is removed successfully.`,
-            type: "success",
-            showClose: true,
+          MessageDialogService.showDialog({
+            response: response
           });
         })
         .catch((err) => {
           // var errors = err.response.data.errors
           console.log(err)
-          if(err.response.data.error){
-            this.$message({
-              message: err.response.data.error,
-              type: "error",
-              showClose: true,
-            });
-          }
         })
         .finally(() => {
           // this.loading = false

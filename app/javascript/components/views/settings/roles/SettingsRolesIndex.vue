@@ -2110,10 +2110,10 @@ export default {
     newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `New role successfully added to your program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_NEW_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId);
@@ -2180,10 +2180,10 @@ export default {
     updatedRoleStatus: {
       handler() {
         if (this.updatedRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Role successfully updated.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           console.log("updatedRole in Admin");
           this.SET_UPDATED_ROLE_STATUS(0);
@@ -2199,10 +2199,10 @@ export default {
           this.addUserToRoleStatus == 204 ||
           this.addUserToRoleStatus == 200
         ) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully added user/role to project.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId);
@@ -2213,19 +2213,19 @@ export default {
     removeAdminRoleStatus: {
       handler() {
         if(this.removeAdminRoleStatus == 406){
-           this.$message({
+           MessageDialogService.showDialog({
             message: `Programs must have at least one program-admin assigned. Before removing ${this.removedUserName} from this role, please assign another program-admin.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
         } else if (
           this.removeAdminRoleStatus == 200 ||
           this.removeAdminRoleStatus == 204
         ) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Succesfully removed Admin role from ${this.removedUserName} .`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.fetchRoles(this.$route.params.programId);
           this.SET_REMOVE_ADMIN_ROLE_STATUS(0);
