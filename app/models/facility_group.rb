@@ -11,7 +11,7 @@ class FacilityGroup < SortableRecord
   has_many :contracts
 
   validates :name, presence: true #, uniqueness: true
-
+  scope :portfolio, -> {where(is_portfolio: true)}
   enum status: [:inactive, :active].freeze
   before_save :set_status
 

@@ -76,7 +76,12 @@ ActiveAdmin.register Facility do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
-          f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
+          facility_group_options = []
+          FacilityGroup.portfolio.in_batches(of: 1000) do |facility_groups|
+            facility_group_options += facility_groups.map{|fg| ["&nbsp;&nbsp;&nbsp;#{fg.name}".html_safe, fg.id]}
+          end
+          # f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
+          f.input :facility_group_id, label: 'Group', include_blank: true, include_hidden: false, as: :select, collection: facility_group_options, input_html: {class: "select2"}
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
@@ -117,7 +122,7 @@ ActiveAdmin.register Facility do
   end
 
   batch_action :"Assign Group", if: proc {current_user.admin_write?}, form: -> {{
-    "Group": FacilityGroup.pluck(:name, :id)
+    "Group": FacilityGroup.portfolio.pluck(:name, :id)
   }} do |ids, inputs|
     notice = "Group is updated"
     Facility.where(id: ids).update_all(facility_group_id: inputs["Group"])
@@ -200,8 +205,19 @@ ActiveAdmin.register Facility do
   end
 
   controller do
+    # before_action :allow_portfolio_facility, only: [:edit, :update]
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    # def allow_portfolio_facility
+
+    #   resource.is_portfolio if resource.present?
+    #   redirect_to '/not_found' and return unless resource.is_portfolio
+    #   super
+    # rescue ActiveRecord::StatementInvalid
+    #   flash[:error] = "Could not edit program projects. Only Portofolio projects are allowed."
+    #   redirect_back fallback_location: root_path
+    # end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -252,14 +268,18 @@ ActiveAdmin.register Facility do
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
+    
+    # def find_resource
+    #   scoped_collection.where(id: params[:id]).first!
+    # end
 
     def scoped_collection
-      super.includes(:facility_group).where(is_portfolio: true)
+      super.includes(:facility_group).where("facilities.is_portfolio": true)
     end
   end
 
   filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
-  filter :facility_group, label: "Group"
+  filter :facility_group, label: "Group", as: :select, collection: -> {FacilityGroup.portfolio.map{|fg| ["#{fg.name}", fg.id]}}
   filter :facility_name, label: "Project Name"
   filter :address
   filter :point_of_contact
