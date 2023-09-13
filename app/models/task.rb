@@ -456,6 +456,13 @@ class Task < ApplicationRecord
     end
 
     all_checklists = task.checklists
+    if !task.planned_effort
+      task.planned_effort = 0.0
+    end
+    
+    if !task.actual_effort
+      task.actual_effort = 0.0
+    end
 
     task.transaction do
       task.save
