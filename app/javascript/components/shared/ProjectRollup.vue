@@ -2171,7 +2171,8 @@ export default {
 
       if (this.filteredTasks.length > 0) {       
         let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
-        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => !t.completed && new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
+       console.log(datesWithinSevenDays)
         return {
           value24: dueDatesTomorrow,   
           value7: datesWithinSevenDays,          
