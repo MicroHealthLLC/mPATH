@@ -207,7 +207,7 @@
           <h3 class="text-danger p-4"><em>Sorry. Task Effort entry is not yet supported for Contracts or Vehicles.</em></h3>
         </div>
 
-      <span class="float-right"><small>*Excludes <em>Ongoing:Closed, On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
+      <span class="float-right"><small>*Excludes <em>On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
   
   
     </div>
