@@ -107,7 +107,7 @@ ActiveAdmin.register Risk do
       end
     end
     column "Project", :facility, nil, sortable: 'facilities.facility_name' do |risk|
-      if current_user.admin_write?
+      if current_user.admin_write? && risk.facility && risk.facility.is_portfolio
         link_to "#{risk.facility.facility_name}", "#{edit_admin_facility_path(risk.facility)}" if risk.facility.present?
       else
         "<span>#{risk.facility&.facility_name}</span>".html_safe
@@ -291,7 +291,7 @@ ActiveAdmin.register Risk do
     end
 
     def scoped_collection
-      super.includes(:contract_project_data, :task_type, :risk_stage, facility_project: [:project, :facility])
+      super.includes(:contract_project_data, :task_type, :risk_stage, :facility, facility_project: [:project, :facility])
     end
   end
 

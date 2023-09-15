@@ -23,8 +23,6 @@ class Issue < ApplicationRecord
 
   attr_accessor :file_links
 
-  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
-  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do

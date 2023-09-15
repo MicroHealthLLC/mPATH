@@ -487,7 +487,7 @@
 import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
-import XLSX from 'xlsx'
+import * as XLSX from "xlsx/xlsx";
 import {API_BASE_PATH} from './../../mixins/utils'
 
 export default {
