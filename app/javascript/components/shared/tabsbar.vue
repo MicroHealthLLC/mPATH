@@ -10,7 +10,7 @@
       :to="routeKanbanSwap"
       tag="div"
     >
-      <div v-show="!isContractView && !isVehicleView && !isEffortsView"  class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
+      <div v-show="!isContractView && !isVehicleView" class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
         Kanban
       </div>
     </router-link>
@@ -19,12 +19,12 @@
       :to="routeCalendarSwap"
       tag="div"
     >
-      <div class="badge" v-show="!isContractView && !isVehicleView && !isEffortsView" :class="{ active: isCalendarView }" data-cy="calendar_tab">
+      <div class="badge" v-show="!isContractView && !isVehicleView" :class="{ active: isCalendarView }" data-cy="calendar_tab">
         Calendar
       </div>
     </router-link>
      <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
-      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab" v-show="!isContractView && !isVehicleView && !isEffortsView">
+      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab" v-show="!isContractView && !isVehicleView">
         Map
       </div>
     </router-link>
@@ -88,9 +88,9 @@ export default {
     isProgramSettingsView() {
       return this.$route.name.includes("settings");
     },
-    isEffortsView() {
-      return this.$route.name.includes("effort");
-    },
+//    isEffortsView() {
+//      return this.$route.name.includes("effort");
+//    },
     isGanttView() {
       return this.$route.name === "GanttChartView";
     },
