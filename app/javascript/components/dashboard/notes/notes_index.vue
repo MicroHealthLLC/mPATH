@@ -49,10 +49,10 @@
             @note-deleted="noteDeleted"           
           ></notes-show>
         </div>
-        <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
+        <div v-else class="text-danger ml-3">No notes found..</div>
       </div>
       <div v-else class="text-danger mx-2 mt-2">
-        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+        <h5><i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
       </div>
 
     </div>
