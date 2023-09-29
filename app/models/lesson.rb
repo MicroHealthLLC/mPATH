@@ -39,13 +39,6 @@ class Lesson < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   attr_accessor :file_links
-
-  amoeba do
-    include_association :lesson_stage
-    include_association :task_type
-
-    append :title => " - Copy"
-  end
   
   def is_contract_resource?
     self.project_contract_id.present?
