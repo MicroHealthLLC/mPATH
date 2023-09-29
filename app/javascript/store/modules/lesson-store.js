@@ -484,15 +484,11 @@ const lessonFormData = (lesson) => {
   formData.append("lesson[title]", lesson.title); // Required
   formData.append("lesson[description]", lesson.description); // Required
   formData.append("lesson[date]", lesson.date); // Required
-  if (lesson.task_type_id) {
-    formData.append("lesson[task_type_id]", lesson.task_type_id);
-  }
+  formData.append("lesson[task_type_id]", lesson.task_type_id);
   if (lesson.user_id) {
     formData.append("lesson[user_id]", lesson.user_id);
   }
-  if (lesson.lesson_stage_id) {
-    formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
-  }
+  formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
   formData.append("lesson[important]", lesson.important || false);
   formData.append("lesson[reportable]", lesson.reportable || false);
   formData.append("lesson[draft]", lesson.draft || false);
