@@ -199,7 +199,7 @@
             </tr>
             <tbody>
               <tr
-                v-for="lesson in  sortedLessonTable"
+                v-for="lesson in sortedLessonTable"
                 :key="lesson.id"
                 @click="openLesson(lesson.id)"
                 @mouseup.right="openContextMenu($event, lesson)"
@@ -361,7 +361,7 @@ export default {
     return {
       activeSortValue: "",
       sortAsc: false,
-      currentSort:'text',
+      currentSort:'title',
       currentSortDir:'asc',
       showContextMenu: false,
       clickedLesson: {},
