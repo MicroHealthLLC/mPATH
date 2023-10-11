@@ -638,6 +638,7 @@ export default {
       },
       set(value) {
         this.setLessonsPerPageFilter(value);
+        this.currentPage = 1;
       },
     },
  
