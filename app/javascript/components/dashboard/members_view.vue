@@ -223,7 +223,8 @@ export default {
         return this.getMembersPerPageFilter || { id: 15, name: '15', value: 15 }
       },
       set(value) {
-        this.setMembersPerPageFilter(value)
+        this.setMembersPerPageFilter(value);
+        this.currentPage = 1;
       }
     },
   },
