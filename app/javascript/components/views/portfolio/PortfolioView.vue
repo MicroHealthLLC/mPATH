@@ -6689,6 +6689,7 @@ export default {
       },
       set(value) {
         this.setIssuesPerPageFilter(value);
+        this.currentPage = 1;
       },
     },
     C_tasksPerPage: {
@@ -6697,6 +6698,7 @@ export default {
       },
       set(value) {
         this.setTasksPerPageFilter(value);
+        this.currentPage = 1;
       },
     },
     currentPage: {
@@ -6737,6 +6739,7 @@ export default {
       },
       set(value) {
         this.setRisksPerPageFilter(value);
+        this.currentPage = 1;
       },
     },
     C_lessonsPerPage: {
@@ -6747,6 +6750,7 @@ export default {
       },
       set(value) {
         this.setLessonsPerPageFilter(value);
+        this.currentPage = 1;
       },
     },
     C_hideBriefedTasks: {
