@@ -360,7 +360,8 @@
                       value-key="id"
                       multiple
                       clearable
-                      placeholder="Select Process Area"
+                      filterable
+                      placeholder="Search and select Process Area"
                     >
                         <el-option
                         v-for="item in taskTypes"
