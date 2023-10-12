@@ -329,7 +329,7 @@
                 data-cy="task_type"
                 name="Process Area"
                 :class="{ 'error': errors.has('Process Area') }"
-                placeholder="Select and select Process Area"
+                placeholder="Search and select Process Area"
                 filterable
               >
                 <el-option
