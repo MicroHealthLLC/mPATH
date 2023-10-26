@@ -107,3 +107,5 @@ gem 'jwt', '~> 2.7'
 gem 'addressable', '>= 2.8.0'
 
 gem 'nokogiri', '1.14.3'
+
+gem 'rack-cors'

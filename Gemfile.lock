@@ -274,6 +274,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.7)
+    rack-cors (2.0.1)
+      rack (>= 2.0.0)
     rack-protection (3.0.6)
       rack
     rack-proxy (0.7.6)
@@ -458,6 +460,7 @@ DEPENDENCIES
   pry-byebug
   pry-rails
   puma (>= 6.3.1)
+  rack-cors
   rails (= 7.0.7.1)
   rubocop-performance
   rubocop-rails
