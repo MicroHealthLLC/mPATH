@@ -1114,7 +1114,8 @@ export default {
         return this.getLessonsPerPage || {id: 15, name: '15', value: 15}
       },
       set(value) {
-        this.setLessonsPerPageFilter(value)
+        this.setLessonsPerPageFilter(value);
+        this.currentPage = 1;
        }
      },
     C_facilityCount() {         
