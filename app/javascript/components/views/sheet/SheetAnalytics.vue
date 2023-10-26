@@ -1066,7 +1066,7 @@ export default {
       nextWeek.setDate(new Date().getDate() + 7)
       if (this.filteredTasks.length > 0) {       
         let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
-        let datesWithinSevenDays = this.filteredTasks.filter(t => !t.completed && new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
         return {
           value24: dueDatesTomorrow,   
           value7: datesWithinSevenDays,          

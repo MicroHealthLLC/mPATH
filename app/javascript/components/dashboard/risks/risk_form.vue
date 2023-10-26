@@ -1890,73 +1890,6 @@
             style="min-height: 300px"
             class="paperLookTab"
           >
-          <div class="form-group mt-2 mx-4 paginated-updates">
-              <label class="font-md my-2">Updates</label>
-              <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
-                @click.prevent="addNote"
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
-              <paginate-links
-                v-if="filteredNotes.length"
-                for="filteredNotes"
-                :show-step-links="true"
-                :limit="2"
-              ></paginate-links>
-              <paginate
-                ref="paginator"
-                name="filteredNotes"
-                :list="filteredNotes"
-                :per="5"
-                class="paginate-list"
-                :key="filteredNotes ? filteredNotes.length : 1"
-              >
-                
-
-                <el-card
-                  v-for="note in paginated('filteredNotes')"
-                  :key="note.id"
-                  class="update-card mb-3"
-                >
-                  <div class="d-flex justify-content-between">
-                    <label class="font-md">Update</label>
-                    <div class="font-sm">
-                      <el-tag size="mini"
-                        ><span class="font-weight-bold">Submitted by:</span>
-                        <span v-if="note.updatedAt"
-                          >{{ note.user.fullName }} on
-                          {{ new Date(note.updatedAt).toLocaleString() }}</span
-                        ><span v-else
-                          >{{ $currentUser.full_name }} on
-                          {{ new Date().toLocaleDateString() }}</span
-                        ></el-tag
-                      >
-                      <i
-                        v-if="allowDeleteNote(note)"
-                        class="el-icon-delete clickable ml-3"
-                        @click.prevent.stop="destroyNote(note)"
-                      ></i>
-                    </div>
-                  </div>
-
-                  <el-input
-                    v-model="note.body"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="Enter your update here..."
-                    :readonly="!allowEditNote(note)"
-                  ></el-input>
-                </el-card>
-
-              </paginate>
-            </div>
-          </div>
-          <!-- END RISK DISPOSITION SECTION TAB -->
-
-          <!-- BEGIN RISK UPDATES TAB SECTION -->
-          <div v-show="currentTab == 'tab8'" class="paperLookTab">
             <div class="form-group mt-3 mx-4">             
                 <div class="form-group mx-4">
                 <label class="font-md"
@@ -2028,7 +1961,75 @@
                   
                 </div>
               </div>
-            </div>          
+            </div>
+          </div>
+          <!-- END RISK DISPOSITION SECTION TAB -->
+
+          <!-- BEGIN RISK UPDATES TAB SECTION -->
+          <div v-show="currentTab == 'tab8'" class="paperLookTab">
+            <div class="form-group mt-2 mx-4 paginated-updates">
+              <label class="font-md my-2">Updates</label>
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click.prevent="addNote"
+              >
+                <i class="fas fa-plus-circle"></i>
+              </span>
+              <paginate-links
+                v-if="filteredNotes.length"
+                for="filteredNotes"
+                :show-step-links="true"
+                :limit="2"
+              ></paginate-links>
+              <paginate
+                ref="paginator"
+                name="filteredNotes"
+                :list="filteredNotes"
+                :per="5"
+                class="paginate-list"
+                :key="filteredNotes ? filteredNotes.length : 1"
+              >
+                
+
+                <el-card
+                  v-for="note in paginated('filteredNotes')"
+                  :key="note.id"
+                  class="update-card mb-3"
+                >
+                  <div class="d-flex justify-content-between">
+                    <label class="font-md">Update</label>
+                    <div class="font-sm">
+                      <el-tag size="mini"
+                        ><span class="font-weight-bold">Submitted by:</span>
+                        <span v-if="note.updatedAt"
+                          >{{ note.user.fullName }} on
+                          {{ new Date(note.updatedAt).toLocaleString() }}</span
+                        ><span v-else
+                          >{{ $currentUser.full_name }} on
+                          {{ new Date().toLocaleDateString() }}</span
+                        ></el-tag
+                      >
+                      <i
+                        v-if="allowDeleteNote(note)"
+                        class="el-icon-delete clickable ml-3"
+                        @click.prevent.stop="destroyNote(note)"
+                      ></i>
+                    </div>
+                  </div>
+
+                  <el-input
+                    v-model="note.body"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="Enter your update here..."
+                    :readonly="!allowEditNote(note)"
+                  ></el-input>
+                </el-card>
+
+
+              </paginate>
+            </div>
           </div>
           <!-- END RISK UPDATES TAB SECTION -->
         </div>
