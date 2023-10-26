@@ -97,6 +97,8 @@ import ContextMenu from "../../shared/ContextMenu";
 import moment from "moment";
 Vue.prototype.moment = moment;
 
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "TaskSheets",
   components: {
@@ -165,7 +167,7 @@ export default {
           this.$confirm(`Are you sure you want to remove this task from on-watch?`, 'Confirm Remove', {
             confirmButtonText: 'Remove',
             cancelButtonText: 'Cancel',
-            type: 'warning'
+            type: MessageDialogService.msgTypes.WARNING
           }).then(() => {
             this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
             this.updateWatchedTasks(this.DV_task)
@@ -189,7 +191,7 @@ export default {
       this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.taskDeleted(this.DV_task)
       });

@@ -302,22 +302,12 @@ export default {
               facilityProjectId
              );
             }           
-            if (response.status === 200) {
-              this.$message({
-                message: `${risk.title} was moved successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
+            MessageDialogService.showDialog({
+              response: response              
+            });
           })
           .catch((err) => {
-            this.$message({
-              message: `Unable to move ${risk.title}. Please try again.`,
-              type: "error",
-              showClose: true,
-            });
-            // var errors = err.response.data.errors
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             this.loading = false;
@@ -388,22 +378,12 @@ export default {
             this.risk.facilityProjectId
           );
             }     
-            if (response.status === 200) {
-            this.$message({
-              message: `${responseRisk.text} was duplicated successfully.`,
-              type: "success",
-              showClose: true,
+            MessageDialogService.showDialog({
+              response: response              
             });
-          }
         })
         .catch((err) => {
-          this.$message({
-            message: `Unable to duplicate ${responseRisk.text}. Please try again.`,
-            type: "error",
-            showClose: true,
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false
@@ -504,22 +484,12 @@ export default {
             );
           });
          }
-         if (response.status === 200) {
-            this.$message({
-              message: `${this.risk.text} was duplicated successfully to selected projects.`,
-              type: "success",
-              showClose: true,
-            });
-          }
+          MessageDialogService.showDialog({
+            response: response              
+          });
         })
         .catch((err) => {
-          this.$message({
-            message: `Unable to duplicate ${this.risk.text} to selected projects. Please try again.`,
-            type: "error",
-            showClose: true,
-          });
-          // var errors = err.response.data.errors
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           // this.loading = false
@@ -535,21 +505,20 @@ export default {
       this.$confirm(`Are you sure you want to delete ${risk.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.riskDeleted({ risk, programId }).then((value) => {
             if (value === 'Success') {
-              this.$message({
+              MessageDialogService.showDialog({
                 message: `${risk.text} was deleted successfully.`,
-                type: "success",
-                showClose: true,
+                
+                
               });
             }
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled',
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: 'Delete canceled',
             showClose: true
           });          
         });

@@ -275,10 +275,10 @@ export default {
         },
       }).then((response) => {
         if (response.status === 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `New Project ${this.newProjectName} has been saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.dialogVisible = false;
           this.fetchCurrentProject(this.programId)
@@ -305,10 +305,10 @@ export default {
         },
       }).then((response) => {
         if (response.status === 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Edits has been saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.fetchCurrentProject(this.programId)
         }

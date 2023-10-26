@@ -91,15 +91,6 @@
           </button>
         </div>
     </div>
-        <el-alert  
-        v-if="errorTrue"
-        type="warning"
-        class="py-1 ml-3 w_97"
-        show-icon >
-       <template slot="title">
-        <em> There was a problem saving.</em>  
-       </template>
-       </el-alert>
     
       <hr class="mx-4 mb-6 mt-2" />
 
@@ -303,7 +294,8 @@
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
                 name="Process Area"
-                placeholder="Select Process Area"
+                placeholder="Search and select Process Area"
+                filterable
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -330,7 +322,8 @@
                 data-cy="issue_type_field"
                 name="Issue Type"
                 :disabled="!_isallowed('write')"
-                placeholder="Issue Type"
+                placeholder="Search and select Issue Type"
+                filterable
               >
                 <el-option
                   v-for="item in issueTypes"
@@ -367,7 +360,8 @@
                 :class="{ 'error': errors.has('Issue Severity') }"
                 data-cy="issue_severity"
                 name="Issue Severity"
-                placeholder="Issue Severity"
+                placeholder="Search and select Issue Severity"
+                filterable
               >
                 <el-option
                   v-for="item in issueSeverities"
@@ -1324,6 +1318,7 @@ import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
 import { API_BASE_PATH } from '../../../mixins/utils'
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: "IssueForm",
@@ -1581,7 +1576,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.issueDeleted(this.DV_issue);
         this.cancelIssueSave();
@@ -1592,7 +1587,7 @@ export default {
       this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           if (file.uri || file.link) {
             let index = this.DV_issue.issueFiles.findIndex(
@@ -1620,24 +1615,20 @@ export default {
         return
       }
       if (this.DV_issue.progress == 100 && !this.DV_issue.watched) {
-        this.$message({
+        MessageDialogService.showDialog({
           message: `Issues at 100% progress cannot be placed On Watch status.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         });
         return;
       }
       if (this.DV_issue.watched) {
-        this.$message({
+        MessageDialogService.showDialog({
           message: `${this.DV_issue.title} has been removed from On Watch status.`,
-          type: "warning",
-          showClose: true,
+          type: MessageDialogService.msgTypes.WARNING
         });
       } else {
-        this.$message({
-          message: `${this.DV_issue.title} successfully placed On Watch status.`,
-          type: "success",
-          showClose: true,
+        MessageDialogService.showDialog({
+          message: `${this.DV_issue.title} successfully placed On Watch status.`
         });
       }
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
@@ -1897,7 +1888,7 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue);
             this.loadIssue(responseIssue);
-          if (this.$route.params.contractId){
+            if (this.$route.params.contractId){
                this.updateContractIssues({ issue: responseIssue });
             } else if (this.$route.params.vehicleId){
                this.updateVehicleIssues({ issue: responseIssue });
@@ -1905,13 +1896,6 @@ export default {
              this.updateIssuesHash({ issue: responseIssue });
             }  
            
-            if (response.status === 200) {
-              this.$message({
-                message: `${response.data.issue.title} was saved successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
             if (response.status !== 200) {
               this.errorTrue = true
             }
@@ -1940,12 +1924,13 @@ export default {
             } else this.$router.push(
               `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/issue/${response.data.issue.id}`
             );
+            MessageDialogService.showDialog({
+              response: response
+            });
           })
           .catch((err) => {
-            console.log(err);
-            if(err) {
+            console.log("Error",err);
             this.errorTrue = true
-           }
           })
           .finally(() => {
             this.loading = false;
@@ -1959,7 +1944,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           let i = note.id
             ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
@@ -1982,7 +1967,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this Progress List item?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
             let i = progressList.id
             ? check.progressLists.findIndex((c) => c.id === progressList.id)
@@ -2015,7 +2000,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           let i = check.id
             ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
@@ -2095,7 +2080,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedTasks.splice(
             this.relatedTasks.findIndex((task) => task.id == id),
@@ -2110,7 +2095,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedIssues.splice(
             this.relatedIssues.findIndex((issue) => issue.id == id),
@@ -2125,7 +2110,7 @@ export default {
       this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.relatedRisks.splice(
             this.relatedRisks.findIndex((risk) => risk.id == id),
@@ -2287,7 +2272,7 @@ export default {
     //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
     //       this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
     //       confirmButtonText: 'Ok',
-    //       type: 'warning'
+    //       type: MessageDialogService.msgTypes.WARNING
     //     });
     //     }
     //   }

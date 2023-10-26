@@ -112,7 +112,9 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import ContextMenu from "../../shared/ContextMenu"
 
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'TaskShow',
     components: {
       ContextMenu
@@ -153,7 +155,7 @@
         this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
-          type: 'warning'
+          type: MessageDialogService.msgTypes.WARNING
         }).then(() => {
           this.taskDeleted(this.DV_task)
         });

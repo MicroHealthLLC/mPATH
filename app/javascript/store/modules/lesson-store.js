@@ -38,7 +38,7 @@ const lessonModule = {
           commit("SET_PROGRAM_LESSONS", res.data.lessons);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
 
@@ -62,7 +62,7 @@ const lessonModule = {
           commit("SET_PROGRAM_LESSONS_COUNT", res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
 
@@ -86,7 +86,7 @@ const lessonModule = {
           commit("SET_PROJECT_LESSONS", res.data.lessons);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_LESSONS_LOADED", true);
@@ -109,7 +109,7 @@ const lessonModule = {
           commit("SET_CONTRACT_LESSONS", res.data.lessons);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
@@ -132,7 +132,7 @@ const lessonModule = {
           commit("SET_VEHICLE_LESSONS", res.data.lessons);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_VEHICLE_LESSONS_LOADED", true);
@@ -153,7 +153,7 @@ const lessonModule = {
           commit("SET_LESSON", res.data.lesson);
            })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_LESSONS_LOADED", true);
@@ -174,7 +174,7 @@ const lessonModule = {
            commit("SET_CONTRACT_LESSON", res.data.lesson);
            })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
@@ -195,7 +195,7 @@ const lessonModule = {
            commit("SET_VEHICLE_LESSON", res.data.lesson);
            })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_VEHICLE_LESSONS_LOADED", true);
@@ -221,7 +221,7 @@ const lessonModule = {
           commit("SET_LESSON_STATUS", res.status)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_LESSONS_LOADED", true);
@@ -248,7 +248,7 @@ const lessonModule = {
      
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Error",err);
     })
     .finally(() => {
       commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
@@ -275,7 +275,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
       
      })
      .catch((err) => {
-       console.log(err);
+       console.log("Error",err);
      })
      .finally(() => {
        commit("TOGGLE_VEHICLE_LESSONS_LOADED", true);
@@ -301,7 +301,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("SET_LESSON_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_LESSONS_LOADED", true);
@@ -327,7 +327,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("SET_CONTRACT_LESSON_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
@@ -353,7 +353,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("SET_VEHICLE_LESSON_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_VEHICLE_LESSONS_LOADED", true);
@@ -373,7 +373,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("DELETE_LESSON", id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {});
     },
@@ -391,7 +391,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("DELETE_CONTRACT_LESSON", id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {});
     },
@@ -409,7 +409,7 @@ addVehicleLesson({ commit }, { lesson, vehicleId }) {
           commit("DELETE_VEHICLE_LESSON", id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {});
     },
@@ -484,15 +484,11 @@ const lessonFormData = (lesson) => {
   formData.append("lesson[title]", lesson.title); // Required
   formData.append("lesson[description]", lesson.description); // Required
   formData.append("lesson[date]", lesson.date); // Required
-  if (lesson.task_type_id) {
-    formData.append("lesson[task_type_id]", lesson.task_type_id);
-  }
+  formData.append("lesson[task_type_id]", lesson.task_type_id);
   if (lesson.user_id) {
     formData.append("lesson[user_id]", lesson.user_id);
   }
-  if (lesson.lesson_stage_id) {
-    formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
-  }
+  formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
   formData.append("lesson[important]", lesson.important || false);
   formData.append("lesson[reportable]", lesson.reportable || false);
   formData.append("lesson[draft]", lesson.draft || false);

@@ -360,7 +360,8 @@
                       value-key="id"
                       multiple
                       clearable
-                      placeholder="Select Process Area"
+                      filterable
+                      placeholder="Search and select Process Area"
                     >
                         <el-option
                         v-for="item in taskTypes"
@@ -1755,7 +1756,8 @@ export default {
         return this.getTasksPerPage || {id: 15, name: '15', value: 15}
       },
       set(value) {
-        this.setTasksPerPageFilter(value)
+        this.setTasksPerPageFilter(value);
+        this.currentPage = 1;
        }
      },
    currentPage:{

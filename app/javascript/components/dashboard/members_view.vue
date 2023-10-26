@@ -152,6 +152,8 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { jsPDF } from "jspdf"
 import 'jspdf-autotable'
+import MessageDialogService from "../../services/message_dialog_service";
+
 export default {
   name: "TeamMembersView",
   props: ['facility', 'from'],
@@ -221,7 +223,8 @@ export default {
         return this.getMembersPerPageFilter || { id: 15, name: '15', value: 15 }
       },
       set(value) {
-        this.setMembersPerPageFilter(value)
+        this.setMembersPerPageFilter(value);
+        this.currentPage = 1;
       }
     },
   },

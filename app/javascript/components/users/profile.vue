@@ -432,10 +432,13 @@
               }else{
                 this.gotoDashboard()
               }
+              MessageDialogService.showDialog({
+                response: res
+              })
 
             })
             .catch((err) => {
-              alert(err.response.data.errors)
+              console.log(err)
             })
         })
       },

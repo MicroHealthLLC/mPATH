@@ -27,9 +27,7 @@ class Task < ApplicationRecord
 
   attr_accessor :file_links
 
-  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
-  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
-  scope :exclude_closed_in, -> (dummy) { where("closed_date is NULL") }
+  scope :exclude_closed_in, -> (dummy) { where("ongoing is false and closed_date is NULL") }
   scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   amoeba do
@@ -458,6 +456,13 @@ class Task < ApplicationRecord
     end
 
     all_checklists = task.checklists
+    if !task.planned_effort
+      task.planned_effort = 0.0
+    end
+    
+    if !task.actual_effort
+      task.actual_effort = 0.0
+    end
 
     task.transaction do
       task.save

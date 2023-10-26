@@ -73,6 +73,7 @@
   import http from './../../common/http'
   import {SweetModal} from 'sweet-modal-vue'
   import {mapGetters, mapActions, mapMutations} from 'vuex'
+  import MessageDialogService from "../../services/message_dialog_service";
 
   export default {
     name: "GanttChart",
@@ -314,6 +315,9 @@
           .then((res) => {
             this.taskUpdated({facilityId: this.AC_task.facilityId, projectId: this.AC_task.projectId, cb})
             this.onCloseTask()
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

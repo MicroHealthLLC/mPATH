@@ -487,7 +487,7 @@
 import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
-import XLSX from 'xlsx'
+import * as XLSX from "xlsx/xlsx";
 import {API_BASE_PATH} from './../../mixins/utils'
 
 export default {
@@ -1024,7 +1024,6 @@ export default {
         this.favoriteFilterOptions = res
       })
       .catch((err) => {
-        // var errors = err.response.data.errors
         console.log(err)
       })
       .finally(() => {
@@ -1262,20 +1261,13 @@ export default {
         _.remove(this.favoriteFilterOptions, (t) => t.id === null)
         this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
-        this.$message({
-          message: `Favorite Filter is saved successfully.`,
-          type: "success",
-          showClose: true,
+        MessageDialogService.showDialog({
+          message: `Favorite Filter is saved successfully.`
         });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        this.$message({
-          message: err.response.data.error ,
-          type: "error",
-          showClose: true,
-        });
       })
       .finally(() => {
         // this.loading = false
@@ -1323,7 +1315,7 @@ export default {
       this.$confirm(`Are you sure you want to remove this favorite filter?`, 'Confirm Remove', {
         confirmButtonText: 'Remove',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: MessageDialogService.msgTypes.WARNING
       }).then(() => {
         this.setTaskIssueUserFilter([])
         this.setTaskIssueProgressStatusFilter([])
@@ -1390,22 +1382,15 @@ export default {
           }
           //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
           //Vue.set(this.favoriteFilterOptions, i, null)
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Favorite Filter is removed successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
         })
         .catch((err) => {
           // var errors = err.response.data.errors
           console.log(err)
-          if(err.response.data.error){
-            this.$message({
-              message: err.response.data.error,
-              type: "error",
-              showClose: true,
-            });
-          }
 
         })
         .finally(() => {

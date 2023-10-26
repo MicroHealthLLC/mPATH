@@ -80,7 +80,7 @@ ActiveAdmin.register Lesson do
       end
     end
     column "Project", :facility, nil, sortable: 'facilities.facility_name' do |lesson|
-      if current_user.admin_write?
+      if current_user.admin_write? && lesson.facility && lesson.facility.is_portfolio
         link_to "#{lesson.facility.facility_name}", "#{edit_admin_facility_path(lesson.facility)}" if lesson.facility.present?
       else
         "<span>#{lesson.facility&.facility_name}</span>".html_safe

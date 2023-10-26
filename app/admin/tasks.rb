@@ -91,7 +91,7 @@ ActiveAdmin.register Task do
       end
     end
     column "Project", :facility, nil, sortable: 'facilities.facility_name' do |task|
-      if current_user.admin_write?
+      if current_user.admin_write? && task.facility && task.facility.is_portfolio
         link_to "#{task.facility.facility_name}", "#{edit_admin_facility_path(task.facility)}" if task.facility.present?
       else
         "<span>#{task.facility&.facility_name}</span>".html_safe
@@ -304,7 +304,7 @@ ActiveAdmin.register Task do
 
     def scoped_collection
       # To make order sorting working for contract_project_data on index page, we must have to add assoication in include
-      super.includes(:contract_project_data, :task_type, :task_stage, facility_project: [:project, :facility])
+      super.includes(:contract_project_data, :task_type, :task_stage, :facility, facility_project: [:project, :facility])
     end
   end
 

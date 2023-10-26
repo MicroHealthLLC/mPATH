@@ -12,6 +12,8 @@ import Tabsbar from "./../shared/tabsbar";
 import FilterSidebar from "./../shared/filter_sidebar";
 import SettingsSidebar from "../views/settings/SettingsSidebar.vue";
 
+import MessageDialogService from "../../services/message_dialog_service";
+
 export default {
   name: "Dashboard",
   components: {

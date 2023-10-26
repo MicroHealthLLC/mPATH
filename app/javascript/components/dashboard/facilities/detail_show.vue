@@ -29,8 +29,9 @@
   import TaskForm from './../tasks/task_form'
   import {mapGetters, mapMutations} from 'vuex'
   import {API_BASE_PATH} from './../../../mixins/utils'
+  import MessageDialogService from "../../../services/message_dialog_service";
 
-  export default {
+export default {
     name: 'DetailShow',
     props: ['facility', 'from'],
     components: {
@@ -74,6 +75,9 @@
             let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
             this.$emit('refresh-facility')
+            MessageDialogService.showDialog({
+              response: res
+            })
           })
           .catch((err) => console.log(err))
       },

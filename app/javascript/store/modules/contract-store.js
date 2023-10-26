@@ -62,7 +62,7 @@ const contractStore = {
           // console.log(res.data.roles)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_PROJECTS_LOADED", true);
@@ -82,7 +82,7 @@ const contractStore = {
           commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
@@ -102,7 +102,7 @@ const contractStore = {
           commit("SET_CONTRACT_DATA_OPTIONS", res.data);
           })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_DATA_OPTIONS_LOADED", true);
@@ -123,7 +123,7 @@ const contractStore = {
           // console.log(res.data.roles)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_POCS_LOADED", true);
@@ -175,7 +175,7 @@ const contractStore = {
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
@@ -224,7 +224,7 @@ const contractStore = {
           commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
@@ -266,7 +266,7 @@ const contractStore = {
           commit("SET_CONTRACT_POCS_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_POCS_LOADED", true);
@@ -290,7 +290,7 @@ const contractStore = {
           // console.log(res.data.roles)
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", true);
@@ -313,7 +313,7 @@ const contractStore = {
             // console.log(res.data.roles)
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_ASSOCIATED_VEHICLES_LOADED", true);
@@ -339,7 +339,7 @@ const contractStore = {
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
@@ -441,7 +441,7 @@ const contractStore = {
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
@@ -514,7 +514,7 @@ const contractStore = {
         commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {
         commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
@@ -547,7 +547,7 @@ const contractStore = {
       commit("SET_CONTRACT_POCS_STATUS", res.status);
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Error",err);
     })
     .finally(() => {
       commit("TOGGLE_CONTRACT_POCS_LOADED", true);
@@ -569,7 +569,7 @@ const contractStore = {
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
       })
       .finally(() => {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
@@ -591,7 +591,7 @@ const contractStore = {
             commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error",err);
           })
           .finally(() => {
             commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
@@ -613,7 +613,7 @@ const contractStore = {
           commit("SET_CONTRACT_POCS_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_CONTRACT_POCS_LOADED", true);

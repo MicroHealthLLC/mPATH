@@ -950,6 +950,7 @@ export default {
     //ISSUES
     if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')){
         this.isIssuesRead = false
+    }
     if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')) {
         this.issuesPriv.push(..."R")
         this.isIssuesRead= true
@@ -1035,7 +1036,6 @@ export default {
     if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')){
         this.notesPriv.push(..."D")
         this.isNotesDelete = true
-    }
     }
   },
   cancelEditRole(index, rowData){    
@@ -1338,10 +1338,10 @@ export default {
     newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `New role successfully added to your program.`,
-            type: "success",
-            showClose: true,
+            
+            
           });         
           this.SET_NEW_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)   
@@ -1352,10 +1352,10 @@ export default {
     updatedContractRoleStatus: {
       handler() {
         if (this.updatedContractRoleStatus == 200) {
-        this.$message({
+        MessageDialogService.showDialog({
             message: `Role successfully updated.`,
-            type: "success",
-            showClose: true,
+            
+            
           }); 
           console.log("updatedRole in contracts Tab")
           this.isEditting = false;

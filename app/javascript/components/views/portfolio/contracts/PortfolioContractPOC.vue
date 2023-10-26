@@ -664,10 +664,10 @@ export default {
     contractProjectStatus: {
       handler() {
         if (this.contractProjectStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Contract POC saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();
@@ -677,10 +677,10 @@ export default {
     contractVehicleStatus: {
       handler() {
         if (this.contractVehicleStatus == 200) {
-          this.$message({
+          MessageDialogService.showDialog({
             message: `Vehicle POC data saved successfully.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
           this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();

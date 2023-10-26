@@ -5,48 +5,57 @@ task :modify_roles => :environment do
     {
       name: "update-project", 
       type_of: 'project',
-      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES,
+      privilege: "RWD"
     },
     {
       name: "read-project", 
       type_of: 'project',
-      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES,
+      privilege: "R"
     },
     {
       name: "contribute-project", 
       type_of: 'project',
-      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES,
+      privilege: "RW"
     },
   
     {
       name: "update-contract", 
       type_of: 'contract',
-      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES,
+      privilege: "RWD"
     },
     {
       name: "read-contract", 
       type_of: 'contract',
-      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES,
+      privilege: "R"
     },
     {
       name: "contribute-contract", 
       type_of: 'contract',
-      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES
+      role_privileges: RolePrivilege::CONTRACT_PRIVILEGES_ROLE_TYPES,
+      privilege: "RW"
     },  
     {
       name: "program-admin",
       type_of: 'admin',
-      role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+      role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES,
+      privilege: "RWD"
     },
     {
       name: "program-admin-not-users",
       type_of: 'admin',
-      role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"])
+      role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"]),
+      privilege: "RWD"
     },
     {
       name: "program-admin-not-contract",
       type_of: 'admin',
-      role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"])
+      role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"]),
+      privilege: "RWD"
     },
   ]
 

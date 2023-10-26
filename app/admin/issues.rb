@@ -92,7 +92,7 @@ ActiveAdmin.register Issue do
       end
     end
     column "Project", :facility, nil, sortable: 'facilities.facility_name' do |issue|
-      if current_user.admin_write?
+      if current_user.admin_write? && issue.facility && issue.facility.is_portfolio
         link_to "#{issue.facility.facility_name}", "#{edit_admin_facility_path(issue.facility)}" if issue.facility.present?
       else
         "<span>#{issue.facility&.facility_name}</span>".html_safe
@@ -323,7 +323,7 @@ ActiveAdmin.register Issue do
     end
 
     def scoped_collection
-      super.includes(:contract_project_data, :task_type, :issue_type, :issue_severity, :issue_stage, facility_project: [:project, :facility])
+      super.includes(:contract_project_data, :task_type, :issue_type, :issue_severity, :issue_stage, :facility, facility_project: [:project, :facility])
     end
   end
 

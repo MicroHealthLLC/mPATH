@@ -119,17 +119,16 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
           this.deleteLesson({ id: this.lesson.id, ...this.$route.params });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-            showClose: true,
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: "Delete canceled",
+            
           });
         });
 
@@ -140,23 +139,22 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
           this.deleteContractLesson({ id: this.lesson.id, ...this.$route.params });
           // Move this message to store
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.lesson.title} is successfully deleted.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-            showClose: true,
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: "Delete canceled",
+            
           });
         });        
       } else if (this.$route.params.vehicleId){
@@ -166,23 +164,22 @@ export default {
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
-          type: "warning",
+          type: MessageDialogService.msgTypes.WARNING,
         }
       )
         .then(() => {
           this.deleteVehicleLesson({ id: this.lesson.id, ...this.$route.params });
           // Move this message to store
-          this.$message({
+          MessageDialogService.showDialog({
             message: `${this.lesson.title} is successfully deleted.`,
-            type: "success",
-            showClose: true,
+            
+            
           });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-            showClose: true,
+          MessageDialogService.showDialog({
+            type: MessageDialogService.msgTypes.INFO,            message: "Delete canceled",
+            
           });
         });        
       }   

@@ -34,7 +34,7 @@ const notesStore = {
           commit("SET_CONTRACT_NOTES", res.data.notes);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -55,7 +55,7 @@ const notesStore = {
            commit("SET_CONTRACT_NOTE", res.data.notes);
            })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -83,7 +83,7 @@ const notesStore = {
         
         })
         .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
         })
         .finally(() => {
         commit("TOGGLE_NOTES_LOADED", true);
@@ -109,7 +109,7 @@ const notesStore = {
           commit("SET_CONTRACT_NOTE_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -129,7 +129,7 @@ const notesStore = {
           commit("DELETE_CONTRACT_NOTE", id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {});
     },
@@ -151,7 +151,7 @@ const notesStore = {
           commit("SET_VEHICLE_NOTES", res.data.notes);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -172,7 +172,7 @@ const notesStore = {
            commit("SET_VEHICLE_NOTE", res.data.notes);
            })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -200,7 +200,7 @@ const notesStore = {
         
         })
         .catch((err) => {
-        console.log(err);
+        console.log("Error",err);
         })
         .finally(() => {
         commit("TOGGLE_NOTES_LOADED", true);
@@ -226,7 +226,7 @@ const notesStore = {
           commit("SET_VEHICLE_NOTE_STATUS", res.status);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {
           commit("TOGGLE_NOTES_LOADED", true);
@@ -246,7 +246,7 @@ const notesStore = {
           commit("DELETE_VEHICLE_NOTE", id);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error",err);
         })
         .finally(() => {});
     },

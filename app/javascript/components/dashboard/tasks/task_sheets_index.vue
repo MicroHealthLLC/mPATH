@@ -507,7 +507,9 @@
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
-  export default {
+  import MessageDialogService from "../../../services/message_dialog_service";
+
+export default {
     name: 'TasksSheetsIndex',
     components: {
       TaskSheets
@@ -995,7 +997,8 @@
         return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
       },
       set(value) {
-        this.setTasksPerPageFilter(value)
+        this.setTasksPerPageFilter(value);
+        this.currentPage = 1;
        }
      },
       C_myTasks: {
