@@ -329,7 +329,8 @@
                 data-cy="task_type"
                 name="Process Area"
                 :class="{ 'error': errors.has('Process Area') }"
-                placeholder="Select Process Area"
+                placeholder="Search and select Process Area"
+                filterable
               >
                 <el-option
                   v-for="item in taskTypes"

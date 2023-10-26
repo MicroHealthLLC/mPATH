@@ -214,9 +214,10 @@
           v-model="contractLesson.task_type_id"
           class="w-100"
           clearable
+          filterable
           value-key="id"
           name="Process Area"
-          placeholder="Select Process Area"
+          placeholder="Search and select Process Area"
           :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->

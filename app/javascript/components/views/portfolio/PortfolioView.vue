@@ -684,8 +684,9 @@
                   value-key="id"
                   multiple
                   clearable
+                  filterable
                   @clear="setValueNull"
-                  placeholder="Select Process Area"
+                  placeholder="Search and select Process Area"
                 >
                   <el-option
                     v-for="item in C_categories"

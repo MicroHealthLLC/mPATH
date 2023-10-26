@@ -126,8 +126,8 @@
 
         <div class="col-6 pl-0">
           <label class="font-md w-100">Process Area</label>
-          <el-select v-model="lesson.task_type_id" class="w-100" value-key="id" clearable name="Process Area"
-            placeholder="Select Process Area" :disabled="!_isallowed('write')">
+          <el-select v-model="lesson.task_type_id" class="w-100" value-key="id" clearable filterable name="Process Area"
+            placeholder="Search and select Process Area" :disabled="!_isallowed('write')">
             <!--TODO: Change taskTypes to categoryTypes -->
             <el-option v-for="category in taskTypes" :value="category.id" :key="category.id" :label="category.name">
             </el-option>

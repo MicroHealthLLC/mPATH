@@ -294,7 +294,8 @@
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
                 name="Process Area"
-                placeholder="Select Process Area"
+                placeholder="Search and select Process Area"
+                filterable
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -321,7 +322,8 @@
                 data-cy="issue_type_field"
                 name="Issue Type"
                 :disabled="!_isallowed('write')"
-                placeholder="Issue Type"
+                placeholder="Search and select Issue Type"
+                filterable
               >
                 <el-option
                   v-for="item in issueTypes"
@@ -358,7 +360,8 @@
                 :class="{ 'error': errors.has('Issue Severity') }"
                 data-cy="issue_severity"
                 name="Issue Severity"
-                placeholder="Issue Severity"
+                placeholder="Search and select Issue Severity"
+                filterable
               >
                 <el-option
                   v-for="item in issueSeverities"
