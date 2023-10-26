@@ -1051,7 +1051,8 @@ export default {
           return this.getRisksPerPageFilter || {id: 15, name: '15', value: 15}
         },
         set(value) {
-          this.setRisksPerPageFilter(value)
+          this.setRisksPerPageFilter(value);
+          this.currentPage = 1;
         }
      },
       sortedRisks:function() {

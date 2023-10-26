@@ -1421,7 +1421,8 @@ export default {
           return this.getIssuesPerPage || {id: 15, name: '15', value: 15}
         },
         set(value) {
-          this.setIssuesPerPageFilter(value)
+          this.setIssuesPerPageFilter(value);
+          this.currentPage = 1;
         }
      },
     C_showCountToggle: {                  

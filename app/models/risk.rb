@@ -241,6 +241,7 @@ class Risk < ApplicationRecord
       :ongoing,
       :duration,
       :duration_name,
+      :status,
       :status_name,
       :explanation,
       :risk_approach_description,
@@ -759,6 +760,7 @@ class Risk < ApplicationRecord
     self.probability = self.probability.to_i
     self.impact_level = self.impact_level.to_i
     self.duration = self.duration.to_i
+    self.status = self.status.to_i
     self.priority_level = self.probability * self.impact_level
   end
 

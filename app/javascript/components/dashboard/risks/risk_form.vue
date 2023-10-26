@@ -336,7 +336,8 @@
                     data-cy="task_type"
                     name="Process Area"
                     :class="{ 'error': errors.has('Process Area') }"
-                    placeholder="Select Process Area"
+                    placeholder="Search and select Process Area"
+                    filterable
                   >
                     <el-option
                       v-for="item in taskTypes"
@@ -721,6 +722,7 @@
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Risk Probability') }"
                       data-cy="risk_probability"
+                      filterable
                     >
                       <el-option
                         v-for="item in getRiskProbabilityNames"
@@ -752,6 +754,7 @@
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Impact Level') }"
                       data-cy="impact_level"
+                      filterable
                     >
                       <el-option
                         v-for="item in getRiskImpactLevelNames"
@@ -1142,6 +1145,7 @@
                   :disabled="!_isallowed('write')"
                   :class="{ error: errors.has('Risk Approach') }"
                   data-cy="risk_approach"
+                  filterable
                 >
                   <el-option
                     v-for="item in riskApproaches"
@@ -1913,10 +1917,11 @@
                     v-model="selectedStatus"                  
                     class="w-100"
                     track-by="name" 
-                    clearable               
+                    clearable
+                    filterable
                     :disabled="!_isallowed('write')"
                     data-cy="risk_status"                  
-                    placeholder="Risk Disposition Status"
+                    placeholder="Search and select Risk Disposition Status"
                   >
                     <el-option
                       v-for="item in getRiskDispositionStatus"                 
@@ -1938,9 +1943,10 @@
                     v-model="selectedDuration"                            
                     class="w-100"
                     clearable
+                    filterable
                     track-by="name"                  
                     :disabled="!_isallowed('write')"                                 
-                    placeholder="Risk Disposition Duration"
+                    placeholder="Search and select Risk Disposition Duration"
                   >
                     <el-option
                       v-for="item in getRiskDispositionDuration"                 

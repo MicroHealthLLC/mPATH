@@ -950,6 +950,7 @@ export default {
     //ISSUES
     if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')){
         this.isIssuesRead = false
+    }
     if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')) {
         this.issuesPriv.push(..."R")
         this.isIssuesRead= true
@@ -1035,7 +1036,6 @@ export default {
     if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')){
         this.notesPriv.push(..."D")
         this.isNotesDelete = true
-    }
     }
   },
   cancelEditRole(index, rowData){    
