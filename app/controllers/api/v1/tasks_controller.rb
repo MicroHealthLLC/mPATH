@@ -2,12 +2,12 @@ class Api::V1::TasksController < AuthenticatedController
 # NOTE: uncomment this when we move to token based authentication
 # class  Api::V1::TasksController < Api::ApplicationController
   before_action :set_resources#, except: [:show]
-  before_action :set_task, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_task, only: [:versions,:update, :destroy, :create_duplicate, :create_bulk_duplicate]
   before_action :check_permission
 
   def check_permission
     action = nil
-    if ["index", "show" ].include?(params[:action]) 
+    if ["index", "show", "versions" ].include?(params[:action]) 
       action = "read"
     elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
       action = "write"
@@ -22,6 +22,10 @@ class Api::V1::TasksController < AuthenticatedController
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
     end
+  end
+
+  def versions
+    render json: @task.versions_json
   end
 
   def index

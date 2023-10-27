@@ -2,7 +2,7 @@ class Task < ApplicationRecord
   include Normalizer
   include Tasker
   include CommonUtilities
-
+  
   belongs_to :task_type
   belongs_to :task_stage, optional: true
 

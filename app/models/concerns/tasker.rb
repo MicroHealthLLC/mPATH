@@ -8,6 +8,9 @@ module Tasker
 
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
+    
+    # Adding log for Task
+    has_paper_trail
 
     belongs_to :facility_project, optional: true #since now we can create task under contract
     belongs_to :contract, optional: true
@@ -48,6 +51,19 @@ module Tasker
     scope :inactive_facility, -> { includes(facility_project: [:facility]).where.not(facility_project: { facilities: { status: 0 } }) }
 
     base.const_set :URL_FILENAME_LENGTH, 252
+
+    def versions_json
+      h = []
+      users = User.where(id:  versions.pluck(:whodunnit).uniq).pluck(:id, :email).to_h
+      versions.each do |v|
+        h << {
+          event: v.event,
+          user: users[v.whodunnit.to_i],
+          change: v.object_changes ? v.object_changes.gsub("---",'') : ''
+        }
+      end
+      h
+    end
 
     def valid_url?(url)
       uri = URI.parse(url)

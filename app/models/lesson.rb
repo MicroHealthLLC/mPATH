@@ -1,4 +1,8 @@
 class Lesson < ApplicationRecord
+
+  # Adding log for Task
+  has_paper_trail
+
   belongs_to :user
   belongs_to :task_type, optional: true
 
@@ -51,6 +55,19 @@ class Lesson < ApplicationRecord
       project_id: facility.id,
       project_name: facility.facility_name
     }
+  end
+
+  def versions_json
+    h = []
+    users = User.where(id:  versions.pluck(:whodunnit).uniq).pluck(:id, :email).to_h
+    versions.each do |v|
+      h << {
+        event: v.event,
+        user: users[v.whodunnit.to_i],
+        change: v.object_changes ? v.object_changes.gsub("---",'') : ''
+      }
+    end
+    h
   end
 
   def portfolio_json

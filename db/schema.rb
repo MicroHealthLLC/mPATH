@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_26_202731) do
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -378,7 +378,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.string "code"
     t.integer "status", default: 1
     t.integer "region_type", default: 0
-    t.string "center", default: "[]"
+    t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.boolean "is_portfolio", default: false
@@ -401,10 +401,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.integer "facility_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "lessons", default: "---\n- R\n"
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
-    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -1027,6 +1027,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
 
+  create_table "tenants", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "subdomain", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", charset: "utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -1052,13 +1059,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_174451) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "versions", charset: "utf8mb4", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", size: :long
+    t.text "object_changes", size: :long
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

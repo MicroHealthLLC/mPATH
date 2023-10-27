@@ -1,6 +1,8 @@
 class Api::ApplicationController < ActionController::API
   before_action :authenticate_request!
   around_action :user_time_zone, if: :current_user
+  
+  before_action :set_paper_trail_whodunnit
 
   attr_reader :current_user
 
