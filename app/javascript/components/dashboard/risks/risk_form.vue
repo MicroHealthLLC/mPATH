@@ -1885,12 +1885,11 @@
           <!-- END RISK RELATED TAB SECTION -->
 
           <!-- BEGIN RISK DISPOSITION SECTION TAB -->
-          <div
-            v-show="currentTab == 'tab7'"
+          <div v-show="currentTab == 'tab7'"
             style="min-height: 300px"
             class="paperLookTab"
-          >
-          <div class="form-group mt-2 mx-4 paginated-updates">
+          >          
+            <div class="form-group mt-2 mx-4 paginated-updates">
               <label class="font-md my-2">Updates</label>
               <span
                 class="ml-2 clickable"
@@ -1949,6 +1948,7 @@
                     :readonly="!allowEditNote(note)"
                   ></el-input>
                 </el-card>
+
 
               </paginate>
             </div>
@@ -2028,7 +2028,8 @@
                   
                 </div>
               </div>
-            </div>          
+            </div>
+       
           </div>
           <!-- END RISK UPDATES TAB SECTION -->
         </div>
