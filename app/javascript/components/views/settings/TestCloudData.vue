@@ -105,6 +105,7 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
+import MessageDialogService from "../../../services/message_dialog_service";
 
 
 export default {

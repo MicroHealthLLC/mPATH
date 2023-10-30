@@ -89,6 +89,7 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import axios from "axios";
 import humps from "humps";
 import {API_BASE_PATH} from './../../mixins/utils'
+import MessageDialogService from "../../services/message_dialog_service";
 
 export default {
   name: "ContextMenu",
