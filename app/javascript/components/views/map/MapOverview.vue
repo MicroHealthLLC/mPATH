@@ -618,6 +618,7 @@ import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
 import {API_BASE_PATH} from './../../../mixins/utils'
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: "MapOverview",

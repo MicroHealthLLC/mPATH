@@ -191,6 +191,8 @@
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import MessageDialogService from "../../../../services/message_dialog_service";
+
   Vue.filter('toCurrency', function (value) {
       if (typeof value !== "number") {
           return value;
