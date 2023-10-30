@@ -1334,6 +1334,8 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import FormTabs from "../../shared/FormTabs.vue";
 import { faSlash } from "@fortawesome/free-solid-svg-icons";
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "SettingsUsers",
   components: {
