@@ -663,7 +663,8 @@
 
 <script>
 import { faLeaf } from '@fortawesome/free-solid-svg-icons';
- 
+import MessageDialogService from "../../../../services/message_dialog_service";
+
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {

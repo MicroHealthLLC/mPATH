@@ -499,6 +499,7 @@ import 'vue2-datepicker/index.css'
  Vue.component('v2-date-picker', DatePicker)
  import DatePicker from 'vue2-datepicker'
  Vue.component('treeselect', VueTreeselect.Treeselect)
+import MessageDialogService from "../../services/message_dialog_service";
 
 export default {
   name: 'PortfolioFilterSidebar',

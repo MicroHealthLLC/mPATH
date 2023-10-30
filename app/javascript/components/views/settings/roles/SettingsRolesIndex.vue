@@ -1260,6 +1260,7 @@ import SettingsRolesProjects from "./SettingsRolesProjects.vue";
 import SettingsRolesContracts from "./SettingsRolesContracts.vue";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import AuthorizationService from '../../../../services/authorization_service'
+import MessageDialogService from "../../../../services/message_dialog_service";
 
 export default {
   name: "SettingsRolesIndex",
