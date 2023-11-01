@@ -288,7 +288,8 @@
                 v-model="selectedTaskType"              
                 class="w-100"
                 track-by="id"
-                value-key="id" 
+                value-key="id"
+                filterable
                :disabled="!_isallowed('write')"             
                 data-cy="task_type"    
               :class="{ 'error': errors.has('Process Area') }"         
