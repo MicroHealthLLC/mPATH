@@ -105,6 +105,7 @@
                           @change="onChange"
                           :disabled="!_isallowed('write')"
                           placeholder="Select Project Status"
+                          filterable
                         >
                           <el-option
                             v-for="item in statuses"
