@@ -276,7 +276,7 @@
           </button>
           <button class="btn btn-sm page-btns" id="page-count">
             {{ currentPage }} of
-            {{ Math.ceil( this.filteredLessons.filtered.lessons.length / lessonsPerPage.value) }}
+            {{ Math.ceil( this.filteredLessons.filtered.lessons.length / this.lessonsPerPage.value) }}
           </button>
           <button class="btn btn-sm page-btns" @click="nextPage">
             <i class="fas fa-angle-right"></i>
