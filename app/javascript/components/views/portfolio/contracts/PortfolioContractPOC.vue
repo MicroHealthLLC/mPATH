@@ -535,6 +535,7 @@
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import MessageDialogService from "../../../../services/message_dialog_service";
 
 export default {
   name: "PortfolioContractPOC",

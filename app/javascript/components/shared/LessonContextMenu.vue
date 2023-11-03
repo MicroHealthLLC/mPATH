@@ -21,6 +21,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import MessageDialogService from "../../services/message_dialog_service";
 
 export default {
   name: "LessonContextMenu",
