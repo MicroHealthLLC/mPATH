@@ -315,11 +315,12 @@
                     class="w-100"
                     track-by="id"
                     value-key="id"
+                    filterable
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"
                     name="Process Area"
                     :class="{ 'error': errors.has('Process Area') }"
-                    placeholder="Select Process Area"
+                    placeholder="Search and select Process Area"
                   >
                     <el-option
                       v-for="item in taskTypes"
@@ -711,6 +712,7 @@
                       class="w-100"
                       track-by="value"
                       value-key="id"
+                      filterable
                       placeholder="Risk Probablity"
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Risk Probability') }"
@@ -742,6 +744,7 @@
                       class="w-100"
                       track-by="value"
                       value-key="id"
+                      filterable
                       placeholder="Impact Level"
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Impact Level') }"
@@ -1133,6 +1136,7 @@
                   track-by="name"
                   v-validate="'required'"
                   placeholder="Risk Approach"
+                  filterable
                   :disabled="!_isallowed('write')"
                   :class="{ error: errors.has('Risk Approach') }"
                   data-cy="risk_approach"
@@ -1897,9 +1901,10 @@
                     v-model="selectedStatus"                                            
                     class="w-100"
                     clearable
+                    filterable
                     track-by="name"                  
                     :disabled="!_isallowed('write')"                                 
-                    placeholder="Risk Disposition Status"
+                    placeholder="Search and select Risk Disposition Status"
                   >
                     <el-option
                       v-for="item in getRiskDispositionStatus"                 
@@ -1920,9 +1925,10 @@
                                            
                     class="w-100"
                     clearable
+                    filterable
                     track-by="name"                  
                     :disabled="!_isallowed('write')"                                 
-                    placeholder="Risk Disposition Duration"
+                    placeholder="Search and select Risk Disposition Duration"
                   >
                     <el-option
                       v-for="item in getRiskDispositionDuration"                 

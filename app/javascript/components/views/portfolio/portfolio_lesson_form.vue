@@ -215,7 +215,8 @@
           clearable
           value-key="id"
           name="Process Area"
-          placeholder="Select Process Area"
+          filterable
+          placeholder="Search and select Process Area"
           :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->

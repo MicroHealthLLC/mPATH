@@ -28,7 +28,8 @@
       value-key="id"
       multiple                                                                                                                                               
       clearable
-      placeholder="Select Process Area"
+      filterable
+      placeholder="Filter by Process Area"
       >
     <el-option 
       v-for="item in taskTypes"                                                     
@@ -47,6 +48,7 @@
         value-key="id"
         multiple
         clearable
+        filterable
         placeholder="Filter by Issue Types"
       >
       <el-option
@@ -65,6 +67,7 @@
         value-key="id"
         multiple
         clearable
+        filterable
         placeholder="Filter by Issue Severities"
       >
       <el-option
