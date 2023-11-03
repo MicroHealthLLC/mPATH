@@ -35,7 +35,8 @@
       value-key="id"
       multiple                                                                                                                                               
       clearable
-      placeholder="Select Process Area"
+      filterable
+      placeholder="Filter by Process Area"
       >
     <el-option 
       v-for="item in taskTypes"                                                     
@@ -55,7 +56,8 @@
            track-by="name" 
            value-key="id"
            multiple                                                                                                                                               
-          clearable
+           clearable
+           filterable
            placeholder="Filter by Risk Approach"
            >
           <el-option 
@@ -75,6 +77,7 @@
         value-key="id"
         multiple
         clearable
+        filterable
         placeholder="Filter by Risk Priority Level"
         >
         <el-option
