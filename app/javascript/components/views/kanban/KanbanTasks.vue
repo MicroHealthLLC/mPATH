@@ -26,7 +26,8 @@
           value-key="id"
           multiple
           clearable
-          placeholder="Select Process Area"
+          filterable
+          placeholder="Search and select Process Area"
           collapse-tags
         >
           <el-option
