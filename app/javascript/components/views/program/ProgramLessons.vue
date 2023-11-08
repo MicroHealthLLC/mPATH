@@ -1213,7 +1213,8 @@ export default {
        } else return true              
         })
       } 
-    }
+    };
+    this.currentPage = 1;
    },
    sortedLessons:function() {
     return this.filteredLessons.filtered.lessons.sort((a,b) => { 
@@ -1482,7 +1483,7 @@ export default {
        this.currentSort = "";
     },
     nextPage:function() {
-        if((this.currentPage*this.C_lessonsPerPage.value) < this.filteredLessons.filtered.lessons) this.currentPage++;
+        if((this.currentPage*this.C_lessonsPerPage.value) < this.filteredLessons.filtered.lessons.length) this.currentPage++;
       },
     prevPage:function() {
        if(this.currentPage > 1) this.currentPage--;
