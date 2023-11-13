@@ -47,7 +47,7 @@
                     <div class="col-3 mt-3">
                     <img
                         style="width: 145px"
-                      :src="require('../../../../assets/images/microhealthllc.png')"
+                      :src="require('../../../../assets/images/mh_logo.png')"
                     />
                 </div>
             </div>
