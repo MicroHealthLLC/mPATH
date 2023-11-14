@@ -253,7 +253,7 @@
           class="my-2"
           style="width: 147px;cursor:pointer"
           id="img1"
-          :src="require('../../../assets/images/microhealthllc.png')"
+          :src="require('../../../assets/images/mh_logo.png')"
         />
       </span>
 
@@ -802,7 +802,7 @@
         <img
           class="my-2"
           style="width: 147px;cursor:pointer"
-          :src="require('../../../assets/images/microhealthllc.png')"
+          :src="require('../../../assets/images/mh_logo.png')"
         />
       </span>
      
@@ -3003,7 +3003,7 @@ export default {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
       const html =  this.$refs.table.innerHTML       
-      const logo = require('../../../assets/images/microhealthllc.png')
+      const logo = require('../../../assets/images/mh_logo.png')
       var imgLogo = new Image()
       imgLogo.src = logo    
 
@@ -3061,7 +3061,7 @@ export default {
     printProgramEffortReport(programName, week) {
       const doc = new jsPDF("l")
       const html =  this.$refs.table1.innerHTML    
-      const logo = require('../../../assets/images/microhealthllc.png')
+      const logo = require('../../../assets/images/mh_logo.png')
       var imgLogo = new Image()
       imgLogo.src = logo
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
