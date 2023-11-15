@@ -1044,6 +1044,51 @@ v-if="filteredRisks.filtered.risks.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>
+        <th class="sort-th" style="min-width: 130px" @click="sort('riskStage')">
+          Stage
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'riskStage'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'asc' &&
+              currentSort === 'riskStage'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'asc' &&
+              currentSort === 'riskStage'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'desc' &&
+              currentSort === 'riskStage'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'desc' &&
+              currentSort === 'riskStage'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>
         <th class="non-sort-th" style="min-width: 145px">
         Flags
         </th>
@@ -1181,6 +1226,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
             {{ risk.progress + "%" }}
             </span>
         </td>
+        <td>
+          <span v-if="risk.riskStage">{{
+            risk.riskStage
+          }}</span>
+          <span v-else> --- </span>
+        </td>            
         <td class="text-center">
             <span v-if="risk.isOverdue" v-tooltip="`Overdue`">
             <i class="fas fa-calendar text-danger mr-1"></i
