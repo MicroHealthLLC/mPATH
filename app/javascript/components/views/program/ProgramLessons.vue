@@ -744,7 +744,52 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           >
             <i class="fas fa-sort-down"></i
           ></span>
-        </th>  
+        </th>
+        <th class="sort-th" style="min-width: 130px" @click="sort('lessonStage')">
+          Stage
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'lessonStage'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'asc' &&
+              currentSort === 'lessonStage'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'asc' &&
+              currentSort === 'lessonStage'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'desc' &&
+              currentSort === 'lessonStage'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'desc' &&
+              currentSort === 'lessonStage'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>      
         <th style="min-width: 145px">Flags</th>
         <th class="pl-1 sort-th twenty" @click="sort('category')">
         Process Area
@@ -821,7 +866,12 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           <td class="text-center">
           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
         </td>
-       
+        <td>
+          <span v-if="lesson.lessonStage">{{
+            lesson.lessonStage
+          }}</span>
+          <span v-else> --- </span>
+        </td>       
       <td class="text-center">
         <span v-if="lesson.draft == true" v-tooltip="`Draft`">
           <i class="fas fa-pencil-alt text-warning"></i
