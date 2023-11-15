@@ -60,7 +60,7 @@
                 <div class="col-3 mt-3">
                 <img
                     style="width: 145px"
-                  :src="require('../../../../assets/images/microhealthllc.png')"
+                  :src="require('../../../../assets/images/mh_logo.png')"
                 />
             </div>
         </div>
@@ -999,6 +999,51 @@ v-if="filteredIssues.filtered.issues.length > 0"
           <i class="fas fa-sort-down"></i
       ></span>
       </th>
+      <th class="sort-th" style="min-width: 130px" @click="sort('issueStage')">
+        Stage
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="currentSort !== 'issueStage'"
+        >
+          <i class="fas fa-sort"></i
+        ></span>
+        <span
+          class="sort-icon scroll"
+          v-if="
+            currentSortDir === 'asc' &&
+            currentSort === 'issueStage'
+          "
+        >
+          <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="
+            currentSortDir !== 'asc' &&
+            currentSort === 'issueStage'
+          "
+        >
+          <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+          class="sort-icon scroll"
+          v-if="
+            currentSortDir === 'desc' &&
+            currentSort === 'issueStage'
+          "
+        >
+          <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+          class="inactive-sort-icon scroll"
+          v-if="
+            currentSortDir !== 'desc' &&
+            currentSort === 'issueStage'
+          "
+        >
+          <i class="fas fa-sort-down"></i
+        ></span>
+      </th>
       <th class="non-sort-th" style="min-width: 145px">
       Flags
       </th>
@@ -1072,8 +1117,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <td class="text-center">           
             {{ moment(issue.startDate).format("DD MMM YYYY") }}
         </td>
-        <td class="text-center">
-           
+        <td class="text-center">           
             <span v-if="issue.completed && (issue.dueDate == null || issue.dueDate == undefined)"></span>
             <span
             v-else-if="issue.onHold && issue.dueDate == null"
@@ -1085,12 +1129,15 @@ v-if="filteredIssues.filtered.issues.length > 0"
             }}</span>
         </td>
         <td>{{ issue.userNames }}</td>
-        <td class="text-center">                          
-           
-        
-            {{ issue.progress + "%" }}
-          
+        <td class="text-center">        
+            {{ issue.progress + "%" }}          
         </td>
+        <td>
+          <span v-if="issue.issueStage">{{
+            issue.issueStage
+          }}</span>
+          <span v-else> --- </span>
+        </td>           
         <td class="text-center">
             <span v-if="issue.isOverdue" v-tooltip="`Overdue`">
             <i class="fas fa-calendar text-danger mr-1"></i

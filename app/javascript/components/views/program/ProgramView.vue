@@ -93,7 +93,7 @@
                             <div class="col-3 mt-3">
                             <img
                                 style="width: 145px"
-                              :src="require('../../../../assets/images/microhealthllc.png')"
+                              :src="require('../../../../assets/images/mh_logo.png')"
                             />
                         </div>
                     </div>
@@ -1121,6 +1121,51 @@
                           <i class="fas fa-sort-down"></i
                         ></span>
                       </th>
+                      <th class="sort-th" style="min-width: 130px" @click="sort('taskStage')">
+                        Stage
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="currentSort !== 'taskStage'"
+                        >
+                          <i class="fas fa-sort"></i
+                        ></span>
+                        <span
+                          class="sort-icon scroll"
+                          v-if="
+                            currentSortDir === 'asc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir !== 'asc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="sort-icon scroll"
+                          v-if="
+                            currentSortDir === 'desc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir !== 'desc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                      </th>
                       <th class="non-sort-th" style="min-width: 145px">
                         Flags
                       </th>
@@ -1239,6 +1284,12 @@
                           {{ task.progress + "%" }}
                            </span>
                         </td>
+                        <td>
+                          <span v-if="task.taskStage">{{
+                            task.taskStage
+                          }}</span>
+                          <span v-else> --- </span>
+                        </td>                        
                         <td class="text-center">
                           <span v-if="task.isOverdue" v-tooltip="`Overdue`">
                             <i class="fas fa-calendar text-danger mr-1"></i
