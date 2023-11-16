@@ -52,11 +52,12 @@ COPY . .
 RUN /bin/bash -l -c "gem install bundler"
 # RUN gem install bundler
 RUN /bin/bash -l -c "bundle install"
-
+RUN /bin/bash -l -c "rails -v"
 # Create and migrate the database
-RUN /bin/bash -l -c "rake db:create" 
-RUN /bin/bash -l -c "rake db:migrate" 
-RUN /bin/bash -l -c "rake db:seed"
+# RUN /bin/bash -l -c "rake db:create" 
+# RUN /bin/bash -l -c "rake db:migrate" 
+# RUN /bin/bash -l -c "rake db:seed"
+EXPOSE 3000
 
-# Start the Rails server and Webpacker
-CMD ["rails", "s", "-b", "0.0.0.0"]
+CMD /bin/bash -l -c "rails s -b 0.0.0.0"
+
