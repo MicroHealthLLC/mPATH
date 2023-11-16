@@ -940,6 +940,8 @@ import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
 import {API_BASE_PATH} from '../../../mixins/utils'
+import MessageDialogService from "../../../services/message_dialog_service";
+
 export default {
   name: "SheetAnalytics",
   components: {
@@ -1067,7 +1069,7 @@ export default {
       nextWeek.setDate(new Date().getDate() + 7)
       if (this.filteredTasks.length > 0) {       
         let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
-        let datesWithinSevenDays = this.filteredTasks.filter(t => new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek )   
+        let datesWithinSevenDays = this.filteredTasks.filter(t => !t.completed && new Date(t.dueDate) >= today && new Date(t.dueDate) <= nextWeek ) 
         return {
           value24: dueDatesTomorrow,   
           value7: datesWithinSevenDays,          

@@ -778,7 +778,7 @@ export default new VueRouter({
           path: "vehicles/:vehicleId/tasks",
           component: VehicleTasks,
           beforeEnter: (to, from, next) => {
-            console.log(to)
+            // console.log(to)
             var programId = to.params.programId;
             var vehicleId = to.params.vehicleId;
             var fPrivilege = _.filter(

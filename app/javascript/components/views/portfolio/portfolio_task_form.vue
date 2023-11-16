@@ -1265,6 +1265,7 @@ import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
 import {API_BASE_PATH} from './../../../mixins/utils'
+import MessageDialogService from "../../../services/message_dialog_service";
 
 const moment = extendMoment(Moment);
 export default {

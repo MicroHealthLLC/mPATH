@@ -78,7 +78,8 @@
 <script>
   import Vue from "vue";
   import { mapGetters, mapActions, mapMutations } from "vuex";
-  
+  import MessageDialogService from "../../services/message_dialog_service";
+
   export default {
     name: "MoveProjectContextMenu",
     props: {
@@ -183,7 +184,7 @@
         "SET_DUPLICATE_PROJECT_STATUS"
       ]),
       log(e){
-        console.log(e)
+        // console.log(e)
       },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)
@@ -227,12 +228,12 @@
         this.$refs.duplicatetree.setCheckedNodes([]);
       },
       move(node) {
-      console.log("move", node)
+      // console.log("move", node)
       this.target_program_id = node.targetProgramId,
       this.target_group_id = node.targetGroupId      
       },
       duplicateSelection(node) {
-        console.log("move", node)
+        // console.log("move", node)
         this.target_program_id = node.targetProgramId,
         this.target_group_id = node.targetGroupId      
       },
@@ -249,7 +250,7 @@
             this.$router.push(`/programs/${this.$route.params.programId}/sheet/`)
           } 
         this.exportProject({...data})
-        console.log("this works", data)
+        // console.log("this works", data)
       },
       confirmProjectDuplicate(){
       let data = {
@@ -261,7 +262,7 @@
           }           
         }
        this.duplicateProject({...data})
-        console.log("this works", data)
+        // console.log("this works", data)
       },
     filterNode(value, data) {
         if (!value) return true;

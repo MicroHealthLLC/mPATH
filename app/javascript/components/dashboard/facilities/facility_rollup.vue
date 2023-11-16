@@ -427,8 +427,6 @@ import Loader from './../../shared/loader'
 import {mapGetters} from 'vuex'
 import MessageDialogService from "../../../services/message_dialog_service";
 
-import MessageDialogService from "../../../services/message_dialog_service";
-
 export default {
   name: 'FacilityRollup',
   props: ['from', 'facilityGroup'],

@@ -793,6 +793,7 @@ import { mapActions, mapMutations, mapGetters } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input.vue";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import AuthorizationService from "../../../services/authorization_service"
+import MessageDialogService from "../../../services/message_dialog_service";
 
 export default {
   name: "portfolioLessonForm",

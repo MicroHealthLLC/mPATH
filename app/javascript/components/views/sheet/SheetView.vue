@@ -210,7 +210,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.$route.params)
+    // console.log(this.$route.params)
     if (
       this.getPreviousRoute.includes("Map") &&
       this.facilities.length !== this.getUnfilteredFacilities.length
@@ -226,7 +226,7 @@ export default {
   },
 
   beforeMount() {
-    console.log(this.$route.params)
+    // console.log(this.$route.params)
     // this.fetchContracts()
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(

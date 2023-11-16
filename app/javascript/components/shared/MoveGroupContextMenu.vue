@@ -82,6 +82,7 @@
 <script>
   import Vue from "vue";
   import { mapGetters, mapActions, mapMutations } from "vuex";
+  import MessageDialogService from "../../services/message_dialog_service";
 
   
   export default {
@@ -157,7 +158,7 @@
       ...mapActions(["taskDeleted", "fetchAuthorizedPortfolioPrograms", "moveGroup", "duplicateGroup","fetchCurrentProject"]),
       ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks", "SET_MOVE_GROUP_STATUS", "SET_DUPLICATE_GROUP_STATUS"]),
       log(e){
-        console.log(e)
+        // console.log(e)
       },
       isAllowed(salut) {
         return this.checkPrivileges("task_form", salut, this.$route)

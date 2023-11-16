@@ -1110,6 +1110,8 @@ import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
 import PortfolioContractPOC from "./PortfolioContractPOC.vue";
 import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
+import MessageDialogService from "../../../../services/message_dialog_service";
+
 Vue.filter('toCurrency', function (value) {
     if (isNaN(parseFloat(value))) {
         return value;
