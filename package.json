@@ -109,7 +109,7 @@
     "defaults"
   ],
   "devDependencies": {
-    "@4tw/cypress-drag-drop": "^1.4.0",  
+    "@4tw/cypress-drag-drop": "^1.4.0",
     "cypress": "^12.9.0"
   }
 }

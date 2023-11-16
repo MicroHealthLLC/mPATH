@@ -1135,8 +1135,7 @@ export default {
         } else 
           this.setCurrTab('#tab-tasks')
           this.setPortfolioTab(value)
-      },
-      this.currentPage = 1;
+      },  
   },
   validLessonProjectGroups(){
       let name = this.programLessons;
