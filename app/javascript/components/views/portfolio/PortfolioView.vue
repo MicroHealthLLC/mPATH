@@ -13,7 +13,7 @@
         <img
           class="mb-2"
           style="width: 147px;cursor:pointer"
-          :src="require('../../../../assets/images/microhealthllc.png')"
+          :src="require('../../../../assets/images/mh_logo.png')"
         />
         <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
       </span>
@@ -192,7 +192,7 @@
                     <img
                       style="width: 145px"
                       :src="
-                        require('../../../../assets/images/microhealthllc.png')
+                        require('../../../../assets/images/mh_logo.png')
                       "
                     />
                   </div>
