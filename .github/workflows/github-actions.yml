@@ -1,0 +1,19 @@
+name: mPath Docker image build, tag, puush
+
+on:
+  push:
+    branches:
+      - 'containerize'
+
+jobs:
+  build:
+    name: Checkout
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Message for the humble!
+      if: github.ref == 'refs/heads/containerize'
+      run: |
+        echo "More to come here"
