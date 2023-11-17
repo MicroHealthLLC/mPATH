@@ -1,8 +1,7 @@
-# Use an official Ruby runtime as a parent image
-# FROM ruby:latest
+# Image subject to change
 FROM ubuntu:20.04
 
-# Set environment variables for Node.js and Yarn
+# Environment Vars
 ENV NODE_VERSION 14.18.2
 ENV NVM_DIR /root/.nvm
 ENV YARN_VERSION 1.22.17
@@ -17,8 +16,6 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update
 RUN apt install yarn -y
-    # && \
-    # curl -o- -L https://yarnpkg.com/install.sh | bash
 
 # Install Node.js using NVM
 RUN . "$NVM_DIR/nvm.sh" && \
@@ -32,27 +29,18 @@ RUN . "$NVM_DIR/nvm.sh" && \
 # Install RVM and Ruby
 RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby
-# RUN /bin/sh source ~/.bashrc
-# Source RVM
-# RUN rvm install 3.1.0
-# RUN bash -l -c "gem install bundler"
 RUN /bin/bash -l -c "rvm install 3.1.0 && rvm use 3.1.0 --default"
 RUN echo 'source /usr/local/rvm/scripts/rvm' >> /etc/bash.bashrc
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy your Ruby on Rails application into the container
 COPY . .
 
-# Add bundler executable to the PATH
-# RUN echo 'export PATH="$HOME/.gem/ruby/3.1.0/bin:$PATH"' >> /etc/profile
-# Install Rails dependencies
-# Add bundler executable to the PATH
 RUN /bin/bash -l -c "gem install bundler"
-# RUN gem install bundler
 RUN /bin/bash -l -c "bundle install"
 RUN /bin/bash -l -c "rails -v"
+
 # Create and migrate the database
 # RUN /bin/bash -l -c "rake db:create" 
 # RUN /bin/bash -l -c "rake db:migrate" 
