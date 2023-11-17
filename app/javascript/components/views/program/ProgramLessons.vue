@@ -1263,8 +1263,7 @@ export default {
        } else return true              
         })
       } 
-    };
-    this.currentPage = 1;
+    }
    },
    sortedLessons:function() {
     return this.filteredLessons.filtered.lessons.sort((a,b) => { 
