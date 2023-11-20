@@ -7,8 +7,8 @@ production:
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  # socket: 3306
-  # port: 3306
+  # socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  port: <%= ENV['MPATH_DATABASE_PORT'] %>
 
 development:
   adapter: mysql2
@@ -18,8 +18,8 @@ development:
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  # socket: 3306
-  # port: 3306
+  # socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  port: <%= ENV['MPATH_DATABASE_PORT'] %>
 
 test:
   adapter: mysql2
@@ -29,5 +29,5 @@ test:
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  # socket: 3306
-  # port: 3306
+  # socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  port: <%= ENV['MPATH_DATABASE_PORT'] %>

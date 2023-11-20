@@ -1,8 +1,71 @@
+
+
 # mPATH
-Agile portfolio management for large programs and projects including those geographically dispersed
 
+Agile portfolio management for large programs and projects, including those geographically dispersed.
 
-# update centos
+## Table of Contents
+
+- [Installation](#installation)
+  - [Docker](#docker-setup)
+  - [Server](#server)
+    - [CentOS](#centos)
+    - [Ubuntu](#ubuntu)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+
+# Docker Setup
+
+This section will guide you through the process of setting up mPATH using Docker.
+
+### Prerequisites
+
+Before you begin, ensure you have the following prerequisites installed:
+
+- Docker: [Installation Guide](https://docs.docker.com/get-docker/)
+- Docker Compose: [Installation Guide](https://docs.docker.com/compose/install/)
+
+### Installation
+
+1. Clone the mPATH repository to your local machine.
+
+   ```bash
+   git clone https://github.com/your-username/mPATH.git
+   cd mPATH
+2. Create a .env in the repos root directory.
+    ```bash
+    touch .env && \
+    echo "MPATH_DATABASE_HOST=" >> .env
+    echo "MPATH_DATABASE_USERNAME=" >> .env
+    echo "MPATH_DATABASE_PASSWORD=" >> .env
+    echo "MPATH_DATABASE_NAME=" >> .env
+    echo "API_TEST_MODE=true" >> .env
+    echo "FIREBASE_API_KEY=" >> .env
+    echo "GOOGLE_MAP_KEY=" >> .env
+    echo "SECRET_KEY_BASE=" >> .env
+    echo "OFFICE365_SECRET=" >> .env
+    echo "OFFICE365_KEY=" >> .env
+    echo "GOOGLE_OAUTH_KEY=" >> .env
+    echo "GOOGLE_OAUTH_SECRET=" >> .env
+    echo 'PASSWORDS_KEY={"range":"8","uppercase":false,"lowercase":false,"numbers":false,"special_chars":false}' >> .env
+    echo 'PORTFOLIO_HEADING=My mPATH' >> .env
+    echo 'MPATH_INSTANCE=My mPATH Instance' >> .env
+    echo 'PORTFOLIO_TITLE=Portfolio Data Viewer' >> .env
+    echo "PUMA_PORT=3000" >> .env
+    echo "WEB_CONCURRENCY=1" >> .env
+    echo "OKTA_CLIENT_ID=" >> .env
+    echo "OKTA_CLIENT_SECRET=" >> .env
+    echo "OKTA_SITE=" >> .env
+4. Use Docker Compose to start the mPATH application.
+   ```bash
+   docker-compose up -d
+5. Open a web browser to http://localhost:3000
+## Server
+
+### CentOS
 
       
 
@@ -17,7 +80,7 @@ Agile portfolio management for large programs and projects including those geogr
         Reboot as there are likely kernel updates
 
 
-# install ruby
+### Install Ruby
 
         curl -sSL https://rvm.io/pkuczynski.asc | sudo gpg2 --import -
         
@@ -36,10 +99,10 @@ Agile portfolio management for large programs and projects including those geogr
         bash -l -c "rvm use 2.6.6 --default"
 
 
-# be sure git is installed
+### Be sure git is installed
         yum install git
         
-# install passenger phusion
+### Install passenger phusion
 
         yum install -y pygpgme curl
 
@@ -53,7 +116,7 @@ Agile portfolio management for large programs and projects including those geogr
         
         gem install rack
 
-# install nginx
+### Install Nginx
         
         groupadd nginx
         
@@ -63,7 +126,7 @@ Agile portfolio management for large programs and projects including those geogr
         
 choose one.  install it into the directory of your choice.  but for the conf below, chose /etc/nginx/
 
-# edit nginx.conf
+### Edit nginx.conf
 
         nano /etc/nginx/conf/nginx.conf
 
@@ -78,7 +141,7 @@ Below "server {" section add these
         passenger_enabled on;
         rails_env production;
 
-# restart nginx
+### Restart Nginx
 you will have to create an nginx service now
 
         nano /lib/systemd/system/nginx.service
@@ -127,7 +190,7 @@ you will have to create an nginx service now
         
         If you still have permission problems be sure to check selinux
         
-# Install Mysql
+### Install Mysql
         yum install mariadb-server mariadb  OR follow instructions here https://linuxize.com/post/install-mariadb-on-centos-7/#install-mariadb-103-on-centos-7 for client only install for remote databse connections. You will also need to run this "yum install mariadb-shared" after you follow the instructions in the link above 
 
         yum install mysql-devel
@@ -152,7 +215,7 @@ you will have to create an nginx service now
 
 --enter the password for mysql where it says password then save and exit
 
-# go to the cloned directory 
+### go to the cloned directory 
         cd /var/www/mPATH
 
         gem install rails
@@ -182,9 +245,7 @@ you will have to create an nginx service now
         Service nginx restart
 
 
-
-
-# Setup
+### Setup
 go to https://your-url/admin
 
 login with temp account admin@example.com with password adminPa$$w0rd

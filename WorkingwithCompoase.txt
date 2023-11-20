@@ -25,26 +25,31 @@ RUN . "$NVM_DIR/nvm.sh" && \
     npm install -g yarn@$YARN_VERSION && \
     npm cache clear --force && \
     yarn cache clean --force
+    # echo "source $NVM_DIR/nvm.sh && nvm use default" >> ~/.bashrc
 
 # Install RVM and Ruby
 RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby
 RUN /bin/bash -l -c "rvm install 3.1.0 && rvm use 3.1.0 --default"
 RUN echo 'source /usr/local/rvm/scripts/rvm' >> /etc/bash.bashrc
+# ENV PATH="/usr/local/rvm/gems/ruby-3.1.0/bin:$PATH"
+# RUN /bin/bash -l -c "echo 'source /usr/local/rvm/scripts/rvm' >> /etc/bash.bashrc"
 
 # Set the working directory in the container
 WORKDIR /app
-
+# COPY start.sh /app/start.sh
 COPY . .
-
+# RUN yarn
 RUN /bin/bash -l -c "gem install bundler"
 RUN /bin/bash -l -c "bundle install"
-RUN /bin/bash -l -c "rails -v"
 
 # Create and migrate the database
-# RUN /bin/bash -l -c "rake db:create" 
-# RUN /bin/bash -l -c "rake db:migrate" 
+RUN /bin/bash -l -c "echo 'Waiting for the MySQL database to become available...'"
+# RUN /bin/bash -l -c "sleep 60 && rake db:create"
+# RUN /bin/bash -l -c "rake db:create"
+# RUN /bin/bash -l -c "rake db:migrate"
 # RUN /bin/bash -l -c "rake db:seed"
 EXPOSE 3000
 
-CMD /bin/bash -l -c "rails s -b 0.0.0.0"
+CMD /bin/bash -l -c "sleep 20 && rake db:create && rake db:migrate && rake db:seed && rails s -b 0.0.0.0 &"
+
