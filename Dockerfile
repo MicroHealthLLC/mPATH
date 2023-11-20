@@ -47,4 +47,4 @@ RUN /bin/bash -l -c "rails -v"
 # RUN /bin/bash -l -c "rake db:seed"
 EXPOSE 3000
 
-CMD /bin/bash -l -c "rails s -b 0.0.0.0"
+CMD /bin/bash -l -c "rake db:create && rake db:migrate && rake db:seed && rails s -b 0.0.0.0"
