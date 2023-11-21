@@ -867,8 +867,8 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
         </td>
         <td>
-          <span v-if="lesson.stage">{{
-            lesson.stage
+          <span v-if="lesson.lesson_stage">{{
+            lesson.lesson_stage
           }}</span>
           <span v-else> --- </span>
         </td>       
