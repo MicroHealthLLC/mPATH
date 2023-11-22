@@ -144,7 +144,7 @@
                           <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                           <div class="lastUpdateCol">                                
                             <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                            <div style="height:300px; overflow-y:auto">
+                            <div style="height:240px; overflow-y:auto">
                             <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
                             <span>
                               <br>
@@ -172,7 +172,7 @@
                             <div class="issueTypes mt-3" v-if="dynamicObj == filteredTasks.filtered.tasks">
 
                             <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
-                              <div style="height:100px; overflow-y:auto">
+                              <div style="height:160px; overflow-y:auto">
                                 <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
                             </div>
                           </div>
