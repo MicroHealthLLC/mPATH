@@ -1114,8 +1114,9 @@ a:hover {
     border-bottom: solid 15px #1D336F;
     margin-top: 0 !important;
   }
-  .el-progress__text {
-    color:  #f8f9fa;
+  .el-progress__text.text-light {
+    color: #f8f9fa;
+    font-size: 20px;
   }
   .riskLabels {
     box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
