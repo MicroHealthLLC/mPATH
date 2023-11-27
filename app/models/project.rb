@@ -493,7 +493,6 @@ class Project < SortableRecord
       contract_current_pops: ContractCurrentPop.all.as_json,
       contract_classifications: ContractClassification.all.as_json
     })
-
     hash
   end
 
