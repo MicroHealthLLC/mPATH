@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
 
+      get "/program_setting_role", to: 'roles#program_setting_role'
+      get "/preferences", to: 'users#preferences'
+      
       # Program settings routes
       namespace :program_settings do
 
@@ -212,6 +215,7 @@ Rails.application.routes.draw do
         
         collection do
           get "project_efforts/:program_id", to: 'projects#project_efforts'
+          get 'project_facility_hash', to: 'projects#project_facility_hash'
         end
 
         member do

@@ -420,7 +420,9 @@ class User < ApplicationRecord
     return unless self.changes.has_key?("password")
     pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
     error_message = []
-    if password&.size < pass_settings['range'].to_i
+    if password&.size > pass_settings['max_chars'].to_i
+      error_message.push "Length must be maximum #{pass_settings['max_chars']} characters"
+    elsif password&.size < pass_settings['range'].to_i
       error_message.push "Length should be at least #{pass_settings['range']} characters"
     elsif pass_settings['uppercase']
       error_message.push "Should include 1 uppercase letter! " unless password =~ /^(?=.*?[A-Z]).{1,}$/

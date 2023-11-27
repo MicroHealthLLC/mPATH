@@ -84,6 +84,11 @@ class Api::V1::ProjectsController < AuthenticatedController
     render json: {efforts: response }
   end
 
+  def project_facility_hash
+    facility_projects = FacilityProject.where(project_id: current_user.authorized_programs.pluck(:id)).group_by{|fp| fp.project_id}.transform_values{|fps| fps.map{|f| {facility_id: f.facility_id, facility_project_id: f.id } } }
+    render json: {facility_projects: facility_projects}
+  end
+
   def task_issues
     collection = Project.find_by(id: params[:id]).as_json(include: {tasks: {only: [:text, :id]}, issues: {only: [:title, :id]}, risks: {only: [:risk_description, :id]}})
     render json: collection
