@@ -867,8 +867,8 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
         </td>
         <td>
-          <span v-if="lesson.lessonStage">{{
-            lesson.lessonStage
+          <span v-if="lesson.lesson_stage">{{
+            lesson.lesson_stage
           }}</span>
           <span v-else> --- </span>
         </td>       
@@ -1263,8 +1263,7 @@ export default {
        } else return true              
         })
       } 
-    };
-    this.currentPage = 1;
+    }
    },
    sortedLessons:function() {
     return this.filteredLessons.filtered.lessons.sort((a,b) => { 
