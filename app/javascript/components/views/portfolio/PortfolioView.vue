@@ -177,12 +177,12 @@
                     ></span>
 
                     <span v-if="dynamicObj[currentTaskSlide].text">
-                      <h2 class="mt-2 d-inline text-truncate">
+                      <h2 class="mt-2 d-inline text-truncate breakWord">
                         {{ dynamicObj[currentTaskSlide].text }}
                       </h2>
                     </span>
                     <span v-if="dynamicObj[currentTaskSlide].title">
-                      <h2 class="mt-2 d-inline text-truncate">
+                      <h2 class="mt-2 d-inline text-truncate breakWord">
                         {{ dynamicObj[currentTaskSlide].title }}
                       </h2>
                     </span>
