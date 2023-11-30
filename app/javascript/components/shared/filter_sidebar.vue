@@ -35,7 +35,7 @@
                     value-key="id"
                     multiple                                                                                                                                               
                     clearable
-                    placeholder="Search and select Project Group"
+                    placeholder="Search and select Project Groups"
                   >
                   <el-option 
                     v-for="item in C_activeFacilityGroups"                                                     
@@ -57,7 +57,7 @@
                     multiple   
                     filterable                                                                                                                                                        
                     clearable
-                    placeholder="Search and select Project Name"
+                    placeholder="Search and select Project Names"
                     >
                   <el-option 
                     v-for="item in C_activeProjectNames"                                                            
@@ -94,7 +94,8 @@
                     data-cy="project_status"                
                     multiple                                                                                                                                                         
                     clearable
-                    placeholder="Select Project Status"
+                    filterable
+                    placeholder="Search and select Project Statuses"
                     >
                   <el-option 
                     v-for="item in statuses"                                                     
@@ -131,7 +132,8 @@
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Process Areas"
+                  filterable
+                  placeholder="Search and select Process Areas"
                   >
                 <el-option 
                   v-for="item in taskTypes"                                                     
@@ -153,7 +155,7 @@
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Search and select names"
+                  placeholder="Search and select Names"
                   >
                 <el-option 
                   v-for="item in activeProjectUsers"                                                     
@@ -263,7 +265,8 @@
                   data-cy="task_stage"             
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Task Stage"
+                  filterable
+                  placeholder="Search and select Task Stages"
                   >
                 <el-option 
                   v-for="item in taskStages"                                                     
@@ -287,7 +290,8 @@
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Issue Stage"
+                  filterable
+                  placeholder="Search and select Issue Stages"
                   >
                 <el-option 
                   v-for="item in issueStages"                                                     
@@ -309,7 +313,8 @@
                   data-cy="issue_type"            
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Issue Type"
+                  filterable
+                  placeholder="Search and select Issue Types"
                   >
                 <el-option 
                   v-for="item in issueTypes"                                                     
@@ -331,7 +336,8 @@
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Issue Severity"
+                  filterable
+                  placeholder="Search and select Issue Severities"
                   >
                 <el-option 
                   v-for="item in issueSeverities"                                                     
@@ -356,7 +362,8 @@
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Risk Stage"
+                  filterable
+                  placeholder="Search and select Risk Stages"
                   >
                 <el-option 
                   v-for="item in riskStages"                                                     
@@ -375,7 +382,8 @@
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Risk Approach"
+                  filterable
+                  placeholder="Search and select Risk Approaches"
                   >
                 <el-option 
                   v-for="item in getRiskApproachFilterOptions"                                                     
@@ -394,7 +402,8 @@
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
                   clearable
-                  placeholder="Select Risk Priority Level"
+                  filterable
+                  placeholder="Search and select Risk Priority Levels"
                   >
                 <el-option 
                   v-for="item in getRiskPriorityLevelFilterOptions"                                                     

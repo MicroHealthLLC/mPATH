@@ -541,7 +541,7 @@ const AuthorizationService = {
         let facility_project_privileges =
           AuthorizationService.projectPrivilegesRoles[facility_project_id];
           if(extraData && extraData["method"]=="isAllowedFacilityContextMenu"){
-            console.log(page, extraData, facility_project_id, facility_project_privileges)
+            // console.log(page, extraData, facility_project_id, facility_project_privileges)
           }
         return (
           facility_project_privileges &&

@@ -13,7 +13,7 @@
         <img
           class="mb-2"
           style="width: 147px;cursor:pointer"
-          :src="require('../../../../assets/images/microhealthllc.png')"
+          :src="require('../../../../assets/images/mh_logo.png')"
         />
         <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
       </span>
@@ -177,12 +177,12 @@
                     ></span>
 
                     <span v-if="dynamicObj[currentTaskSlide].text">
-                      <h2 class="mt-2 d-inline text-truncate">
+                      <h2 class="mt-2 d-inline text-truncate breakWord">
                         {{ dynamicObj[currentTaskSlide].text }}
                       </h2>
                     </span>
                     <span v-if="dynamicObj[currentTaskSlide].title">
-                      <h2 class="mt-2 d-inline text-truncate">
+                      <h2 class="mt-2 d-inline text-truncate breakWord">
                         {{ dynamicObj[currentTaskSlide].title }}
                       </h2>
                     </span>
@@ -192,7 +192,7 @@
                     <img
                       style="width: 145px"
                       :src="
-                        require('../../../../assets/images/microhealthllc.png')
+                        require('../../../../assets/images/mh_logo.png')
                       "
                     />
                   </div>
@@ -6690,7 +6690,7 @@ export default {
       },
       set(value) {
         this.setIssuesPerPageFilter(value);
-        this.currentPage = 1;
+        this.currentIssuesPage = 1;
       },
     },
     C_tasksPerPage: {
@@ -6740,7 +6740,7 @@ export default {
       },
       set(value) {
         this.setRisksPerPageFilter(value);
-        this.currentPage = 1;
+        this.currentRisksPage = 1;
       },
     },
     C_lessonsPerPage: {
@@ -6751,7 +6751,7 @@ export default {
       },
       set(value) {
         this.setLessonsPerPageFilter(value);
-        this.currentPage = 1;
+        this.currentLessonsPage = 1;
       },
     },
     C_hideBriefedTasks: {

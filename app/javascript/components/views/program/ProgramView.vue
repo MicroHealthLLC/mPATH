@@ -93,7 +93,7 @@
                             <div class="col-3 mt-3">
                             <img
                                 style="width: 145px"
-                              :src="require('../../../../assets/images/microhealthllc.png')"
+                              :src="require('../../../../assets/images/mh_logo.png')"
                             />
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                           <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                           <div class="lastUpdateCol">                                
                             <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                            <div style="height:300px; overflow-y:auto">
+                            <div style="height:240px; overflow-y:auto">
                             <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
                             <span>
                               <br>
@@ -172,7 +172,7 @@
                             <div class="issueTypes mt-3" v-if="dynamicObj == filteredTasks.filtered.tasks">
 
                             <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
-                              <div style="height:100px; overflow-y:auto">
+                              <div style="height:160px; overflow-y:auto">
                                 <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
                             </div>
                           </div>
@@ -1121,6 +1121,51 @@
                           <i class="fas fa-sort-down"></i
                         ></span>
                       </th>
+                      <th class="sort-th" style="min-width: 130px" @click="sort('taskStage')">
+                        Stage
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="currentSort !== 'taskStage'"
+                        >
+                          <i class="fas fa-sort"></i
+                        ></span>
+                        <span
+                          class="sort-icon scroll"
+                          v-if="
+                            currentSortDir === 'asc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir !== 'asc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="sort-icon scroll"
+                          v-if="
+                            currentSortDir === 'desc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir !== 'desc' &&
+                            currentSort === 'taskStage'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                      </th>
                       <th class="non-sort-th" style="min-width: 145px">
                         Flags
                       </th>
@@ -1239,6 +1284,12 @@
                           {{ task.progress + "%" }}
                            </span>
                         </td>
+                        <td>
+                          <span v-if="task.taskStage">{{
+                            task.taskStage
+                          }}</span>
+                          <span v-else> --- </span>
+                        </td>                        
                         <td class="text-center">
                           <span v-if="task.isOverdue" v-tooltip="`Overdue`">
                             <i class="fas fa-calendar text-danger mr-1"></i

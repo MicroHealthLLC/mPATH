@@ -253,7 +253,7 @@
           class="my-2"
           style="width: 147px;cursor:pointer"
           id="img1"
-          :src="require('../../../assets/images/microhealthllc.png')"
+          :src="require('../../../assets/images/mh_logo.png')"
         />
       </span>
 
@@ -802,7 +802,7 @@
         <img
           class="my-2"
           style="width: 147px;cursor:pointer"
-          :src="require('../../../assets/images/microhealthllc.png')"
+          :src="require('../../../assets/images/mh_logo.png')"
         />
       </span>
      
@@ -2172,7 +2172,6 @@ export default {
       if (this.filteredTasks.length > 0) {       
         let dueDatesTomorrow = this.filteredTasks.filter(t => new Date(t.dueDate) > new Date() && new Date(t.dueDate) < tomorr )   
         let datesWithinSevenDays = this.filteredTasks.filter(t => !t.completed && new Date(t.dueDate) >= today && new Date(t.dueDate) <= plusSevenDays )   
-       console.log(datesWithinSevenDays)
         return {
           value24: dueDatesTomorrow,   
           value7: datesWithinSevenDays,          
@@ -3004,7 +3003,7 @@ export default {
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
       const doc = new jsPDF({orientation: "l"})
       const html =  this.$refs.table.innerHTML       
-      const logo = require('../../../assets/images/microhealthllc.png')
+      const logo = require('../../../assets/images/mh_logo.png')
       var imgLogo = new Image()
       imgLogo.src = logo    
 
@@ -3035,7 +3034,7 @@ export default {
         doc.text(5, 15, `Date of Report:  ${moment().format("DD MMM YY")} `); 
         doc.text(5, 20, `Name of Staff:  ${username} `); 
         doc.text(5, 25, `Position:  ${title} `); 
-        console.log("TEST TEST")
+        // console.log("TEST TEST")
         if(weekFilter == 'ALL WEEKS' && showProjEffort){
           doc.text(5, 205, `( ) Values in parenthesis represent Projected Effort`); 
         }  
@@ -3062,7 +3061,7 @@ export default {
     printProgramEffortReport(programName, week) {
       const doc = new jsPDF("l")
       const html =  this.$refs.table1.innerHTML    
-      const logo = require('../../../assets/images/microhealthllc.png')
+      const logo = require('../../../assets/images/mh_logo.png')
       var imgLogo = new Image()
       imgLogo.src = logo
       //jsPDF image documentation:  https://raw.githack.com/MrRio/jsPDF/master/docs/module-addImage.html#~addImage
@@ -3338,7 +3337,7 @@ export default {
           }        
          } else  {
           this.projectedHoursDisplay = true
-          console.log(this.projectedHoursDisplay)
+          // console.log(this.projectedHoursDisplay)
           this.fetchProgramEffortReport({programId: this.$route.params.programId})
           this.programDateOfWeekFilter = "ALL WEEKS"        
       

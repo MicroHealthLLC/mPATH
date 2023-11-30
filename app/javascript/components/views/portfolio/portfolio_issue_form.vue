@@ -269,12 +269,13 @@
                 :load="log(selectedTaskType)"
                 class="w-100"
                 clearable
+                filterable
                 track-by="id"
                 value-key="id"
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
                 name="Process Area"
-                placeholder="Select Process Area"
+                placeholder="Search and select Process Area"
               >
                 <el-option
                 v-for="item in taskTypes"     
@@ -300,6 +301,7 @@
                 :class="{ 'error': errors.has('Issue Type') }"
                 data-cy="issue_type_field"
                 name="Issue Type"
+                filterable
                 :disabled="!_isallowed('write')"
                 placeholder="Issue Type"
               >
@@ -335,6 +337,7 @@
                 class="w-100"
                 track-by="id"
                 value-key="id"
+                filterable
                 :disabled="!_isallowed('write')"
                 :class="{ 'error': errors.has('Issue Severity') }"
                 data-cy="issue_severity"
