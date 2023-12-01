@@ -190,7 +190,7 @@
 
                   <div class="col-3 mt-3">
                     <img
-                      style="width: 145px"
+                      style="width: 150px;height: 21px;"
                       :src="
                         require('../../../../assets/images/mh_logo.png')
                       "
