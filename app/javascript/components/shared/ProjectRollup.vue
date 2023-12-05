@@ -251,7 +251,7 @@
     <span class="centerLogo" >
         <img
           class="my-2"
-          style="width: 147px;cursor:pointer"
+          style="width: 150px;height: 21px;cursor:pointer"
           id="img1"
           :src="require('../../../assets/images/mh_logo.png')"
         />
@@ -801,7 +801,7 @@
     <span class="centerLogo" >
         <img
           class="my-2"
-          style="width: 147px;cursor:pointer"
+          style="width: 150px;height: 21px;cursor:pointer"
           :src="require('../../../assets/images/mh_logo.png')"
         />
       </span>
