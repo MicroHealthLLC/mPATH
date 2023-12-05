@@ -12,7 +12,7 @@
       <span @click.prevent="backHomeBtn">
         <img
           class="mb-2"
-          style="width: 147px;cursor:pointer"
+          style="width: 150px;height: 21px;cursor:pointer"
           :src="require('../../../../assets/images/mh_logo.png')"
         />
         <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
@@ -190,7 +190,7 @@
 
                   <div class="col-3 mt-3">
                     <img
-                      style="width: 145px"
+                      style="width: 150px;height: 21px;"
                       :src="
                         require('../../../../assets/images/mh_logo.png')
                       "
