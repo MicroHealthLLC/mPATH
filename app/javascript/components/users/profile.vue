@@ -480,6 +480,10 @@
         var pass = this.profile.password
         var errors = {}
         if (this.editPass) {
+          console.log("C_passValidationCheck", validations)
+          if(pass.length > Number(validations.max_chars)) {
+            errors.length = `Password must be maximum of ${Number(validations.max_chars)} characters.`
+          }
           if (pass.length < Number(validations.range)) {
             errors.length = `Password should be at least ${Number(validations.range)} characters.`
           }

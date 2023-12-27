@@ -1,5 +1,9 @@
 class Api::V1::UsersController < AuthenticatedController
-  before_action :require_admin, except: [:index]
+  before_action :require_admin, except: [:index,:preferences]
+
+  def preferences
+    render json: current_user.get_preferences.value, status: 200    
+  end
 
   def index
     @users = []    
