@@ -12,7 +12,7 @@
     "@fortawesome/vue-fontawesome": "^2.0.0",
     "@vue/composition-api": "^1.6.2",
     "async": "2.6.4",
-    "axios": "^0.21.2",
+    "axios": "^1.6.2",
     "babel-loader": "^9.1.0",
     "babel-plugin-macros": "^3.1.0",
     "bootstrap": "^4.5.3",
