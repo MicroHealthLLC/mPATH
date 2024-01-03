@@ -1715,14 +1715,17 @@ export default {
       return lastItem
     },
     awardToNums(){
-      if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueAwardTOs = _.uniq(this.contractProjects.filter(t => t.contract_award_to_id))
-        let awardTos = uniqueAwardTOs.map(t => t.contract_award_to).filter(t => t !== undefined)
-        let unique = [];
-        // console.log(awardTos)
-        awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        console.log(unique)
+      if (this.contractProjects && this.contractProjects.length > 0){  
+        if (this.contractProjects && this.contractProjects.length == 1){
+          return this.contractProjects[0].contract_award_to_id
+        } else {
+          let uniqueAwardTOs = _.uniq(this.contractProjects.filter(t => t.contract_award_to_id))
+          let awardTos = uniqueAwardTOs.map(t => t.contract_award_to).filter(t => t !== undefined)
+          let unique = [];
+          awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+          console.log(unique)
          return unique.filter(u => u.name.trim().length !== 0 && u.name !== 'null')
+        }        
       }
     },
     primeOrSub(){
