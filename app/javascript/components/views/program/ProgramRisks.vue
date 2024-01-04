@@ -718,7 +718,10 @@ v-if="filteredRisks.filtered.risks.length > 0"
           >
             <i class="fas fa-sort-down"></i
           ></span>
-        </th>              
+        </th>
+        <th class="non-sort-th" style="min-width: 75px">
+        ID
+        </th>
         <th class="pl-1 sort-th twenty" @click="sort('text')">
         Risk
         <span
@@ -1143,7 +1146,8 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <td v-if="risk.projectGroup">{{ risk.projectGroup }}</td>
         <td v-else>Unassigned</td>
         <td>{{ risk.facilityName || risk.contractNickname || risk.vehicleNickname }}</td>
-        <td>{{ risk.text }}</td>        
+        <td>{{ risk.id }}</td>
+        <td>{{ risk.text }}</td>
         <td>       
           <span  v-if="risk.notes.length > 0">
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
