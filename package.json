@@ -32,6 +32,7 @@
     "dotenv": "^16.0.3",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.15.12",
+    "es5-ext": "0.10.63",
     "firebase": "8.10.0",
     "follow-redirects": "^1.15.4",
     "gantt-elastic": "^1.0.11",
