@@ -5,11 +5,11 @@ ruby '3.1.0'
 # updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '7.0.7.1' #'6.1.6.1' #'~> 5.2.3'
+gem 'rails', '7.0.8.1' #'6.1.6.1' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
-gem 'puma', '>= 6.3.1'
+gem 'puma', '= 6.4.2'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -105,5 +105,5 @@ gem 'will_paginate', '3.3.1'
 gem 'jwt', '~> 2.7'
 
 gem 'addressable', '>= 2.8.0'
-
-gem 'nokogiri', '1.14.3'
+gem 'rack', '2.2.8.1'
+gem 'nokogiri', '1.16.2'
