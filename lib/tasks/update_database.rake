@@ -10,11 +10,7 @@ task :update_active_storage_blob => :environment do
       result = blob.key.scan(/.{1,2}/)[0..1].join("/")
       old_file_path = "#{Rails.root}/storage/#{result}/#{blob.key}"
       new_file_path = "#{Rails.root}/storage/#{result}/#{blob.filename}"
-      begin
-        FileUtils.cp(old_file_path,new_file_path)
-      rescue Exception => e
-        puts "Exception : #{e.message}"
-      end
+      FileUtils.cp(old_file_path,new_file_path) rescue nil
     end
   end
 end
