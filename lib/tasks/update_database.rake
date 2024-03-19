@@ -1,3 +1,14 @@
+desc 'Update User Preferences data'
+task :update_user_preferences => :environment do
+  User.all.each do |user|
+    preferences = user.get_preferences.value
+    if !user.user_preference.present?
+      preferences.merge!({user_id: user.id})
+      UserPreference.create(preferences)
+    end
+  end
+end
+
 desc 'Update ActiveStorage blob data'
 task :update_active_storage_blob => :environment do
   ActiveStorage::Attachment.in_batches(of: 1000) do |active_storage_attachments|
