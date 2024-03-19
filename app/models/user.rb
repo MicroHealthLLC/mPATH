@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :facility_projects, through: :projects
   has_many :risks
   has_one :privilege, dependent: :destroy
+  has_one :user_preference, dependent: :destroy
   belongs_to :organization, optional: true
   has_many :query_filters, dependent: :destroy
   has_many :contract_privileges, dependent: :destroy
@@ -479,12 +480,13 @@ class User < ApplicationRecord
     # if preferences.project_id.present?
     #   preferences.project = FacilityProject.where(facility_id: preferences.project_id).first
     # end
-    p = self.settings(:preferences)
-    if p.new_record?
-      p.value =  PREFERENCES_HASH
-      p.save
-    end
-    p
+    # p = self.settings(:preferences)
+    # if p.new_record?
+    #   p.value =  PREFERENCES_HASH
+    #   p.save
+    # end
+    # p
+    user_preference.as_json(except: [:created_at, :updated_at, :user_id, :id]).with_indifferent_access
   end
 
   def active_for_authentication?
