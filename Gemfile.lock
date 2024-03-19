@@ -231,7 +231,7 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
-    nokogiri (1.14.3-x86_64-linux)
+    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     oauth2 (2.0.9)
       faraday (>= 0.17.3, < 3.0)
@@ -272,7 +272,7 @@ GEM
     public_suffix (5.0.1)
     puma (6.3.1)
       nio4r (~> 2.0)
-    racc (1.6.2)
+    racc (1.7.3)
     rack (2.2.7)
     rack-protection (3.0.6)
       rack
@@ -450,7 +450,7 @@ DEPENDENCIES
   malloc_trim
   mini_magick
   mysql2
-  nokogiri (= 1.14.3)
+  nokogiri (= 1.15.6)
   oj
   omniauth-google-oauth2 (~> 1.1, >= 1.1.1)
   omniauth-rails_csrf_protection (~> 1.0)
