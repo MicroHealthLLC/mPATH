@@ -3,6 +3,11 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.20.5",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-regenerator": "^7.22.10",
     "@babel/plugin-transform-runtime": "^7.23.2",
     "@babel/preset-env": "^7.20.2",
     "@babel/runtime": "^7.20.6",
@@ -27,8 +32,9 @@
     "dotenv": "^16.0.3",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.15.12",
+    "es5-ext": "0.10.63",
     "firebase": "8.10.0",
-    "follow-redirects": "^1.14.8",
+    "follow-redirects": "^1.15.4",
     "gantt-elastic": "^1.0.11",
     "gantt-elastic-header": "^0.1.11",
     "humps": "^2.0.1",
@@ -89,12 +95,7 @@
     "webpack-dev-server": "^4.11.1",
     "webpack-merge": "^5.8.0",
     "webpack-sources": "^3.2.3",
-    "xlsx": "^0.18.5",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-    "@babel/plugin-proposal-private-methods": "^7.18.6",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@babel/plugin-transform-regenerator": "^7.22.10"
+    "xlsx": "^0.18.5"
   },
   "version": "0.1.0",
   "babel": {
