@@ -660,7 +660,10 @@ v-if="filteredIssues.filtered.issues.length > 0"
         >
           <i class="fas fa-sort-down"></i
         ></span>
-      </th>                   
+      </th>
+      <th class="non-sort-th" style="min-width: 75px">
+      ID
+      </th>
       <th class="pl-1 sort-th twenty" @click="sort('title')">
       Issue
       <span
@@ -1098,6 +1101,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <td v-if="issue.projectGroup">{{ issue.projectGroup }}</td>
         <td v-else>Unassigned</td>
         <td>{{ issue.facilityName || issue.contractNickname || issue.vehicleNickname }}</td>
+        <td>{{ issue.id }}</td>
         <td>{{ issue.title }}</td>
         <td>
          <span v-if="issue.notes.length > 0">       
