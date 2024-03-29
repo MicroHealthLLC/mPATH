@@ -1,3 +1,31 @@
+desc 'Update User Preferences data'
+task :update_user_preferences => :environment do
+  User.all.each do |user|
+    preferences = user.get_preferences.value
+    if !user.user_preference.present?
+      preferences.merge!({user_id: user.id})
+      UserPreference.create(preferences)
+    end
+  end
+end
+
+desc 'Update ActiveStorage blob data'
+task :update_active_storage_blob => :environment do
+  ActiveStorage::Attachment.in_batches(of: 1000) do |active_storage_attachments|
+    active_storage_attachments.each do |attachment|
+      attachment.blob.update(record_id: attachment.record_id, record_type: attachment.record_type, name: attachment.name)
+    end
+  end
+  ActiveStorage::Blob.in_batches(of: 1000) do |active_storage_blobs|
+    active_storage_blobs.each do |blob|
+      result = blob.key.scan(/.{1,2}/)[0..1].join("/")
+      old_file_path = "#{Rails.root}/storage/#{result}/#{blob.key}"
+      new_file_path = "#{Rails.root}/storage/#{result}/#{blob.filename}"
+      FileUtils.cp(old_file_path,new_file_path) rescue nil
+    end
+  end
+end
+
 desc 'Move existing POC records to multiple as feature is changed'
 task :move_existing_poc_to_multiple => :environment do
   ContractProjectDatum.all.each do |contract_project_data|
