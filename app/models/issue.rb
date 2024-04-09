@@ -344,6 +344,23 @@ class Issue < ApplicationRecord
       sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
+  
+  def remove_duplicate_resource_users
+    g_issue_users = issue_users.group_by{|tu| tu.user_type }
+    duplicate_users = []
+    valid_users = []
+    g_issue_users.each do |user_type, t_users|
+      t_users.each do |t|
+        vu = valid_users.detect{|v| v.user_type == t.user_type && v.user_id == t.user_id }
+        if vu
+          duplicate_users << t
+        else
+          valid_users << t
+        end
+      end
+    end
+    IssueUser.where(id: duplicate_users.map(&:id)).destroy_all
+  end
 
   def files_as_json
     issue_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|

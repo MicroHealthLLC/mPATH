@@ -1,3 +1,11 @@
+
+desc 'Remove duplicate Task / Issue / Risk Users'
+task :remove_duplicate_resource_users => :environment do
+  Task.all.map(&:remove_duplicate_resource_users)
+  Issue.all.map(&:remove_duplicate_resource_users)
+  Risk.all.map(&:remove_duplicate_resource_users)
+end
+
 desc 'Move existing POC records to multiple as feature is changed'
 task :move_existing_poc_to_multiple => :environment do
   ContractProjectDatum.all.each do |contract_project_data|
