@@ -711,6 +711,23 @@ class Risk < ApplicationRecord
     }
   end
 
+  def remove_duplicate_resource_users
+    g_risk_users = risk_users.group_by{|tu| tu.user_type }
+    duplicate_users = []
+    valid_users = []
+    g_risk_users.each do |user_type, t_users|
+      t_users.each do |t|
+        vu = valid_users.detect{|v| v.user_type == t.user_type && v.user_id == t.user_id }
+        if vu
+          duplicate_users << t
+        else
+          valid_users << t
+        end
+      end
+    end
+    RiskUser.where(id: duplicate_users.map(&:id)).destroy_all
+  end
+
   def duration_name
     duration_name_hash[duration] || duration_name_hash[1]
   end
