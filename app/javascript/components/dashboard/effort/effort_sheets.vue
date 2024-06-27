@@ -111,7 +111,7 @@
       </div>
     </span>
 
-    <el-tabs type="border-card" v-model="editableTabsValue">
+    <el-tabs type="border-card" v-model="editableTabsValue"  closable @tab-remove="removeTab">
       <el-tab-pane label="Summary" class="is-active">
         <el-table 
           v-if="tableData && tableData.length > 0 && matrixDates && matrixDates.length > 0"
@@ -120,20 +120,36 @@
           class="crudRow mt-4" 
           :header-row-style="{ textAlign: 'center' }"
           >
-          <el-table-column prop="plannedEffort" label="Planned Effort" width="80" header-align="center">
+          <el-table-column prop="plannedEffort" label="Planned Effort" width="85" header-align="center">
           </el-table-column>
-          <el-table-column prop="actualEffort" label="Actual Effort1" width="80" header-align="center">
+          <el-table-column prop="actualEffort" label="Actual Effort" width="85" header-align="center">
           </el-table-column>
           <el-table-column prop="text" label="Tasks" width="250" header-align="center">
 
           </el-table-column>
           <el-table-column label="Week of" header-align="center" v-if="matrixDates && matrixDates.length > 0">
-            <el-table-column v-for="weekof, i in matrixDates" :key="i" :label='weekof' width="120">
+            <el-table-column v-for="(weekof, i) in matrixDates" :key="i" :label='weekof' width="120">
+              <template slot="header">
+                <div>
+                  <span>{{ weekof }}</span>                
+                </div>
+              </template>
               <template slot-scope="scope">
-                <span v-if="userTime && userTime.length > 0 && calculateHours(userTime, scope.row, weekof) !== 0">
-                  {{
-                    calculateHours(userTime, scope.row, weekof)
-                  }}
+                <span v-if="!editMode || columnIndex !== i">
+                  {{ getWeekOfEffort(scope.row.tasks, scope.row, weekof) }}
+                </span>
+                <span v-else>
+                  <input 
+                    @change="changeValues($event, weekof, scope.row, scope.row.id, scope.row.tasks
+                      .filter(t => t.id == scope.row.id)
+                      .map(t => t.efforts)
+                      .flat()
+                      .filter(t => t.date_of_week == weekof))"
+                    :value="getWeekOfEffort(scope.row.tasks, scope.row, weekof)"
+                    :name="weekof" 
+                    type="text" 
+                    class="form-control" 
+                  />
                 </span>
               </template>
             </el-table-column>
@@ -176,40 +192,40 @@
           </el-table-column>
           <!-- Column of individual users -->
           <el-table-column label="Week of" header-align="center">
-            <el-table-column v-for="weekof, weekofIndex in matrixDates" :key="weekofIndex" :label='weekof' width="120">
+            <el-table-column v-for="(weekof, i) in matrixDates" :key="i" :label='weekof' width="120">
+              <template slot="header">
+             
+                  <span>{{ weekof }}</span>
+                  <br/>
+                  <span>                
+                    <i class="fa-light fa-calendar-pen text-success"  v-tooltip="`Add/Edit`" @click.prevent="editToggle(i)"></i>               
+                    <i class="far fa-save mx-1 text-primary"  @click.prevent="saveEffortColumn(i)" v-tooltip="`Save`"></i>                
+                    <i class="fas fa-ban text-danger" v-tooltip="`Cancel`" @click.prevent="cancelEdits(i)" ></i>
+                  </span>                 
+           
+              </template>
               <template slot-scope="scope">
-                <!-- DEFAULT VIEW MODE  -->
-                <span v-if="item.tasks && item.tasks.length > 0 && rowId !== scope.row.id">
-                  {{
-                    getWeekOfEffort(item.tasks, scope.row, weekof)
-                  }}
+                <span v-if="!editMode || columnIndex !== i">
+                  {{ getWeekOfEffort(item.tasks, scope.row, weekof) }}
                 </span>
-                <!-- IF ENTER/EDIT BUTTON IS CLICKED, THIS IS THE EDIT MODE -->
-                <span v-if="rowId == scope.row.id">
-                  <span v-if="item.tasks && item.tasks.length > 0 && getWeekOfEffort(item.tasks, scope.row, weekof)">
-                    <input 
-                     @change="changeValues($event, weekof, item, rowId,  
-                        item.tasks
-                          .filter(t => t.id == scope.row.id )
-                          .map(t => t.efforts)
-                          .flat()
-                          .filter(t => t.date_of_week == weekof)
-                        )" 
-                      :value="getWeekOfEffort(item.tasks, scope.row, weekof, item)"
-                      :name="weekof" 
-                      type="text" 
-                      class="form-control" 
-                    />              
-                  <!-- CREATE MODE IF ENTER/EDIT BUTTON IS CLICKED -->
-                  </span>
-
-                  <input v-else v-model="addedHrs[weekofIndex]" :name="weekof" type="text" class="form-control" :id="weekof" />
+                <span v-else>
+                  <input 
+                    @change="changeValues($event, weekof, item, scope.row.id, item.tasks
+                      .filter(t => t.id == scope.row.id)
+                      .map(t => t.efforts)
+                      .flat()
+                      .filter(t => t.date_of_week == weekof))"
+                    :value="getWeekOfEffort(item.tasks, scope.row, weekof, item)"
+                    :name="weekof" 
+                    type="text" 
+                    class="form-control" 
+                  />
                 </span>
               </template>
             </el-table-column>
           </el-table-column>
 
-          <el-table-column label="Actions" width="110" align="center">
+          <!-- <el-table-column label="Actions" width="110" align="center">
             <template slot-scope="scope">
               <el-button size="mini" type="default" v-tooltip="`Cancel`" v-if="scope.$index == rowIndex"
                 @click.prevent="cancelEdits(scope.$index, scope.row)" class="bg-secondary text-light  px-2">
@@ -224,7 +240,7 @@
                 <i class="far fa-save"></i>
               </el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
         </el-table>
         
@@ -233,10 +249,6 @@
         </div>
 
       </el-tab-pane>
-      <!-- <el-button type="primary"   @click="editToggle(scope.$index, scope.row)" class="calendarBtn"  circle>
-        <i class="fa-light fa-calendar-pen text-light"></i>
-      </el-button> -->
-
     </el-tabs>
     <span class="float-right"><small>*Excludes <em>Ongoing:Closed, On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
 
@@ -299,36 +311,68 @@ export default {
     log(e) {
       // console.log("getWeekOfEffort ")
       // console.log(e)
-    },
-    changeValues(event, weekOf, user, rowId, effort) {
-      let ids = user.tasks.filter(t => t.id == rowId)
-              .map(t => t.efforts)
-              .flat()
-              .filter(t => t.date_of_week == weekOf)
-              .map(t => t.id)[0]
-      let hours = { 
-                    h: event.target.value, 
-                    id: effort[0].id, 
-                    weekof: weekOf 
-                  }
-      if (event){
-        this.effortIds.push(ids)
-        this.effortHours.push(hours)
+    },    
+    removeTab(targetName) {
+      let tabs = this.editableTabsValue;
+      let activeName = this.activeTab;
+      if (activeName === targetName) {
+        tabs.forEach((tab, index) => {
+          if (tab.name === targetName) {
+            let nextTab = tabs[index + 1] || tabs[index - 1];
+            if (nextTab) {
+              activeName = nextTab.name;
+            }
+          }
+        });
       }
+      
+      this.activeTab = activeName;
+      this.editableTabs = tabs.filter(tab => tab.name !== targetName);
     },
+   changeValues(event, weekOf, user, rowId, effort) {
+    console.log('changeValues called with:', { event, weekOf, user, rowId, effort });
+    this.userId = user.id;
+
+    let hours = {
+      h: event.target.value,
+      id: effort && effort[0] ? effort[0].id : null,
+      weekof: weekOf,
+      taskId: rowId
+    };
+
+    // Use a Map to store changes, with a unique key for each task and week
+    if (!this.effortChanges) this.effortChanges = new Map();
+    const key = `${rowId}-${weekOf}`;
+    this.effortChanges.set(key, hours);
+
+    console.log('Updated effortChanges:', this.effortChanges);
+  },
     handleChange(e) {
       console.log("hadnleChange:")
       console.log(e)
     },
-    getWeekOfEffort(_tasks, _row, _weekof, user){     
-      let hour = _tasks.filter(t => t.id == _row.id)
-                .map(t => t.efforts)
-                .flat()
-                .filter(t => t.date_of_week == _weekof)
-                .map(t => t.hours)[0]
-      return hour;
+    // getWeekOfEffort(_tasks, _row, _weekof, user){     
+    //   let hour = _tasks.filter(t => t.id == _row.id)
+    //             .map(t => t.efforts)
+    //             .flat()
+    //             .filter(t => t.date_of_week == _weekof)
+    //             .map(t => t.hours)[0]
+    //   return hour;
      
-    },
+    // },
+    getWeekOfEffort(_tasks, _row, _weekof, user) {
+    if (!_tasks || !Array.isArray(_tasks)) {
+      return 0;
+    }
+    
+    let hour = _tasks.filter(t => t.id == _row.id)
+              .map(t => t.efforts)
+              .flat()
+              .filter(t => t.date_of_week == _weekof)
+              .map(t => t.hours)[0] || 0;
+    
+    return hour;
+  },
     calculateActualEffort(_tasks, _row){
       let hour = _tasks.filter(t => t.id == _row.id)
                     .map(t => t.efforts)
@@ -351,7 +395,7 @@ export default {
       this.matrixDates = []; 
       let oneYearOut = new Date(this.fridayDayOfWeek);
       let start = this.fridayDayOfWeek;   
-      let end = oneYearOut.setDate(oneYearOut.getDate() + 364);
+      let end = oneYearOut.setDate(oneYearOut.getDate());
       let loop = new Date(start);  
       this.weekBegin  = "";
       this.weekEnd = "";   
@@ -373,6 +417,47 @@ export default {
     openUserTasksReport() {
       this.userTasksDialog = true;
     },
+  saveEffortColumn(weekOfIndex) {
+    console.log('saveEffortColumn called with weekOfIndex:', weekOfIndex);
+    const weekOf = this.matrixDates[weekOfIndex];
+    console.log('Week of:', weekOf);
+
+    const effortsToSave = [];
+
+    this.effortChanges.forEach((change, key) => {
+      if (change.weekof === weekOf) {
+        effortsToSave.push({
+          effortData: {
+            id: change.id,
+            taskId: change.taskId,
+            userId: this.userId,
+            hours: change.h,
+            week: weekOf,
+            programId: this.$route.params.programId,
+            projectId: this.$route.params.projectId
+          }
+        });
+      }
+    });
+
+    console.log('Efforts to save:', effortsToSave);
+
+    effortsToSave.forEach(effortData => {
+      console.log('Effort data to save:', effortData);
+      if (effortData.effortData.id) {
+        console.log('Updating effort:', effortData);
+        this.updateEffort(effortData);
+      } else {
+        console.log('Creating effort:', effortData);
+        this.createEffort(effortData);
+      }
+    });
+
+    // Reset state after saving
+    this.editMode = false;
+    this.columnIndex = null;
+    this.effortChanges.clear();
+  },
     saveEffortRow(index, rows, userId, userTasks) {     
       this.rowIndex = null;
       this.rowId = null;  
@@ -436,12 +521,10 @@ export default {
       console.log(tab)
       console.log(event)
     },
-    editToggle(index, row, weekIndex, item) {
+    editToggle(columnIndex) {
       this.editMode = true;
       this.editColValue = null;
-      this.rowIndex = index
-      this.userId = item.id
-      this.rowId = row.id
+      this.columnIndex = columnIndex;
     },
     timeEdit(index, row, weekof, weekofIndex, effort) {
       this.columnIndex = weekofIndex
@@ -451,15 +534,12 @@ export default {
     cancelTimeEdit() {
       this.columnIndex = null
     },
-    cancelEdits() {
+    cancelEdits(columnIndex) {
       this.editMode = false;
-      this.rowIndex = null;
-      this.rowId = null;
-      this.addedHrs = [];
-      this.columnIndex = null
-      this.effortIds = [],
-      this.effortHours = []
+      this.editColValue = null;
+      this.columnIndex = columnIndex;
     },
+   
   },
   computed: {
     ...mapGetters([
@@ -511,6 +591,25 @@ export default {
         return tasks
       }
     },
+    totalActualEffortByTask() {
+    const totalEffort = {};
+    
+    this.tableData.forEach(row => {
+      if (row.tasks) {
+        totalEffort[row.id] = row.tasks.reduce((sum, task) => {
+          if (task.efforts) {
+            return sum + task.efforts.reduce((effortSum, effort) => 
+              effortSum + (parseFloat(effort.hours) || 0), 0);
+          }
+          return sum;
+        }, 0);
+      } else {
+        totalEffort[row.id] = 0;
+      }
+    });
+
+    return totalEffort;
+  },
     filteredActiveProjectUsers() {
       if (this.efforts && this.activeProjectUsers && this.efforts.length > 0) {
         return this.activeProjectUsers.filter(t => !this.efforts.map(f => f.id).includes(t.id))
@@ -527,7 +626,7 @@ export default {
     },
     weekOfArr(){       
           let oneYearOut = new Date(this.fridayDayOfWeek);
-          let end = oneYearOut.setDate(oneYearOut.getDate() + 364);    
+          let end = oneYearOut.setDate(oneYearOut.getDate());    
           let start = this.fridayDayOfWeek;      
           let loop = new Date(start);  
 
@@ -591,22 +690,49 @@ export default {
           return arr   
          }        
       },
-      weekOfEnd(){
-        if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
-          let arr = []
-          let oneYearOut = new Date(this.fridayDayOfWeek)
-          let end1 = oneYearOut.setDate(oneYearOut.getDate() + 364)       
-          let pastBeginDate =  this.fridayDayOfWeek.setDate(this.fridayDayOfWeek.getDate() + 7)
-          let loop1 = new Date(pastBeginDate);         
-          while(loop1 <= end1){        
-            arr.push(moment(loop1).format("DD MMM YY"))   
-            // console.log(arr)        
-            let newDate1 = loop1.setDate(loop1.getDate() + 7);
-            loop1 = new Date(newDate1);
-          }      
-          return arr   
-         }        
-      },    
+   weekOfEnd(){
+      if (this.facility && this.facility.tasks && this.facility.tasks.length > 0) {
+    let arr = [];
+    
+    // Calculate the Friday of the current week
+    const getCurrentFriday = () => {
+      let today = new Date();
+      let dayOfWeek = today.getDay();
+      let daysUntilFriday = 5 - dayOfWeek;
+      if (daysUntilFriday < 0) daysUntilFriday += 7; // If today is Saturday or Sunday
+      let currentFriday = new Date(today);
+      currentFriday.setDate(today.getDate() + daysUntilFriday);
+      return currentFriday;
+    };
+
+    let currentFriday = getCurrentFriday();
+    let loopDate = new Date(this.fridayDayOfWeek);
+
+    while (loopDate <= currentFriday) {
+      arr.push(moment(loopDate).format("DD MMM YY"));
+      loopDate.setDate(loopDate.getDate() + 7);
+      loopDate = new Date(loopDate);
+    }
+
+    return arr;
+  }
+},
+      // weekOfEnd(){
+      //   if(this.facility && this.facility.tasks && this.facility.tasks.length > 0){
+      //     let arr = []
+      //     let oneYearOut = new Date(this.fridayDayOfWeek)
+      //     let end1 = oneYearOut.setDate(oneYearOut.getDate())       
+      //     let pastBeginDate =  this.fridayDayOfWeek.setDate(this.fridayDayOfWeek.getDate() + 7)
+      //     let loop1 = new Date(pastBeginDate);         
+      //     while(loop1 <= end1){        
+      //       arr.push(moment(loop1).format("DD MMM YY"))   
+      //       // console.log(arr)        
+      //       let newDate1 = loop1.setDate(loop1.getDate() + 7);
+      //       loop1 = new Date(newDate1);
+      //     }      
+      //     return arr   
+      //    }        
+      // },    
   },
   mounted() {
     this.fetchEfforts(this.$route.params)
@@ -692,7 +818,7 @@ input[type=number] {
 }
 
 .el-table .cell {
-  word-break: break-word;
+  word-break: break-all;
 }
 
 .el-table thead {
