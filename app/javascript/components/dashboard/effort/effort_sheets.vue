@@ -30,7 +30,7 @@
             type="primary"
             @click="addTab(editableTabsValue)"
             >
-            <i class="fa-solid fa-user-plus text-light"> </i>
+            <i class="fas fa-user-plus text-light"> </i>
           </el-button>
         </div>
 
@@ -89,10 +89,17 @@
         </div>
 
         <div class="col-1 mt-4 pl-0">
-          <i v-show="!weekEnd && !weekBegin" class="fa-sharp fa-circle-xmark" style="color:#d3d3d3"
+          <!-- {{  `Week Begin: ${weekBegin}.  WeekdEnd: ${weekEnd}` }} -->
+          <!-- {{  `Edit Mode: ${editMode}` }} -->
+          <i class="fas fa-times-circle-o" style="color:#d3d3d3"
             v-tooltip="`Clear Week Of filter(s)`"></i>
-          <i v-show="weekEnd || weekBegin" class="fa-sharp fa-light fa-circle-xmark cursor"
-            v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i>
+            <button 
+              @click="clearWeekFilters"
+              v-tooltip="`Clear Week Of filter(s)`"
+              class="btn btn-sm el-icon-close">          
+            </button>
+          <!-- <i class="fas fa-times-circle-o cursor"
+            v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i> -->
         </div>
 
         <div class="col-1 mt-4 px-0">
@@ -120,17 +127,27 @@
           class="crudRow mt-4" 
           :header-row-style="{ textAlign: 'center' }"
           >
-          <el-table-column prop="plannedEffort" label="Planned Effort" width="85" header-align="center">
+          <el-table-column prop="plannedEffort" label="Planned Effort" width="125" header-align="center">
+        
           </el-table-column>
-          <el-table-column prop="actualEffort" label="Actual Effort" width="85" header-align="center">
+          <el-table-column prop="actualEffort" label="Actual Effort" width="125" header-align="center">
+            <template slot-scope="scope">
+           {{ calculateTotalActualEffort(scope.row.id) }}
+           </template>
           </el-table-column>
           <el-table-column prop="text" label="Tasks" width="250" header-align="center">
 
           </el-table-column>
-          <el-table-column label="Week of" header-align="center" v-if="matrixDates && matrixDates.length > 0">
-            <el-table-column v-for="(weekof, i) in matrixDates" :key="i" :label='weekof' width="120">
+          <el-table-column label="Week of" header-align="center" v-if="uniqueMatrixDates && uniqueMatrixDates.length > 0">
+          <el-table-column 
+            v-for="(weekof, i) in uniqueMatrixDates" 
+            :key="`${weekof}-${i}-${forceRerender}`" 
+            :label='weekof' 
+            width="120" 
+            header-align="center"
+          >
               <template slot="header">
-                <div>
+                <div class="text-center">
                   <span>{{ weekof }}</span>                
                 </div>
               </template>
@@ -161,7 +178,7 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane v-for="(item, index) in efforts" :key="item.id" :label="item.full_name" :name="index">
+      <el-tab-pane v-for="(item) in efforts" :key="item.id" :label="item.full_name" :name="item.id.toString()">
         
         <el-table 
           v-if="tableData && tableData.length > 0  && matrixDates && matrixDates.length > 0" 
@@ -171,44 +188,37 @@
           class="crudRow mt-4" 
           :header-row-style="{ textAlign: 'center' }"
           >
-          <el-table-column prop="plannedEffort" label="Planned Effort" width="80" header-align="center">
+          <el-table-column prop="plannedEffort" label="Planned Effort" width="125" header-align="center">
           </el-table-column>
-          <el-table-column prop="actualEffort" label="Actual Effort" width="80" header-align="center">
-
+          <el-table-column prop="actualEffort" label="Actual Effort" width="125" header-align="center">
             <template slot-scope="scope">
-              <span v-if="item.tasks && calculateActualEffort(item.tasks, scope.row)">
-                {{ 
-                  calculateActualEffort(item.tasks, scope.row)
-                }}
-              </span>
-              <span v-else>
-                
-              </span>
-
-            </template>
+            {{ calculateActualEffort(item.tasks, scope.row.id) }}
+          </template>       
           </el-table-column>
           <el-table-column prop="text" label="Tasks" width="250" header-align="center">
 
           </el-table-column>
           <!-- Column of individual users -->
           <el-table-column label="Week of" header-align="center">
-            <el-table-column v-for="(weekof, i) in matrixDates" :key="i" :label='weekof' width="120">
+            <el-table-column v-for="(weekof, i) in uniqueMatrixDates" :key="`${weekof}-${i}-${forceRerender}`"  :label='weekof' width="120">
               <template slot="header">
-             
-                  <span>{{ weekof }}</span>
+                <div class="text-center">
+                  <span :log="(editingColumn)">{{ weekof }}</span>
                   <br/>
-                  <span>                
-                    <i class="fa-light fa-calendar-pen text-success"  v-tooltip="`Add/Edit`" @click.prevent="editToggle(i)"></i>               
+                  <span v-if="editingColumn === i">                 
                     <i class="far fa-save mx-1 text-primary"  @click.prevent="saveEffortColumn(i)" v-tooltip="`Save`"></i>                
-                    <i class="fas fa-ban text-danger" v-tooltip="`Cancel`" @click.prevent="cancelEdits(i)" ></i>
-                  </span>                 
-           
+                    <i class="fas fa-ban text-danger" v-tooltip="`Cancel`" @click.prevent="cancelEdits(i)" ></i>    
+                  </span>   
+                  <span v-else>          
+                    <i class="fas fa-pencil-alt text-primary" v-tooltip="`Edit Effort`" @click.prevent="editToggle(i)"></i>
+                  </span>              
+                </div>
               </template>
               <template slot-scope="scope">
-                <span v-if="!editMode || columnIndex !== i">
+                <span v-if="editingColumn !== i">
                   {{ getWeekOfEffort(item.tasks, scope.row, weekof) }}
                 </span>
-                <span v-else>
+                <span v-if="editingColumn === i">
                   <input 
                     @change="changeValues($event, weekof, item, scope.row.id, item.tasks
                       .filter(t => t.id == scope.row.id)
@@ -244,15 +254,32 @@
 
         </el-table>
         
+        
         <div v-else>
           You currently have no Tasks in this Project or the Task due date has passed. Please add a task or adjust the <em>Week of End</em> filter.
         </div>
+  
 
       </el-tab-pane>
     </el-tabs>
     <span class="float-right"><small>*Excludes <em>Ongoing:Closed, On Hold, Planned,</em> and <em>Draft</em> Tasks</small> </span>
-
-
+    <el-dialog
+        title="Confirm Removal"
+        :visible.sync="isRemoveModalVisible"
+        width="30%"
+        @close="handleCloseRemoveModal"
+      >
+      <span>
+        <h5>
+          Are you sure you want to delete this user from this project's Task User list?
+        </h5>
+      </span>
+      
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="isRemoveModalVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="confirmRemoveTab">Confirm</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -290,8 +317,13 @@ export default {
       notesQuery: '',
       Week: [],
       DV_facility: Object.assign({}, this.facility),
-
-      //PROJECT  
+      isRemoveModalVisible: false,
+      tabToRemove: null, 
+      editingColumn: null,
+      effortChanges: new Map(),
+      forceRerender: 0,
+      saveCounter: 0, // Counter to track the number of save operations
+      totalSaves: 0, // Total number of save operations initiated
     }
   },
   methods: {
@@ -306,29 +338,13 @@ export default {
       "createEffort",
       "updateEffort",
       "fetchEfforts",
+      "updateUserStatus",
       "fetchCurrentProject"
     ]),
     log(e) {
-      // console.log("getWeekOfEffort ")
+      // console.log("Editing col: ", e)
       // console.log(e)
-    },    
-    removeTab(targetName) {
-      let tabs = this.editableTabsValue;
-      let activeName = this.activeTab;
-      if (activeName === targetName) {
-        tabs.forEach((tab, index) => {
-          if (tab.name === targetName) {
-            let nextTab = tabs[index + 1] || tabs[index - 1];
-            if (nextTab) {
-              activeName = nextTab.name;
-            }
-          }
-        });
-      }
-      
-      this.activeTab = activeName;
-      this.editableTabs = tabs.filter(tab => tab.name !== targetName);
-    },
+    },      
    changeValues(event, weekOf, user, rowId, effort) {
     console.log('changeValues called with:', { event, weekOf, user, rowId, effort });
     this.userId = user.id;
@@ -341,25 +357,40 @@ export default {
     };
 
     // Use a Map to store changes, with a unique key for each task and week
-    if (!this.effortChanges) this.effortChanges = new Map();
+    if (!this.effortChanges) {
+    this.effortChanges = new Map();
+   }
     const key = `${rowId}-${weekOf}`;
     this.effortChanges.set(key, hours);
 
     console.log('Updated effortChanges:', this.effortChanges);
   },
+  toggleRemovedEfforts(userId, removedStatus) {
+      this.effortsData.forEach(user => {
+        if (user.id === userId) {
+          user.tasks.forEach(task => {
+            task.efforts.forEach(effort => {
+              effort.removed = removedStatus;
+            });
+          });
+        }
+      });
+  },
+  handleCloseRemoveModal() {
+    this.tabToRemove = null; // Reset the tab to remove
+  },
+  removeTab(name) {
+    // Here, you would add your logic to mark the user's efforts as removed and remove the tab
+    console.log(`Confirmed removal of tab with id: ${name}`);
+    // Example: this.markEffortsAsRemoved(this.tabToRemove);
+    // Actual removal logic here...
+    this.isRemoveModalVisible = true; // Close the modal
+    this.tabToRemove = name; // Reset the tab to remove
+  },
     handleChange(e) {
       console.log("hadnleChange:")
       console.log(e)
-    },
-    // getWeekOfEffort(_tasks, _row, _weekof, user){     
-    //   let hour = _tasks.filter(t => t.id == _row.id)
-    //             .map(t => t.efforts)
-    //             .flat()
-    //             .filter(t => t.date_of_week == _weekof)
-    //             .map(t => t.hours)[0]
-    //   return hour;
-     
-    // },
+    }, 
     getWeekOfEffort(_tasks, _row, _weekof, user) {
     if (!_tasks || !Array.isArray(_tasks)) {
       return 0;
@@ -373,14 +404,31 @@ export default {
     
     return hour;
   },
-    calculateActualEffort(_tasks, _row){
-      let hour = _tasks.filter(t => t.id == _row.id)
-                    .map(t => t.efforts)
-                    .flat()
-                    .map(t => t.hours).map(Number).reduce((a, b) => a + (b || 0), 0)
-      // console.log("calculateActualEffort", hour)
-      return hour;
-    },
+  
+ calculateTotalActualEffort(taskId) {    
+  if (!this.efforts || this.efforts.length === 0) {
+    console.log('No efforts data available');
+    return 0;
+  }
+  const total = this.efforts.reduce((totalEffort, user) => {  
+  const userTaskEffort = this.calculateActualEffort(user.tasks, taskId); 
+  return totalEffort + userTaskEffort;
+}, 0); 
+  return total;
+},
+calculateActualEffort(userTasks, taskId) {     
+  if (!userTasks || userTasks.length === 0) {   
+    return 0;
+  }
+  const task = userTasks.find(t => t.id === taskId);          
+  if (!task || !task.efforts) {    
+    return 0;
+  }
+  const total = task.efforts.reduce((total, effort) => {
+    return total + (parseFloat(effort.hours) || 0);
+  }, 0);  
+  return total;
+},
     calculateHours(_userTime, _row, _weekof) {
       let hour = _userTime
         .filter(t => t && t.id && t.id == _row.id)
@@ -391,35 +439,42 @@ export default {
         // console.log("calculateHours", hour)
       return hour;
     },
-    clearWeekFilters(){   
-      this.matrixDates = []; 
-      let oneYearOut = new Date(this.fridayDayOfWeek);
-      let start = this.fridayDayOfWeek;   
-      let end = oneYearOut.setDate(oneYearOut.getDate());
-      let loop = new Date(start);  
-      this.weekBegin  = "";
-      this.weekEnd = "";   
+    clearWeekFilters() {
+  // Reset weekBegin and weekEnd
+  this.weekBegin = '';
+  this.weekEnd = '';
 
-      while(loop <= end || loop == end){
-      this.matrixDates.push(moment(loop).format("DD MMM YY")) 
-      let newDate;       
-      if(loop instanceof Date){
-        newDate = loop.setDate(loop.getDate() + 7); 
-      }     
+  // Get today's date
+  let today = new Date();
+  let dayOfWeek = today.getDay();
 
-      loop = new Date(newDate);
-      } 
-      let friYAY;
-      let fri = new Date(this.fridayDayOfWeek);
-      friYAY = fri.setDate(fri.getDate() - 7);         
-      this.matrixDates.unshift(moment(friYAY).format("DD MMM YY"));  
-    },
-    openUserTasksReport() {
+  // Calculate the current Friday's date
+  let currentFriday = new Date(today);
+  if (dayOfWeek !== 5) {
+    let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+    currentFriday.setDate(today.getDate() + daysUntilFriday);
+  }
+
+  // Reset matrixDates to only include the current Friday
+  this.matrixDates = [moment(currentFriday).format("DD MMM YY")];
+
+  console.log('Cleared week filters. Current matrixDates:', this.matrixDates);
+
+  // Trigger a re-render
+  this.$nextTick(() => {
+    // Ensure no duplicates in matrixDates
+    this.matrixDates = [...new Set(this.matrixDates)];
+    this.forceRerender += 1;
+    console.log('Re-render triggered. Current matrixDates:', this.matrixDates);
+  });
+},
+ openUserTasksReport() {
       this.userTasksDialog = true;
     },
-  saveEffortColumn(weekOfIndex) {
-    console.log('saveEffortColumn called with weekOfIndex:', weekOfIndex);
-    const weekOf = this.matrixDates[weekOfIndex];
+  saveEffortColumn(columnIndex) {
+    this.totalSaves++;
+    console.log('saveEffortColumn called with columnIndex:', columnIndex);
+    const weekOf = this.matrixDates[columnIndex];
     console.log('Week of:', weekOf);
 
     const effortsToSave = [];
@@ -453,93 +508,113 @@ export default {
       }
     });
 
-    // Reset state after saving
-    this.editMode = false;
-    this.columnIndex = null;
+    this.editingColumn = null;
+    if (this.effortChanges) {
     this.effortChanges.clear();
-  },
-    saveEffortRow(index, rows, userId, userTasks) {     
-      this.rowIndex = null;
-      this.rowId = null;  
-      let hrs =  _.uniq(this.effortHours)
-      let ids =  _.uniq(this.effortIds)
+  } else {
+    this.effortChanges = new Map();
+  }
+  }, 
+  async addTab() {
+   if (!this.addedUser || !this.addedUser.id) {
+    console.error('No user selected');
+    return;
+  }
 
-      if (this.addedHrs.length > 0 ) {
-        for (var i = 0; i < this.addedHrs.length; i++) {
-          if (this.matrixDates[i] && this.addedHrs[i]) {
-            console.log(this.matrixDates[i])
-            console.log(this.addedHrs[i])
-            let effortData = {
-              effortData: {
-                hours: this.addedHrs[i],
-                week: this.matrixDates[i],
-                taskId: rows.id,
-                userId: userId,
-                programId: this.$route.params.programId,
-                projectId: this.$route.params.projectId
-              },
-            };
-          this.createEffort({ ...effortData })
-          }
-        }
-      }      
-      if (ids && ids.length > 0){         
-       for (var i = 0; i < ids.length; i++) {       
-            let effortData = {
-              effortData: {         
-                taskId: rows.id,
-                userId: userId,
-                id: ids[i],   
-                hours: hrs.filter(t => t.id == ids[i])[0].h,
-                week:  hrs.filter(t => t.id == ids[i])[0].weekof,             
-                programId: this.$route.params.programId,
-                projectId: this.$route.params.projectId
-              },
-            };    
-              console.log('effortData:')        
-              console.log(effortData)        
-           this.updateEffort({ ...effortData })      
-        }
-     }
-    },
-    addTab(targetName) {
-      let newTabName = this.efforts.length;
-      if (this.efforts.length == 1) {
-        newTabName = 1
-        this.editableTabsValue = newTabName;
+  // Check if the user is already in the efforts array
+  const existingTab = this.efforts.find(tab => tab.id === this.addedUser.id);
+  if (existingTab) {
+    console.warn('User already has a tab');
+    this.editableTabsValue = existingTab.id.toString();
+    this.addedUser = {};
+    return;
+  }
+
+  const newTab = {
+    full_name: this.addedUser.fullName,
+    name: this.efforts.length.toString(),
+    content: 'New Tab content',
+    id: this.addedUser.id,
+    tasks: []
+  };
+
+  this.efforts.push(newTab);
+  this.editableTabsValue = newTab.id.toString();
+
+  // Fetch efforts only for the added user
+  await this.fetchEfforts({
+    programId: this.$route.params.programId,
+    projectId: this.$route.params.projectId,
+    userId: this.addedUser.id
+  });
+
+  // Update the tasks for the newly added tab
+  const updatedTab = this.efforts.find(tab => tab.id === this.addedUser.id);
+  if (updatedTab) {
+    updatedTab.tasks = this.efforts.find(effort => effort.id === this.addedUser.id)?.tasks || [];
+  }
+
+  this.addedUser = {};
+}, 
+  async confirmRemoveTab() {
+    let name = this.tabToRemove;    
+    // Find the index of the tab to remove
+    const tabIndex = this.efforts.findIndex(tab => tab.id.toString() === name);  
+    if (tabIndex === -1) return; // Tab not found
+
+    // Get the user associated with the tab
+    const removedUser = this.efforts[tabIndex];
+    // Update the active tab if the removed tab is the active tab
+    if (this.editableTabsValue === name) {
+      const nextTab = this.efforts[tabIndex + 1] || this.efforts[tabIndex - 1];
+      if (nextTab) {
+        this.editableTabsValue = nextTab.id.toString();
+      } else {
+        this.editableTabsValue = 'summary'; // Default to summary tab if no other tabs are available
       }
-      this.efforts.push({
-        full_name: this.addedUser.fullName,
-        name: newTabName,
-        content: 'New Tab content',
-        id: this.addedUser.id,
-        tasks: []
-      });
-      this.addedUser = []
-    },
+    }
+    // Remove the tab from the efforts array
+    this.efforts.splice(tabIndex, 1);
+    // Add the user back to the filteredActiveProjectUsers array
+    const userIndex = this.filteredActiveProjectUsers.findIndex(user => user.id === removedUser.id);
+    if (userIndex === -1) {
+      this.filteredActiveProjectUsers.push(removedUser);
+      
+    } 
+    this.tabToRemove = null;
+    this.isRemoveModalVisible = false; 
+    try {
+      await this.updateUserStatus({ userId: removedUser.id, status: 'inactive' });
+
+    } catch (error) {
+      console.error('Failed to update user status:', error);
+    }
+   
+  },
     handleClick(tab, event) {
       console.log(tab)
       console.log(event)
     },
     editToggle(columnIndex) {
-      this.editMode = true;
-      this.editColValue = null;
-      this.columnIndex = columnIndex;
-    },
+          this.editingColumn = columnIndex;
+        this.forceRerender += 1;
+      },
+
+      cancelEdits(columnIndex) {
+        this.editingColumn = null;
+        this.effortChanges.clear();
+        this.forceRerender += 1;
+      },
+
     timeEdit(index, row, weekof, weekofIndex, effort) {
       this.columnIndex = weekofIndex
-      console.log(effort);
+
       this.updatedEffort = effort
     },
     cancelTimeEdit() {
       this.columnIndex = null
     },
-    cancelEdits(columnIndex) {
-      this.editMode = false;
-      this.editColValue = null;
-      this.columnIndex = columnIndex;
-    },
-   
+      
   },
   computed: {
     ...mapGetters([
@@ -554,7 +629,9 @@ export default {
       "effortsLoaded",
       "activeProjectUsers"
     ]),
-
+    uniqueMatrixDates() {
+      return [...new Set(this.matrixDates)];
+    },
     C_taskIssueDueDateFilter: {
       get() {
         if (!this.taskIssueDueDateFilter) return this.taskIssueDueDateFilter
@@ -572,12 +649,13 @@ export default {
     },
     tableData() {
       let project = this.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)
+     
+     
       if (project && project.tasks && project.tasks.length > 0) {
         let tasks = project.tasks.filter(t => !t.onHold && !t.draft && !t.planned)
           .filter((task) => {
             if (this.taskProgressFilter) {
-              console.log(task)
-              return task.progress < 100;
+               return task.progress < 100;
             } else return true;
           })
           .filter((task) => {
@@ -588,6 +666,7 @@ export default {
             } else return true;
             // Filtering 7 Task States
           });
+
         return tasks
       }
     },
@@ -612,9 +691,12 @@ export default {
   },
     filteredActiveProjectUsers() {
       if (this.efforts && this.activeProjectUsers && this.efforts.length > 0) {
-        return this.activeProjectUsers.filter(t => !this.efforts.map(f => f.id).includes(t.id))
-      } else {
         return this.activeProjectUsers
+        .filter(t => t.status !== 'inactive')
+        .filter(t => !this.efforts
+          .map(f => f.id).includes(t.id))
+      } else {
+        return this.activeProjectUsers.filter(t => t.status !== 'inactive')
       }
     },
     fridayDayOfWeek() {
@@ -743,33 +825,53 @@ export default {
       //Need to add weekOfArr value here to handle data better than the current load property within the template
       
       handler() {
-        console.log('effortStatus')
+ 
         if (this.effortStatus == 200) {
-          console.log('effort status OK')
-          this.$message({
-            message: `Task Effort successfully saved.`,
-            type: "success",
-            showClose: true,
-          });
-          this.effortIds = [],
-          this.effortHours = [],
-          this.addedHrs = [];
-          this.editColValue = null;
-          this.columnIndex = null;
-          this.updatedEffort = null,
-          this.SET_EFFORT_STATUS(0);
-          this.SET_EFFORTS_STATUS(0)
-          this.fetchCurrentProject(this.$route.params.programId)
-          this.fetchEfforts(this.$route.params)
+          console.log('effort status OK');
+          this.saveCounter++; // Increment the save counter
+
+          // Check if all save operations are completed
+          if (this.saveCounter === this.totalSaves) {
+            this.$message({
+              message: `Task Effort successfully saved.`,
+              type: "success",
+              showClose: true,
+            });
+
+            // Reset the counters
+            this.saveCounter = 0;
+            this.totalSaves = 0;
+
+            this.effortIds = [];
+            this.effortHours = [];
+            this.addedHrs = [];
+            this.editColValue = null;
+            this.columnIndex = null;
+            this.updatedEffort = null;
+            this.SET_EFFORT_STATUS(0);
+            this.SET_EFFORTS_STATUS(0);
+            this.fetchCurrentProject(this.$route.params.programId);
+            this.fetchEfforts(this.$route.params);
+          }
         }
       },
+      immediate: true,
     },
-    facility: {
-      handler: function (value) {
-        this.DV_facility = Object.assign({}, value)
-        this.loading = true
-      }, deep: true
-    }
+  editingColumn(newVal, oldVal) {
+    console.log('editingColumn changed from', oldVal, 'to', newVal);
+   },
+  //  matrixDates: {
+  //   handler(newVal) {
+  //     console.log('matrixDates changed:', newVal);
+  //   },
+  //   deep: true
+  // },
+  facility: {
+    handler: function (value) {
+      this.DV_facility = Object.assign({}, value)
+      this.loading = true
+    }, deep: true
+  }
   }
 }
 </script>
@@ -892,6 +994,10 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+.btn.el-icon-close{
+  border-radius: 50%;
+  background-color: lightgray;
 }
 
 .editCol {

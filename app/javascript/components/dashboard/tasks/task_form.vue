@@ -541,6 +541,7 @@
               <el-select
                 v-model="responsibleUsers"
                 class="w-100"
+                :multiple="true"
                 filterable
                 clearable
                 track-by="id"
@@ -565,6 +566,7 @@
                 class="w-100"
                 clearable
                 track-by="id"
+                :multiple="true"
                 value-key="id"
                 placeholder="Search and select Accountable User"
                 :disabled="!_isallowed('write')"
@@ -1394,8 +1396,8 @@ export default {
       editTimeLive: "",
       selectedTaskType: null,
       selectedTaskStage: null,
-      responsibleUsers: null,
-      accountableTaskUsers: null,
+      responsibleUsers: [],
+      accountableTaskUsers: [],
       consultedTaskUsers: [],
       informedTaskUsers: [],
       relatedIssues: [],
@@ -1594,10 +1596,10 @@ export default {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.responsibleUserIds.includes(u.id)
-      )[0];
+      );
       this.accountableTaskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.accountableUserIds.includes(u.id)
-      )[0];
+      );
       this.consultedTaskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.consultedUserIds.includes(u.id)
       );
@@ -2335,7 +2337,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.responsibleUserIds = null;
+          this.DV_task.responsibleUserIds = [];
         }
       },
       deep: true,
@@ -2347,7 +2349,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.accountableUserIds = null;
+          this.DV_task.accountableUserIds = [];
         }
       },
       deep: true,
