@@ -465,6 +465,7 @@
                 v-model="responsibleUsers"
                 class="w-100"
                 filterable
+                :multiple="true"
                 clearable
                 track-by="id"
                 value-key="id"
@@ -487,6 +488,7 @@
                 v-model="accountableTaskUsers"
                 class="w-100"
                 clearable
+                :multiple="true"
                 track-by="id"
                 value-key="id"
                 placeholder="Search and select Accountable User"               
@@ -1284,8 +1286,8 @@ export default {
       programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedTaskStage: null,
-      responsibleUsers: null,
-      accountableTaskUsers: null,
+      responsibleUsers: [],
+      accountableTaskUsers: [],
       consultedTaskUsers: [],
       informedTaskUsers: [],
       relatedIssues: [],
@@ -1485,12 +1487,12 @@ export default {
       if (this.responsibleUsers) {
           this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
-      )[0];
+      );
       }
      if ( this.accountableTaskUsers){
       this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
-      )[0];
+      );
      }
       if (this.consultedTaskUsers){
        this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
@@ -2175,7 +2177,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.responsible_user_ids = null;
+          this.DV_task.responsible_user_ids = [];
         }
       },
       deep: true,
@@ -2187,7 +2189,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.accountable_user_ids = null;
+          this.DV_task.accountable_user_ids = [];
         }
       },
       deep: true,
