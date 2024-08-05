@@ -89,19 +89,12 @@
         </div>
 
         <div class="col-1 mt-4 pl-0">
-          <!-- {{  `Week Begin: ${weekBegin}.  WeekdEnd: ${weekEnd}` }} -->
-          <!-- {{  `Edit Mode: ${editMode}` }} -->
-          <i class="fas fa-times-circle-o" style="color:#d3d3d3"
+          <i v-show="!weekEnd && !weekBegin" class="fa-sharp fa-circle-xmark" style="color:#d3d3d3"
             v-tooltip="`Clear Week Of filter(s)`"></i>
-            <button 
-              @click="clearWeekFilters"
-              v-tooltip="`Clear Week Of filter(s)`"
-              class="btn btn-sm el-icon-close">          
-            </button>
-          <!-- <i class="fas fa-times-circle-o cursor"
-            v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i> -->
+          <i v-show="weekEnd || weekBegin" class="fa-sharp fa-light fa-circle-xmark cursor"
+            v-tooltip="`Clear Week Of filter(s)`" @click="clearWeekFilters"></i>
         </div>
-
+        
         <div class="col-1 mt-4 px-0">
           <el-switch 
             v-model="taskProgressFilter" 
