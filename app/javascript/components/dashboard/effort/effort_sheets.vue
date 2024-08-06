@@ -535,11 +535,11 @@ calculateActualEffort(userTasks, taskId) {
   this.editableTabsValue = newTab.id.toString();
 
   // Fetch efforts only for the added user
-  await this.fetchEfforts({
-    programId: this.$route.params.programId,
-    projectId: this.$route.params.projectId,
-    userId: this.addedUser.id
-  });
+  // await this.fetchEfforts({
+  //   programId: this.$route.params.programId,
+  //   projectId: this.$route.params.projectId,
+  //   userId: this.addedUser.id
+  // });
 
   // Update the tasks for the newly added tab
   const updatedTab = this.efforts.find(tab => tab.id === this.addedUser.id);
