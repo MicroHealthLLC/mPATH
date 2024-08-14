@@ -38,7 +38,7 @@ const effortStore = {
         },
       })
         .then((res) => {
-          commit("SET_EFFORTS", res.data.efforts);
+          commit("SET_EFFORTS", res.data.efforts.filter(effort => effort.status == 'active'));
           commit("SET_EFFORTS_STATUS", res.status);
           console.log(res.data)
         })
@@ -65,7 +65,7 @@ const effortStore = {
         },
       })
         .then((res) => {
-          commit("SET_PROGRAM_EFFORTS", res.data.efforts);
+          commit("SET_PROGRAM_EFFORTS", res.data.efforts.filter(effort => effort.status == 'active'));
           console.log(res.data)
         })
         .catch((err) => {
@@ -92,7 +92,7 @@ const effortStore = {
         },
       })
         .then((res) => {
-          commit("SET_PROGRAM_TASK_EFFORT", res.data.efforts);
+          commit("SET_PROGRAM_TASK_EFFORT", res.data.efforts.filter(effort => effort.status == 'active'));
           console.log(res.data.efforts)
         })
         .catch((err) => {

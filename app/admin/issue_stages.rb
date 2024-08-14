@@ -28,7 +28,7 @@ ActiveAdmin.register IssueStage do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     f.inputs do
       f.input :name
       f.input :percentage, as: :range, in: 0..100, step: 1
