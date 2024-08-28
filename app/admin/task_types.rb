@@ -28,7 +28,7 @@ ActiveAdmin.register TaskType do
 
 
   form(html: {autocomplete: :off}) do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors
     f.inputs do
       f.input :name
     end

@@ -412,7 +412,7 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-.vue-map-container /deep/ button.gm-ui-hover-effect {
+.vue-map-container ::v-deep button.gm-ui-hover-effect {
   display: none;
   visibility: hidden;
 }

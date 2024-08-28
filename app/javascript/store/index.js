@@ -380,6 +380,12 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null
       }
     },
+    updateUserStatus(state, { userId, status }) {
+      const user = state.projectUsers.find(u => u.id === userId);
+      if (user) {
+        user.status = status;
+      }
+    },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
     setPreviousRoute: (state, route) => state.previousRoute = route,
     setNewSession: (state) => state.newSession = !state.newSession
@@ -1888,7 +1894,18 @@ export default new Vuex.Store({
           })
       })
     },
-
+    async updateUserStatus({ commit }, { userId, status }) {
+      console.log('updateUserStatus async method executing: ', userId, status);
+      try {
+        const response = await http.patch(`/admin/users/${userId}.json`, { status });
+        commit('updateUserStatus', { userId, status });
+        console.log(response);
+        return 'Success';
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to update user status');
+      }
+    },
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
       // await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
@@ -1896,7 +1913,6 @@ export default new Vuex.Store({
       // commit('setToggleRACI', false)
       if (cb) return cb()
     },
-
     async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
       return new Promise(async (resolve, reject) => {
         let facility = await dispatch('fetchFacility', {projectId, facilityId})

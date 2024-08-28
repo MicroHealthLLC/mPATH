@@ -541,6 +541,7 @@
               <el-select
                 v-model="responsibleUsers"
                 class="w-100"
+                :multiple="true"
                 filterable
                 clearable
                 track-by="id"
@@ -565,6 +566,7 @@
                 class="w-100"
                 clearable
                 track-by="id"
+                :multiple="true"
                 value-key="id"
                 placeholder="Search and select Accountable User"
                 :disabled="!_isallowed('write')"
@@ -1394,8 +1396,8 @@ export default {
       editTimeLive: "",
       selectedTaskType: null,
       selectedTaskStage: null,
-      responsibleUsers: null,
-      accountableTaskUsers: null,
+      responsibleUsers: [],
+      accountableTaskUsers: [],
       consultedTaskUsers: [],
       informedTaskUsers: [],
       relatedIssues: [],
@@ -1594,10 +1596,10 @@ export default {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.responsibleUserIds.includes(u.id)
-      )[0];
+      );
       this.accountableTaskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.accountableUserIds.includes(u.id)
-      )[0];
+      );
       this.consultedTaskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_task.consultedUserIds.includes(u.id)
       );
@@ -2335,7 +2337,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.responsibleUserIds = null;
+          this.DV_task.responsibleUserIds = [];
         }
       },
       deep: true,
@@ -2347,7 +2349,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.accountableUserIds = null;
+          this.DV_task.accountableUserIds = [];
         }
       },
       deep: true,
@@ -2576,7 +2578,7 @@ ul {
 .disabled {
   opacity: 0.6;
 }
-.simple-select /deep/ .multiselect {
+.simple-select ::v-deep .multiselect {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
@@ -2613,21 +2615,21 @@ ul {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/ .el-collapse {
+::v-deep .el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+::v-deep.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+::v-deep.el-collapse-item__header {
   background-color: #fafafa;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  ::v-deep.el-collapse-item__header {
     float: right;
     padding: 1em;
     padding-right: 0;
@@ -2678,7 +2680,7 @@ input.file-link {
 }
 
 .overSixSteps {
-  /deep/.el-step__title {
+  ::v-deep.el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;
