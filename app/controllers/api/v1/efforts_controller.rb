@@ -1,7 +1,7 @@
 class Api::V1::EffortsController < AuthenticatedController 
   before_action :set_resources#, except: [:show]
   before_action :set_effort, only: [:update, :destroy]
-  # before_action :check_permission
+  before_action :check_permission
 
   def check_permission
     action = nil
@@ -14,11 +14,11 @@ class Api::V1::EffortsController < AuthenticatedController
     end
 
     if params[:project_contract_id]
-      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'tasks', project_contract: params[:project_contract_id])
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'efforts', project_contract: params[:project_contract_id])
     elsif params[:project_contract_vehicle_id]
-      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'tasks', project_contract_vehicle: params[:project_contract_vehicle_id])
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'efforts', project_contract_vehicle: params[:project_contract_vehicle_id])
     else
-      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'efforts', program: params[:project_id], project: params[:facility_id])
     end
   end
 

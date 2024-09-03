@@ -14,9 +14,13 @@ class Api::V1::ProjectsController < AuthenticatedController
       all_efforts = Effort.includes([ {user: [:organization] }, {facility_project: :facility} ]).where("efforts.facility_project_id in (?) and efforts.hours > 0", facility_project_ids)
     end
 
-    preloader = ActiveRecord::Associations::Preloader.new
-    preloader.preload(all_efforts.select { |p| p.resource_type == 'Task' }, resource: [:notes])
+    # preloader = ActiveRecord::Associations::Preloader.new
+    # preloader.preload(all_efforts.select { |p| p.resource_type == 'Task' }, resource: [:notes])
 
+    ActiveRecord::Associations::Preloader.new(
+      records: all_efforts,
+      associations: ['resource']
+    ).call
     # total_pages = all_efforts.total_pages
     # current_page = all_efforts.current_page
     # next_page = all_efforts.next_page

@@ -24,7 +24,8 @@ class Effort < ApplicationRecord
       :task_id,
       :date_of_week,
       :resource_id,
-      :resource_type
+      :resource_type,
+      :removed
     ]
   end
 
