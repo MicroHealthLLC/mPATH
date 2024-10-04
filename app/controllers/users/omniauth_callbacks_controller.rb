@@ -8,7 +8,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     check_omniauth_auth
   end
 
-  def oktaoauth
+  def okta
     session[:oktastate] = request.env["omniauth.auth"]["uid"]
     check_omniauth_auth
   end

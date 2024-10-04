@@ -16,6 +16,12 @@
           .col-md-12
             = button_to("Continue with Office 365", omniauth_authorize_path(resource_name, :office365), method: :post, class: "btn btn-info btn-block")
 
+        .row
+          .col-md-12
+            = button_to("Continue with OKTA", omniauth_authorize_path(resource_name, :okta), method: :post, class: "btn btn-primary btn-block")
+
+
+
       =form_for(resource, as: resource_name, url: session_path(resource_name), html: {  }) do |f|
         = render "devise/shared/messages"
         .form-group.mt-4.px-4
