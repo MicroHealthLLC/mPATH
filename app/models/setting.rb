@@ -46,7 +46,7 @@ class Setting < ApplicationRecord
         fields: ['profile', 'email'],
         client_options: {
           site:          ENV['OKTA_SITE'],
-          authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authoriz",
+          authorize_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/authorize",
           token_url:     "#{ENV['OKTA_SITE']}/oauth2/default/v1/token",
           user_info_url: "#{ENV['OKTA_SITE']}/oauth2/default/v1/userinfo",
           audience: ENV['OKTA_CLIENT_ID']
