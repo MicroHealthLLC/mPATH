@@ -18,7 +18,7 @@
 
         .row
           .col-md-12
-            = button_to("Continue with OKTA", omniauth_authorize_path(resource_name, :okta), method: :post, class: "btn btn-primary btn-block")
+            = link_to "Continue with OKTA", omniauth_authorize_path(resource_name, :okta), class: "btn btn-primary btn-block", method: :get
 
 
 
