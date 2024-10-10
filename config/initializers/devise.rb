@@ -297,6 +297,7 @@ Devise.setup do |config|
   config.omniauth :keycloak_openid,
   ENV['KEYCLOAK_CLIENT_ID'], 
   ENV['KEYCLOAK_CLIENT_SECRET'], 
+  scope: 'openid email',
   client_options: {
     site: 'https://keycloak.microhealthllc.com',
     realm: 'master',

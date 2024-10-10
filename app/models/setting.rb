@@ -61,6 +61,7 @@ class Setting < ApplicationRecord
       config.omniauth :keycloak_openid,
       Setting['KEYCLOAK_CLIENT_ID'], 
       Setting['KEYCLOAK_CLIENT_SECRET'], 
+      scope: 'openid email',
       client_options: { 
         site: 'https://keycloak.microhealthllc.com',
         realm: 'master',
