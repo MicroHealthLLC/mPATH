@@ -1,7 +1,7 @@
 # require 'omniauth-oktaoauth'
 require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
-require Rails.root.join("lib", "omniauth", "strategies", "keycloak_openid.rb")
 require 'omniauth-okta'
+require 'omniauth-keycloak'
 
 # frozen_string_literal: true
 
@@ -278,6 +278,7 @@ Devise.setup do |config|
       userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
     },
     strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
+    issuer: "#{ENV['KEYCLOAK_SITE']}/oauth2/default",
     provider_ignores_state: true
   )
    config.omniauth(:office365, 
