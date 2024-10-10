@@ -17,7 +17,7 @@
 
         .row
           .col-md-12
-            = button_to("Continue with MicroHealth-KC", omniauth_authorize_path(resource_name, :keycloakopenid), method: :post, class: "btn btn-primary btn-block") 
+            = button_to("Continue with MicroHealth-KC", omniauth_authorize_path(resource_name, :keycloak_openid), method: :post, class: "btn btn-primary btn-block") 
 
       =form_for(resource, as: resource_name, url: registration_path(resource_name), html: { }) do |f|
         = render "devise/shared/messages"
