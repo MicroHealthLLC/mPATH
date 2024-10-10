@@ -305,7 +305,8 @@ Devise.setup do |config|
     token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
     userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
   },
-  strategy_class: OmniAuth::Strategies::KeycloakOpenId
+  strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
+  provider_ignores_state: true
 
   
   # Debugging logic
