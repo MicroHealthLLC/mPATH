@@ -8,17 +8,24 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     check_omniauth_auth
   end
 
+  def keycloak_openid
+     Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
+    check_omniauth_auth
+  end
+
   def okta
+    Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
     session[:oktastate] = request.env["omniauth.auth"]["uid"]
     check_omniauth_auth
   end
 
   def passthru
+    Rails.logger.debug "Passthru path: #{request.fullpath}"
     respond_to do |format|
-      format.html {render status: 404, text: "Not found. Authentication passthru."}
+      format.html { render status: 404, text: "Not found. Authentication passthru." }
     end    
   end
-
+  
   def failure
     set_flash_message :alert, :failure, kind: OmniAuth::Utils.camelize(failed_strategy.name), reason: failure_message
     redirect_to after_omniauth_failure_path_for(resource_name)

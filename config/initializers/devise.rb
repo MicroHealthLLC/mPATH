@@ -1,5 +1,6 @@
 # require 'omniauth-oktaoauth'
 require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
+require Rails.root.join("lib", "omniauth", "strategies", "keycloak_openid.rb")
 require 'omniauth-okta'
 
 # frozen_string_literal: true
@@ -292,6 +293,23 @@ Devise.setup do |config|
     strategy_class: OmniAuth::Strategies::Okta
   )
 
+# Add Keycloak provider configuration here
+  config.omniauth :keycloak_openid,
+  ENV['KEYCLOAK_CLIENT_ID'], 
+  ENV['KEYCLOAK_CLIENT_SECRET'], 
+  client_options: {
+    site: 'https://keycloak.microhealthllc.com',
+    realm: 'master',
+    authorization_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/auth',
+    token_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/token',
+    userinfo_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/userinfo'
+  },
+  strategy_class: OmniAuth::Strategies::KeycloakOpenId
+
+  
+  # Debugging logic
+  Rails.logger.debug "Devise OmniAuth providers: #{Devise.omniauth_configs.keys.inspect}"
+  Rails.logger.debug "Devise OmniAuth providers: #{Devise.omniauth_configs.inspect}"
   # config.omniauth(:oktaoauth, ENV['OKTA_CLIENT_ID'], ENV['OKTA_CLIENT_SECRET'], :scope => 'openid profile email', :fields => ['profile', 'email'], :client_options => {site: ENV['OKTA_ISSUER'], authorize_url: ENV['OKTA_ISSUER'] + "/v1/authorize", token_url: ENV['OKTA_ISSUER'] + "/v1/token"}, :redirect_uri => ENV["OKTA_REDIRECT_URI"], :auth_server_id => ENV['OKTA_AUTH_SERVER_ID'], :issuer => ENV['OKTA_ISSUER'], :strategy_class => OmniAuth::Strategies::Oktaoauth)
 
   # ==> Warden configuration
