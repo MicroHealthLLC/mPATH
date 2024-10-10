@@ -275,6 +275,24 @@ Devise.setup do |config|
     },
     provider_ignores_state: true, prompt: :select_account)
 
+  
+    # Add Keycloak provider configuration here
+    config.omniauth(:keycloak_openid,
+    ENV['KEYCLOAK_CLIENT_ID'], 
+    ENV['KEYCLOAK_CLIENT_SECRET'], 
+    scope: 'openid, basic, email, profile',
+    uid_field: "email",
+    client_options: {
+      uid_field: "email",
+      site: 'https://keycloak.microhealthllc.com',
+      realm: 'master',
+      authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
+      token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
+      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
+    },
+    strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
+    provider_ignores_state: true)
+
   config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
   config.omniauth(:okta,
@@ -293,22 +311,6 @@ Devise.setup do |config|
     strategy_class: OmniAuth::Strategies::Okta
   )
 
-# Add Keycloak provider configuration here
-  config.omniauth :keycloak_openid,
-  ENV['KEYCLOAK_CLIENT_ID'], 
-  ENV['KEYCLOAK_CLIENT_SECRET'], 
-  scope: 'openid, basic, email, profile',
-  uid_field: "email",
-  client_options: {
-    uid_field: "email",
-    site: 'https://keycloak.microhealthllc.com',
-    realm: 'master',
-    authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
-    token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-    userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
-  },
-  strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
-  provider_ignores_state: true
 
   
   # Debugging logic

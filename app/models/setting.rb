@@ -54,11 +54,9 @@ class Setting < ApplicationRecord
         issuer: "#{ENV['OKTA_SITE']}/oauth2/default",
         strategy_class: OmniAuth::Strategies::Okta
       )
-
-      config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
-   
+      
       # Add Keycloak provider configuration here
-      config.omniauth :keycloak_openid,
+      config.omniauth(:keycloak_openid,
       Setting['KEYCLOAK_CLIENT_ID'], 
       Setting['KEYCLOAK_CLIENT_SECRET'], 
       scope: 'openid, basic, email, profile',
@@ -72,7 +70,10 @@ class Setting < ApplicationRecord
         userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
       },
       strategy_class: OmniAuth::Strategies::KeycloakOpenId,
-      provider_ignores_state: true
+      provider_ignores_state: true)
+
+      config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
+
     end
   end
 end
