@@ -297,13 +297,13 @@ Devise.setup do |config|
   config.omniauth :keycloak_openid,
   ENV['KEYCLOAK_CLIENT_ID'], 
   ENV['KEYCLOAK_CLIENT_SECRET'], 
-  scope: 'openid email',
+  scope: 'openid, basic, email, profile',
   client_options: {
     site: 'https://keycloak.microhealthllc.com',
     realm: 'master',
-    authorization_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/auth',
-    token_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/token',
-    userinfo_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/userinfo'
+    authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
+    token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
+    userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
   },
   strategy_class: OmniAuth::Strategies::KeycloakOpenId
 
