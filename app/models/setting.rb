@@ -39,7 +39,7 @@ class Setting < ApplicationRecord
         },
         provider_ignores_state: true, prompt: :select_account)
 
-        config.omniauth(:okta,
+      config.omniauth(:okta,
         ENV['OKTA_CLIENT_ID'],
         ENV['OKTA_CLIENT_SECRET'],
         scope: 'openid profile email',
@@ -57,20 +57,21 @@ class Setting < ApplicationRecord
       
       # Add Keycloak provider configuration here
       config.omniauth(:keycloak_openid,
-      Setting['KEYCLOAK_CLIENT_ID'], 
-      Setting['KEYCLOAK_CLIENT_SECRET'], 
-      scope: 'openid, basic, email, profile',
-      uid_field: "email",
-      client_options: { 
+        Setting['KEYCLOAK_CLIENT_ID'], 
+        Setting['KEYCLOAK_CLIENT_SECRET'], 
+        scope: 'openid, basic, email, profile',
         uid_field: "email",
-        site: 'https://keycloak.microhealthllc.com',
-        realm: 'master',
-        authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
-        token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-        userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
-      },
-      strategy_class: OmniAuth::Strategies::KeycloakOpenId,
-      provider_ignores_state: true)
+        client_options: { 
+          uid_field: "email",
+          site: 'https://keycloak.microhealthllc.com',
+          realm: 'master',
+          authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
+          token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
+          userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
+        },
+        strategy_class: OmniAuth::Strategies::KeycloakOpenId,
+        provider_ignores_state: true
+      )
 
       config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
