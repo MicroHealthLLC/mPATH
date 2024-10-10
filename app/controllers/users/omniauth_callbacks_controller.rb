@@ -8,7 +8,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     check_omniauth_auth
   end
 
-  def keycloak_openid
+  def keycloakopenid
      Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
     check_omniauth_auth
   end

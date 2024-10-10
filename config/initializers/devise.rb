@@ -298,7 +298,9 @@ Devise.setup do |config|
   ENV['KEYCLOAK_CLIENT_ID'], 
   ENV['KEYCLOAK_CLIENT_SECRET'], 
   scope: 'openid, basic, email, profile',
+  uid_field: "email",
   client_options: {
+    uid_field: "email",
     site: 'https://keycloak.microhealthllc.com',
     realm: 'master',
     authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
