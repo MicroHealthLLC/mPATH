@@ -10,6 +10,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def keycloak_openid
      Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
+      Rails.logger.debug "Request environment: #{request.env.inspect}"
+      Rails.logger.debug "Incoming request parameters: #{params.inspect}"
+      session[:keycloakstate] = request.env["omniauth.auth"]["uid"]
+
     check_omniauth_auth
   end
 

@@ -69,9 +69,9 @@ class Setting < ApplicationRecord
           token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
           userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
         },
-        issuer: "#{ENV['KEYCLOAK_SITE']}/oauth2/default",
+        issuer: "https://keycloak.microhealthllc.com/realms/master",
         strategy_class: OmniAuth::Strategies::KeycloakOpenId,
-        provider_ignores_state: true
+        # provider_ignores_state: true
       )
 
       config.omniauth :google_oauth2, Setting['GOOGLE_OAUTH_KEY'],  Setting['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true

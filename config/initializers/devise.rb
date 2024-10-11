@@ -278,9 +278,10 @@ Devise.setup do |config|
       userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
     },
     strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
-    issuer: "#{ENV['KEYCLOAK_SITE']}/oauth2/default",
-    provider_ignores_state: true
+    issuer: "https://keycloak.microhealthllc.com/realms/master",
+    # provider_ignores_state: true
   )
+
    config.omniauth(:office365, 
     ENV['OFFICE365_KEY'], 
     ENV['OFFICE365_SECRET'], 

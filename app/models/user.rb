@@ -2,8 +2,8 @@ class User < ApplicationRecord
   
   devise :database_authenticatable,
          :recoverable, :rememberable, :trackable,
-         :validatable, :omniauthable, omniauth_providers: %i[google_oauth2 keycloak_openid office365 okta]
-        #  :validatable, :omniauthable
+        #  :validatable, :omniauthable, omniauth_providers: %i[google_oauth2 keycloak_openid office365 okta]
+         :validatable, :omniauthable
 
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users

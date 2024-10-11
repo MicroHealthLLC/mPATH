@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   devise_for :users, controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
+  get '/auth/keycloak/callback', to: 'users/omniauth_callbacks#keycloak_openid'
+  
   authenticate :user, lambda {|u| u.admin?} do
     begin
       ActiveAdmin.routes(self)
