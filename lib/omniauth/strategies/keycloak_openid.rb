@@ -9,7 +9,7 @@ module OmniAuth
         site:          "https://keycloak.microhealthllc.com",
         authorize_url: "/realms/master/protocol/openid-connect/auth",
         token_url:     "/realms/master/protocol/openid-connect/token",
-        user_info_url: "/realms/master/protocol/openid-connect/userinfo"
+        user_info_url: "/realms/master/protocol/openid-connect/userinfo",
         redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
       }
 
