@@ -11,6 +11,7 @@ module OmniAuth
         token_url:     "/realms/master/protocol/openid-connect/token",
         user_info_url: "/realms/master/protocol/openid-connect/userinfo",
         redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
+        base_url: '',
       }
 
       uid { raw_info["sub"] }
