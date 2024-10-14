@@ -1,7 +1,8 @@
 # require 'omniauth-oktaoauth'
 require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
+require Rails.root.join("lib", "omniauth", "strategies","keycloak_openid.rb")
 require 'omniauth-okta'
-require 'omniauth-keycloak'
+# require 'omniauth-keycloak'
 
 # frozen_string_literal: true
 
@@ -273,12 +274,12 @@ Devise.setup do |config|
       uid_field: "email",
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
-      authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
-      token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
+      authorization_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/auth',
+      token_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/token',
+      userinfo_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/userinfo'
     },
-    strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
-    issuer: "https://keycloak.microhealthllc.com/realms/master",
+    # strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
+    issuer: "https://keycloak.microhealthllc.com/auth/realms/master",
     # provider_ignores_state: true
   )
 

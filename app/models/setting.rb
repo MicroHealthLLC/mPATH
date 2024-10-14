@@ -56,9 +56,9 @@ class Setting < ApplicationRecord
       )
       
       # Add Keycloak provider configuration here
-      config.omniauth(:keycloak_openid,
-        ENV['KEYCLOAK_CLIENT_ID'], 
-        ENV['KEYCLOAK_CLIENT_SECRET'], 
+      config.omniauth(:keycloak_openid,   
+        Setting['KEYCLOAK_CLIENT_ID'], 
+        Setting['KEYCLOAK_CLIENT_SECRET'], 
         scope: 'openid, basic, email, profile',
         uid_field: "email",
         client_options: { 
