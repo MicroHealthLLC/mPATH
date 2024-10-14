@@ -270,17 +270,19 @@ Devise.setup do |config|
     ENV['KEYCLOAK_CLIENT_SECRET'], 
     scope: 'openid, basic, email, profile',
     uid_field: "email",
+    redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
     client_options: {
       uid_field: "email",
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
       authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
       token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
+      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo',
+      redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
     },
     # strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
     issuer: "https://keycloak.microhealthllc.com/realms/master",
-    provider_ignores_state: true
+    # provider_ignores_state: true
   )
 
    config.omniauth(:office365, 
