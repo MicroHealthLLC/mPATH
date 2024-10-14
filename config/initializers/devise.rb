@@ -279,6 +279,7 @@ Devise.setup do |config|
       token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
       userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo',
       redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
+      base_url: '',
     },
     # strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
     issuer: "https://keycloak.microhealthllc.com/realms/master",
