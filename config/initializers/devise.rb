@@ -274,13 +274,13 @@ Devise.setup do |config|
       uid_field: "email",
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
-      authorization_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/auth',
-      token_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/token',
-      userinfo_endpoint: 'https://keycloak.microhealthllc.com/auth/realms/master/protocol/openid-connect/userinfo'
+      authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
+      token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
+      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
     },
     # strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
-    issuer: "https://keycloak.microhealthllc.com/auth/realms/master",
-    # provider_ignores_state: true
+    issuer: "https://keycloak.microhealthllc.com/realms/master",
+    provider_ignores_state: true
   )
 
    config.omniauth(:office365, 
