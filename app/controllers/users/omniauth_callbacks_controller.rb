@@ -8,12 +8,19 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     check_omniauth_auth
   end
 
-  def keycloak_openid
+  def keycloakopenid
     #  Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
     #   Rails.logger.debug "Request environment: #{request.env.inspect}"
     #   Rails.logger.debug "Incoming request parameters: #{params.inspect}"
-    #   session[:keycloakstate] = request.env["omniauth.auth"]["uid"]
-    check_omniauth_auth
+    # session[:keycloakstate] = request.env["omniauth.auth"]["uid"]
+    # check_omniauth_auth
+    @user = User.from_omniauth(request.env["omniauth.auth"])
+    if @user.persisted?
+      sign_in_and_redirect @user, event: :authentication
+    else
+      session["devise.keycloakopenid_data"] = request.env["omniauth.auth"]
+      redirect_to new_user_registration_url
+    end
   end
 
   def okta

@@ -56,11 +56,11 @@ class Setting < ApplicationRecord
       )
       
       # Add Keycloak provider configuration here
-      config.omniauth(:keycloak_openid,   
+      config.omniauth :keycloak_openid,
         Setting['KEYCLOAK_CLIENT_ID'], 
         Setting['KEYCLOAK_CLIENT_SECRET'], 
         scope: 'openid, basic, email, profile',
-        uid_field: "email",
+        # uid_field: "email",
         client_options: { 
           uid_field: "email",
           site: 'https://keycloak.microhealthllc.com',
@@ -69,8 +69,9 @@ class Setting < ApplicationRecord
           token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
           userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
         },
-        issuer: "https://keycloak.microhealthllc.com/realms/master",
-        strategy_class: OmniAuth::Strategies::KeycloakOpenId,
+        # issuer: "https://keycloak.microhealthllc.com/realms/master",
+        :strategy_class => OmniAuth::Strategies::KeycloakOpenId,
+        name: 'keycloak'
         # provider_ignores_state: true
       )
 
