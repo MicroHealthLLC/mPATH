@@ -2,11 +2,7 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
  # get '/auth/keycloak/callback', to: 'users/omniauth_callbacks#keycloak_openid'
-    devise_scope :user do
-    get '/auth/oauth2/callback', to: 'users/omniauth_callbacks#oauth2'
-    get '/auth/oauth2', to: 'users/omniauth_callbacks#passthru', as: :user_oauth2_omniauth_authorize
-    post '/auth/oauth2', to: 'users/omniauth_callbacks#passthru', as: :user_oauth2_omniauth_authorize_post
-  end
+ # get '/auth/oauth2/callback', to: 'users/omniauth_callbacks#oauth2'
   
   authenticate :user, lambda {|u| u.admin?} do
     begin
