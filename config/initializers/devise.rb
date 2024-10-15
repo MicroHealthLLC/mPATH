@@ -266,12 +266,15 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
-config.omniauth :keycloak_openid,
-  ENV['KEYCLOAK_CLIENT_ID'],
-  ENV['KEYCLOAK_CLIENT_SECRET'],
-  client_options: { site: ENV['KEYCLOAK_SITE'] },
-  scope: 'openid email',
-  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
+# config.omniauth :keycloak_openid,
+ # ENV['KEYCLOAK_CLIENT_ID'],
+ # ENV['KEYCLOAK_CLIENT_SECRET'],
+ # client_options: { site: ENV['KEYCLOAK_SITE'] },
+ # scope: 'openid email',
+ # redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
+
+  config.omniauth :keycloak_openid, ENV['KEYCLOAK_CLIENT_ID'], ENV['KEYCLOAK_CLIENT_SECRET'], 
+                client_options: { site: ENV['KEYCLOAK_SITE'] }
     
 #   config.omniauth(:office365, 
 #    ENV['OFFICE365_KEY'], 
