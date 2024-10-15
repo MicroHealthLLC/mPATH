@@ -271,7 +271,7 @@ Devise.setup do |config|
     client_options: {
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
-      base_url: 'https://keycloak.microhealthllc.com',
+      base_url: '/',
       authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
       token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
       userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
