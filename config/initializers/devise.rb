@@ -266,13 +266,27 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
- config.omniauth :keycloak_openid,
+# config.omniauth :keycloak_openid,
+#  ENV['KEYCLOAK_CLIENT_ID'],
+#  ENV['KEYCLOAK_CLIENT_SECRET'],
+#  client_options: { site: ENV['KEYCLOAK_SITE'] },
+#  scope: 'openid email',
+#  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
+config.omniauth(:keycloak_openid,
   ENV['KEYCLOAK_CLIENT_ID'],
   ENV['KEYCLOAK_CLIENT_SECRET'],
-  client_options: { site: ENV['KEYCLOAK_SITE'] },
-  scope: 'openid email',
+  scope: 'openid profile email',
+  client_options: {
+    site: ENV['KEYCLOAK_SITE'],
+    realm: ENV['KEYCLOAK_REALM'] || 'master',
+    authorize_url: "#{ENV['KEYCLOAK_SITE']}/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/auth",
+    token_url: "#{ENV['KEYCLOAK_SITE']}/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/token",
+    user_info_url: "#{ENV['KEYCLOAK_SITE']}/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/userinfo"
+  },
+  issuer: "#{ENV['KEYCLOAK_SITE']}/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}",
+  strategy_class: OmniAuth::Strategies::KeycloakOpenId,
   redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
-    
+)   
 #   config.omniauth(:office365, 
 #    ENV['OFFICE365_KEY'], 
 #    ENV['OFFICE365_SECRET'], 
