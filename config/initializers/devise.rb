@@ -271,7 +271,7 @@ config.omniauth :keycloak_openid,
   ENV['KEYCLOAK_CLIENT_SECRET'],
   client_options: {
     site: ENV['KEYCLOAK_SITE'],
-    realm: 'master',
+    realm: "#{ENV['KEYCLOAK_SITE']}/realms/master",
     base_url: '/'  # Change this to a relative path
   },
   name: :keycloak_openid,
