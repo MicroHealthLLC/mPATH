@@ -270,7 +270,7 @@ Devise.setup do |config|
     ENV['KEYCLOAK_CLIENT_SECRET'], 
     scope: 'openid, basic, email, profile',
     uid_field: "email",
-    redirect_uri: "https://mpath-qa.microhealthllc.com/",
+   # redirect_uri: "https://mpath-qa.microhealthllc.com/",
     client_options: {
       uid_field: "email",
       site: 'https://keycloak.microhealthllc.com',
