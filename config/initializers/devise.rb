@@ -269,17 +269,9 @@ Devise.setup do |config|
 config.omniauth :keycloak_openid,
   ENV['KEYCLOAK_CLIENT_ID'],
   ENV['KEYCLOAK_CLIENT_SECRET'],
-  client_options: {
-    site: ENV['KEYCLOAK_SITE'],
-    base_url: '/'  # Change this to a relative path
-  },
-  name: :keycloak_openid,
-  scope: 'openid profile email',
-  response_type: 'code',
-  issuer: "#{ENV['KEYCLOAK_SITE']}/realms/master",
-  discovery: true,
-  redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/keycloak_openid/callback",
-  strategy_class: OmniAuth::Strategies::KeycloakOpenId
+  client_options: { site: ENV['KEYCLOAK_SITE'] },
+  scope: 'openid email',
+  redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/keycloak_openid/callback"
     
 #   config.omniauth(:office365, 
 #    ENV['OFFICE365_KEY'], 
