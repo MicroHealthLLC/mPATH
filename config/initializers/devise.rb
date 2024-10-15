@@ -295,7 +295,7 @@ Devise.setup do |config|
       token_url: "/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/token"
     },
     strategy_class: OmniAuth::Strategies::OAuth2,
-    redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/oauth2/callback"
+    # redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/oauth2/callback"
   
 #   config.omniauth(:office365, 
 #    ENV['OFFICE365_KEY'], 
