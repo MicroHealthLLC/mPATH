@@ -265,24 +265,21 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
-  config.omniauth(:keycloak_openid,
-    ENV['KEYCLOAK_CLIENT_ID'], 
-    ENV['KEYCLOAK_CLIENT_SECRET'], 
-    scope: 'openid, basic, email, profile',
-    uid_field: "email",
-   # redirect_uri: "https://mpath-qa.microhealthllc.com/",
+  config.omniauth :keycloak_openid,
+    ENV['KEYCLOAK_CLIENT_ID'],
+    ENV['KEYCLOAK_CLIENT_SECRET'],
+    scope: 'openid profile email',
     client_options: {
-      uid_field: "email",
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
+      base_url: 'https://keycloak.microhealthllc.com',
       authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
       token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo', 
+      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
     },
-    # strategy_class: OmniAuth::Strategies::KeycloakOpenId, 
-    issuer: "https://keycloak.microhealthllc.com/realms/master",
-    # provider_ignores_state: true
-  )
+    redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/keycloak_openid/callback",
+    name: :keycloak,
+    strategy_class: OmniAuth::Strategies::KeycloakOpenId
 
    config.omniauth(:office365, 
     ENV['OFFICE365_KEY'], 
