@@ -25,7 +25,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       session["devise.keycloak_data"] = request.env["omniauth.auth"].except(:extra)
       redirect_to new_user_registration_url
     end
-    
+  end
+  
   def okta
     Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
     session[:oktastate] = request.env["omniauth.auth"]["uid"]
