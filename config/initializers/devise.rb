@@ -277,10 +277,9 @@ Devise.setup do |config|
     ENV['KEYCLOAK_CLIENT_ID'],
     ENV['KEYCLOAK_CLIENT_SECRET'],
     client_options: {
-      site: ENV['KEYCLOAK_SITE'],
-      realm: ENV['KEYCLOAK_REALM'] || 'master'
+      site: 'https://keycloak.microhealthllc.com',
+      realm: 'master',
     },
-    provider: :keycloak_openid,
     scope: [:openid, :profile, :email],
     :strategy_class => OmniAuth::Strategies::KeycloakOpenId
     # redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
@@ -326,9 +325,9 @@ config.omniauth(:office365,
   prompt: :select_account
 )
    
-   config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
+config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
-  config.omniauth(:okta,
+config.omniauth(:okta,
     ENV['OKTA_CLIENT_ID'],
     ENV['OKTA_CLIENT_SECRET'],
     scope: 'openid profile email',

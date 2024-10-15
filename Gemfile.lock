@@ -482,7 +482,6 @@ DEPENDENCIES
   mysql2
   nokogiri (= 1.14.3)
   oj
-  omniauth (~> 2.0)
   omniauth-google-oauth2 (~> 1.2.0)
   omniauth-keycloak
   omniauth-okta
