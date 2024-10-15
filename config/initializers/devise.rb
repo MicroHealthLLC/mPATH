@@ -280,6 +280,7 @@ Devise.setup do |config|
       site: ENV['KEYCLOAK_SITE'],
       realm: ENV['KEYCLOAK_REALM'] || 'master'
     },
+    provider :keycloak_openid,
     scope: [:openid, :profile, :email],
     :strategy_class => OmniAuth::Strategies::KeycloakOpenId
     # redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
