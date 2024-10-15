@@ -271,7 +271,7 @@ config.omniauth :keycloak_openid,
   client_options: {
     site: ENV['KEYCLOAK_SITE'],
     realm: 'master',
-    base_url: ENV['KEYCLOAK_SITE']
+    base_url: '/'  # Change this to a relative path
   },
   name: :keycloak_openid,
   scope: 'openid profile email',
