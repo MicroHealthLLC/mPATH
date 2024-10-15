@@ -285,10 +285,10 @@ Devise.setup do |config|
 #    provider_ignores_state: true, prompt: :select_account
 #    )
 
-  config.omniauth(:office365, 
+config.omniauth(:office365, 
   ENV['OFFICE365_KEY'], 
   ENV['OFFICE365_SECRET'], 
-  :scope => 'openid profile email https://graph.microsoft.com/mail.read',
+  :scope => 'openid profile email offline_access user.read mail.read',
   :client_options => {
     :site => 'https://graph.microsoft.com/v1.0',
     :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
