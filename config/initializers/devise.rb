@@ -271,7 +271,7 @@ Devise.setup do |config|
     client_options: {
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
-      base_url: 'https://keycloak.microhealthllc.com'
+      base_url: '/'  # Change this to a relative path
     },
     name: :keycloak_openid,
     scope: 'openid profile email',
