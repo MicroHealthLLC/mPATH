@@ -10,7 +10,7 @@ module OmniAuth
         authorize_url: "/realms/master/protocol/openid-connect/auth",
         token_url:     "/realms/master/protocol/openid-connect/token",
         user_info_url: "/realms/master/protocol/openid-connect/userinfo",
-        redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
+       # redirect_uri: "https://mpath-qa.microhealthllc/auth/keycloak/callback",
         base_url: '',
       }
 
