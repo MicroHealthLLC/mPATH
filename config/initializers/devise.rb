@@ -269,7 +269,7 @@ Devise.setup do |config|
     ENV['KEYCLOAK_CLIENT_ID'],
     ENV['KEYCLOAK_CLIENT_SECRET'],
     client_options: {
-      site: 'https://keycloak.microhealthllc.com',
+      site: 'https://keycloak.microhealthllc.com/realms/',
       realm: 'master',
       ssl: true
     },
