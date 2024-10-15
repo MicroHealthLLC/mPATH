@@ -272,7 +272,7 @@ Devise.setup do |config|
 #  client_options: { site: ENV['KEYCLOAK_SITE'] },
 #  scope: 'openid email',
 #  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
-config.omniauth(:keycloak_openid,
+config.omniauth :keycloak_openid,
   ENV['KEYCLOAK_CLIENT_ID'],
   ENV['KEYCLOAK_CLIENT_SECRET'],
   client_options: {
