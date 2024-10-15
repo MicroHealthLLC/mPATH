@@ -278,7 +278,7 @@ Devise.setup do |config|
       userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
     },
     redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/keycloak_openid/callback",
-    name: :keycloak,
+    name: :keycloak_openid,
     strategy_class: OmniAuth::Strategies::KeycloakOpenId
 
    config.omniauth(:office365, 
