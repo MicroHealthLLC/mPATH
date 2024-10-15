@@ -273,9 +273,9 @@ Devise.setup do |config|
       site: 'https://keycloak.microhealthllc.com',
       realm: 'master',
       base_url: 'https://keycloak.microhealthllc.com',
-      authorization_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/auth',
-      token_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/token',
-      userinfo_endpoint: 'https://keycloak.microhealthllc.com/realms/master/protocol/openid-connect/userinfo'
+      authorization_endpoint: '/realms/master/protocol/openid-connect/auth',
+      token_endpoint: '/realms/master/protocol/openid-connect/token',
+      userinfo_endpoint: '/realms/master/protocol/openid-connect/userinfo'
     },
     redirect_uri: "https://mpath-qa.microhealthllc.com/users/auth/keycloak_openid/callback",
     name: :keycloak_openid,
