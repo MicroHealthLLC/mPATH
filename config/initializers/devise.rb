@@ -274,7 +274,7 @@ config.omniauth :office365,
       token_url: '/common/oauth2/v2.0/token'
     },
     provider_ignores_state: true
-    issuer: "https://login.microsoftonline.com/487ea2d6-7ea0-4a4b-8773-6f4833ed2108/v2.0"
+    # issuer: "https://login.microsoftonline.com/487ea2d6-7ea0-4a4b-8773-6f4833ed2108/v2.0"
     strategy_class: OmniAuth::Strategies::Office365
   }
   
