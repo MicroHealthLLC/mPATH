@@ -273,17 +273,19 @@ Devise.setup do |config|
 #  scope: 'openid email',
 #  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
 
-  config.omniauth( :keycloak_openid,
-    ENV['KEYCLOAK_CLIENT_ID'],
-    ENV['KEYCLOAK_CLIENT_SECRET'],
+config.omniauth :office365,
+  ENV['OFFICE365_CLIENT_ID'],
+  ENV['OFFICE365_CLIENT_SECRET'],
+  {
+    scope: 'openid profile email offline_access https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Read',
     client_options: {
-      site: 'https://keycloak.microhealthllc.com',
-      realm: 'master',
+      site: 'https://graph.microsoft.com',
+      authorize_url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      token_url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
     },
-    scope: [:openid, :profile, :email],
-    :strategy_class => OmniAuth::Strategies::KeycloakOpenId
-    # redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
-   )
+    provider_ignores_state: true,
+    prompt: 'select_account'
+  }
   
   config.omniauth( :oauth2,
     ENV['KEYCLOAK_CLIENT_ID'],
