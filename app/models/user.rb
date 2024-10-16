@@ -398,23 +398,41 @@ class User < ApplicationRecord
     url
   end
 
+  # def self.from_omniauth(auth)
+  #   if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
+  #     where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|
+  #       user.provider = auth.provider
+  #       user.uid = auth.uid
+  #       user.first_name = auth.info.first_name rescue nil
+  #       user.last_name = auth.info.last_name rescue nil
+  #       user.email = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+  #       user.login = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+  #       user.first_name ||= user.login
+  #       user.last_name ||= user.login
+  #       user.password = Devise.friendly_token[0, 20]
+  #     end
+  #   else
+  #     nil
+  #   end
+  # end
+
   def self.from_omniauth(auth)
-    if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
-      where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|
-        user.provider = auth.provider
-        user.uid = auth.uid
-        user.first_name = auth.info.first_name rescue nil
-        user.last_name = auth.info.last_name rescue nil
-        user.email = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
-        user.login = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
-        user.first_name ||= user.login
-        user.last_name ||= user.login
-        user.password = Devise.friendly_token[0, 20]
-      end
-    else
-      nil
+    user = where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first_or_initialize do |user|
+      user.provider = auth.provider
+      user.uid = auth.uid
+      user.first_name = auth.info.first_name if auth.info.first_name.present?
+      user.last_name = auth.info.last_name if auth.info.last_name.present?
+      user.email = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+      user.login = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+      user.first_name ||= user.login
+      user.last_name ||= user.login
+      user.password = Devise.friendly_token[0, 20] if user.new_record?
     end
+  
+    user.save if user.changed?
+    user
   end
+  
 
   def password_complexity
     return unless self.changes.has_key?("password")

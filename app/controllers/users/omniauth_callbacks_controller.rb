@@ -1,26 +1,27 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def office365
+    log_omniauth_data
     check_omniauth_auth
   end
 
   def google_oauth2
+    log_omniauth_data
     check_omniauth_auth
   end
 
   def keycloak_openid
-    #  Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
-    #   Rails.logger.debug "Request environment: #{request.env.inspect}"
-    #   Rails.logger.debug "Incoming request parameters: #{params.inspect}"
-    #   session[:keycloakstate] = request.env["omniauth.auth"]["uid"]
+    log_omniauth_data
     check_omniauth_auth
   end
 
   def oauth2
+    log_omniauth_data
     @user = User.from_omniauth(request.env["omniauth.auth"])
       sign_in_and_redirect @user, event: :authentication
       set_flash_message(:notice, :success, kind: "OAuth2") if is_navigational_format?
       check_omniauth_auth
+      
   end
   
   def okta
@@ -39,6 +40,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def failure
     set_flash_message :alert, :failure, kind: OmniAuth::Utils.camelize(failed_strategy.name), reason: failure_message
     redirect_to after_omniauth_failure_path_for(resource_name)
+  end
+
+  def log_omniauth_data
+    Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
+    Rails.logger.debug "Request environment: #{request.env.inspect}"
   end
 
 

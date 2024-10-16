@@ -282,7 +282,6 @@ Devise.setup do |config|
     },
     scope: [:openid, :profile, :email],
     :strategy_class => OmniAuth::Strategies::KeycloakOpenId
-    # redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
    )
   
   config.omniauth( :oauth2,
