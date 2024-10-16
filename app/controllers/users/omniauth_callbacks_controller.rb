@@ -17,18 +17,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     check_omniauth_auth
   end
 
-  def oauth2
-    @user = User.from_omniauth(request.env["omniauth.auth"])
-      sign_in_and_redirect @user, event: :authentication
-      set_flash_message(:notice, :success, kind: "OAuth2") if is_navigational_format?
-      check_omniauth_auth
-  end
-  
-  def okta
-    Rails.logger.debug "OmniAuth auth data: #{request.env['omniauth.auth'].inspect}"
-    session[:oktastate] = request.env["omniauth.auth"]["uid"]
-    check_omniauth_auth
-  end
 
   def passthru
     Rails.logger.debug "Passthru path: #{request.fullpath}"
