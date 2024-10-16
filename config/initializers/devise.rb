@@ -269,17 +269,17 @@ Devise.setup do |config|
 #  scope: 'openid email',
 #  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
 
-  config.omniauth :office365,
-    ENV['OFFICE365_CLIENT_ID'],
-    ENV['OFFICE365_CLIENT_SECRET'],
-    {
-      scope: 'openid profile email offline_access https://graph.microsoft.com/User.Read',
-      client_options: {
-        site: 'https://login.microsoftonline.com',
-        authorize_url: '/common/oauth2/v2.0/authorize',
-        token_url: '/common/oauth2/v2.0/token'
-      }
+config.omniauth :office365,
+  ENV['OFFICE365_CLIENT_ID'],
+  ENV['OFFICE365_CLIENT_SECRET'],
+  {
+    scope: 'openid profile email offline_access https://graph.microsoft.com/User.Read',
+    client_options: {
+      site: 'https://login.microsoftonline.com',
+      authorize_url: '/common/oauth2/v2.0/authorize',
+      token_url: '/common/oauth2/v2.0/token'
     }
+  }
     
 #   config.omniauth(:office365, 
 #    ENV['OFFICE365_KEY'], 
