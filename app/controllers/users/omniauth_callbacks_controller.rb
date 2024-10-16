@@ -3,10 +3,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
    def office365
       # Handle Office 365 callback
     end
-   
-  def keycloak
-
-  end
 
   def failure
     redirect_to root_path
