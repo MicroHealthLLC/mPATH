@@ -313,19 +313,6 @@ config.omniauth :office365,
 #    },
 #    provider_ignores_state: true, prompt: :select_account
 #    )
-
-config.omniauth(:office365, 
-  ENV['OFFICE365_KEY'], 
-  ENV['OFFICE365_SECRET'], 
-  :scope => 'openid profile email offline_access https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Read',
-  :client_options => {
-    :site => 'https://graph.microsoft.com',
-    :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-    :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-  },
-  provider_ignores_state: true, 
-  prompt: :select_account
-)
    
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
