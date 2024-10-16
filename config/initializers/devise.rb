@@ -267,7 +267,7 @@ config.omniauth :office365,
   ENV['OFFICE365_CLIENT_SECRET'],
   {
     scope: 'openid profile email',
-    fields: ['profile', 'email'],
+    # fields: ['profile', 'email'],
     client_options: {
       site: 'https://login.microsoftonline.com',
       authorize_url: '/common/oauth2/v2.0/authorize',
