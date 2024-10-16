@@ -14,15 +14,11 @@
 
         .row
           .col-md-12
-            = button_to("Continue with Office 365", omniauth_authorize_path(resource_name, :office365), method: :post, class: "btn btn-info btn-block")
+            = button_to("Continue with Office 365", user_office365_omniauth_authorize_path, method: :post, class: "btn btn-info btn-block")
 
         .row
           .col-md-12
-            = button_to("Continue with MicroHealth-KC", omniauth_authorize_path(resource_name, :keycloak_openid), method: :post, class: "btn btn-primary btn-block") 
-
-        .row
-          .col-md-12
-            = button_to("Continue with Keycloak", omniauth_authorize_path(resource_name, :oauth2), method: :post, class: "btn btn-primary btn-block")
+            = button_to("Continue with MicroHealth-KC", omniauth_authorize_path(resource_name, :keycloak), method: :post, class: "btn btn-info btn-block")
 
       =form_for(resource, as: resource_name, url: session_path(resource_name), html: {  }) do |f|
         = render "devise/shared/messages"
