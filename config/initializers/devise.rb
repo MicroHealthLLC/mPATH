@@ -275,7 +275,7 @@ config.omniauth :office365,
     },
     provider_ignores_state: true
     # issuer: "https://login.microsoftonline.com/487ea2d6-7ea0-4a4b-8773-6f4833ed2108/v2.0"
-    strategy_class: OmniAuth::Strategies::Office365
+    # strategy_class: OmniAuth::Strategies::Office365
   }
   
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
