@@ -16,6 +16,10 @@
           .col-md-12
             = button_to("Continue with Office 365", user_office365_omniauth_authorize_path, method: :post, class: "btn btn-info btn-block")
 
+        .row
+          .col-md-12
+            = button_to("Continue with MicroHealth-KC", omniauth_authorize_path(resource_name, :keycloak), method: :post, class: "btn btn-info btn-block")
+
       =form_for(resource, as: resource_name, url: session_path(resource_name), html: {  }) do |f|
         = render "devise/shared/messages"
         .form-group.mt-4.px-4
