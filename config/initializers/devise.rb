@@ -281,17 +281,21 @@ config.omniauth :office365,
     }
   }
     
-#   config.omniauth(:office365, 
-#    ENV['OFFICE365_KEY'], 
-#    ENV['OFFICE365_SECRET'], 
-#    :scope => 'openid profile email https://outlook.office.com/mail.read',
-#    :client_options => {
-#      :site => 'https://outlook.office.com/',
-#      :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-#      :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-#    },
-#    provider_ignores_state: true, prompt: :select_account
-#    )
+  config.omniauth( :oauth2,
+    ENV['KEYCLOAK_CLIENT_ID'],
+    ENV['KEYCLOAK_CLIENT_SECRET'],
+    name: :keycloak,
+    scope: [:openid, :profile, :email],
+    client_options: {
+      site: ENV['KEYCLOAK_SITE'],
+      realm: ENV['KEYCLOAK_REALM'] || 'master',
+      authorize_url: "/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/auth",
+      token_url: "/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/token"
+    },
+    strategy_class: OmniAuth::Strategies::OAuth2
+    # redirect_uri: "
+https://mpath-qa.microhealthllc.com/users/auth/oauth2/callback"
+    )
    
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
