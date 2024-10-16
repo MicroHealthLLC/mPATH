@@ -3,16 +3,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :recoverable, :rememberable, :trackable,
         # :omniauthable, omniauth_providers: [:office365, :google_oauth2], 
         # :validatable, :omniauthable, omniauth_providers: %i[google_oauth2 keycloak_openid office365 okta]
-         :validatable, :omniauthable, omniauth_providers: [:office365, :google_oauth2, :keycloak]       
-  
-  def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name
-      # Add any other fields you want to save from the auth hash
-    end
-  end
+         :validatable, :omniauthable, omniauth_providers: [:office365, :google_oauth2, :keycloak] 
 
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users
