@@ -278,6 +278,7 @@ config.omniauth :office365,
       site: 'https://login.microsoftonline.com',
       authorize_url: '/common/oauth2/v2.0/authorize',
       token_url: '/common/oauth2/v2.0/token'
+      ssl: { verify: false }
     }
   }
     
