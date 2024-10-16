@@ -1,5 +1,6 @@
 # require 'omniauth-oktaoauth'
 require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
+require Rails.root.join("lib", "omniauth", "strategies","keycloak_openid.rb")
 
 # frozen_string_literal: true
 
@@ -262,25 +263,30 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
-# config.omniauth :keycloak_openid,
-#  ENV['KEYCLOAK_CLIENT_ID'],
-#  ENV['KEYCLOAK_CLIENT_SECRET'],
-#  client_options: { site: ENV['KEYCLOAK_SITE'] },
-#  scope: 'openid email',
-#  redirect_uri: "https://mpath-qa.microhealthllc.com/auth/keycloak/callback"
-
-config.omniauth :office365,
-  ENV['OFFICE365_CLIENT_ID'],
-  ENV['OFFICE365_CLIENT_SECRET'],
-  {
-    scope: 'openid profile email offline_access https://graph.microsoft.com/email',
+ config.omniauth( :keycloak_openid,
+    ENV['KEYCLOAK_CLIENT_ID'],
+    ENV['KEYCLOAK_CLIENT_SECRET'],
     client_options: {
-      site: 'https://login.microsoftonline.com',
-      authorize_url: '/common/oauth2/v2.0/authorize',
-      token_url: '/common/oauth2/v2.0/token'
-    }
-  }
+      site: 'https://keycloak.microhealthllc.com',
+      realm: 'master',
+    },
+    scope: [:openid, :profile, :email],
+    :strategy_class => OmniAuth::Strategies::KeycloakOpenId
+   )
 
+  config.omniauth(:office365, 
+    ENV['OFFICE365_KEY'], 
+    ENV['OFFICE365_SECRET'], 
+    :scope => 'openid profile email offline_access user.read mail.read',
+    :client_options => {
+      :site => 'https://graph.microsoft.com/v1.0',
+      :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+    },
+    provider_ignores_state: true, 
+    prompt: :select_account
+  )
+  
   config.omniauth( :oauth2,
     ENV['KEYCLOAK_CLIENT_ID'],
     ENV['KEYCLOAK_CLIENT_SECRET'],
@@ -292,9 +298,7 @@ config.omniauth :office365,
       authorize_url: "/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/auth",
       token_url: "/realms/#{ENV['KEYCLOAK_REALM'] || 'master'}/protocol/openid-connect/token"
     },
-    strategy_class: OmniAuth::Strategies::OAuth2
-    # redirect_uri: "
-https://mpath-qa.microhealthllc.com/users/auth/oauth2/callback"
+    strategy_class: OmniAuth::Strategies::OAuth2    
     )
   
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
