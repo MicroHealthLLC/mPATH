@@ -261,16 +261,22 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth(:office365, 
-    ENV['OFFICE365_KEY'], 
-    ENV['OFFICE365_SECRET'], 
-    :scope => 'openid profile email https://outlook.office.com/mail.read',
-    :client_options => {
-      :site => 'https://outlook.office.com/',
-      :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-      :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-    },
-    provider_ignores_state: true)
+  
+  # config.omniauth(:office365, 
+  #   ENV['OFFICE365_KEY'], 
+  #   ENV['OFFICE365_SECRET'], 
+  #   :scope => 'openid profile email https://outlook.office.com/mail.read',
+  #   :client_options => {
+  #     :site => 'https://outlook.office.com/',
+  #     :authorize_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+  #     :token_url => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+  #   },
+  #   provider_ignores_state: true)
+
+  config.omniauth :office365,
+  ENV['OFFICE365_CLIENT_ID'],
+  ENV['OFFICE365_CLIENT_SECRET'],
+  scope: 'openid profile email User.Read'
 
   config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
     
