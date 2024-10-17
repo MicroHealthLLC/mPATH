@@ -265,7 +265,7 @@ Devise.setup do |config|
 config.omniauth :office365,
   ENV['OFFICE365_CLIENT_ID'],
   ENV['OFFICE365_CLIENT_SECRET'],
-  scope: 'openid profile email'
+  scope: 'openid profile email User.Read'
   
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
