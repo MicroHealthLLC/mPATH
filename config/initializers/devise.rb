@@ -265,18 +265,7 @@ Devise.setup do |config|
 config.omniauth :office365,
   ENV['OFFICE365_CLIENT_ID'],
   ENV['OFFICE365_CLIENT_SECRET'],
-  {
-    scope: 'openid profile email',
-    # fields: ['profile', 'email'],
-    client_options: {
-      site: 'https://login.microsoftonline.com',
-      authorize_url: '/common/oauth2/v2.0/authorize',
-      token_url: '/common/oauth2/v2.0/token'
-    },
-    provider_ignores_state: true
-    # issuer: "https://login.microsoftonline.com/487ea2d6-7ea0-4a4b-8773-6f4833ed2108/v2.0"
-    # strategy_class: OmniAuth::Strategies::Office365
-  }
+  scope: 'openid profile email'
   
 config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_KEY'],  ENV['GOOGLE_OAUTH_SECRET'], provider_ignores_state: true
 
