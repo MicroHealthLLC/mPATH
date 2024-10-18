@@ -1,4 +1,5 @@
 # require 'omniauth-oktaoauth'
+require Rails.root.join("lib", "omniauth", "strategies","office365.rb")
 
 # frozen_string_literal: true
 
