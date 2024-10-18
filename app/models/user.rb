@@ -17,6 +17,7 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create
+  after_create :create_privilege_if_not_exists
 
   enum role: [:client, :superadmin].freeze
   enum status: [:inactive, :active].freeze
@@ -135,6 +136,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
+    return [] unless self.privilege # Handle nil privilege
     nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
     nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
   end
@@ -160,6 +162,10 @@ class User < ApplicationRecord
     self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (k != "facility_id") && (v.present? || v.any?) }.compact } }
     
   end
+
+   def create_privilege_if_not_exists
+    self.create_privilege unless self.privilege.present?
+   end
 
   def build_sub_navigation_tabs_for_profile
     # allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
