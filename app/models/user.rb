@@ -452,7 +452,7 @@ def update_sub_navigation_url(url, p, current_top_navigation_menu, sub_nav = nil
   end
 
   def admin?
-    superadmin? || privilege.admin.include?("R")
+    superadmin? || (privilege.present? && privilege.admin.present? && privilege.admin.include?("R"))
   end
 
   def initialize(*args)
