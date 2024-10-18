@@ -192,65 +192,142 @@ class User < ApplicationRecord
     end
   end
 
+  # def preference_url
+  #   p = self.get_preferences
+  #   top_navigations = allowed_navigation_tabs
+  #   current_top_navigation_menu = nil
+  #   url = "/"
+  #   if p.program_id.present?
+  #     url = "/programs/#{p.program_id}/sheet" # map must be
+  #     if p.navigation_menu.present?
+  #       navigtaion_present = false
+  #       if top_navigations.include?( top_navigation_hash.invert[p.navigation_menu] )
+  #         url = "/programs/#{p.program_id}/#{p.navigation_menu}"
+  #         current_top_navigation_menu = p.navigation_menu
+  #         navigtaion_present = true
+          
+  #         return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
+
+  #       elsif top_navigations.size > 0
+  #         url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
+  #         current_top_navigation_menu = top_navigations.first
+  #         navigtaion_present = true
+  #         return url  if ["gantt_view", "members"].include?(top_navigations.first)
+  #       else
+  #         url = ""
+  #       end
+        
+  #       if navigtaion_present && p.project_id.present?
+  #         if p.sub_navigation_menu.present?
+  #           sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
+  #           sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
+  #           allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
+
+  #           if sub_navigation_allowed
+
+  #             # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
+  #             if current_top_navigation_menu == 'calendar_view'
+  #               if  ["tasks", "issues", "risks"].include?(p.sub_navigation_menu)
+  #                 url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+  #               end
+  #             else
+  #               url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+  #             end
+            
+  #           elsif allowed_sub_navigation_values.size > 0
+            
+  #             if current_top_navigation_menu == 'calendar_view'
+  #               if  ["tasks", "issues", "risks"].include?(allowed_sub_navigation_values.first)
+  #                 url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+  #               end
+  #             else
+  #               url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+  #             end
+  #           end
+          
+  #         end
+  #       end
+  #     end
+  #   end
+  #   url
+  # end
+
+
   def preference_url
     p = self.get_preferences
+    Rails.logger.info "User #{self.id} Preferences: #{p.inspect}"
+  
     top_navigations = allowed_navigation_tabs
+    Rails.logger.info "User #{self.id} Allowed navigation tabs: #{top_navigations.inspect}"
+  
     current_top_navigation_menu = nil
     url = "/"
+    
     if p.program_id.present?
-      url = "/programs/#{p.program_id}/sheet" # map must be
+      url = "/programs/#{p.program_id}/sheet"
+      Rails.logger.info "User #{self.id} Program ID: #{p.program_id}, Initial URL: #{url}"
+  
       if p.navigation_menu.present?
-        navigtaion_present = false
-        if top_navigations.include?( top_navigation_hash.invert[p.navigation_menu] )
+        navigation_present = false
+  
+        if top_navigations.include?(top_navigation_hash.invert[p.navigation_menu])
           url = "/programs/#{p.program_id}/#{p.navigation_menu}"
           current_top_navigation_menu = p.navigation_menu
-          navigtaion_present = true
-          
-          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
-
+          navigation_present = true
+          Rails.logger.info "User #{self.id} Navigation menu: #{p.navigation_menu}, URL: #{url}"
+  
+          return url if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
+        
         elsif top_navigations.size > 0
           url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
           current_top_navigation_menu = top_navigations.first
-          navigtaion_present = true
-          return url  if ["gantt_view", "members"].include?(top_navigations.first)
+          navigation_present = true
+          Rails.logger.info "User #{self.id} Fallback top navigation: #{top_navigations.first}, URL: #{url}"
+  
+          return url if ["gantt_view", "members"].include?(top_navigations.first)
         else
           url = ""
         end
         
-        if navigtaion_present && p.project_id.present?
+        if navigation_present && p.project_id.present?
+          Rails.logger.info "User #{self.id} Project ID: #{p.project_id}, URL before sub-navigation: #{url}"
+  
           if p.sub_navigation_menu.present?
-            sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
+            sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s) || {}
+            Rails.logger.info "User #{self.id} Sub-navigation privileges: #{sub_navigation_privileges.inspect}"
+  
             sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
-            allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
-
+            allowed_sub_navigation_values = sub_navigation_privileges.map { |key, value| key if value.is_a?(Array) && value.any? }.compact
+            Rails.logger.info "User #{self.id} Allowed sub-navigation values: #{allowed_sub_navigation_values.inspect}"
+  
             if sub_navigation_allowed
-
-              # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
-              if current_top_navigation_menu == 'calendar_view'
-                if  ["tasks", "issues", "risks"].include?(p.sub_navigation_menu)
-                  url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
-                end
-              else
-                url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
-              end
-            
+              url = update_sub_navigation_url(url, p, current_top_navigation_menu)
             elsif allowed_sub_navigation_values.size > 0
-            
-              if current_top_navigation_menu == 'calendar_view'
-                if  ["tasks", "issues", "risks"].include?(allowed_sub_navigation_values.first)
-                  url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
-                end
-              else
-                url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
-              end
+              url = update_sub_navigation_url(url, p, current_top_navigation_menu, allowed_sub_navigation_values.first)
             end
-          
           end
         end
       end
-    end
-    url
   end
+
+  Rails.logger.info "Final URL for User #{self.id}: #{url}"
+  url
+end
+
+def update_sub_navigation_url(url, p, current_top_navigation_menu, sub_nav = nil)
+  sub_nav ||= p.sub_navigation_menu
+
+  if current_top_navigation_menu == 'calendar_view'
+    if ["tasks", "issues", "risks"].include?(sub_nav)
+      url = "#{url}/projects/#{p.project_id}/#{sub_nav}"
+    end
+  else
+    url = "#{url}/projects/#{p.project_id}/#{sub_nav}"
+  end
+
+  Rails.logger.info "Sub-navigation URL: #{url}"
+  url
+ end
 
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
