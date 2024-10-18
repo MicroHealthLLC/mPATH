@@ -23,9 +23,18 @@ class ApplicationController < ActionController::Base
     MallocTrim.trim
   end
 
+  # def after_sign_in_path_for(resource_or_scope)
+  #   current_user.preference_url
+  # end
+
   def after_sign_in_path_for(resource_or_scope)
-    current_user.preference_url
+    path = current_user.preference_url
+    Rails.logger.info "After sign in path: #{path}"
+    
+    # Add a fallback in case something goes wrong
+    path || main_app.root_path
   end
+
 
   def render_404(options={})
     # render_error({message: :notice_file_not_found, status: 404}.merge(options))
