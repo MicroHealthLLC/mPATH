@@ -135,11 +135,28 @@ class User < ApplicationRecord
     return crypt.decrypt_and_verify(token) == self.authentication_token rescue false
   end
 
+  # def allowed_navigation_tabs(right = 'R')
+  #   return [] unless self.privilege # Handle nil privilege
+  #   nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
+  #   nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
+  # end
+
   def allowed_navigation_tabs(right = 'R')
-    return [] unless self.privilege # Handle nil privilege
-    nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
-    nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
-  end
+    return [] unless privilege.present? # Ensure privilege is present
+    
+    navigation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
+    Rails.logger.info "User Privilege: #{privilege.attributes.inspect}"  # Add this log line
+    
+    valid_privilege_keys = privilege.attributes.select do |k, v|
+      Rails.logger.info "Checking key: #{k}, value: #{v}"  # Log each key and value
+      v.is_a?(String) && v.include?(right)
+    end.keys
+    
+    Rails.logger.info "Valid Privilege Keys: #{valid_privilege_keys.inspect}"  # Log valid keys
+    
+    navigation_tabs & valid_privilege_keys
+ end
+
 
   def build_navigation_tabs_for_profile
     n = []
@@ -164,7 +181,13 @@ class User < ApplicationRecord
   end
 
    def create_privilege_if_not_exists
-    self.create_privilege unless self.privilege.present?
+      if self.privilege.present?
+        Rails.logger.info "Privilege already exists for user #{self.id}"
+      else
+        Rails.logger.info "Creating privilege for user #{self.id}"
+        self.create_privilege
+        Rails.logger.info "Privilege created: #{self.privilege.inspect}"
+      end
    end
 
   def build_sub_navigation_tabs_for_profile
