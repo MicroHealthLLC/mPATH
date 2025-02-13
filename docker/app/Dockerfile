@@ -1,17 +1,23 @@
-FROM node:latest
+FROM ruby:3.1.0
 
 WORKDIR /app
 
-COPY ../package.json ../package-lock.json ./
-RUN npm install --only=production
+# Install dependencies first
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler:2.3.26 && bundle install
 
+# Explicitly install Rails
+RUN gem install rails --no-document --force
+
+# Copy the entire application, including bin/rails
 COPY . .
 
-ENV DB_HOST=mysql
-ENV DB_USER=mpath_user
-ENV DB_PASSWORD=mpath_pass
-ENV DB_NAME=mpath
+# Ensure bin/rails exists before setting permissions
+RUN if [ ! -f "bin/rails" ]; then bundle exec rails app:update:bin; fi
+RUN chmod +x bin/rails || true
 
+# Expose Rails port
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Start Rails server
+CMD ["bin/rails", "server", "-b", "0.0.0.0"]
