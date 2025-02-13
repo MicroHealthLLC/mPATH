@@ -26,7 +26,8 @@ services:
       PUMA_SSL_CERT_FILE: /etc/ssl/certs/server.crt
       PUMA_SSL_VERIFY_MODE: non
       DATABASE_URL: mysql2://mpath_user:mpath_pass@mysql/mpath
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}   
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+  
     networks:
       - app_network  
     command: >
