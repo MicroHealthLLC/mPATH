@@ -22,6 +22,11 @@ RUN gem install bundler:2.3.26
 # Copy Gemfile and Gemfile.lock before running `bundle install`
 COPY Gemfile Gemfile.lock ./
 
+# Copy entrypoint script and make it executable
+COPY docker/app/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+
 # Install Ruby dependencies (without development/test)
 RUN bundle install --without development test
 
