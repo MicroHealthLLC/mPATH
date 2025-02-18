@@ -19,6 +19,7 @@ services:
       - .env
     environment:
       RAILS_ENV: production
+      DATABASE_HOST: mysql  
       PUMA_PORT: 3000
       RAILS_MAX_THREADS: 5
       RAILS_MIN_THREADS: 5
