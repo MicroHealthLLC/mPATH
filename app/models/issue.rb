@@ -59,6 +59,10 @@ class Issue < ApplicationRecord
     }
   end
 
+  def project
+    self.facility_project.try(:project)
+  end
+
   def portfolio_json(facility_groups: [], files: false)
     self.on_hold = false if draft & on_hold
 
