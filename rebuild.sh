@@ -11,6 +11,6 @@ rm -rf docker/mysql/data
 rm -rf tmp/pids/server.pid
 
 echo "Rebuilding and Starting Docker Containers..."
-docker compose build --no-cache && docker compose up -d --build
+docker compose build --no-cache && docker compose up -d
 
 echo "rebuild is done"

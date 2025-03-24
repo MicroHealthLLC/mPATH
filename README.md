@@ -196,3 +196,23 @@ https://YourliveSiteDomain/users/auth/google_oauth2/callback
 https://YourliveSiteDomain/users/auth/office365/callback
 
 After you have it configured in google or office 365 and you have the proper values entered in the system, restart nginx
+
+### Docker Setup & Instructions
+Docker is an alternative approach to deply mPATH
+
+This repo includes a Dockerized local development setup:
+- `docker/mysql` contains the MySQL service for local testing only.
+- `docker/nginx` holds the Nginx config for reverse proxying the app.
+- `docker/app` is the full application build.
+- `docker-compose.yaml`
+
+To build and start the application, make sure docker is installed. Clone the repo and make sure .env values are added. Then execute the following command at the root of the repo
+
+```bash
+docker compose build --no-cache && docker compose up -d
+```
+To completely rebuild the application, you can run the rebuild.sh script
+```bash
+rebuild.sh
+```
+###
