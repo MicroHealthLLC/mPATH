@@ -18,13 +18,8 @@ fork_worker
 environment rails_env
 if rails_env == 'production'
   pidfile ENV.fetch('PUMA_PIDFILE')
-  ssl_bind(
-    ENV.fetch('PUMA_SSL_HOST'),
-    puma_port,
-    key: ENV.fetch('PUMA_SSL_KEY_FILE'),
-    cert: ENV.fetch('PUMA_SSL_CERT_FILE'),
-    verify_mode: ENV.fetch('PUMA_SSL_VERIFY_MODE')
-  )
+  port ENV.fetch("PUMA_PORT") { 8443 }
+
 else
 port puma_port
 end

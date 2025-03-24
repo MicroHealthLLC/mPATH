@@ -1,14 +1,17 @@
-# Use the official Ruby image with the required version
+# Use the official Ruby image
 FROM ruby:3.1.0
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /var/www/mPATH
 
-# Install system dependencies
+# Install system dependencies, including gosu
 RUN apt-get update -qq && apt-get install -y \
     curl dirmngr gnupg apt-transport-https ca-certificates \
     software-properties-common \
-    default-mysql-client libmariadb-dev nginx \
+    default-mysql-client libmariadb-dev nginx wget \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.16/gosu-amd64" \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (>=14.15.0) and Yarn
@@ -16,41 +19,47 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g yarn
 
-# Install Bundler version required by the project
+# Install Bundler
 RUN gem install bundler:2.3.26
 
-# Copy Gemfile and Gemfile.lock before running `bundle install`
-COPY Gemfile Gemfile.lock ./
+# Create puma user and group
+RUN groupadd -r puma && useradd -r -g puma -d /var/www/mPATH puma
 
-# Copy entrypoint script and make it executable
-COPY docker/app/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-
-# Install Ruby dependencies (without development/test)
-RUN bundle install --without development test
-
-# Copy the application code into the container
+# Copy the application source code
 COPY . .
 
-# Ensure `bin/rails` exists
-RUN if [ ! -f "bin/rails" ]; then bundle exec rails app:update:bin; fi
+# Ensure correct ownership of the application directory and dependencies
+RUN chown -R puma:puma /var/www/mPATH /usr/local/bundle
+RUN chown -R puma:puma /tmp && chmod -R 755 /tmp
 
-# Set executable permissions
-RUN chmod +x bin/rails || true
+# Switch to the puma user for security
+USER puma
 
-# Install JavaScript dependencies with Yarn
-RUN yarn install
+# Set Bundler configuration before installing gems
+RUN bundle config set --local without 'development test' && \
+    bundle install
 
-# Update Browserslist before asset precompilation
-RUN npx update-browserslist-db@latest || true
+# Install JavaScript dependencies
+RUN yarn install --silent
 
-# Precompile assets (ensure JavaScript runtime exists)
+# Ensure Webpacker/Shakapacker is installed
+RUN NODE_ENV=production RAILS_ENV=production bundle exec rails webpacker:install || true
+RUN NODE_ENV=production RAILS_ENV=production bundle exec rails shakapacker:install || true
+
+# Precompile Rails assets
 RUN SECRET_KEY_BASE=placeholder RAILS_ENV=production bundle exec rake assets:precompile
 
 
-# Expose the default Rails port
+# Switch back to root for final setup
+USER root
+
+# Final chown to ensure correct ownership
+RUN chown -R puma:puma /var/www/mPATH /usr/local/bundle
+
+# Expose port for Puma
 EXPOSE 3000
 
-# Start the Rails server when the container launches
-CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+# Set the entrypoint script with correct permissions
+RUN chmod +x /var/www/mPATH/docker/app/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/var/www/mPATH/docker/app/entrypoint.sh"]
+

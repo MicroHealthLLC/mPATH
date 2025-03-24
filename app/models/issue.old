@@ -1,0 +1,114 @@
+class Issue < ApplicationRecord
+  include Normalizer
+  include Tasker
+
+  belongs_to :portfolio, optional: true # Added portfolio relationship
+  belongs_to :facility_project, optional: true # Ensures issues are linked to a project
+  belongs_to :issue_type
+  belongs_to :issue_stage, optional: true
+  belongs_to :task_type, optional: true
+  belongs_to :issue_severity
+  belongs_to :facility
+
+  has_many :issue_users, dependent: :destroy
+  has_many :users, through: :issue_users
+  has_many_attached :issue_files, dependent: :destroy
+  has_many :notes, as: :noteable, dependent: :destroy
+
+  validates :title, :start_date, :due_date, presence: true, if: -> { !on_hold }
+  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
+
+  before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
+  before_update :validate_states
+  before_save :init_kanban_order, if: Proc.new { |issue| issue.issue_stage_id_was.nil? }
+
+  after_create :assign_portfolio_if_missing # Automatically assigns a portfolio
+
+  attr_accessor :file_links
+
+  def self.ransackable_scopes(_auth_object = nil)
+    []
+  end
+
+  def assign_portfolio_if_missing
+    if self.portfolio.nil?
+      default_portfolio = Portfolio.first || Portfolio.create!(name: "Default Portfolio")
+      self.update!(portfolio: default_portfolio)
+    end
+  end
+
+  def portfolio_json
+    {
+      id: id,
+      title: title,
+      project_id: facility_project&.id,
+      project_name: facility_project&.facility&.facility_name,
+      portfolio_id: portfolio&.id, # Added portfolio data
+      portfolio_name: portfolio&.name
+    }
+  end
+  
+  def project
+    self.facility_project.try(:project)
+  end
+  
+  def self.params_to_permit
+    [
+      :title,
+      :description,
+      :issue_type_id,
+      :issue_stage_id,
+      :issue_severity_id,
+      :facility_project_id,
+      :task_type_id,
+      :portfolio_id, # Ensure this is included
+      :progress,
+      :contract_id,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :watched,
+      :kanban_order,
+      :important,
+      :reportable,
+      :on_hold,
+      :draft,
+      :project_contract_id,
+      :project_contract_vehicle_id,
+      issue_files: [],
+      file_links: [],
+      user_ids: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :due_date,
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    ]
+  end
+
+  private
+
+  def validate_states
+    self.on_hold = false if self.draft?
+  end
+end
+

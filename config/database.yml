@@ -4,7 +4,7 @@ production:
   database: <%= ENV['MPATH_DATABASE_NAME'] %>
   host: <%= ENV['MPATH_DATABASE_HOST'] %>
   username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
-  password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
+  password: $8l}XM#8a^6)l!lYbMEopAsplnIp^<nX
   encoding: utf8
   pool: 25
   # socket: 3306

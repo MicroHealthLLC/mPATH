@@ -2,6 +2,21 @@
 
 default: &default
   source_path: app/javascript
+  extensions:
+  - .jsx
+  - .js
+  - .sass
+  - .scss
+  - .css
+  - .module.sass
+  - .module.scss
+  - .module.css
+  - .png
+  - .svg
+  - .gif
+  - .jpeg
+  - .jpg
+  
 
   # You can have a subdirectory of the source_path, like 'packs' (recommended).
   # Alternatively, you can use '/' to use the whole source_path directory.
