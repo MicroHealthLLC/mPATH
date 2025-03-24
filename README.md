@@ -213,6 +213,6 @@ docker compose build --no-cache && docker compose up -d
 ```
 To completely rebuild the application, you can run the rebuild.sh script
 ```bash
-rebuild.sh
+rebuild_docker.sh
 ```
 ###
