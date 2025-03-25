@@ -228,7 +228,7 @@ The following values can be added into the .env values
 
 `OFFICE365_PROVIDER_URL=`
 
-# Web Server Configuration
+#### Web Server Configuration
 `ASSET_HOST=https://app-url.com`
 
 `WEB_CONCURRENCY=2`
