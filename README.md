@@ -204,27 +204,39 @@ The following values can be added into the .env values
 
 #### Puma Configuration
 `PUMA_PORT=8443`
+
 `PUMA_PIDFILE=/app/tmp/pids/server.pid`
 
 #### Database Configuration
 `DATABASE_URL=`
+
 `DATABASE_NAME=`
+
 `DATABASE_HOST=`
+
 `DATABASE_USERNAME=`
+
 `DATABASE_PASSWORD=`
 
 #### Microsoft Auth Configuration
 
 `OFFICE365_CLIENT_ID=`
+
 `OFFICE365_CLIENT_SECRET=`
+
 `OFFICE365_REDIRECT_URI=`
+
 `OFFICE365_PROVIDER_URL=`
 
 # Web Server Configuration
 `ASSET_HOST=https://app-url.com`
+
 `WEB_CONCURRENCY=2`
+
 `RAILS_MAX_THREADS=5`
+
 `RAILS_MIN_THREADS=2`
+
 `NODE_ENV=`
 
 This repo includes a Dockerized setup:
