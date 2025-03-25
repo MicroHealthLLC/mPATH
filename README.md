@@ -245,7 +245,7 @@ This repo includes a Dockerized setup:
 - `docker/app` is the full application build.
 - `docker-compose.yaml`
 
-Add the correct environmnet to the following files:
+Add the correct environment to the following files:
 - `docker/app/entrypoint.sh`
 - - Look for `RAILS_ENV=production` and change it to the correct environment
 - `docker/app/Dockerfile`
