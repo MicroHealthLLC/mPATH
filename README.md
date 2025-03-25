@@ -197,14 +197,49 @@ https://YourliveSiteDomain/users/auth/office365/callback
 
 After you have it configured in google or office 365 and you have the proper values entered in the system, restart nginx
 
-### Docker Setup & Instructions
-Docker is an alternative approach to deploy mPATH
+# Docker Setup & Instructions
+## Docker is an alternative method to deploy mPATH
+
+The following values can be added into the .env values
+
+#### Puma Configuration
+`PUMA_PORT=8443`
+`PUMA_PIDFILE=/app/tmp/pids/server.pid`
+
+#### Database Configuration
+`DATABASE_URL=`
+`DATABASE_NAME=`
+`DATABASE_HOST=`
+`DATABASE_USERNAME=`
+`DATABASE_PASSWORD=`
+
+#### Microsoft Auth Configuration
+
+`OFFICE365_CLIENT_ID=`
+`OFFICE365_CLIENT_SECRET=`
+`OFFICE365_REDIRECT_URI=`
+`OFFICE365_PROVIDER_URL=`
+
+# Web Server Configuration
+`ASSET_HOST=https://app-url.com`
+`WEB_CONCURRENCY=2`
+`RAILS_MAX_THREADS=5`
+`RAILS_MIN_THREADS=2`
+`NODE_ENV=`
 
 This repo includes a Dockerized setup:
 - `docker/mysql` contains the MySQL service for local testing only.
 - `docker/nginx` holds the Nginx config for reverse proxying the app.
 - `docker/app` is the full application build.
 - `docker-compose.yaml`
+
+Add the correct environmnet to the following files:
+- `docker/app/entrypoint.sh`
+- - Look for `RAILS_ENV=production` and change it to the correct environment
+- `docker/app/Dockerfile`
+- - Look for `RAILS_ENV=production` and change it to the correct environment
+- `docker-compose.yaml`
+- - Look for `RAILS_ENV: production` and change it to the correct environment
 
 To build and start the application, make sure docker is installed. Clone the repo and make sure .env values are added. Then execute the following command at the root of the repo
 

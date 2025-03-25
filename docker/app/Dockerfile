@@ -57,7 +57,7 @@ USER root
 RUN chown -R puma:puma /var/www/mPATH /usr/local/bundle
 
 # Expose port for Puma
-EXPOSE 3000
+EXPOSE 8443
 
 # Set the entrypoint script with correct permissions
 RUN chmod +x /var/www/mPATH/docker/app/entrypoint.sh
