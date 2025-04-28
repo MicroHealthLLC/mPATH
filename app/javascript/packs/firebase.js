@@ -1,51 +1,39 @@
-import firebase from 'firebase'
-import 'firebase/firestore';
-
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, doc, getDoc, updateDoc, deleteDoc, addDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: "mh-test-3a298.firebaseapp.com",
-    projectId: "mh-test-3a298",
-    storageBucket: "mh-test-3a298.appspot.com",
-    messagingSenderId: "27896897832",
-    appId: "1:27896897832:web:a663fb5f41d20a5b94301d",
-    measurementId: "${config.measurementId}"
-  };
-  
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-//   const analytics = getAnalytics(app);
-  
-  const db = app.firestore()
-  const usersCollection = db.collection('contracts')
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: "mh-test-3a298.firebaseapp.com",
+  projectId: "mh-test-3a298",
+  storageBucket: "mh-test-3a298.appspot.com",
+  messagingSenderId: "27896897832",
+  appId: "1:27896897832:web:a663fb5f41d20a5b94301d",
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+};
 
-  export const createUser = user => {
-      return usersCollection.add(user)
-  }
+const app = initializeApp(firebaseConfig);
 
-  export const dbCollection = () => {
-    return db.collection('contracts')
-  }
+const db = getFirestore(app);
 
+const usersCollection = collection(db, 'contracts');
 
-  export const getUser = async id => {
-      const user = await usersCollection.doc(id).get()
-      return user.exists ? user.data() : null
-  }
+export const createUser = async (user) => {
+  return await addDoc(usersCollection, user);
+};
 
-  export const updateUser = (id, user) => {
-      return usersCollection.doc(id).update(user)
-  }
+export const dbCollection = () => {
+  return collection(db, 'contracts');
+};
 
-  export const deleteUser = id => {
-    return usersCollection.doc(id).delete()
-}
+export const getUser = async (id) => {
+  const userDoc = await getDoc(doc(db, 'contracts', id));
+  return userDoc.exists() ? userDoc.data() : null;
+};
 
-// export const useLoadUsers = () => {
-//   const users = ref([])
-//   const close = usersCollection.onSnapshot(snapshot => {
-//       users.value = snapshot.doc.map(doc => ({ id: doc.id, ...doc.data() }))
-//   })
-//   onUnmounted(close)
-//   return users
-// }
+export const updateUser = async (id, user) => {
+  return await updateDoc(doc(db, 'contracts', id), user);
+};
+
+export const deleteUser = async (id) => {
+  return await deleteDoc(doc(db, 'contracts', id));
+};
