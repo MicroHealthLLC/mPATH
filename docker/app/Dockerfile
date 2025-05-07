@@ -47,8 +47,11 @@ RUN yarn install --silent
 RUN NODE_ENV=production RAILS_ENV=production bundle exec rails webpacker:install || true
 RUN NODE_ENV=production RAILS_ENV=production bundle exec rails shakapacker:install || true
 
-# Precompile Rails assets
-RUN SECRET_KEY_BASE=placeholder RAILS_ENV=production bundle exec rake assets:precompile
+# Precompile Rails assets (including mh_logo.png)
+RUN SECRET_KEY_BASE=placeholder \
+    DATABASE_URL=mysql2://mpath_user:mpath_pass@mysql/mpath \
+    RAILS_ENV=production \
+    bundle exec rake assets:clobber assets:precompile
 
 
 # Switch back to root for final setup
