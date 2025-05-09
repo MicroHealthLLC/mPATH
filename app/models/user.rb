@@ -334,71 +334,72 @@ class User < ApplicationRecord
   end
 
   def preference_url
-    # p = self.get_preferences
-    # top_navigations = allowed_navigation_tabs
-    # current_top_navigation_menu = nil
-    # url = "/"
-    # navigation_menu = p.navigation_menu
-    # sub_navigation_menu = p.sub_navigation_menu
-    # sub_navigation_menu = FacilityPrivilege::PRIVILEGE_MODULE[sub_navigation_menu.to_sym] if sub_navigation_menu
+    p = self.get_preferences
+    top_navigations = allowed_navigation_tabs
+    current_top_navigation_menu = nil
+    url = "/"
+    navigation_menu = p.navigation_menu
+    sub_navigation_menu = p.sub_navigation_menu
+    sub_navigation_menu = FacilityPrivilege::PRIVILEGE_MODULE[sub_navigation_menu.to_sym] if sub_navigation_menu
 
-    # if p.program_id.present?
-    #   url = "/programs/#{p.program_id}/sheet" # map must be
-    #   if navigation_menu.present?
-    #     navigtaion_present = false
-    #     if top_navigations.include?( top_navigation_hash.invert[navigation_menu] )
-    #       url = "/programs/#{p.program_id}/#{navigation_menu}"
-    #       current_top_navigation_menu = navigation_menu
-    #       navigtaion_present = true
+    if p.program_id.present?
+      url = "/programs/#{p.program_id}/sheet" # map must be
+      if navigation_menu.present?
+        navigtaion_present = false
+        if top_navigations.include?( top_navigation_hash.invert[navigation_menu] )
+          url = "/programs/#{p.program_id}/#{navigation_menu}"
+          current_top_navigation_menu = navigation_menu
+          navigtaion_present = true
           
-    #       return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[navigation_menu])
+          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[navigation_menu])
 
-    #     elsif top_navigations.size > 0
-    #       url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
-    #       current_top_navigation_menu = top_navigations.first
-    #       navigtaion_present = true
-    #       return url  if ["gantt_view", "members"].include?(top_navigations.first)
-    #     else
-    #       url = ""
-    #     end
+        elsif top_navigations.size > 0
+          url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
+          current_top_navigation_menu = top_navigations.first
+          navigtaion_present = true
+          return url  if ["gantt_view", "members"].include?(top_navigations.first)
+        else
+          url = ""
+        end
         
-    #     if navigtaion_present && p.project_id.present?
-    #       if sub_navigation_menu.present?
-    #         sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
-    #         sub_navigation_privileges["analytics"] = sub_navigation_privileges["overview"] || []
-    #         sub_navigation_allowed = sub_navigation_privileges[sub_navigation_menu].present?
-    #         allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
+        if navigtaion_present && p.project_id.present?
+          if sub_navigation_menu.present?
+            sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
+            sub_navigation_privileges["analytics"] = sub_navigation_privileges["overview"] || []
+            sub_navigation_allowed = sub_navigation_privileges[sub_navigation_menu].present?
+            allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
 
-    #         if sub_navigation_allowed
+            if sub_navigation_allowed
 
-    #           # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
-    #           if current_top_navigation_menu == 'calendar_view'
-    #             if  ["tasks", "issues", "risks"].include?(sub_navigation_menu)
-    #               url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
-    #             end
-    #           else
-    #             url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
-    #           end
+              # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
+              if current_top_navigation_menu == 'calendar_view'
+                if  ["tasks", "issues", "risks"].include?(sub_navigation_menu)
+                  url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
+                end
+              else
+                url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
+              end
             
-    #         elsif allowed_sub_navigation_values.size > 0
+            elsif allowed_sub_navigation_values.size > 0
             
-    #           if current_top_navigation_menu == 'calendar_view'
-    #             if  ["tasks", "issues", "risks"].include?(allowed_sub_navigation_values.first)
-    #               url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
-    #             end
-    #           else
-    #             url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
-    #           end
-    #         end
-    #       else
-    #         url = "#{url}/projects/#{p.project_id}"
-    #       end
-    #     end
-    #   end
-    # end
-    # url
-    "program/1"
+              if current_top_navigation_menu == 'calendar_view'
+                if  ["tasks", "issues", "risks"].include?(allowed_sub_navigation_values.first)
+                  url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+                end
+              else
+                url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+              end
+            end
+          else
+            url = "#{url}/projects/#{p.project_id}"
+          end
+        end
+      end
+    end
+    url
   end
+
+  # "/program/8"
 
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
@@ -475,20 +476,24 @@ class User < ApplicationRecord
   # end
 
   def get_preferences
-    # if preferences.project_group_id.present?
-    #   preferences.project_group = FacilityGroup.find(preferences.project_group_id)
-    # end
-    # if preferences.project_id.present?
-    #   preferences.project = FacilityProject.where(facility_id: preferences.project_id).first
-    # end
-    # p = self.settings(:preferences)
-    # if p.new_record?
-    #   p.value =  PREFERENCES_HASH
-    #   p.save
-    # end
-    # p
-    user_preference.as_json(except: [:created_at, :updated_at, :user_id, :id])&.with_indifferent_access
+    p = self.settings(:preferences)
+  
+    if p.project_group_id.present?
+      p.project_group = FacilityGroup.find(p.project_group_id)
+    end
+  
+    if p.project_id.present?
+      p.project = FacilityProject.where(facility_id: p.project_id).first
+    end
+  
+    if p.new_record?
+      p.value = PREFERENCES_HASH
+      p.save
+    end
+  
+    p
   end
+  # user_preference.as_json(except: [:created_at, :updated_at, :user_id, :id])&.with_indifferent_access
 
   def active_for_authentication?
     super and self.active?
