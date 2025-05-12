@@ -399,6 +399,8 @@ class User < ApplicationRecord
     url
   end
 
+  # "/program/8"
+
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
       where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|
@@ -474,20 +476,24 @@ class User < ApplicationRecord
   # end
 
   def get_preferences
-    # if preferences.project_group_id.present?
-    #   preferences.project_group = FacilityGroup.find(preferences.project_group_id)
-    # end
-    # if preferences.project_id.present?
-    #   preferences.project = FacilityProject.where(facility_id: preferences.project_id).first
-    # end
-    # p = self.settings(:preferences)
-    # if p.new_record?
-    #   p.value =  PREFERENCES_HASH
-    #   p.save
-    # end
-    # p
-    user_preference.as_json(except: [:created_at, :updated_at, :user_id, :id]).with_indifferent_access
+    p = self.settings(:preferences)
+  
+    if p.project_group_id.present?
+      p.project_group = FacilityGroup.find(p.project_group_id)
+    end
+  
+    if p.project_id.present?
+      p.project = FacilityProject.where(facility_id: p.project_id).first
+    end
+  
+    if p.new_record?
+      p.value = PREFERENCES_HASH
+      p.save
+    end
+  
+    p
   end
+  # user_preference.as_json(except: [:created_at, :updated_at, :user_id, :id])&.with_indifferent_access
 
   def active_for_authentication?
     super and self.active?

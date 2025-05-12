@@ -43,9 +43,11 @@ else
   echo "Assets already precompiled."
 fi
 
-# Final ownership fix after all setup steps
-echo "Ensuring correct file ownership..."
-chown -R puma:puma /var/www/mPATH /usr/local/bundle
+# Skip chown to avoid permission errors on mounted volumes
+echo "Skipping chown: mounted volumes may restrict ownership change"
+
+# Still try to apply basic permissions, ignoring errors
+chmod -R u+rwX,g+rwX,o-rwx /var/www/mPATH || echo "Warning: chmod failed"
 
 # Start Puma server as puma user
 echo "Starting Puma server..."
