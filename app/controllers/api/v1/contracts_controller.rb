@@ -25,29 +25,29 @@ class Api::V1::ContractsController < AuthenticatedController
     end
   end
 
-  # def create
-  #   @contract = Contract.new.create_or_update_issue(params, current_user)
-  #   if @contract.errors.any?
-  #     render json: {errors: @contract.errors.full_messages}, status: 406
-  #   else
-  #     render json: {contract: @contract.reload.as_json}
-  #   end
-  # end
+  def create
+    @contract = Contract.new.create_or_update_issue(params, current_user)
+    if @contract.errors.any?
+      render json: {errors: @contract.errors.full_messages}, status: 406
+    else
+      render json: {contract: @contract.reload.as_json}
+    end
+  end
 
-  # def update
-  #   @contract = Contract.new.create_or_update_issue(params, current_user)
-  #   if @contract.errors.any?
-  #     render json: {errors: @contract.errors.full_messages}, status: 406
-  #   else
-  #     render json: {contract: @contract.reload.as_json}
-  #   end
-  # end
+  def update
+    @contract = Contract.new.create_or_update_issue(params, current_user)
+    if @contract.errors.any?
+      render json: {errors: @contract.errors.full_messages}, status: 406
+    else
+      render json: {contract: @contract.reload.as_json}
+    end
+  end
 
-  # def destroy
-  #   @contract = Contract.find_by(id: params[:id])
-  #   @contract.destroy!
-  #   render json: {}, status: 200
-  # rescue
-  #   render json: {}, status: :not_found
-  # end
+  def destroy
+    @contract = Contract.find_by(id: params[:id])
+    @contract.destroy!
+    render json: {}, status: 200
+  rescue
+    render json: {}, status: :not_found
+  end
 end

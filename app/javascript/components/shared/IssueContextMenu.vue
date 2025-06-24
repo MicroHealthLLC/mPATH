@@ -297,7 +297,7 @@ export default {
         })
           .then((response) => {
             let responseIssue = humps.camelizeKeys(response.data.issue)
-            debugger
+            // debugger
             this.$emit(callback, responseIssue );
             
            if (this.$route.params.contractId){

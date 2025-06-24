@@ -633,7 +633,10 @@ const contractStore = {
 
     SET_CONTRACT_DATA_OPTIONS: (state, options) => (state.contract_data_options = options),
     //CONTRACT PROJECTS DATA
-    SET_CONTRACT_PROJECTS: (state, value) => (state.contract_projects = value),
+    SET_CONTRACT_PROJECTS: (state, value) => {
+      state.contract_projects = value
+      console.log("Updated projects in mutation:", state.contract_projects);
+    },
     SET_CONTRACT_PROJECT_STATUS: (state, status) => (state.contract_project_status = status), 
     TOGGLE_CONTRACT_PROJECTS_LOADED: (state, loaded) => (state.contract_projects_loaded = loaded),
 

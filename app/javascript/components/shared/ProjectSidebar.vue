@@ -7,7 +7,7 @@
         id="program_name"
         class="programNameDiv smallCaps pl-2 pr-3"
       >
-        {{ programName }}
+        {{ programName }} --
       </div>
     </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>

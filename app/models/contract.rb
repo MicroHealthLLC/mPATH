@@ -159,10 +159,34 @@ class Contract < ApplicationRecord
       contract.user_id = user.id
       contract.save
     end
-    # if params[:facility_group_name]
-    #   contract.contract_facility_group.update(name: params[:facility_group_name])
-    # end
+    if params[:facility_group_name]
+      contract.contract_facility_group.update(name: params[:facility_group_name])
+    end
     contract
   end
 
+  def manipulate_files(params)
+    return unless params[:contract][:contract_files].present?
+    file_blobs = JSON.parse(params[:contract][:contract_files])
+    file_blobs.each do |file|
+      if file['_destroy']
+        contract_files.find_by_id(file['id'])&.purge
+      elsif file['_new']
+        contract_files.new(blob_id: file['id'])
+      end
+    end
+  end
+
+  def manipulate_links(params)
+    return unless params[:contract][:file_links].present?
+    link_params = JSON.parse(params[:contract][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        contract_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.contract_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
+    end
+  end
 end
