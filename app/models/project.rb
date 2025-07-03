@@ -452,8 +452,8 @@ class Project < SortableRecord
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
 
-      fg.project_contracts.each do |pc|
-        h2[:contracts] << project_contract_hash2[pc.id] if project_contract_hash2[pc.id]
+      fg.contracts.each do |pc|
+        h2[:contracts] << pc.id
         h2[:contract_project_ids] << pc.project_id
       end
 

@@ -3816,7 +3816,6 @@ export default new Vuex.Store({
           .get(url)
           .then((res) => {
             commit("setFacilityGroups", res.data.facilityGroups);
-            // console.log(res.data.facilityGroups)
             resolve();
           })
           .catch((err) => {

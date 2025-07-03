@@ -854,7 +854,7 @@
      <el-tab-pane class="p-3" > 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
-      ANALYTICS   
+      ANALYTICS   -----
     </template>   
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
  
@@ -885,7 +885,7 @@
                 <span v-tooltip="`100% Progress achieved`" class="d-block">
                   <i class="fas fa-clipboard-check text-success grow" id="taskFlags" @click="completedOnly"></i>
                 </span>           
-                  <span class="smallerFont d-block">COMPLETE</span>               
+                  <span class="smallerFont d-block">COMPLETE---</span>               
                  </div>
                   
                <div class="col p-0 mb-0">

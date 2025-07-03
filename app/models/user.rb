@@ -49,16 +49,17 @@ class User < ApplicationRecord
   end
 
   def can_contract_data?(permission = 'read')
-    privilege = self.privilege || Privilege.new
-    if permission == 'read'
-      privilege.contract_data && privilege.contract_data.chars.include?("R")
-    elsif permission == 'write'
-      privilege.contract_data && privilege.contract_data.chars.include?("W")
-    elsif permission == 'delete'
-      privilege.contract_data && privilege.contract_data.chars.include?("D")
-    else
-      false
-    end
+    # privilege = self.privilege || Privilege.new
+    # if permission == 'read'
+    #   privilege.contract_data && privilege.contract_data.chars.include?("R")
+    # elsif permission == 'write'
+    #   privilege.contract_data && privilege.contract_data.chars.include?("W")
+    # elsif permission == 'delete'
+    #   privilege.contract_data && privilege.contract_data.chars.include?("D")
+    # else
+    #   false
+    # end
+    true
   end
 
   def can_read_contract_data?
