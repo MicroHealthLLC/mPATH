@@ -5,7 +5,7 @@ ruby '3.1.0'
 # updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '7.0.7.1' #'6.1.6.1' #'~> 5.2.3'
+gem 'rails', '7.1.5.2' #'6.1.6.1' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
@@ -37,7 +37,7 @@ gem 'uri'
 # gem 'capistrano-rails', group: :development
 
 gem 'activeadmin', github: 'activeadmin/activeadmin', branch: 'master'
-gem 'activeadmin_addons'
+gem 'activeadmin_addons', '>= 1.10.1'
 gem 'bootstrap', '~> 4.3.1'
 gem 'cancancan'
 gem 'devise', '4.8.1' #, '~> 4.7.1'
@@ -70,7 +70,7 @@ group :development, :test do
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'factory_bot_rails'
-  gem 'database_cleaner-active_record'
+  gem 'database_cleaner-active_record', '>= 2.2.0'
 end
 
 group :development do
@@ -80,7 +80,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'active_record_doctor'
+  gem 'active_record_doctor', '>= 1.12.0'
   # gem 'sql_tracker'
   gem 'fasterer'
 end
@@ -95,14 +95,14 @@ gem 'malloc_trim'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
-gem 'activerecord-import', '1.4.1'
+gem 'activerecord-import', '1.5.0'
 
 # gem 'omniauth-rails_csrf_protection', '~> 1.0'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
-gem 'amoeba'
+gem 'amoeba', '>= 3.3.0'
 
-gem 'ledermann-rails-settings'
+gem 'ledermann-rails-settings', '>= 2.6.0'
 
 gem 'oj'
 
