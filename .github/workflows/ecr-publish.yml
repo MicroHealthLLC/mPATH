@@ -1,0 +1,37 @@
+name: ECR Publish
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  ecr-publish:
+    name: ECR Publish
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v5.0.0
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest .
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest
+
+    - name: Force ECS Service Update
+      run: |
+        aws ecs update-service \
+          --cluster mpath-Production \
+          --service mpath-service \
+          --force-new-deployment \
+          --region ${{ secrets.AWS_REGION }}
