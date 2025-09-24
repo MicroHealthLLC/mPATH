@@ -1,5 +1,5 @@
 # AWS Configuration
-aws_account_id = "2"  # Replace with your AWS account ID
+aws_account_id = "211125425735"  # Replace with your AWS account ID
 
 # Application Configuration
 environment = "Production"
@@ -10,9 +10,6 @@ container_image_tag = "latest"
 desired_count = 2
 cpu = 1024
 memory = 2048
-
-# Security Configuration
-secret_key = "your-secure-secret-key-here"  # Generate a secure key
 
 # AWS Region Configuration
 aws_region         = "us-east-1"
@@ -31,7 +28,7 @@ certificate_arn = ""
 tags = {
   Owner       = "DevOps Team"
   CostCenter  = "Engineering"
-  Application = "HealthMetricsAI"
+  Application = "mpath"
 }
 
 # ECS Configuration

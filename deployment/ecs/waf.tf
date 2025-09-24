@@ -1,4 +1,4 @@
-resource "aws_wafv2_web_acl" "healthmetricsai_production_web_acl" {
+resource "aws_wafv2_web_acl" "mpath_production_web_acl" {
   name        = "${var.environment}-${local.app_name}-web-acl"
   description = "${var.environment} ${local.app_name} WebACL"
   scope       = "REGIONAL"
@@ -157,7 +157,7 @@ resource "aws_wafv2_web_acl" "healthmetricsai_production_web_acl" {
   tags = local.common_tags
 }
 
-resource "aws_wafv2_web_acl_association" "healthmetricsai_production_web_acl_association" {
-  resource_arn = aws_lb.healthmetricsai_production_alb.arn
-  web_acl_arn  = aws_wafv2_web_acl.healthmetricsai_production_web_acl.arn
+resource "aws_wafv2_web_acl_association" "mpath_production_web_acl_association" {
+  resource_arn = aws_lb.mpath_production_alb.arn
+  web_acl_arn  = aws_wafv2_web_acl.mpath_production_web_acl.arn
 }

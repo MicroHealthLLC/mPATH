@@ -29,7 +29,7 @@ variable "availability_zones" {
 variable "vpc_name" {
   description = "Name of the VPC"
   type        = string
-  default     = "healthmetricsai-production-vpc"
+  default     = "mpath-production-vpc"
 
   validation {
     condition     = length(var.vpc_name) > 0 && length(var.vpc_name) <= 255
@@ -50,7 +50,7 @@ variable "certificate_arn" {
 variable "internet_gateway_name" {
   description = "Name of the Internet Gateway"
   type        = string
-  default     = "healthmetricsai-production-igw"
+  default     = "mpath-production-igw"
 
   validation {
     condition     = length(var.internet_gateway_name) > 0 && length(var.internet_gateway_name) <= 255
@@ -61,7 +61,7 @@ variable "internet_gateway_name" {
 variable "nat_gateway_name" {
   description = "Name of the NAT Gateway"
   type        = string
-  default     = "healthmetricsai-production-nat-gateway"
+  default     = "mpath-production-nat-gateway"
 
   validation {
     condition     = length(var.nat_gateway_name) > 0 && length(var.nat_gateway_name) <= 255
