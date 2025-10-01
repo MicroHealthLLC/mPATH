@@ -288,3 +288,10 @@ variable "waf_allowed_countries" {
   type        = list(string)
   default     = ["US"]
 }
+
+# using these in the name/tags:
+variable "environment" { type = string }  # e.g., "shared" if this WAF is reused
+locals {
+  app_name      = "mpath"                  # or from a var if you prefer
+  common_tags   = { Project = "mpath", ManagedBy = "Terraform" }
+}

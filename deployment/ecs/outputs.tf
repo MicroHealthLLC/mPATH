@@ -83,3 +83,12 @@ output "target_group_arn" {
   description = "ARN of the target group"
   value       = aws_lb_target_group.ecs_tg.arn
 }
+
+# root/outputs.tf
+output "waf_web_acl_arn" {
+  value = aws_wafv2_web_acl.mpath_web_acl.arn
+}
+
+output "waf_web_acl_id" {
+  value = aws_wafv2_web_acl.mpath_web_acl.id
+}

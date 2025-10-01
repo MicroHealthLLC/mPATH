@@ -16,10 +16,9 @@ locals {
 data "terraform_remote_state" "root" {
   backend = "s3"
   config = {
-    bucket         = "YOUR_TF_STATE_BUCKET"
-    key            = "mpath/root/terraform.tfstate"  # <-- update to your actual root state key
-    region         = "us-east-1"
-    dynamodb_table = "YOUR_TF_LOCKS_TABLE"
+    bucket         = "mpath-terraform-state"
+    key            = "mpath/root/terraform.tfstate"
+    region         = var.aws_region
     encrypt        = true
   }
 }
@@ -86,3 +85,16 @@ output "bo_target_group_arn" {
 output "bo_ecs_service_sg" {
   value = module.ecs_service.security_group_id
 }
+
+# Discover this env’s ALB (created by module.ecs_service)
+data "aws_lb" "bo_alb" {
+  name       = "${local.app_name}-${local.env}-alb"
+  depends_on = [module.ecs_service]
+}
+
+# Associate the root WAF to this ALB
+resource "aws_wafv2_web_acl_association" "mpath_web_acl_assoc" {
+  resource_arn = data.aws_lb.bo_alb.arn
+  web_acl_arn  = data.terraform_remote_state.root.outputs.waf_web_acl_arn
+}
+
