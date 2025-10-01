@@ -66,20 +66,29 @@ output "private_subnet_ids" {
 
 output "alb_dns_name" {
   description = "DNS name of the load balancer"
-  value       = aws_lb.healthmetricsai_production_alb.dns_name
+  value       = aws_lb.mpath_production_alb.dns_name
 }
 
 output "alb_zone_id" {
   description = "Zone ID of the load balancer"
-  value       = aws_lb.healthmetricsai_production_alb.zone_id
+  value       = aws_lb.mpath_production_alb.zone_id
 }
 
 output "alb_arn" {
   description = "ARN of the load balancer"
-  value       = aws_lb.healthmetricsai_production_alb.arn
+  value       = aws_lb.mpath_production_alb.arn
 }
 
 output "target_group_arn" {
   description = "ARN of the target group"
   value       = aws_lb_target_group.ecs_tg.arn
+}
+
+# root/outputs.tf
+output "waf_web_acl_arn" {
+  value = aws_wafv2_web_acl.mpath_web_acl.arn
+}
+
+output "waf_web_acl_id" {
+  value = aws_wafv2_web_acl.mpath_web_acl.id
 }

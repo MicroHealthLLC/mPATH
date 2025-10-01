@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'integration'
 
 jobs:
   ecr-publish:
@@ -25,7 +26,13 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest .
+        # Build image from docker/app/Dockerfile
+        docker build \
+          -f docker/app/Dockerfile \
+          -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest \
+          docker/app
+
+        # Push image
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest
 
     - name: Force ECS Service Update

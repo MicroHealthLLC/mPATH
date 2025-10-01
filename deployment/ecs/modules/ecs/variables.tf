@@ -16,7 +16,7 @@ variable "container_image" {
 variable "container_port" {
   description = "Port the container exposes"
   type        = number
-  default     = 7860
+  default     = 8443  
 }
 
 variable "desired_count" {
@@ -43,7 +43,7 @@ variable "vpc_id" {
 }
 
 variable "subnet_ids" {
-  description = "Subnet IDs for the ECS service"
+  description = "PRIVATE subnet IDs for ECS tasks"
   type        = list(string)
 }
 
@@ -80,7 +80,7 @@ variable "health_check_path" {
 variable "assign_public_ip" {
   description = "Assign public IP to ECS tasks"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "platform_version" {
@@ -119,8 +119,50 @@ variable "container_insights_enabled" {
   default     = true
 }
 
-variable "target_group_arn" {
-  description = "ARN of the load balancer target group"
+variable "create_alb" {
+  description = "Create ALB/TG/listeners inside the module"
+  type        = bool
+  default     = false
+}
+
+variable "public_subnet_ids" {
+  description = "PUBLIC subnet IDs for ALB (required if create_alb = true)"
+  type        = list(string)
+  default     = []
+}
+
+variable "acm_certificate_arn" {
+  description = "ACM certificate ARN for HTTPS listener (required if create_alb = true)"
+  type        = string
+  default     = ""
+}
+
+variable "ssl_policy" {
+  description = "TLS policy for HTTPS listener"
+  type        = string
+  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+}
+
+variable "alb_name" {
+  description = "Name for the ALB (defaults to ${service_name}-alb)"
   type        = string
   default     = null
+}
+
+variable "alb_deletion_protection" {
+  description = "Enable deletion protection on the ALB"
+  type        = bool
+  default     = true
+}
+
+variable "allowed_source_sg_ids" {
+  description = "Security group IDs allowed to reach the ECS tasks on container_port (e.g., ALB SG). If empty, no SG ingress is created (unless ALB is created in-module)."
+  type        = list(string)
+  default     = []
+}
+
+
+validation {
+  condition     = !(var.create_alb) || (length(var.public_subnet_ids) > 0 && length(var.acm_certificate_arn) > 0)
+  error_message = "When create_alb = true, you must provide public_subnet_ids and acm_certificate_arn."
 }
