@@ -89,3 +89,8 @@ output "target_group_arn_effective" {
   description = "Target Group ARN actually used by the ECS service"
   value       = local.effective_tg_arn
 }
+
+output "service_sg_id" {
+  description = "Security Group ID attached to the ECS service/tasks"
+  value       = aws_security_group.ecs_service.id
+}

@@ -2,9 +2,33 @@
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+
 # Toggle ALB creation inside this module
 locals {
   do_alb = var.create_alb
+
+  # Use explicit ALB name if provided; else default to "<service_name>-alb"
+  alb_name_effective = coalesce(var.alb_name, "${var.service_name}-alb")
+}
+
+# Secrets to inject into the container (built from the ARNs passed in)
+locals {
+  container_secrets = concat(
+    var.db_secret_arn != null ? [
+      { name = "DB_USERNAME", valueFrom = "${var.db_secret_arn}:username::" },
+      { name = "DB_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" },
+      { name = "DB_HOST",     valueFrom = "${var.db_secret_arn}:host::" },
+      { name = "DB_PORT",     valueFrom = "${var.db_secret_arn}:port::" },
+      { name = "DB_NAME",     valueFrom = "${var.db_secret_arn}:database::" },
+      { name = "DB_ADAPTER",  valueFrom = "${var.db_secret_arn}:adapter::" },
+      { name = "DATABASE_URL", valueFrom = "${var.db_secret_arn}:url::"    }
+    ] : [],
+    var.app_secret_arn != null ? [
+      # Rails core
+      { name = "SECRET_KEY_BASE",     valueFrom = "${var.app_secret_arn}:SECRET_KEY_BASE::" },
+      #{ name = "OFFICE365_CLIENT_ID", valueFrom = "${var.app_secret_arn}:OFFICE365_CLIENT_ID::" }
+    ] : []
+  )
 }
 
 resource "aws_ecs_cluster" "main" {
@@ -54,11 +78,13 @@ resource "aws_iam_role" "ecs_task_role" {
   tags = var.tags
 }
 
+# AWS-managed policy for pulling from ECR, writing logs, etc.
 resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Extra ECR actions (kept from your original)
 resource "aws_iam_role_policy" "ecs_execution_role_ecr_policy" {
   name = "${var.service_name}-ecs-execution-ecr-policy"
   role = aws_iam_role.ecs_execution_role.id
@@ -78,6 +104,7 @@ resource "aws_iam_role_policy" "ecs_execution_role_ecr_policy" {
   })
 }
 
+# ---- ECS Task Definition (inject secrets) ----
 resource "aws_ecs_task_definition" "app" {
   family                   = var.service_name
   requires_compatibilities = ["FARGATE"]
@@ -95,7 +122,7 @@ resource "aws_ecs_task_definition" "app" {
 
       portMappings = [
         {
-          containerPort = var.container_port  # set to 8443 in env
+          containerPort = var.container_port
           protocol      = "tcp"
         }
       ]
@@ -107,6 +134,14 @@ resource "aws_ecs_task_definition" "app" {
         }
       ]
 
+      # Secrets injected by ECS at container start
+      secrets = local.container_secrets
+      # Run Rails seeds after short delay, then start the app
+      command = [
+        "bash", "-lc",
+        "sleep 10 && echo 'Running Rails seeds...' && bundle exec rails db:seed RAILS_ENV=production || true; echo 'Starting Puma...' && bundle exec puma -C config/puma.rb"
+      ]
+
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -115,6 +150,7 @@ resource "aws_ecs_task_definition" "app" {
           awslogs-stream-prefix = "ecs"
         }
       }
+    
 
       healthCheck = var.health_check_enabled ? {
         command     = ["CMD-SHELL", "curl -f http://localhost:${var.container_port}${var.health_check_path} || exit 1"]
@@ -130,6 +166,7 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 
+# ---- Networking SGs ----
 resource "aws_security_group" "ecs_service" {
   name_prefix = "${var.service_name}-ecs-"
   vpc_id      = var.vpc_id
@@ -143,7 +180,7 @@ resource "aws_security_group" "ecs_service" {
       to_port         = var.container_port
       protocol        = "tcp"
       security_groups = [ingress.value]
-      description     = "Allowed SG -> ECS container port"
+      description     = "Allowed SG  to  ECS container port"
     }
   }
 
@@ -155,11 +192,9 @@ resource "aws_security_group" "ecs_service" {
       to_port         = var.container_port
       protocol        = "tcp"
       security_groups = [ingress.value]
-      description     = "Module ALB SG -> ECS container port"
+      description     = "Module ALB SG  to  ECS container port"
     }
   }
-
-  
 
   egress {
     from_port   = 0
@@ -173,7 +208,6 @@ resource "aws_security_group" "ecs_service" {
   lifecycle { create_before_destroy = true }
 }
 
-
 # ALB SG
 resource "aws_security_group" "alb" {
   count       = local.do_alb ? 1 : 0
@@ -181,28 +215,45 @@ resource "aws_security_group" "alb" {
   vpc_id      = var.vpc_id
   description = "ALB SG for ${var.service_name}"
 
-  ingress { from_port = 80  to_port = 80  protocol = "tcp" cidr_blocks = ["0.0.0.0/0"] }
-  ingress { from_port = 443 to_port = 443 protocol = "tcp" cidr_blocks = ["0.0.0.0/0"] }
-  egress  { from_port = 0   to_port = 0   protocol = "-1"  cidr_blocks = ["0.0.0.0/0"] }
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = merge(var.tags, { Name = "${var.service_name}-alb-sg" })
 }
 
 # ALB
 resource "aws_lb" "this" {
-  count                     = local.do_alb ? 1 : 0
-  name                      = coalesce(var.alb_name, "${var.service_name}-alb")
-  internal                  = false
-  load_balancer_type        = "application"
-  security_groups           = local.do_alb ? [aws_security_group.alb[0].id] : null
-  subnets                   = local.do_alb ? var.public_subnet_ids : null
+  count                      = local.do_alb ? 1 : 0
+  name                       = local.alb_name_effective
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = local.do_alb ? [aws_security_group.alb[0].id] : null
+  subnets                    = local.do_alb ? var.public_subnet_ids : null
   enable_deletion_protection = var.alb_deletion_protection
-  tags                      = var.tags
+  tags                       = var.tags
 }
 
 # Target Group (ALB -> ECS tasks)
-# Note: default to HTTP to the container on var.container_port (8443).
-# If your app speaks TLS on 8443, change protocol to "HTTPS" and add a cert on the task or use TLS termination differently.
 resource "aws_lb_target_group" "ecs" {
   count       = local.do_alb ? 1 : 0
   name        = "${var.service_name}-tg"
@@ -239,8 +290,6 @@ resource "aws_lb_listener" "https" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ecs[0].arn
   }
-
-  tags = var.tags
 }
 
 # HTTP -> HTTPS redirect
@@ -258,14 +307,10 @@ resource "aws_lb_listener" "http" {
       status_code = "HTTP_301"
     }
   }
-
-  tags = var.tags
 }
 
-
 locals {
-  effective_tg_arn = var.target_group_arn != null ? var.target_group_arn :
-    (local.do_alb ? aws_lb_target_group.ecs[0].arn : null)
+  effective_tg_arn = var.target_group_arn != null ? var.target_group_arn : (local.do_alb ? aws_lb_target_group.ecs[0].arn : null)
 }
 
 resource "aws_ecs_service" "app" {
@@ -290,7 +335,6 @@ resource "aws_ecs_service" "app" {
     rollback = var.deployment_circuit_breaker_rollback
   }
 
-  # Attach to TG if provided/created
   dynamic "load_balancer" {
     for_each = local.effective_tg_arn != null ? [1] : []
     content {
@@ -305,4 +349,41 @@ resource "aws_ecs_service" "app" {
   depends_on = [
     aws_iam_role_policy_attachment.ecs_execution_role_policy
   ]
+}
+
+# ---- Allow the ECS *execution role* to read Secrets Manager (and KMS if needed) ----
+locals {
+  secret_arns   = compact([var.db_secret_arn, var.app_secret_arn])
+  kms_key_arns_ = var.kms_key_arns # optional list; pass only if you used CMKs on the secrets
+}
+
+resource "aws_iam_role_policy" "ecs_exec_secrets" {
+  count = length(local.secret_arns) > 0 ? 1 : 0
+  name  = "${var.service_name}-exec-secrets"
+  role  = aws_iam_role.ecs_execution_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = concat(
+      [
+        {
+          Sid      = "ReadSecretsFromSecretsManager"
+          Effect   = "Allow"
+          Action   = [
+            "secretsmanager:GetSecretValue",
+            "secretsmanager:DescribeSecret"
+          ]
+          Resource = local.secret_arns
+        }
+      ],
+      length(local.kms_key_arns_) > 0 ? [
+        {
+          Sid      = "DecryptSecretsWithKMS"
+          Effect   = "Allow"
+          Action   = ["kms:Decrypt"]
+          Resource = local.kms_key_arns_
+        }
+      ] : []
+    )
+  })
 }

@@ -1,39 +1,47 @@
-waf_alb_arns = [
-  aws_lb.mpath_production_alb.arn
-]
-
 aws_region  = "us-east-1"
-environment = "bo"  # your env code uses local.env = "bo"
+environment = "bo"
 
-# Container / service
-container_image = "295669632222.dkr.ecr.us-east-1.amazonaws.com/microhealthllc/mpath-bo:latest"
-container_port  = 8443
+# --- RDS (cheap single-AZ) ---
+db_identifier        = "mpath-bo-mysql"
+db_name              = "mpath_prod"
+db_username          = "mpath_admin"
+db_password          = null # leave null => auto-generate + store in Secrets Manager
+db_allocated_storage = 20   # gp2 minimum
+secret_name          = "mpath/bo/db"
+kms_key_id           = null # or "arn:aws:kms:us-east-1:ACCOUNT:key/...."
+
+# If your ECS tasks SG name is NOT "mpath-bo-ecs-tasks-sg", uncomment & set:
+# ecs_tasks_sg_name = "your-ecs-tasks-sg-name"
+
+# --- Container / service (unchanged) ---
+container_image = "295669632222.dkr.ecr.us-east-1.amazonaws.com/microhealthllc/mpath-bo:latest-working"
 desired_count   = 2
 cpu             = 1024
 memory          = 2048
 
-# Healthcheck
-health_check_path = "/health"
+# --- Healthcheck ---
+health_check_path = "/users/sign_in"
 
-# TLS / ALB
-acm_certificate_arn     = ""  # ACM ARN
-ssl_policy              = "ELBSecurityPolicy-TLS-1-2-2017-01"
+ssl_policy              = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 alb_deletion_protection = true
 
-# ECS deployment knobs
-platform_version                   = "LATEST"
-deployment_maximum_percent         = 200
-deployment_minimum_healthy_percent = 50
-deployment_circuit_breaker_enabled = true
+# --- ECS deployment knobs ---
+platform_version                    = "LATEST"
+deployment_maximum_percent          = 200
+deployment_minimum_healthy_percent  = 50
+deployment_circuit_breaker_enabled  = true
 deployment_circuit_breaker_rollback = true
-log_retention_days                 = 30
-
+log_retention_days                  = 30
 
 waf_allowed_countries = ["US"]
 
-# Tags
+# --- Tags (add App/Env for SG auto-discovery) ---
 tags = {
+  App         = "mPATH"
+  Env         = "bo"
   Owner       = "DevOps Team"
   CostCenter  = "Engineering"
   Application = "mpath"
 }
+
+db_secret_arn = aws_secretsmanager_secret.db.arn

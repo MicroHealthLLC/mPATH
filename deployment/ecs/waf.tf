@@ -4,22 +4,29 @@ resource "aws_wafv2_web_acl" "mpath_web_acl" {
   description = "${var.environment} ${local.app_name} WebACL"
   scope       = "REGIONAL"
 
-  default_action { allow {} }
+  default_action {
+    allow {}
+  }
 
-
+  # 1) Allow-only list of countries; everything else is blocked
   rule {
     name     = "block-non-allowed-countries"
     priority = 0
+
     statement {
       not_statement {
         statement {
           geo_match_statement {
-            country_codes = var.waf_allowed_countries  # e.g., ["US"]
+            country_codes = var.waf_allowed_countries # e.g., ["US"]
           }
         }
       }
     }
-    action { block {} }
+
+    action {
+      block {}
+    }
+
     visibility_config {
       sampled_requests_enabled   = true
       cloudwatch_metrics_enabled = true
@@ -27,35 +34,47 @@ resource "aws_wafv2_web_acl" "mpath_web_acl" {
     }
   }
 
-  # 2) Block known bad IPs (very low false-positive)
+  # 2) AWS managed IP reputation (enforced)
   rule {
     name     = "AWS-AWSManagedRulesAmazonIpReputationList"
     priority = 1
+
     statement {
       managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
         vendor_name = "AWS"
+        name        = "AWSManagedRulesAmazonIpReputationList"
       }
     }
-    override_action { none {} } # enforce block
+
+    # 'none' = respect the rule group's native action (block)
+    override_action {
+      none {}
+    }
+
     visibility_config {
+      sampled_requests_enabled   = true
       cloudwatch_metrics_enabled = true
       metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
-      sampled_requests_enabled   = true
     }
   }
 
-  # 3) Common rules in COUNT mode (observe first, then enforce later)
+  # 3) Common rules in COUNT mode (observe first)
   rule {
     name     = "AWS-AWSManagedRulesCommonRuleSet"
     priority = 2
+
     statement {
       managed_rule_group_statement {
         vendor_name = "AWS"
         name        = "AWSManagedRulesCommonRuleSet"
       }
     }
-    override_action { count {} } # low-risk: no blocking yet
+
+    # 'count' = do not block yet; just record matches
+    override_action {
+      count {}
+    }
+
     visibility_config {
       sampled_requests_enabled   = true
       cloudwatch_metrics_enabled = true
@@ -63,6 +82,7 @@ resource "aws_wafv2_web_acl" "mpath_web_acl" {
     }
   }
 
+  # Web ACL level visibility
   visibility_config {
     sampled_requests_enabled   = true
     cloudwatch_metrics_enabled = true
