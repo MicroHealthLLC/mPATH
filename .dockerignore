@@ -1,0 +1,4 @@
+deployment/
+*.tf
+*.log
+.git/

@@ -1,5 +1,5 @@
-bucket         = "mpath-terraform-state"
-key            = "mpath/ecs/vpc/terraform.tfstate"
+bucket         = "mpath-terraform-remote-state"
+key            = "mpath/vpc/terraform.tfstate"
 region         = "us-east-1"
 encrypt        = true
 use_lockfile   = true

@@ -1,18 +1,23 @@
 terraform {
+  required_version = ">= 1.13.3"
+  backend "s3" {}
   required_providers {
-    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.95"  # stable; avoids the 5.100.x ARM crash
+    }
   }
-  backend "s3" {} # init with -backend-config=backend-prod.hcl
 }
+
 
 provider "aws" { region = var.aws_region }
 
 locals {
   app_name = "mpath"
   common_tags = merge(var.tags, {
-    Project = "mpath"
+    Project     = "mpath"
     Environment = "shared-network"
-    ManagedBy = "Terraform"
+    ManagedBy   = "Terraform"
   })
 }
 
@@ -21,7 +26,7 @@ resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
-  tags = merge(local.common_tags, { Name = var.vpc_name })
+  tags                 = merge(local.common_tags, { Name = var.vpc_name })
 }
 
 # IGW
@@ -57,8 +62,8 @@ resource "aws_subnet" "private" {
 
 # NAT (single-AZ cost saver)
 resource "aws_eip" "nat" {
-  domain = "vpc"
-  tags   = merge(local.common_tags, { Name = "${var.nat_gateway_name}-eip" })
+  domain     = "vpc"
+  tags       = merge(local.common_tags, { Name = "${var.nat_gateway_name}-eip" })
   depends_on = [aws_internet_gateway.main]
 }
 
@@ -72,13 +77,19 @@ resource "aws_nat_gateway" "main" {
 # Route tables
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
-  route { cidr_block = "0.0.0.0/0"; gateway_id = aws_internet_gateway.main.id }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
   tags = merge(local.common_tags, { Name = "${var.vpc_name}-public-rt" })
 }
 
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
-  route { cidr_block = "0.0.0.0/0"; nat_gateway_id = aws_nat_gateway.main.id }
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
   tags = merge(local.common_tags, { Name = "${var.vpc_name}-private-rt" })
 }
 
@@ -94,18 +105,3 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
-# Outputs (env stacks will read these)
-output "vpc_id" {
-  description = "Shared VPC ID"
-  value       = aws_vpc.main.id
-}
-
-output "private_subnet_ids" {
-  description = "Private subnet IDs for ECS tasks"
-  value       = aws_subnet.private[*].id
-}
-
-output "public_subnet_ids" {
-  description = "Public subnet IDs for ALBs"
-  value       = aws_subnet.public[*].id
-}

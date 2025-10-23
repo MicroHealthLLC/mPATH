@@ -7,15 +7,6 @@ PORT="${PORT:-8443}"
 echo "Starting mPATH (entrypoint) ..."
 cd "$APP_HOME"
 
-# Require secrets (do not silently generate in prod)
-if [[ -z "${SECRET_KEY_BASE:-}" ]]; then
-  echo "ERROR: SECRET_KEY_BASE is not set."
-  exit 1
-fi
-if [[ -z "${RAILS_MASTER_KEY:-}" && ! -f "config/master.key" ]]; then
-  echo "ERROR: RAILS_MASTER_KEY not set and config/master.key not present."
-  exit 1
-fi
 
 # Optional: wait for DB (Lightsail) if requested
 if [[ "${DB_WAIT:-0}" == "1" ]]; then

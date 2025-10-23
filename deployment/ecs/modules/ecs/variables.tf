@@ -16,7 +16,7 @@ variable "container_image" {
 variable "container_port" {
   description = "Port the container exposes"
   type        = number
-  default     = 8443  
+  default     = 8443
 }
 
 variable "desired_count" {
@@ -123,6 +123,12 @@ variable "create_alb" {
   description = "Create ALB/TG/listeners inside the module"
   type        = bool
   default     = false
+
+validation {
+  condition     = !var.create_alb || (length(var.public_subnet_ids) > 0 && length(trimspace(var.acm_certificate_arn)) > 0)
+  error_message = "When create_alb = true, you must provide public_subnet_ids and acm_certificate_arn."
+}
+
 }
 
 variable "public_subnet_ids" {
@@ -140,11 +146,12 @@ variable "acm_certificate_arn" {
 variable "ssl_policy" {
   description = "TLS policy for HTTPS listener"
   type        = string
+  # Consider: "ELBSecurityPolicy-TLS13-1-2-2021-06" for modern clients
   default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
 variable "alb_name" {
-  description = "Name for the ALB (defaults to ${service_name}-alb)"
+  description = "Optional explicit ALB name; if null, the module will use <service_name>-alb."
   type        = string
   default     = null
 }
@@ -161,8 +168,25 @@ variable "allowed_source_sg_ids" {
   default     = []
 }
 
+variable "target_group_arn" {
+  description = "Optional existing Target Group ARN to attach ECS service to; if null, the module-created TG is used."
+  type        = string
+  default     = null
+}
 
-validation {
-  condition     = !(var.create_alb) || (length(var.public_subnet_ids) > 0 && length(var.acm_certificate_arn) > 0)
-  error_message = "When create_alb = true, you must provide public_subnet_ids and acm_certificate_arn."
+variable "db_secret_arn" {
+  type    = string
+  default = null
+}
+
+variable "app_secret_arn" {
+  type    = string
+  default = null
+}
+
+
+variable "kms_key_arns" {
+  type        = list(string)
+  default     = []
+  description = "Optional list of KMS key ARNs used to encrypt the secrets; grants kms:Decrypt to the execution role."
 }

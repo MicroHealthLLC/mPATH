@@ -1,8 +1,5 @@
 version: '3.8'
 
-networks:
-  app_network:
-
 services:
   app:
     build:
@@ -11,48 +8,13 @@ services:
     container_name: app
     restart: always
     ports:
-      - "3000:3000"  # Expose port 3000 for local access
+      - "8443:8443"
     env_file:
       - .env
     environment:
       RAILS_ENV: production
-      DATABASE_URL: mysql2://mpath_user:mpath_pass@mysql:3306/mpath
-      DATABASE_HOST: mysql
-      DATABASE_PORT: 3306
-      DATABASE_NAME: mpath
-      DATABASE_USER: mpath_user
-      DATABASE_PASSWORD: mpath_pass
-      PUMA_PORT: 3000  # Match exposed port
-      RAILS_MAX_THREADS: 5
-      RAILS_MIN_THREADS: 5
       WEB_CONCURRENCY: 2
       PUMA_PIDFILE: /var/www/mPATH/tmp/pids/server.pid
-    networks:
-      - app_network
     volumes:
       - .:/var/www/mPATH
-    depends_on:
-      - mysql
     entrypoint: ["/bin/bash", "/var/www/mPATH/docker/app/entrypoint.sh"]
-
-  mysql:
-    build:
-      context: docker/mysql
-      dockerfile: Dockerfile
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root_pass
-      MYSQL_DATABASE: mpath
-      MYSQL_USER: mpath_user
-      MYSQL_PASSWORD: mpath_pass
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
-    networks:
-      - app_network
-    restart: always
-
-volumes:
-  mysql-data:
