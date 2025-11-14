@@ -27,7 +27,7 @@ resource "aws_security_group" "rds_mysql" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [module.ecs_service.service_sg_id]
+    security_groups = [module.ecs_service.service_sg_id,module.twingate_connector.service_sg_id]
   }
 
   egress {

@@ -1,5 +1,7 @@
-aws_region  = "us-east-1"
-environment = "bo"
+aws_region            = "us-east-1"
+environment           = "bo"
+microsoft_secret_path = "mpath/bo/microsoft"
+twingate_secret_path  = "mpath/bo/twingate"
 
 # --- RDS (cheap single-AZ) ---
 db_identifier        = "mpath-bo-mysql"
@@ -14,10 +16,10 @@ kms_key_id           = null # or "arn:aws:kms:us-east-1:ACCOUNT:key/...."
 # ecs_tasks_sg_name = "your-ecs-tasks-sg-name"
 
 # --- Container / service (unchanged) ---
-container_image = "295669632222.dkr.ecr.us-east-1.amazonaws.com/microhealthllc/mpath-bo:latest-working"
-desired_count   = 2
-cpu             = 1024
-memory          = 2048
+container_image = "295669632222.dkr.ecr.us-east-1.amazonaws.com/microhealthllc/mpath-bo:latest"
+desired_count   = 1
+cpu             = 2048
+memory          = 4096
 
 # --- Healthcheck ---
 health_check_path = "/users/sign_in"
@@ -45,3 +47,5 @@ tags = {
 }
 
 db_secret_arn = aws_secretsmanager_secret.db.arn
+twingate_exec = false
+mpath_exec = false

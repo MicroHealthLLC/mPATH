@@ -76,3 +76,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "waf_login_paths" {
+  description = "List of login or authentication-related paths that should use CAPTCHA"
+  type        = list(string)
+  default     = ["/users/sign_in", "/users/sign_up"]
+}
+
+variable "waf_rate_limit" {
+  description = "Rate limit per IP (requests per 5 minutes)"
+  type        = number
+  default     = 2000
+}

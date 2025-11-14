@@ -7,6 +7,11 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "microsoft_secret_path" {
+  type        = string
+  description = "Path to the Microsoft OAuth JSON secret in AWS Secrets Manager (e.g., mpath/bo/microsoft)"
+}
+
 # =====================================================================
 # Container / Service configuration
 # =====================================================================
@@ -287,3 +292,22 @@ variable "use_ssl" {
   default     = false
   description = "Enable SSL (HTTPS) for the application"
 }
+
+
+variable "twingate_secret_path" {
+  description = "Optional path to the Twingate secret in AWS Secrets Manager (e.g., mpath/bo/twingate)."
+  type        = string
+  default     = ""
+}
+
+variable "twingate_exec" {
+  type        = bool
+  default = false
+}
+
+variable "mpath_exec" {
+  type        = bool
+  default = false
+}
+
+
