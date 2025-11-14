@@ -2,6 +2,11 @@
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+# Microsoft OAuth secret lookup by path
+data "aws_secretsmanager_secret" "microsoft" {
+  count = var.microsoft_secret_path != null && var.microsoft_secret_path != "" ? 1 : 0
+  name  = var.microsoft_secret_path
+}
 
 # Toggle ALB creation inside this module
 locals {
@@ -11,22 +16,32 @@ locals {
   alb_name_effective = coalesce(var.alb_name, "${var.service_name}-alb")
 }
 
+locals {
+  microsoft_secret_arn = length(data.aws_secretsmanager_secret.microsoft) > 0 ? data.aws_secretsmanager_secret.microsoft[0].arn : null
+}
+
 # Secrets to inject into the container (built from the ARNs passed in)
 locals {
   container_secrets = concat(
     var.db_secret_arn != null ? [
       { name = "DB_USERNAME", valueFrom = "${var.db_secret_arn}:username::" },
       { name = "DB_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" },
-      { name = "DB_HOST",     valueFrom = "${var.db_secret_arn}:host::" },
-      { name = "DB_PORT",     valueFrom = "${var.db_secret_arn}:port::" },
-      { name = "DB_NAME",     valueFrom = "${var.db_secret_arn}:database::" },
-      { name = "DB_ADAPTER",  valueFrom = "${var.db_secret_arn}:adapter::" },
-      { name = "DATABASE_URL", valueFrom = "${var.db_secret_arn}:url::"    }
+      { name = "DB_HOST", valueFrom = "${var.db_secret_arn}:host::" },
+      { name = "DB_PORT", valueFrom = "${var.db_secret_arn}:port::" },
+      { name = "DB_NAME", valueFrom = "${var.db_secret_arn}:database::" },
+      { name = "DB_ADAPTER", valueFrom = "${var.db_secret_arn}:adapter::" },
+      { name = "DATABASE_URL", valueFrom = "${var.db_secret_arn}:url::" }
     ] : [],
     var.app_secret_arn != null ? [
       # Rails core
-      { name = "SECRET_KEY_BASE",     valueFrom = "${var.app_secret_arn}:SECRET_KEY_BASE::" },
-      #{ name = "OFFICE365_CLIENT_ID", valueFrom = "${var.app_secret_arn}:OFFICE365_CLIENT_ID::" }
+      { name = "SECRET_KEY_BASE", valueFrom = "${var.app_secret_arn}:SECRET_KEY_BASE::" }
+      # { name = "OFFICE365_CLIENT_ID", valueFrom = "${var.app_secret_arn}:OFFICE365_CLIENT_ID::" } # (kept commented from original)
+    ] : [],
+    local.microsoft_secret_arn != null ? [
+      { name = "OFFICE365_CLIENT_ID", valueFrom = "${local.microsoft_secret_arn}:OFFICE365_CLIENT_ID::" },
+      { name = "OFFICE365_CLIENT_SECRET", valueFrom = "${local.microsoft_secret_arn}:OFFICE365_CLIENT_SECRET::" },
+      { name = "OFFICE365_REDIRECT_URI", valueFrom = "${local.microsoft_secret_arn}:OFFICE365_REDIRECT_URI::" },
+      { name = "OFFICE365_PROVIDER_URL", valueFrom = "${local.microsoft_secret_arn}:OFFICE365_PROVIDER_URL::" }
     ] : []
   )
 }
@@ -54,8 +69,8 @@ resource "aws_iam_role" "ecs_execution_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
       Principal = { Service = "ecs-tasks.amazonaws.com" }
     }]
   })
@@ -69,8 +84,8 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
       Principal = { Service = "ecs-tasks.amazonaws.com" }
     }]
   })
@@ -82,6 +97,23 @@ resource "aws_iam_role" "ecs_task_role" {
 resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+# Attach SSM Managed Instance Core to allow ECS Exec sessions
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_ssm" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# Attach CloudWatch Agent Server policy (optional but useful for ECS Exec sessions)
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_cwagent" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+# Attach the same to the ECS task role (so the container itself can establish session)
+resource "aws_iam_role_policy_attachment" "ecs_task_role_ssm" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 # Extra ECR actions (kept from your original)
@@ -134,8 +166,12 @@ resource "aws_ecs_task_definition" "app" {
         }
       ]
 
+      linuxParameters = {
+        readonlyRootFilesystem = var.readonly_root_filesystem
+      }
       # Secrets injected by ECS at container start
       secrets = local.container_secrets
+
       # Run Rails seeds after short delay, then start the app
       command = [
         "bash", "-lc",
@@ -149,8 +185,7 @@ resource "aws_ecs_task_definition" "app" {
           awslogs-region        = data.aws_region.current.name,
           awslogs-stream-prefix = "ecs"
         }
-      }
-    
+      },
 
       healthCheck = var.health_check_enabled ? {
         command     = ["CMD-SHELL", "curl -f http://localhost:${var.container_port}${var.health_check_path} || exit 1"]
@@ -164,7 +199,6 @@ resource "aws_ecs_task_definition" "app" {
 
   tags = var.tags
 }
-
 
 # ---- Networking SGs ----
 resource "aws_security_group" "ecs_service" {
@@ -320,9 +354,10 @@ resource "aws_ecs_service" "app" {
   desired_count    = var.desired_count
   launch_type      = "FARGATE"
   platform_version = var.platform_version
+  enable_execute_command = var.mpath_exec
 
   network_configuration {
-    subnets          = var.subnet_ids          # private subnets
+    subnets          = var.subnet_ids # private subnets
     security_groups  = [aws_security_group.ecs_service.id]
     assign_public_ip = var.assign_public_ip
   }
@@ -353,7 +388,7 @@ resource "aws_ecs_service" "app" {
 
 # ---- Allow the ECS *execution role* to read Secrets Manager (and KMS if needed) ----
 locals {
-  secret_arns   = compact([var.db_secret_arn, var.app_secret_arn])
+  secret_arns   = compact([var.db_secret_arn, var.app_secret_arn, local.microsoft_secret_arn])
   kms_key_arns_ = var.kms_key_arns # optional list; pass only if you used CMKs on the secrets
 }
 
@@ -367,9 +402,9 @@ resource "aws_iam_role_policy" "ecs_exec_secrets" {
     Statement = concat(
       [
         {
-          Sid      = "ReadSecretsFromSecretsManager"
-          Effect   = "Allow"
-          Action   = [
+          Sid    = "ReadSecretsFromSecretsManager"
+          Effect = "Allow"
+          Action = [
             "secretsmanager:GetSecretValue",
             "secretsmanager:DescribeSecret"
           ]

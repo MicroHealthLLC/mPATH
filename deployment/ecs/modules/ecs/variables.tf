@@ -26,15 +26,15 @@ variable "desired_count" {
 }
 
 variable "cpu" {
-  description = "CPU units for the task (256, 512, 1024, etc.)"
+  description = "CPU units for the task"
   type        = number
-  default     = 256
+  default     = 2048
 }
 
 variable "memory" {
   description = "Memory for the task in MB"
   type        = number
-  default     = 512
+  default     = 4096
 }
 
 variable "vpc_id" {
@@ -124,10 +124,10 @@ variable "create_alb" {
   type        = bool
   default     = false
 
-validation {
-  condition     = !var.create_alb || (length(var.public_subnet_ids) > 0 && length(trimspace(var.acm_certificate_arn)) > 0)
-  error_message = "When create_alb = true, you must provide public_subnet_ids and acm_certificate_arn."
-}
+  validation {
+    condition     = !var.create_alb || (length(var.public_subnet_ids) > 0 && length(trimspace(var.acm_certificate_arn)) > 0)
+    error_message = "When create_alb = true, you must provide public_subnet_ids and acm_certificate_arn."
+  }
 
 }
 
@@ -147,7 +147,7 @@ variable "ssl_policy" {
   description = "TLS policy for HTTPS listener"
   type        = string
   # Consider: "ELBSecurityPolicy-TLS13-1-2-2021-06" for modern clients
-  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  default = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
 variable "alb_name" {
@@ -189,4 +189,22 @@ variable "kms_key_arns" {
   type        = list(string)
   default     = []
   description = "Optional list of KMS key ARNs used to encrypt the secrets; grants kms:Decrypt to the execution role."
+}
+
+variable "microsoft_secret_path" {
+  type        = string
+  description = "Path to the Microsoft OAuth JSON secret in AWS Secrets Manager"
+  default     = null
+}
+
+variable "readonly_root_filesystem" {
+  type        = bool
+  default     = true
+  description = "Whether to make the container's root filesystem read-only."
+}
+
+variable "mpath_exec" {
+  description = "Enable exec"
+  type        = bool
+  default     = false
 }

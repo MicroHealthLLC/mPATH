@@ -60,10 +60,10 @@ locals {
 module "ecs_service" {
   source = "../../modules/ecs"
 
-  cluster_name = "${local.app_name}-${local.env}"
-  service_name = "${local.app_name}-app-${local.env}"
-  vpc_id       = local.vpc_id
-  subnet_ids   = local.private_subnet_ids
+  cluster_name   = "${local.app_name}-${local.env}"
+  service_name   = "${local.app_name}-app-${local.env}"
+  vpc_id         = local.vpc_id
+  subnet_ids     = local.private_subnet_ids
   db_secret_arn  = aws_secretsmanager_secret.db.arn
   app_secret_arn = aws_secretsmanager_secret.app.arn
   # Container / service
@@ -73,6 +73,13 @@ module "ecs_service" {
   cpu               = var.cpu
   memory            = var.memory
   health_check_path = var.health_check_path
+  mpath_exec = var.mpath_exec
+  readonly_root_filesystem = true
+  environment_variables = {
+  RAILS_ENV                = "production"
+  RAILS_SERVE_STATIC_FILES = "true"
+  NODE_ENV                 = "production"
+  }
 
   # ALB/TG/listeners inside the module (per-env ALB)
   create_alb              = true
@@ -91,8 +98,8 @@ module "ecs_service" {
   container_insights_enabled          = true
   log_retention_days                  = var.log_retention_days
   assign_public_ip                    = false
-
-  tags = local.tags
+  microsoft_secret_path               = var.microsoft_secret_path
+  tags                                = local.tags
 }
 
 
@@ -119,9 +126,33 @@ resource "aws_secretsmanager_secret" "app" {
 }
 
 resource "aws_secretsmanager_secret_version" "app" {
-  secret_id     = aws_secretsmanager_secret.app.id
+  secret_id = aws_secretsmanager_secret.app.id
   secret_string = jsonencode({
     SECRET_KEY_BASE = random_password.secret_key_base.result
     # ...other keys...
   })
 }
+
+
+module "twingate_connector" {
+  source = "../../modules/twingate-connector"
+
+  # Network/cluster wiring
+  vpc_id     = local.vpc_id
+  subnet_ids = local.private_subnet_ids
+  cluster_id = module.ecs_service.cluster_id
+  twingate_exec = var.twingate_exec
+  # Place the connector in private subnets, no public IP
+  assign_public_ip = false
+  desired_count    = 1
+  cpu              = 1024
+  memory           = 2048
+
+  twingate_secret_path = var.twingate_secret_path
+
+  readonly_root_filesystem = true
+
+
+  tags = merge(local.tags, { Service = "TwingateConnector" })
+}
+

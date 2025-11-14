@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.95"  # stable; avoids the 5.100.x ARM crash
+      version = "~> 5.95"
     }
   }
 }
@@ -105,3 +105,58 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
+# Interface Endpoints required for ECS Exec / SSM
+locals {
+  interface_endpoint_services = [
+    "ssm",
+    "ssmmessages",
+    "ec2messages",
+    "logs"
+  ]
+}
+
+resource "aws_security_group" "vpc_endpoints" {
+  name_prefix = "${var.vpc_name}-endpoints-"
+  vpc_id      = aws_vpc.main.id
+  description = "Security group for VPC interface endpoints"
+
+  # Allow HTTPS from within the VPC (e.g., ECS tasks)
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+    description = "Allow VPC internal HTTPS"
+  }
+
+  # Required egress
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow outbound traffic"
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${var.vpc_name}-vpc-endpoints-sg"
+  })
+}
+
+resource "aws_vpc_endpoint" "ssm_interface_endpoints" {
+  for_each = toset(local.interface_endpoint_services)
+
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${var.aws_region}.${each.key}"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = aws_subnet.private[*].id
+  security_group_ids = [
+    aws_security_group.vpc_endpoints.id
+  ]
+
+  private_dns_enabled = true
+
+  tags = merge(local.common_tags, {
+    Name = "${var.vpc_name}-vpce-${each.key}"
+  })
+}

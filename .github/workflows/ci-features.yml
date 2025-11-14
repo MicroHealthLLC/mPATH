@@ -1,33 +1,33 @@
-name: CI Feature Branches
-on:
-  push:
-    branches-ignore:
-        - 'main'
-        - 'release'
-        - 'integration'
+# name: CI Feature Branches
+# on:
+#   push:
+#     branches-ignore:
+#         - 'main'
+#         - 'release'
+#         - 'integration'
 
-jobs:
-  prep-workflow:
-    name: Prepping Workflow
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Runner Status
-        run: echo "Runner is ready to go"
+# jobs:
+#   prep-workflow:
+#     name: Prepping Workflow
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check Runner Status
+#         run: echo "Runner is ready to go"
 
-  docker-compose-build:
-    name: Docker Compose Build
-    needs: prep-workflow
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker Compose
-        run: |
-          docker compose build
+#   docker-compose-build:
+#     name: Docker Compose Build
+#     needs: prep-workflow
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Build Docker Compose
+#         run: |
+#           docker compose build
 
-  ready-for-pr:
-    name: Ready for PR
-    needs: docker-compose-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ready for Integration
-        run: echo "Ready for Integration, Open PR to merge feature branch to integration branch"
+#   ready-for-pr:
+#     name: Ready for PR
+#     needs: docker-compose-build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Ready for Integration
+#         run: echo "Ready for Integration, Open PR to merge feature branch to integration branch"

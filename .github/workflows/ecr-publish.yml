@@ -26,10 +26,11 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        # Build image from docker/app/Dockerfile
+        # Build image
         docker build \
           -f docker/app/Dockerfile \
           -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest \
+          --no-cache \
           docker/app
 
         # Push image
@@ -37,8 +38,10 @@ jobs:
 
     - name: Force ECS Service Update
       run: |
+        set -x
         aws ecs update-service \
-          --cluster mpath-Production \
-          --service mpath-service \
+          --cluster mpath-bo \
+          --service mpath-app-bo \
           --force-new-deployment \
-          --region ${{ secrets.AWS_REGION }}
+          --region ${{ secrets.AWS_REGION }} \
+          --output table
