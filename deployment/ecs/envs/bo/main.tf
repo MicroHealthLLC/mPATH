@@ -75,6 +75,7 @@ module "ecs_service" {
   health_check_path = var.health_check_path
   mpath_exec = var.mpath_exec
   readonly_root_filesystem = true
+  custom_domain_name = var.custom_domain_name
   environment_variables = {
   RAILS_ENV                = "production"
   RAILS_SERVE_STATIC_FILES = "true"

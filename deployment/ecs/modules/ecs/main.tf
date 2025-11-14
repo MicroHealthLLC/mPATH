@@ -241,21 +241,12 @@ resource "aws_security_group" "ecs_service" {
 
   lifecycle { create_before_destroy = true }
 }
-
 # ALB SG
 resource "aws_security_group" "alb" {
   count       = local.do_alb ? 1 : 0
   name_prefix = "${var.service_name}-alb-"
   vpc_id      = var.vpc_id
   description = "ALB SG for ${var.service_name}"
-
-  ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
   ingress {
     description = "HTTPS"
@@ -287,7 +278,7 @@ resource "aws_lb" "this" {
   tags                       = var.tags
 }
 
-# Target Group (ALB -> ECS tasks)
+# Target Group
 resource "aws_lb_target_group" "ecs" {
   count       = local.do_alb ? 1 : 0
   name        = "${var.service_name}-tg"
@@ -311,7 +302,7 @@ resource "aws_lb_target_group" "ecs" {
   tags = var.tags
 }
 
-# HTTPS listener (443) with TLS termination
+# HTTPS listener (443)
 resource "aws_lb_listener" "https" {
   count             = local.do_alb ? 1 : 0
   load_balancer_arn = aws_lb.this[0].arn
@@ -320,24 +311,57 @@ resource "aws_lb_listener" "https" {
   ssl_policy        = var.ssl_policy
   certificate_arn   = var.acm_certificate_arn
 
+  # DEFAULT: Redirect EVERY request unless a rule overrides it
   default_action {
+    type = "redirect"
+
+    redirect {
+      host        = var.custom_domain_name
+      protocol    = "HTTPS"
+      port        = "443"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# Rule 1: Allow only the custom domain → forward to ECS
+resource "aws_lb_listener_rule" "allow_only_custom_domain" {
+  count        = local.do_alb ? 1 : 0
+  listener_arn = aws_lb_listener.https[0].arn
+  priority     = 1
+
+  condition {
+    host_header {
+      values = [var.custom_domain_name]
+    }
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ecs[0].arn
   }
 }
 
-# HTTP -> HTTPS redirect
-resource "aws_lb_listener" "http" {
-  count             = local.do_alb ? 1 : 0
-  load_balancer_arn = aws_lb.this[0].arn
-  port              = 80
-  protocol          = "HTTP"
+# Rule 2: Redirect ALB DNS → clean redirect
+resource "aws_lb_listener_rule" "redirect_alb_dns_to_custom_domain" {
+  count        = local.do_alb ? 1 : 0
+  listener_arn = aws_lb_listener.https[0].arn
+  priority     = 2
 
-  default_action {
+  condition {
+    host_header {
+      values = [
+        aws_lb.this[0].dns_name
+      ]
+    }
+  }
+
+  action {
     type = "redirect"
     redirect {
-      port        = "443"
+      host        = var.custom_domain_name
       protocol    = "HTTPS"
+      port        = "443"
       status_code = "HTTP_301"
     }
   }

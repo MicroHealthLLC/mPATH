@@ -49,3 +49,4 @@ tags = {
 db_secret_arn = aws_secretsmanager_secret.db.arn
 twingate_exec = false
 mpath_exec = false
+custom_domain_name = "mpath-ecs-bo.microhealthllc.com"
