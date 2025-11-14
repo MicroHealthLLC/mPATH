@@ -367,24 +367,6 @@ resource "aws_lb_listener_rule" "redirect_alb_dns_to_custom_domain" {
   }
 }
 
-# HTTP → HTTPS redirect
-resource "aws_lb_listener" "http" {
-  count             = local.do_alb ? 1 : 0
-  load_balancer_arn = aws_lb.this[0].arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-
 locals {
   effective_tg_arn = var.target_group_arn != null ? var.target_group_arn : (local.do_alb ? aws_lb_target_group.ecs[0].arn : null)
 }
