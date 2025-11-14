@@ -208,3 +208,8 @@ variable "mpath_exec" {
   type        = bool
   default     = false
 }
+
+variable "custom_domain_name" {
+  description = "The domain allowed to access the ALB"
+  type        = string
+}
