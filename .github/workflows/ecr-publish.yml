@@ -6,6 +6,10 @@ on:
       - 'main'
       - 'integration'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ecr-publish:
     name: ECR Publish
