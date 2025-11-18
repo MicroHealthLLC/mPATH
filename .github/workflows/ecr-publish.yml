@@ -33,12 +33,12 @@ jobs:
         # Build image
         docker build \
           -f docker/app/Dockerfile \
-          -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest \
+          -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/mpath-bo:latest \
           --no-cache \
           .
 
         # Push image
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/mpath-bo:latest
 
     - name: Force ECS Service Update
       run: |
