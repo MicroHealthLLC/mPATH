@@ -17,8 +17,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v5.0.0
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        role-session-name: GitHubActionsECRPublish
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Login to Amazon ECR
