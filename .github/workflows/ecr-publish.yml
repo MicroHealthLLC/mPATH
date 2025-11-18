@@ -35,7 +35,7 @@ jobs:
           -f docker/app/Dockerfile \
           -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest \
           --no-cache \
-          docker/app
+          .
 
         # Push image
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/microhealthllc/bo:latest
