@@ -125,3 +125,8 @@ variable "twingate_exec" {
   type        = bool
   default     = false
 }
+
+variable "env" {
+  description = "Environment or deployment prefix"
+  type        = string
+}

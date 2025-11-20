@@ -1,11 +1,11 @@
 # CloudWatch Log Group for Twingate Connector
 resource "aws_cloudwatch_log_group" "twingate_logs" {
-  name              = "/ecs/${var.service_name}"
+  name              = "/ecs/${var.service_name}/${var.env}"
   retention_in_days = var.log_retention_days
   kms_key_id        = var.enable_log_encryption ? var.log_kms_key_id : null
 
   tags = merge(var.tags, {
-    Name    = "/ecs/${var.service_name}"
+    Name    = "/ecs/${var.service_name}/${var.env}"
     Service = "TwingateConnector"
   })
 }
@@ -119,7 +119,7 @@ resource "aws_ecs_service" "twingate" {
 
 # IAM Role for ECS Execution
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "${var.service_name}-ecs-execution-role"
+  name = "${var.service_name}-${var.env}-ecs-execution-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -137,7 +137,7 @@ resource "aws_iam_role" "ecs_execution_role" {
 
 # IAM Role for ECS Task
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${var.service_name}-ecs-task-role"
+  name = "${var.service_name}-${var.env}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -179,7 +179,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_role_ssm" {
 
 # Additional policy for ECS execution role to write to CloudWatch Logs
 resource "aws_iam_role_policy" "ecs_execution_role_logs_policy" {
-  name = "${var.service_name}-ecs-execution-logs-policy"
+  name = "${var.service_name}-${var.env}-ecs-execution-logs-policy"
   role = aws_iam_role.ecs_execution_role.id
 
   policy = jsonencode({
@@ -214,7 +214,7 @@ data "aws_iam_policy_document" "ecs_exec_sm" {
 }
 
 resource "aws_iam_policy" "ecs_exec_sm" {
-  name   = "${var.service_name}-ecs-exec-secretsmanager"
+  name   = "${var.service_name}-${var.env}-ecs-exec-secretsmanager"
   policy = data.aws_iam_policy_document.ecs_exec_sm.json
 }
 
