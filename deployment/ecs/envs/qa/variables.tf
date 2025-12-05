@@ -293,18 +293,6 @@ variable "use_ssl" {
   description = "Enable SSL (HTTPS) for the application"
 }
 
-
-variable "twingate_secret_path" {
-  description = "Optional path to the Twingate secret in AWS Secrets Manager (e.g., mpath/qa/twingate)."
-  type        = string
-  default     = ""
-}
-
-variable "twingate_exec" {
-  type        = bool
-  default = false
-}
-
 variable "mpath_exec" {
   type        = bool
   default = false
@@ -318,4 +306,10 @@ variable "custom_domain_name" {
 variable "env" {
   description = "Environment or deployment prefix"
   type        = string
+}
+
+variable "readonly_root_filesystem" {
+  type        = bool
+  default     = true
+  description = "Whether to make the container's root filesystem read-only."
 }

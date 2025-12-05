@@ -28,11 +28,6 @@ variable "desired_count" {
   default     = 1
 }
 
-variable "cluster_id" {
-  description = "ECS cluster ID where the Twingate connector will be deployed"
-  type        = string
-}
-
 variable "vpc_id" {
   description = "VPC ID where the Twingate connector will be deployed"
   type        = string
@@ -116,17 +111,12 @@ variable "tags" {
 }
 
 variable "twingate_secret_path" {
-  description = "Path to the Twingate JSON secret in AWS Secrets Manager (e.g., mpath/bo/twingate)."
+  description = "Path to the Twingate JSON secret in AWS Secrets Manager"
   type        = string
 }
 
-variable "twingate_exec" {
-  description = "Enable exec"
-  type        = bool
-  default     = false
-}
 
 variable "env" {
-  description = "Environment or deployment prefix"
+  description = "Short env name"
   type        = string
 }

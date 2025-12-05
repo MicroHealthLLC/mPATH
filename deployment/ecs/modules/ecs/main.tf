@@ -165,10 +165,7 @@ resource "aws_ecs_task_definition" "app" {
           value = value
         }
       ]
-
-      linuxParameters = {
-        readonlyRootFilesystem = var.readonly_root_filesystem
-      }
+      readonlyRootFilesystem = var.readonly_root_filesystem
       # Secrets injected by ECS at container start
       secrets = local.container_secrets
 

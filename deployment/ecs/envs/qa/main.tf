@@ -74,7 +74,7 @@ module "ecs_service" {
   memory            = var.memory
   health_check_path = var.health_check_path
   mpath_exec = var.mpath_exec
-  readonly_root_filesystem = true
+  readonly_root_filesystem = var.readonly_root_filesystem
   custom_domain_name = var.custom_domain_name
   environment_variables = {
   RAILS_ENV                = "production"
@@ -134,26 +134,4 @@ resource "aws_secretsmanager_secret_version" "app" {
   })
 }
 
-
-module "twingate_connector" {
-  source = "../../modules/twingate-connector"
-
-  # Network/cluster wiring
-  vpc_id     = local.vpc_id
-  subnet_ids = local.private_subnet_ids
-  cluster_id = module.ecs_service.cluster_id
-  twingate_exec = var.twingate_exec
-  # Place the connector in private subnets, no public IP
-  assign_public_ip = false
-  desired_count    = 1
-  cpu              = 1024
-  memory           = 2048
-
-  twingate_secret_path = var.twingate_secret_path
-
-  readonly_root_filesystem = true
-
-
-  tags = merge(local.tags, { Service = "TwingateConnector" })
-}
 

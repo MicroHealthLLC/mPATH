@@ -194,7 +194,6 @@ variable "kms_key_arns" {
 variable "microsoft_secret_path" {
   type        = string
   description = "Path to the Microsoft OAuth JSON secret in AWS Secrets Manager"
-  default     = null
 }
 
 variable "readonly_root_filesystem" {

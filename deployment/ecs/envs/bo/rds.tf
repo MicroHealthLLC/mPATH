@@ -17,7 +17,6 @@ resource "aws_db_subnet_group" "this" {
   tags       = merge(local.tags, { Name = "${var.db_identifier}-subnets" })
 }
 
-# Security Group for RDS – allow MySQL from ECS tasks only
 resource "aws_security_group" "rds_mysql" {
   name        = "${var.db_identifier}-sg"
   description = "Allow MySQL from ECS tasks"
@@ -27,7 +26,9 @@ resource "aws_security_group" "rds_mysql" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [module.ecs_service.service_sg_id,module.twingate_connector.service_sg_id]
+    security_groups = [
+      module.ecs_service.service_sg_id
+    ]
   }
 
   egress {
@@ -39,6 +40,7 @@ resource "aws_security_group" "rds_mysql" {
 
   tags = merge(local.tags, { Name = "${var.db_identifier}-sg" })
 }
+
 
 # RDS Instance – MySQL 8, db.t3.micro, gp2, single-AZ
 resource "aws_db_instance" "this" {

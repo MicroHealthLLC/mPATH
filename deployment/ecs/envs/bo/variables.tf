@@ -294,17 +294,6 @@ variable "use_ssl" {
 }
 
 
-variable "twingate_secret_path" {
-  description = "Optional path to the Twingate secret in AWS Secrets Manager (e.g., mpath/bo/twingate)."
-  type        = string
-  default     = ""
-}
-
-variable "twingate_exec" {
-  type        = bool
-  default = false
-}
-
 variable "mpath_exec" {
   type        = bool
   default = false
@@ -313,4 +302,10 @@ variable "mpath_exec" {
 variable "custom_domain_name" {
   description = "The domain allowed to access the ALB"
   type        = string
+}
+
+variable "readonly_root_filesystem" {
+  type        = bool
+  default     = true
+  description = "Whether to make the container's root filesystem read-only."
 }
