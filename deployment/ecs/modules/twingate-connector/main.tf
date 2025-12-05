@@ -1,11 +1,15 @@
+# Data sources
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 # CloudWatch Log Group for Twingate Connector
 resource "aws_cloudwatch_log_group" "twingate_logs" {
-  name              = "/ecs/${var.service_name}"
+  name              = "/ecs/${var.service_name}/${var.env}"
   retention_in_days = var.log_retention_days
   kms_key_id        = var.enable_log_encryption ? var.log_kms_key_id : null
 
   tags = merge(var.tags, {
-    Name    = "/ecs/${var.service_name}"
+    Name    = "/ecs/${var.service_name}/${var.env}"
     Service = "TwingateConnector"
   })
 }
@@ -13,6 +17,18 @@ resource "aws_cloudwatch_log_group" "twingate_logs" {
 # Twingate secret lookup by path (required)
 data "aws_secretsmanager_secret" "twingate" {
   name = var.twingate_secret_path
+}
+
+# ECS Cluster for Twingate Connector
+resource "aws_ecs_cluster" "twingate" {
+  name = "${var.service_name}-${var.env}-cluster"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+
+  tags = var.tags
 }
 
 # ECS Task Definition for Twingate Connector
@@ -33,17 +49,15 @@ resource "aws_ecs_task_definition" "twingate" {
       memory    = var.memory
       cpu       = var.cpu
 
-      # readonlyRootFilesystem must be under linuxParameters
-      linuxParameters = {
-        readonlyRootFilesystem = var.readonly_root_filesystem
-      },
+      
+      readonlyRootFilesystem = var.readonly_root_filesystem
 
       secrets = [
         { name = "TWINGATE_NETWORK",           valueFrom = "${data.aws_secretsmanager_secret.twingate.arn}:TWINGATE_NETWORK::" },
         { name = "TWINGATE_ACCESS_TOKEN",      valueFrom = "${data.aws_secretsmanager_secret.twingate.arn}:TWINGATE_ACCESS_TOKEN::" },
         { name = "TWINGATE_REFRESH_TOKEN",     valueFrom = "${data.aws_secretsmanager_secret.twingate.arn}:TWINGATE_REFRESH_TOKEN::" },
         { name = "TWINGATE_LABEL_DEPLOYED_BY", valueFrom = "${data.aws_secretsmanager_secret.twingate.arn}:TWINGATE_LABEL_DEPLOYED_BY::" }
-      ],
+      ]
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -53,7 +67,6 @@ resource "aws_ecs_task_definition" "twingate" {
           awslogs-stream-prefix = "twingate-connector"
         }
       }
-      # Twingate connector doesn't expose any ports
     }
   ])
 
@@ -88,12 +101,12 @@ resource "aws_security_group" "twingate_connector" {
 # ECS Service for Twingate Connector
 resource "aws_ecs_service" "twingate" {
   name             = var.service_name
-  cluster          = var.cluster_id
+  cluster          = aws_ecs_cluster.twingate.id
+
   task_definition  = aws_ecs_task_definition.twingate.arn
   desired_count    = var.desired_count
   launch_type      = "FARGATE"
   platform_version = var.platform_version
-  enable_execute_command = var.twingate_exec
 
   network_configuration {
     subnets          = var.subnet_ids
@@ -119,7 +132,7 @@ resource "aws_ecs_service" "twingate" {
 
 # IAM Role for ECS Execution
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "${var.service_name}-ecs-execution-role"
+  name = "${var.service_name}-${var.env}-ecs-execution-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -137,7 +150,7 @@ resource "aws_iam_role" "ecs_execution_role" {
 
 # IAM Role for ECS Task
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${var.service_name}-ecs-task-role"
+  name = "${var.service_name}-${var.env}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -179,7 +192,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_role_ssm" {
 
 # Additional policy for ECS execution role to write to CloudWatch Logs
 resource "aws_iam_role_policy" "ecs_execution_role_logs_policy" {
-  name = "${var.service_name}-ecs-execution-logs-policy"
+  name = "${var.service_name}-${var.env}-ecs-execution-logs-policy"
   role = aws_iam_role.ecs_execution_role.id
 
   policy = jsonencode({
@@ -214,7 +227,7 @@ data "aws_iam_policy_document" "ecs_exec_sm" {
 }
 
 resource "aws_iam_policy" "ecs_exec_sm" {
-  name   = "${var.service_name}-ecs-exec-secretsmanager"
+  name   = "${var.service_name}-${var.env}-ecs-exec-secretsmanager"
   policy = data.aws_iam_policy_document.ecs_exec_sm.json
 }
 
@@ -222,7 +235,3 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_attach_sm" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = aws_iam_policy.ecs_exec_sm.arn
 }
-
-# Data sources
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}

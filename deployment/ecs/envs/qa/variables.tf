@@ -131,7 +131,7 @@ variable "waf_allowed_countries" {
 variable "db_identifier" {
   description = "Unique identifier for the RDS instance."
   type        = string
-  default     = "mpath-bo-mysql"
+  default     = "mpath-qa-mysql"
 }
 
 variable "db_name" {
@@ -168,7 +168,7 @@ variable "kms_key_id" {
 variable "secret_name" {
   description = "Secrets Manager name for DB credentials bundle."
   type        = string
-  default     = "mpath/bo/db"
+  default     = "mpath/qa/db"
 }
 
 variable "tags" {
@@ -176,7 +176,7 @@ variable "tags" {
   type        = map(string)
   default = {
     App = "mPATH"
-    Env = "bo"
+    Env = "qa"
   }
 }
 
@@ -293,7 +293,6 @@ variable "use_ssl" {
   description = "Enable SSL (HTTPS) for the application"
 }
 
-
 variable "mpath_exec" {
   type        = bool
   default = false
@@ -301,6 +300,11 @@ variable "mpath_exec" {
 
 variable "custom_domain_name" {
   description = "The domain allowed to access the ALB"
+  type        = string
+}
+
+variable "env" {
+  description = "Environment or deployment prefix"
   type        = string
 }
 

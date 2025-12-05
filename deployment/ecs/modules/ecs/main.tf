@@ -165,10 +165,7 @@ resource "aws_ecs_task_definition" "app" {
           value = value
         }
       ]
-
-      linuxParameters = {
-        readonlyRootFilesystem = var.readonly_root_filesystem
-      }
+      readonlyRootFilesystem = var.readonly_root_filesystem
       # Secrets injected by ECS at container start
       secrets = local.container_secrets
 
@@ -417,7 +414,7 @@ locals {
 }
 
 resource "aws_iam_role_policy" "ecs_exec_secrets" {
-  count = length(local.secret_arns) > 0 ? 1 : 0
+  
   name  = "${var.service_name}-exec-secrets"
   role  = aws_iam_role.ecs_execution_role.name
 
