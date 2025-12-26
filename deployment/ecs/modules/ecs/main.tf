@@ -158,7 +158,6 @@ resource "aws_ecs_task_definition" "app" {
           protocol      = "tcp"
         }
       ]
-
       environment = [
         for key, value in var.environment_variables : {
           name  = key
@@ -168,12 +167,6 @@ resource "aws_ecs_task_definition" "app" {
       readonlyRootFilesystem = var.readonly_root_filesystem
       # Secrets injected by ECS at container start
       secrets = local.container_secrets
-
-      # Run Rails seeds after short delay, then start the app
-      command = [
-        "bash", "-lc",
-        "sleep 10 && echo 'Running Rails seeds...' && bundle exec rails db:seed RAILS_ENV=production || true; echo 'Starting Puma...' && bundle exec puma -C config/puma.rb"
-      ]
 
       logConfiguration = {
         logDriver = "awslogs",

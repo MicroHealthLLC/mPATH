@@ -1,8 +1,7 @@
-# Password (only used if var.db_password == null)
 resource "random_password" "db" {
   length           = 24
   special          = true
-  override_special = "!@#%^*-_=+"
+  override_special = "!#%^*-_=+"   
 }
 
 locals {
@@ -10,7 +9,7 @@ locals {
   derived_ecs_tasks_sg_name = coalesce(var.ecs_tasks_sg_name, "mpath-${local.env}-ecs-tasks-sg")
 }
 
-# DB Subnet Group (use private subnets from main.tf locals)
+
 resource "aws_db_subnet_group" "this" {
   name       = "${var.db_identifier}-subnets"
   subnet_ids = local.private_subnet_ids
@@ -26,9 +25,7 @@ resource "aws_security_group" "rds_mysql" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [
-      module.ecs_service.service_sg_id
-    ]
+    security_groups = [module.ecs_service.service_sg_id]
   }
 
   egress {
@@ -41,12 +38,29 @@ resource "aws_security_group" "rds_mysql" {
   tags = merge(local.tags, { Name = "${var.db_identifier}-sg" })
 }
 
+data "terraform_remote_state" "mgt" {
+  backend = "s3"
+  config = {
+    bucket  = "mpath-prod-terraform-remote-state"
+    key     = "mpath/ecs/mgt/terraform.tfstate"
+    region  = var.aws_region
+    encrypt = true
+  }
+}
 
-# RDS Instance – MySQL 8, db.t3.micro, gp2, single-AZ
+resource "aws_security_group_rule" "allow_mysql_from_twingate" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_mysql.id
+  source_security_group_id = data.terraform_remote_state.mgt.outputs.twingate_service_sg_id
+}
+
 resource "aws_db_instance" "this" {
   identifier     = var.db_identifier
   engine         = "mysql"
-  engine_version = "8.0" # safe major pin
+  engine_version = "8.0"
   instance_class = "db.t3.micro"
 
   storage_type          = "gp2"
@@ -70,14 +84,16 @@ resource "aws_db_instance" "this" {
   # Backups & lifecycle
   backup_retention_period = 7
   deletion_protection     = false
-  skip_final_snapshot     = false
+  skip_final_snapshot     = false 
 
   apply_immediately = true
 
   tags = merge(local.tags, { Name = var.db_identifier })
 }
 
-# Secrets Manager – JSON bundle for ECS injection
+
+
+# This creates the *secret container*.
 resource "aws_secretsmanager_secret" "db" {
   name        = var.secret_name
   description = "mPATH ${upper(local.env)} DB connection"
@@ -87,6 +103,7 @@ resource "aws_secretsmanager_secret" "db" {
 
 resource "aws_secretsmanager_secret_version" "db" {
   secret_id = aws_secretsmanager_secret.db.id
+
   secret_string = jsonencode({
     adapter  = "mysql2"
     username = var.db_username
@@ -94,6 +111,6 @@ resource "aws_secretsmanager_secret_version" "db" {
     host     = aws_db_instance.this.address
     port     = 3306
     database = var.db_name
-    url      = "mysql2://${var.db_username}:${local.db_password_final}@${aws_db_instance.this.address}:3306/${var.db_name}?encoding=utf8mb4&ssl_mode=required"
+    url = "mysql2://${var.db_username}:${urlencode(local.db_password_final)}@${aws_db_instance.this.address}:3306/${var.db_name}?encoding=utf8mb4&ssl_mode=required"
   })
 }

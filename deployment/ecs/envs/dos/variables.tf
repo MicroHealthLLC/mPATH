@@ -107,7 +107,7 @@ variable "deployment_circuit_breaker_rollback" {
 
 
 variable "environment" {
-  description = "Short env name (e.g., bo, qa, prod)"
+  description = "Short env name (e.g., bo, dos, prod)"
   type        = string
   default     = "prod"
 }
@@ -131,7 +131,7 @@ variable "waf_allowed_countries" {
 variable "db_identifier" {
   description = "Unique identifier for the RDS instance."
   type        = string
-  default     = "mpath-qa-mysql"
+  default     = "mpath-dos-mysql"
 }
 
 variable "db_name" {
@@ -168,7 +168,7 @@ variable "kms_key_id" {
 variable "secret_name" {
   description = "Secrets Manager name for DB credentials bundle."
   type        = string
-  default     = "mpath/qa/db"
+  default     = "mpath/dos/db"
 }
 
 variable "tags" {
@@ -176,7 +176,7 @@ variable "tags" {
   type        = map(string)
   default = {
     App = "mPATH"
-    Env = "qa"
+    Env = "dos"
   }
 }
 

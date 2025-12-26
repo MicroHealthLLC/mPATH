@@ -105,14 +105,14 @@ module "ecs_service" {
 
 
 # Discover this env’s ALB (created by module.ecs_service)
-data "aws_lb" "qa_alb" {
+data "aws_lb" "dha_alb" {
   name       = "${local.app_name}-${local.env}-alb"
   depends_on = [module.ecs_service]
 }
 
 # Associate the root WAF to this ALB
 resource "aws_wafv2_web_acl_association" "mpath_web_acl_assoc" {
-  resource_arn = data.aws_lb.qa_alb.arn
+  resource_arn = data.aws_lb.dha_alb.arn
   web_acl_arn  = data.terraform_remote_state.root.outputs.waf_web_acl_arn
 }
 
@@ -122,8 +122,8 @@ resource "random_password" "secret_key_base" {
 }
 
 resource "aws_secretsmanager_secret" "app" {
-  name        = "mpath/qa/app"
-  description = "mPATH qa app env"
+  name        = "mpath/dha/app"
+  description = "mPATH dha app env"
 }
 
 resource "aws_secretsmanager_secret_version" "app" {

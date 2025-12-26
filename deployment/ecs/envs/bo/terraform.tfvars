@@ -1,14 +1,13 @@
 aws_region            = "us-east-1"
 environment           = "bo"
 microsoft_secret_path = "mpath/bo/microsoft"
-twingate_secret_path  = "mpath/bo/twingate"
 
 # --- RDS (cheap single-AZ) ---
 db_identifier        = "mpath-bo-mysql"
 db_name              = "mpath_prod"
 db_username          = "mpath_admin"
-db_password          = null # leave null => auto-generate + store in Secrets Manager
-db_allocated_storage = 20   # gp2 minimum
+db_password          = null
+db_allocated_storage = 20
 secret_name          = "mpath/bo/db"
 kms_key_id           = null # or "arn:aws:kms:us-east-1:ACCOUNT:key/...."
 
@@ -37,11 +36,11 @@ log_retention_days                  = 30
 
 waf_allowed_countries = ["US"]
 
-# --- Tags (add App/Env for SG auto-discovery) ---
+
 tags = {
   App         = "mPATH"
   Env         = "bo"
-  Owner       = "DevOps Team"
+  Owner       = "Microhealth Platform Engineering Team"
   CostCenter  = "Engineering"
   Application = "mpath"
 }
@@ -49,3 +48,4 @@ tags = {
 db_secret_arn = aws_secretsmanager_secret.db.arn
 mpath_exec = false
 custom_domain_name = "mpath-ecs-bo.microhealthllc.com"
+readonly_root_filesystem = false
