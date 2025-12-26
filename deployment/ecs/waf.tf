@@ -130,55 +130,58 @@ resource "aws_wafv2_web_acl" "mpath_web_acl" {
     }
   }
 
-  # 6) Rate-limit POST /users/sign_in
+  # 6) Block local username/password login (POST /users/sign_in)
   rule {
-    name     = "rate-limit-signin-post"
+    name     = "block-local-signin-post"
     priority = 6
+
     statement {
-      rate_based_statement {
-        limit              = 2000
-        aggregate_key_type = "IP"
-        scope_down_statement {
-          and_statement {
-            statement {
-              byte_match_statement {
-                search_string         = "/users/sign_in"
-                positional_constraint = "EXACTLY"
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-              }
+      and_statement {
+        statement {
+          byte_match_statement {
+            search_string         = "/users/sign_in"
+            positional_constraint = "EXACTLY"
+
+            field_to_match {
+              uri_path {}
             }
-            statement {
-              byte_match_statement {
-                search_string         = "POST"
-                positional_constraint = "EXACTLY"
-                field_to_match {
-                  method {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-              }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+
+        statement {
+          byte_match_statement {
+            search_string         = "POST"
+            positional_constraint = "EXACTLY"
+
+            field_to_match {
+              method {}
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
             }
           }
         }
       }
     }
+
     action {
       block {}
     }
+
     visibility_config {
       sampled_requests_enabled   = true
       cloudwatch_metrics_enabled = true
-      metric_name                = "rate-limit-signin-post"
+      metric_name                = "block-local-signin-post"
     }
   }
+
 
   # 7) Block /users/password/new entirely
   rule {

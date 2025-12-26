@@ -12,7 +12,7 @@ waf_allowed_countries = ["US"]
 
 # Tags
 tags = {
-  Owner       = "DevOps Team"
+  Owner       = "Microhealth Platform Engineering"
   CostCenter  = "Engineering"
   Application = "mpath"
 }

@@ -1,4 +1,4 @@
-bucket         = "mpath-terraform-remote-state"
+bucket         = "mpath-prod-terraform-remote-state"
 key            = "mpath/ecs/bo/terraform.tfstate"
 region         = "us-east-1"
 encrypt        = true

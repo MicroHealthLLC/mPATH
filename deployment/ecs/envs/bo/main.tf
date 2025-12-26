@@ -19,7 +19,7 @@ locals {
 data "terraform_remote_state" "root" {
   backend = "s3"
   config = {
-    bucket  = "mpath-terraform-remote-state"
+    bucket  = "mpath-prod-terraform-remote-state"
     key     = "mpath/vpc/terraform.tfstate"
     region  = var.aws_region
     encrypt = true
