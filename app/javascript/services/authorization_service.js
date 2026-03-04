@@ -177,7 +177,7 @@ const AuthorizationService = {
       var is_task = ["task_project_context_menu", "task_contract_context_menu", "task_vehicle_context_menu"].includes(page)
       var is_issue = ["issue_project_context_menu", "issue_contract_context_menu", "issue_vehicle_context_menu"].includes(page)
       var is_risk = ["risk_project_context_menu", "risk_contract_context_menu", "risk_vehicle_context_menu"].includes(page)
-      
+      debugger;
       if (project_contract_id) {
         let contract_privileges = AuthorizationService.contractPrivilegesRoles[project_contract_id];
         

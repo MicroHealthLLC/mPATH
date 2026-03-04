@@ -10,6 +10,7 @@
         {{ programName }}
       </div>
     </div>
+
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
@@ -27,25 +28,25 @@
           <div
             class="d-flex row expandable"
             @click="expandFacilityGroup(group)"
-            :class="{ active: group.id == currentFacilityGroup.id }"
+            :class="{ active: group.id === currentFacilityGroup.id }"
             data-cy="facility_groups"
             :key="index"
           >
             <div class="col-8 py-0 pr-0">
               <span class="d-flex" v-if="!group.isDefault" @mouseup.right="openGroupContextMenu($event, group.id)"  @contextmenu.prevent="">
-                <span v-show="getExpandedGroup != group.id">
+                <span v-show="getExpandedGroup !== group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
-                <span v-show="getExpandedGroup == group.id">
+                <span v-show="getExpandedGroup === group.id">
                   <i class="fa fa-angle-down font-md mr-2 clickable"></i>
                 </span>
                 <p class="clickable groupName expandText">{{ group.name }}</p>
               </span>
               <span class="d-flex" v-else>
-                <span v-show="getExpandedGroup != group.id">
+                <span v-show="getExpandedGroup !== group.id">
                   <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
                 </span>
-                <span v-show="getExpandedGroup == group.id">
+                <span v-show="getExpandedGroup === group.id">
                   <i class="fa fa-angle-down font-md mr-2 clickable"></i>
                 </span>
                 <p class="clickable groupName expandText">{{ group.name }}</p>
@@ -71,7 +72,7 @@
               </span>
             </div>
           </div>
-          <div v-show="getExpandedGroup == group.id" class="ml-2">
+          <div v-show="getExpandedGroup === group.id" class="ml-2">
             <div
               v-for="facility in facilityGroupFacilities(group).projects.a"
               :key="facility.id"
@@ -121,7 +122,7 @@
             <div
              :class="{'d-none': notSheetView }"   
               v-for="v in projectVehicles.filter(
-                (t) => t.facilityGroup && t.facilityGroup.id == group.id
+                (t) => t.facilityGroup && t.facilityGroup.id === group.id
               )"
               :key="v.projectContractVehicleId + 'a'"
             >
@@ -133,7 +134,7 @@
                 <div             
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(v)"
-                  :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
+                  :class="{ active: v.projectContractVehicleId === $route.params.vehicleId }"
                 >
                   <p class="facility-header"data-cy="contracts">
                     <i class="far fa-car mr-1 text-info"></i> {{ v.name }}

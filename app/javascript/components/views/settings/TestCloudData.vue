@@ -104,7 +104,7 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
+import { createUser, deleteUser, getContracts } from "../../../packs/firebase";
 import MessageDialogService from "../../../services/message_dialog_service";
 
 
@@ -137,12 +137,10 @@ export default {
   },
   mounted() {
       // this.fetchContracts()
-      let contracts = []
-      this.globalContracts = dbCollection().get().then(querySnapshot => {
-       contracts = querySnapshot.docs.map(doc => doc.data())
+      getContracts().then(contracts => {
         this.globalContracts = contracts
-    })
-   
+      })
+
     //   return users
 
   },

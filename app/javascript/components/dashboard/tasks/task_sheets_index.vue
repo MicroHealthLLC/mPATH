@@ -565,6 +565,7 @@ export default {
         'setHideBriefed',
       ]),
       _isallowed(salut) {
+        debugger;
         return this.checkPrivileges("task_sheets_index", salut, this.$route)
 
       //  if (this.$route.params.contractId) {
@@ -792,32 +793,32 @@ export default {
             },
        filtered: {
          tasks:  tasks.filter(t => {
-        if (this.getHideOverdue == true) {          
-         return t.isOverdue == false
+        if (this.getHideOverdue === true) {
+         return t.isOverdue === false
        } else return true
       }).filter(t => {
-      if (this.getHideComplete == true) { 
+      if (this.getHideComplete === true) {
         return !t.completed
       } else return true
       }).filter(t => {
-      if (this.getHidePlanned == true) { 
-        return t.planned == false
+      if (this.getHidePlanned === true) {
+        return t.planned === false
       } else return true
       }).filter(t => {
-      if (this.getHideOnhold == true) { 
-        return t.onHold == false
+      if (this.getHideOnhold === true) {
+        return t.onHold === false
       } else return true
       }).filter(t => {
-      if (this.getHideInprogress == true) { 
-        return t.inProgress == false
+      if (this.getHideInprogress === true) {
+        return t.inProgress === false
       } else return true
       }).filter(t => {
-       if (this.getHideDraft == true){
-         return t.draft == false
+       if (this.getHideDraft === true){
+         return t.draft === false
        } else return true   
       }).filter(t => {
-      if (this.getHideOngoing == true) {
-        return t.ongoing == false
+      if (this.getHideOngoing === true) {
+        return t.ongoing === false
       } else return true       
       }).filter(t => {
         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {

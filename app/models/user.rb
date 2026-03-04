@@ -519,11 +519,11 @@ class User < ApplicationRecord
   end
 
   def has_program_admin_role?
-    self.roles.distinct.where(id: Role.program_admin_user_role.id).any?
+    self.roles.distinct.where(id: Role.program_admin_user_role&.id).any?
   end
 
   def programs_with_program_admin_role
-    project_ids = self.role_users.where(role_id: Role.program_admin_user_role.id).pluck(:project_id).uniq
+    project_ids = self.role_users.where(role_id: Role.program_admin_user_role&.id).pluck(:project_id).uniq
     self.projects.where(id: project_ids)
   end
 
@@ -852,8 +852,8 @@ class User < ApplicationRecord
 
   def authorized_facility_project_ids(project_ids: [])
     fids = self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
-    if project_ids.any?
-      fids = FacilityProject.where(project_id: project_ids, id: fids).pluck(:id)
+    if false #&& project_ids.any?
+      fids = FacilityProject.where(project_id: project_ids).pluck(:id)
     end
     fids
   end
@@ -990,7 +990,7 @@ class User < ApplicationRecord
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
-        facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}.id
+        facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}&.id
         
         role_ids = user.role_users.select{|ru| ru.facility_project_id == facility_project_id}.map(&:role_id).compact.uniq
         role_type = RolePrivilege::PROJECT_PRIVILEGES_ROLE_TYPES.detect{|rt| rt.include?(resource)}

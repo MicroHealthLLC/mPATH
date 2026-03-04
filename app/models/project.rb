@@ -271,7 +271,7 @@ class Project < SortableRecord
     all_contracts = []
 
     all_facilities = Facility.where(id: all_facility_ids)
-    all_facility_group_ids = (all_facility_projects.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) ).compact.uniq
+    all_facility_group_ids = (all_facility_projects.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) + all_facilities.map(&:facility_group_id) ).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects, :project_contracts, :project_facility_groups, :project_contract_vehicles).where("id in (?)", all_facility_group_ids)
 
@@ -287,7 +287,7 @@ class Project < SortableRecord
 
     all_facility_projects.each do |fp|
 
-      facility = all_facilities.detect{|f| f.id == fp.facility_id}
+      facility = all_facilities.detect{|f| f.id == fp.facility_id && fp.project_id == self.id}
 
       next if !facility
 
@@ -300,7 +300,7 @@ class Project < SortableRecord
         facility_name: facility.facility_name
       })
 
-      g = all_facility_groups.detect{|gg| gg.id == fp.facility_group_id}
+      g = all_facility_groups.detect{|gg| gg.id == (fp.facility_group_id || fp.facility&.facility_group_id ) }
 
       h[:facility] = facility.attributes.merge({
         facility_group_id: g&.id,

@@ -1,5 +1,5 @@
-import firebase from 'firebase'
-import 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 
 const firebaseConfig = {
@@ -13,32 +13,36 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
 //   const analytics = getAnalytics(app);
   
-  const db = app.firestore()
-  const usersCollection = db.collection('contracts')
+  const db = getFirestore(app);
+  const usersCollection = collection(db, 'contracts');
 
   export const createUser = user => {
-      return usersCollection.add(user)
-  }
-
-  export const dbCollection = () => {
-    return db.collection('contracts')
+      return addDoc(usersCollection, user)
   }
 
 
   export const getUser = async id => {
-      const user = await usersCollection.doc(id).get()
-      return user.exists ? user.data() : null
+      const docRef = doc(usersCollection, id)
+      const docSnap = await getDoc(docRef)
+      return docSnap.exists() ? docSnap.data() : null
   }
 
   export const updateUser = (id, user) => {
-      return usersCollection.doc(id).update(user)
+      const docRef = doc(usersCollection, id)
+      return updateDoc(docRef, user)
   }
 
   export const deleteUser = id => {
-    return usersCollection.doc(id).delete()
+    const docRef = doc(usersCollection, id)
+    return deleteDoc(docRef)
+}
+
+export const getContracts = async () => {
+    const querySnapshot = await getDocs(usersCollection)
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
 }
 
 // export const useLoadUsers = () => {

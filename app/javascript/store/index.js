@@ -576,13 +576,11 @@ export default new Vuex.Store({
     },
     setLessonForManager: (state, { key, value }) => {
       for (let k in state.managerView) {
-        state.managerView[k] = k == key ? value : null;
+        state.managerView[k] = k === key ? value : null;
       }
     },
     setContactInfoForm: (state, { key, value }) =>
     (state.contactInfoForm[key] = value),
-    setMapZoomFilter: (state, filteredIds) =>
-      (state.mapZoomFilter = filteredIds),
     setPreviousRoute: (state, route) => (state.previousRoute = route),
     setNewSession: (state) => (state.newSession = !state.newSession),
   },
@@ -1536,10 +1534,9 @@ export default new Vuex.Store({
 
     filteredFacilities: (state, getters) => (_status = "active") => {
       // return getters.facilities;
-
       return _.filter(getters.facilities, (facility) => {
         let valid = _status === "all" || facility.status === _status;
-        valid = valid && facility.facilityGroupStatus == "active";
+        valid = valid && facility.facilityGroupStatus === "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;
 
@@ -1550,6 +1547,7 @@ export default new Vuex.Store({
         // resources1 = resources1.concat(facility.tasks)
         // resources1 = resources1.concat(facility.issues)
         // resources1 = resources1.concat(facility.risks)
+
 
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0];
@@ -2744,24 +2742,21 @@ export default new Vuex.Store({
       );
     },
     facilityGroupFacilities: (state, getters) => (group, status = "active") => {
+     // console.log("getters.filteredFacilities(status)", getters.filteredFacilities(status));
       return {
-      projects: { 
-          a: getters.filteredFacilities(status)
-          .filter(f => 
-              f.facilityGroupId == group.id &&
-              f.projectId == getters.currentProject.id
-              ).sort((a, b) => a.facilityName.localeCompare(b.facilityName)),
+      projects: {
+          a: getters.filteredFacilities(status).sort((a, b) => a.facilityName.localeCompare(b.facilityName)),
         },
       contracts: { 
           b: getters.filteredContracts
           .filter(f => 
-              f.facilityGroup.id == group.id 
+              f.facilityGroup.id === group.id
               ).sort((a, b) => a.name.localeCompare(b.name)),
          },
       vehicles: { 
           c: getters.filteredVehicles
           .filter(f => 
-              f.facilityGroup.id == group.id 
+              f.facilityGroup.id === group.id
               ).sort((a, b) => a.name.localeCompare(b.name)),
       }      
       }
